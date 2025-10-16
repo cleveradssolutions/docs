@@ -1,0 +1,68 @@
+---
+title: FAQ
+---
+
+
+## Android Build failed
+### AAPT: error: unexpected element `<property>` found in `<manifest><application>`.
+Google AdMob updated its SDK to require Android Gradle plugin version 4.2.0 or higher and Gradle version 6.7.1 or higher. Update your Android Gradle plugin and Gradle versions to resolve error.
+
+### AAPT2 Unexpected error during link, attempting to stop daemon
+```
+* What went wrong:
+Execution failed for task ':launcher:processReleaseResources'.
+> A failure occurred while executing com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask$TaskAction
+   > AAPT2 aapt2-4.2.2-7147631-osx Daemon #0: Unexpected error during link, attempting to stop daemon.
+     This should not happen under normal circumstances, please file an issue if it does.
+```
+Usually, the AAPT2 error occurs when a project is built with Target Android SDK 34 and the SDK Build Tools version is below 34.0.0, because one of the dependencies libraries uses new AAPT2 features that are not available in Build Tools versions below 34.  
+
+We are aware that the DTExchange library is causing this issue.
+
+To resolve this problem, you need to override the AAPT2 path in `gradle.properties` from the Build Tools 34.0.0.
+1. Download AAPT2. 
+Download Build-Tools 34.0.0 via Android SDK Manager or obtain just the [AAPT2 component from Google Maven](https://developer.android.com/tools/aapt2#download_aapt2).
+2. Move the downloaded directory from the Android SDK so that UE does not use Build-Tools version 34 for compilation. 
+3. Override Gradle path to AAPT2
+Add the following line in any Android UPL file:
+```xml
+<gradleProperties>
+	<insert>
+android.aapt2FromMavenOverride=/full/path/to/build-tools/34.0.0/aapt2
+	</insert>
+</gradleProperties>
+```
+Replace `/full/path/to/build-tools` with the actual path to downloaded directory.  
+For Windows use file with extension: `appt2.exe`.
+
+## iOS Build failed
+### ARM64 branch out of range (-135091044 max is +/-128MB)
+The error message "ARM64 branch out of range" indicates that a branch instruction in your code is attempting to jump to a location that is too far away, and it exceeds the allowed range.
+
+This is due to the large size of the Pangle library. You can choose one of the following solutions:
+- Enable "Packaging For Distribution" in the project settings. This will activate the necessary code optimizations, and packaging will be successful.
+- Exclude the Pangle Ad Adapter from the build. We recommend excluding all adapters during development and activating the ad test mode. This will speed up the build time and allow for proper ad testing in the application.
+### Undefined symbols for architecture arm64
+```
+__swift_FORCE_LOAD_$_swiftCompatibility56", referenced from:
+  __swift_FORCE_LOAD_$_swiftCompatibility56_$_CleverAdsSolutions in CleverAdsSolutions
+  ...
+  (maybe you meant: __swift_FORCE_LOAD_$_swiftCompatibility56_$_CleverAdsSolutions)
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1
+```
+This error occurs because your Xcode version lacks the necessary Swift components. Please check the Xcode version requirements and update it accordingly.
+### Duplicate symbols for architecture arm64
+```
+duplicate symbol '_OBJC_IVAR_$_FBLPromise._pendingObjects' in:
+.../UnzippedFrameworks/PromisesObjC/PromisesObjC.framework/PromisesObjC(FBLPromise.o)
+.../CAS-Unreal-main/Source/ThirdParty/IOS/Frameworks/FBLPromises/FBLPromises.framework/FBLPromises(FBLPromise.o)
+...
+ld: 12 duplicate symbols for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+```
+You need to exclude iOS frameworks from the CAS Plugin that have already been added by other plugins in your project. To do this, modify the `Config/DefaultEngine.ini` file of the project by adding the `[CASPluginBuildConfig]` section. For example, excluding the `FBLPromises.framework`, which has been added to the Firebase plugin project, is represented as follows:
+```ini
+[CASPluginBuildConfig]
++ExcludeFrameworks="FBLPromises"
+```

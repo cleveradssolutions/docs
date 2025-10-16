@@ -1,0 +1,24 @@
+---
+title: Google Play data disclosure
+---
+
+This page can help you complete the requirements for this data disclosure in regards to your usage of the CAS.AI Mediation SDKs. We aim to be as transparent as possible in supporting you; however, as the app developer, you are solely responsible for deciding how to respond to Google Play's Data safety section form regarding your app's end-user data collection, sharing, and security practices.
+
+To complete your data disclosure, you can use Android's [guide about data types](https://developer.android.com/guide/topics/data/collect-share) to help you determine which [data types](https://support.google.com/googleplay/android-developer/answer/10787469#in_play_console&zippy=%2Cdata-types)and purposes best describe the collected data. In your data disclosure, make sure to also account for how your specific app shares and uses the collected data.
+
+CAS Mediation integrates third-party ad networks that may collect and process user data independently. Review the privacy policies and data practices of each ad network you enable in your mediation stack.
+
+## Families Ads Solution
+Apps designed for children have special restrictions on data usage for advertising. Our Families Ads Solution includes only those ad SDKs that can operate without collecting any user data. Therefore, you only need to answer the first question:
+- Does your app collect or share any of the required user data types?
+- No
+
+## Optimal Ads Solution
+To help simplify the process, we’ve prepared a configuration CSV file that you can download and import directly into your app’s Data safety section in the Play Console.
+- Download the [Data safety CSV file](https://github.com/cleveradssolutions/CAS-Android/releases/download/4.1.0/data_safety_export.csv)
+
+The provided CSV file includes the default disclosures for the **Optimal Ads Solutions**. You may need to modify or extend it depending on your integration, app features, or additional partners you work with. 
+
+Even though CAS provides guidance for SDK-level data usage, your app may collect additional data through other means. Ensure that your disclosure reflects your complete data practices.
+
+Where appropriate, update your app’s privacy policy and in-app consent flows to reflect SDK usage and user data handling, especially if targeting users in jurisdictions with specific data protection laws (e.g., GDPR, CCPA).

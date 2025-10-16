@@ -1,0 +1,205 @@
+---
+title: CAS.AI plugin for Flutter
+---
+
+Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
+Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
+
+## Import CAS.AI Mobile Ads package
+Include the [CAS.AI plugin for Flutter](https://pub.dev/packages/clever_ads_solutions/install) in your Flutter project.
+
+With Flutter command:
+```shell
+flutter pub add clever_ads_solutions
+```
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Flutter/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
+
+Now in your Dart code, you can use:
+```dart
+import 'package:clever_ads_solutions/clever_ads_solutions.dart';
+```
+
+## Platform specific setup
+To monetize your app using CAS.AI mediation, in addition to importing the package, you need to configure your Android and iOS projects by using the **CAS Gradle plugin** for Android and a **Ruby CAS script** for iOS.  
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+The CAS Android SDK provide a Gradle Plugin to simplify and automate certain integration steps.
+Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
+
+In your Android app Gradle file (usually `<project>/android/app/build.gradle`), add the `com.cleveradssolutions.gradle-plugin` inside the `plugins` block.
+```groovy
+plugins {
+  id("com.android.application") // before CAS plugin
+  id("com.cleveradssolutions.gradle-plugin") version "{{ versions.android }}"
+}
+
+cas {
+  // Plugin configuration
+}
+```
+
+<Info>
+Make sure to update the CAS Gradle plugin version whenever you update the CAS Flutter package. The CASGradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](https://github.com/cleveradssolutions/CAS-Android/wiki#integration-options).
+</Info>
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+The Ruby script performs automatic configuration of your iOS project. To apply it, follow the steps outlined below.
+1. Download the [casconfig.rb](https://github.com/cleveradssolutions/CAS-iOS/releases/download/4.1.0.1/casconfig.rb)  
+2. Place the script in ios app directory `<project>/ios`
+3. Open the terminal window and go to `ios` directory:
+```
+cd ios
+```
+4. Run ruby script with your app CAS ID:
+```
+ruby casconfig.rb <CAS ID>
+```
+
+<Accordion title="What is CAS ID in iOS?">
+
+In most cases, a CASID is the same as your app store ID.  
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
+ 
+If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai  
+If you just want to experiment or test the SDK, you can skip the configuration your project.
+
+</Accordion>
+
+
+<Info>
+Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
+</Info>
+
+The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project. 
+All CAS frameworks are hosted and distributed through their own source repository. Please add CAS source repository url to the beginning of the Podfile:
+```ruby
+source 'https://github.com/cleveradssolutions/CAS-Specs.git'
+```
+
+Mediation dependencies should be added to the `target` block, before the `end` line.
+```ruby
+target 'Runner' do
+    pod ...
+    ...
+end
+```
+Run `pod update` terminal command inside the `ios` directory after modifying the `Podfile`.
+
+<Info>
+Make sure to update the CAS pods version whenever you update the CAS Flutter package. The Ads Solution pods version matches the version of [the CAS iOS SDK](https://github.com/cleveradssolutions/CAS-iOS/releases).
+</Info>
+
+</TabItem>
+</Tabs>
+
+## Mediated Networks
+CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
+If you're unsure which solution best fits your application, please contact your account manager.
+
+Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Adapters#casai-mediation-adapters) tables.
+### Optimal Ads Solution
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+```groovy
+cas {
+    includeOptimalAds = true
+}
+```
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+```ruby
+pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
+```
+</TabItem>
+</Tabs>
+
+### Families Ads Solution
+Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+```groovy
+cas {
+    includeFamiliesAds = true
+}
+```
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+```ruby
+pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
+```
+</TabItem>
+</Tabs>
+
+### Choice networks
+Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android wiki page](Android/Mediated-Networks) and the [iOS wiki page](iOS/Mediated-Networks).
+
+## Advertising Identifier
+CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
+To enable the use of the Advertising ID in your app, you need to complete the following setup steps.
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+CAS Mediation allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
+
+```groovy
+cas {
+    useAdvertisingId = true
+}
+```
+
+An application must not use an advertising identifier if **at least one** of the following conditions is true:
+- The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
+- The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
+
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+
+To use the App Tracking Transparency authorization request for accessing the IDFA, update your `<project>/ios/Runner/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
+```
+
+<AccordionGroup>
+<Accordion title="Usage description examples">
+
+- Your data will remain confidential and will only be used to provide you a better and personalised ad experience
+- Your data will be used to provide you a better and personalised ad experience
+- Your data will be used to create a customized experience tailored to your interests
+- Allowing tracking will enable more personalized ads for you
+- We try to show ads for apps and products that will be most interesting to you based on the apps you use
+- This identifier will be used to deliver personalized ads to you
+- This only uses device info for more interesting and relevant ads
+
+</Accordion>
+<Accordion title="Localizing Usage description (optional)">
+
+To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.  
+The table below gives you a variety of localizations that you can use at your discretion.
+
+| Locale          | Description                                                                                                                                   |
+|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| English (en)    | Your data will remain confidential and will only be used to provide you a better and personalised ad experience                               |
+| German (de)     | Ihre Daten bleiben vertraulich und werden nur dazu verwendet, Ihnen ein besseres und personalisiertes Werbeerlebnis zu bieten                 |
+| French (fr)     | Vos données resteront confidentielles et seront utilisées uniquement pour vous offrir une expérience publicitaire meilleure et personnalisée  |
+| Spanish (es)    | Sus datos permanecerán confidenciales y solo se utilizarán para brindarle una experiencia publicitaria mejor y personalizada                  |
+| Ukrainian (uk)  | Ваші дані залишатимуться конфіденційними та використовуватимуться лише для надання вам кращої та персоналізованої реклами                     |
+| Russian (ru)    | Ваши данные останутся конфиденциальными и будут использоваться только для предоставления вам более качественной и персонализированной рекламы |
+| Portuguese (pt) | Seus dados permanecerão confidenciais e serão usados apenas para lhe proporcionar uma experiência publicitária melhor e personalizada         |
+| Japanese (ja)   | お客様のデータは機密として保持され、より優れたパーソナライズされた広告エクスペリエンスを提供するためにのみ使用されます                                                                                   |
+
+</Accordion>
+</AccordionGroup>
+</TabItem>
+</Tabs>

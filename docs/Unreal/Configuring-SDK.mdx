@@ -1,0 +1,102 @@
+---
+title: Configuring SDK
+---
+
+[Apple Kids Category]: https://github.com/cleveradssolutions/CAS-iOS/wiki/Apple-Kids-Category
+
+In your Unreal project editor, navigate to `Edit > Project Settings > Plugins > CAS.AI Config - [Platform]` to modify default configuration for each native platform.  
+
+<Image width="650" alt="image" src="/assets/unreal/Configuring-SDK-1.png" />
+
+<Info>
+Repeat the following steps for Android and iOS platforms.
+</Info>
+
+## CAS App ID
+In most cases, a CAS App Id is the same as the Android App's package name, and the iOS App's store Id.
+- A [package name](https://developer.android.com/studio/build/application-id) uniquely identifies your app on the device and in the Google Play Store.
+- The store ID of an iOS app uniquely identifies your app in the Apple App Store.
+- You can find an app's store ID in the URL of your app’s Apple App Store listing. For example, the URL of an app page is `apps.apple.com/us/app/id123456789`. The app's store ID is `123456789`.
+-  If you haven't created an CAS account and registered an app yet, now's a great time to do so at [CAS.ai](https://cas.ai). 
+- In a real app, it is important that you use your actual CAS App ID.  
+
+## Autoload ad formats
+Select the advertisement formats that will be loaded automatically after the ads initialization. The chosen ad formats will also be automatically loaded after being displayed or encountering a loading error. In this case, you may choose not to use the ad loading functions and instead simply call the ad display functions when needed. The ad will be displayed if it is ready; otherwise, a failure event will be triggered.
+- [x]  Autoload Banner Ads
+- [x]  Autoload MRec Ads
+- [x]  Autoload Interstitial Ads
+- [x]  Autoload Rewarded Ads
+- [x]  Autoload App Open Ads
+
+<Warning>  
+Do not select ad formats that you do not intend to show to the user, as it will impact the performance of the application.
+</Warning>
+
+## Enabling test ads
+Read about Test ads mode and Test Device Ids [here](Enabling-test-ads).
+- [x] TestAdsMode
+
+## Target app audience
+Select the audience your game is targeting.  
+- Mixed - The app is intended for audiences of all ages.
+- Children - Children restrictions and Google Families Ads Program participation apply to this app. Audience under 12 years old.
+- NotChildren - Audience over 12 years old only. There are no restrictions on ad filling.  
+
+<Success>  
+Read more about [COPPA compliance](Privacy-Regulations).
+</Success>
+
+## Auto Consent Flow
+Select to automatic ask for consent from the user on ads initialization. To get consent for collecting personal data of your users, we suggest you use a built-in Consent Flow, comes with a pre-made consent form that you can easily present to your users.
+- [x] Auto Consent Flow
+
+<Success>  
+Read more about [User Consent Flow](User-Consent-Flow).
+</Success>
+
+## Use Advertising Id
+The Advertising ID is a unique, user-resettable ID for advertising, provided by Google Play services ([AD_ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en)) or by Apple ([IDFA](https://developer.apple.com/documentation/adsupport/asidentifiermanager/advertisingidentifier)). Crucial for mobile attribution, i.e. tracking the user journey, its purpose is to measure user interactions with ad campaigns and track events like installs and in-app activity.
+- [x] Use Advertising Id
+
+## User Tracking Usage Description (iOS Only)
+If your app calls the App Tracking Transparency API, you must provide custom text, known as a _usage-description string_, which displays as a system-permission alert request. The usage-description string tells the user why the app is requesting permission to use data for tracking the user or the device. The user has the option to grant or deny the authorization request.
+<Success>  
+- Allowed if used Advertising Id property only.
+- Read more about [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription)
+</Success>
+
+## Privacy Policy URL
+Provide a link to the app's Privacy Policy so that it is presented to the user in the consent dialog.
+
+<Info>
+If you don't define a link to your application's policy, the user will follow the link to [Clever Ads Solutions policy](https://cas.ai/privacy-policy-3/).
+</Info>
+
+## Include Ads Solution
+Clever Ads Solutions provide ready-made solutions for you to choose from.
+- [ ] An **Optimal Ads Solutions** contains a number of stable partner networks that are recommended for use in most applications.  
+- [ ] A **Families Ads Solutions** designed for applications tagged at a children's audience.  
+  - For Android, solution is fully compatible with apps in the [Google Plays Families Policy](Unreal/Google-Plays-Families-Policy).
+  - For iOS, solution is NOT intended for apps in [Apple Kids Category].
+
+<Warning>  
+Some ad networks require you to do Additional integration steps: [Meta AudienceNetwork](Unreal/Additional-Meta-AudienceNetwork-steps)
+</Warning>
+
+## Advanced Integration
+Advanced integration makes it possible to choose any variations of mediation networks.
+Feel free not to use ready-made solutions, and choose which mediated ad networks you want to integrate by checking the boxes in `Mediation/Advanced` section of settings window.
+
+<Warning>  
+Access to the monetization of the `beta` ad sources is closed.  
+If you would like to monetize by one of these ad sources, please contact your account manager.
+</Warning>
+
+## Cross-promotion
+Cross-promotion is an app marketing strategy in which app developers promote one of their titles on another one of their titles. Cross promoting is especially effective for developers with large portfolios of games as a means to move users across titles and use the opportunity to scale each of their apps. This is most commonly used by hyper-casual publishers who have relatively low retention, and use cross promotion to keep users within their app portfolio.  
+
+Start your cross promotion campaign with https://cas.ai.  
+
+<Info>
+CrossPromotion can be installed/removed using `Mediation/Advanced` section.
+</Info>

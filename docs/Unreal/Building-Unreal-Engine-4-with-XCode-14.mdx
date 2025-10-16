@@ -1,0 +1,46 @@
+---
+title: Building Unreal Engine 4 with XCode 14
+---
+
+In order to implement CAS plugin and package project for iOS, you will need XCode 14. Unreal Engine 4 does not support XCode 14 by default, so you must do some changes to its code.
+
+## Download sources
+
+First, you will need Unreal Engine from GitHub. To finish this step, please, refer to official documentation: 
+
+https://docs.unrealengine.com/4.27/en-US/ProgrammingAndScripting/ProgrammingWithCPP/DownloadingSourceCode/
+
+> Make sure you clone needed version of UE4 from certain tag, not from a main/master branch. 
+> 
+> For example `git clone --depth 1 --branch 4.27.2-release git@github.com:EpicGames/UnrealEngine.git`
+
+## Fix Unreal Engine 4 for XCode 14
+
+Unreal Engine 4 generates XCode project by its build system. XCode project gets generates with some options missing. We need to add those in order to make UE4 compile successfully.
+
+In files 
+
+1) Engine/Source/Programs/UnrealBuildTool/Platform/Mac/MacToolChain.cs
+2) Engine/Source/Programs/UnrealBuildTool/Platform/IOS/IOSToolChain.cs
+
+Add following lines in function `GetCompileArguments_Global`:
+
+```cs
+// Add after line 
+// Result += " -Wall -Werror"; 
+// next lines
+
+Result += " -Wno-unused-but-set-variable";
+Result += " -Wno-uninitialized-const-reference";
+Result += " -Wno-ordered-compare-function-pointers";
+```
+
+
+You will also need to do a little fix in `Engine/Source/ThirdParty/libWebSockets/libwebsockets/include/Mac/libwebsockets.h`.
+
+```cpp
+// Replace line
+enum http_status {
+//With
+enum class http_status {
+```

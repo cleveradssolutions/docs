@@ -1,0 +1,126 @@
+---
+title: Initialize CAS SDK
+---
+
+The `initializeCAS()` method initializes the SDK and calls a completion listener once both CAS SDK initialization have completed. 
+This needs to be done only once, ideally at app launch.
+
+To begin, create a string constant with your `CAS_ID`. This constant will be needed when creating each ad format instance.
+
+```java
+import com.cleversolutions.ads.android.CAS;
+
+class MyApplication extends Application {
+
+    public static final String CAS_ID = BuildConfig.APPLICATION_ID
+
+    @Override
+    protected void onCreate() {
+        super.onCreate();
+        
+        initializeCAS();
+    }
+}
+```
+
+<Accordion title="What is CAS ID?">
+
+In most cases, a `casId` is the same as your application package name.
+- A [package name](https://developer.android.com/studio/build/application-id) uniquely identifies your app on the device and in the Google Play Store.
+- The package name value is case-sensitiv and is often referred to as an `APPLICATION_ID`.
+- Find your app's package name in your module (app-level) Gradle file, usually `app/build.gradle` (example package name: `com.yourcompany.yourproject`).
+
+</Accordion>
+
+
+<Info>
+Using `context.packageName` as CAS ID is not safe. If your app does not use `BuildConfig`, it's better to specify a constant.
+</Info>
+
+You can skip the manual call for ad initialization, and then the SDK will automatically perform the initialization before the first ad load. However, if it's important for you to change the configuration or listen to states of the Consent Flow, make sure to initialize it at least once before the first ad load.
+
+```java
+void initializeCAS() {
+    ManagerBuilder builder = CAS.buildManager()
+        .withCasId(MyApplication.CAS_ID)
+        .withCompletionListener(new InitializationListener() {  
+            @Override  
+            public void onCASInitialized(@NonNull InitialConfiguration config) { 
+                // The CAS SDK initializes if the error is `null`
+                String initErrorOrNull = config.getError();
+                String userCountryISO2OrNull = config.getCountryCode();
+                
+                // True if the user is protected by GDPR or other regulations
+                boolean protectionApplied = config.isConsentRequired();
+
+                // The user completes the consent flow
+                int consentFlowStatus = config.getConsentFlowStatus(); 
+            }  
+        });
+
+    builder.build(this);
+}
+```
+
+The `onCASInitialized` listener may be called with an error. In this case, the SDK will attempt to reinitialize and the listener will be called again until the error is resolved.
+
+<Error>  
+Do not initialize mediated advertising SDKs (CAS does that for you).  
+Not following this step will result in noticeable integration issues.
+</Error>
+
+### Automatic user consent flow
+To get consent for collecting personal data of your users, we suggest you use a built-in Consent Flow, comes with a pre-made consent form that you can easily present to your users. That means you no longer need to create your own consent window.  
+
+The user will see the consent flow when your app initialize CAS SDK. When the user completes the flow, the SDK calls your initialization-completion handler.
+
+CAS consent flow is enabled by default. You can disable the consent flow by add disabled  ConsentFlow instance to `withConsentFlow()`:
+```java
+builder.withConsentFlow(
+    new ConsentFlow(/* isEnabled = */ false)
+);
+```
+
+Make sure to apply all configurations before calling `builder.build()`.
+
+You must wait until the user finishes the consent flow before you initialize third-party SDKs (such as MMPs or analytics SDKs). For this reason, initialize such SDKs from within your initialization-completion callback. If you were to initialize these third-party SDKs before the user completes the consent flow, these third-party SDKs would not be able to access relevant identifiers and you would suffer a material impact on measurement, reporting, and ad revenue.
+
+<Info>
+Read more about "Privacy options button" and "Debug geography" on [CAS User Consent Flow page](Android/User-Consent-Flow)
+</Info>
+
+### Always test with test ads
+When building and testing your apps, make sure you use test ads rather than live, production ads. Failure to do so can lead to suspension of your account.
+
+By default, CAS initializes mediation in live mode. To enable test ad mode, you should manually call `initializeCAS()` with the following option:
+```java
+builder.withTestAdMode(BuildConfig.DEBUG);
+```
+
+For more information about how the CAS.AI SDK's test ads work, see [Enable test ads](Android/Enabling-test-ads)
+
+### Legacy support MediationManager
+We are not removing support for managing ads using `MediationManager` at this time, but we recommend migrating to the new `CASInterstitial` and `CASRewarded` components whenever possible.
+
+To continue using `MediationManager`, you still need to specify the ad formats you want to work with, just as before.  
+```java
+builder.withAdTypes(AdType.Interstitial, AdType.Rewarded);
+```
+If your app no longer uses `MediationManager` for Interstitial and Rewarded formats, simply do not define any formats during initialization.
+
+### Retrieve the Version Number
+To programmatically retrieve the SDK version number at runtime, CAS provides the following method:
+```java
+String sdkVersion = CAS.getSDKVersion();
+```
+
+### (Optional) Trial ad-free interval
+Set the time interval during which users can enjoy an ad-free experience while retaining access
+to Rewarded Ads and App Open Ads formats. This interval is defined from the moment of the initial
+app installation, in seconds. Within this interval, users enjoy privileged access to the
+application's features without intrusive advertisements.
+
+```java
+int secondsIn7Days = 604800;
+CAS.settings.setTrialAdFreeInterval(secondsIn7Days);
+```

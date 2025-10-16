@@ -1,0 +1,41 @@
+---
+title: CAS.AI plugin for Unreal
+---
+
+Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
+Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
+
+
+## Add the Plugin to Your Project
+1. Open Project root directory.
+2. Create `Plugins` folder at the same level as the standard `Source` folder.
+3. Download latest [Source code(zip)](https://github.com/cleveradssolutions/CAS-Unreal/releases/latest) and unpack archive to the `Plugins` directory.  
+  You can also simply clone the git plugin repository into the Plugins directory.
+
+You can also find precompiled (with binaries) CAS.AI plugin packages in the list of assets attached to the GitHub release. Please note that these packages are built only for specific versions of Unreal Engine and cannot be used with other versions.
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Unreal/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
+
+Check your project structure after adding the `uplugin`:
+```md
+UnrealProjectRoot
+├── Content
+├── Plugins
+│   ├── CAS-Unreal
+│   │   ├── CleverAdsSolutions.uplugin
+├── Source
+```
+
+## Import the Plugin into Unreal
+To use the CAS Unreal Plugin from C++ scripts, you need add `CleverAdsSolutions` module as a dependency to the `PublicDependencyModuleNames` array inside of your app’s `<PROJECTNAME>.Build.cs` file:
+```csharp
+PublicDependencyModuleNames.Add("CleverAdsSolutions");
+```
+
+<Image width="671" alt="image" src="/assets/unreal/index-1.png" />
+
+## Project structure for Windows machine
+When building an application on a Windows machine, it is crucial to ensure that your project folder is located on the same drive as the Unreal Engine installation directory. (e.g., both on `C:` or both on `D:`)  
+Unreal Engine relies on specific paths and directories during the build process. If the project and Unreal Engine are located on different drives, it may cause path resolution problems, leading to potential build failures or incorrect behavior.

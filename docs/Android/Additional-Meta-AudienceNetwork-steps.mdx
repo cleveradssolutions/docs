@@ -1,0 +1,34 @@
+---
+title: Additional Meta AudienceNetwork steps
+---
+
+## Data Processing Options for US Users
+Meta Audience Network Data Processing Options for US Users Limited Data Use is a data processing option that gives you more control over how your data is used in Meta’s systems and better supports your compliance efforts with various US state privacy regulations. To utilize this feature, you must proactively enable Limited Data Use.  
+Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
+
+Import `AdSettings` from Audience Network library:
+```java
+import com.facebook.ads.AdSettings;
+```
+
+If you do not want to enable Limited Data Use (LDU) mode, pass an empty string array:
+```java
+AdSettings.setDataProcessingOptions( new String[] {} );  
+```
+To enable LDU for users and specify user geography, call `setDataProcessingOptions` in a form like this:
+```java
+AdSettings.setDataProcessingOptions( new String[] {"LDU"} );
+```
+
+You can determine whether the user has consented to Meta or not with Additional Consent from CMP. To do so, use code like the following:
+```java
+int metaConsent = CAS.settings.getAdditionalConsent(89);
+if (metaConsent == ConsentStatus.ACCEPTED) {
+    AdSettings.setDataProcessingOptions( new String[] {} );
+} else if (metaConsent == ConsentStatus.DENIED) {
+    AdSettings.setDataProcessingOptions( new String[] {"LDU"} );
+} else {
+    // AC String is not available on disk. 
+    // Please check for consent status after the user completes the CMP flow.
+}
+```

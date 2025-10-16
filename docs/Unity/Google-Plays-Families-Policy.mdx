@@ -1,0 +1,20 @@
+---
+title: Google Plays Families Policy
+---
+
+<Info>
+If your application does not participate in Families Ads program, then you can safely skip the page. 
+</Info>
+
+Google is focused on providing a great experience for families on Google Play and wants to help make sure that any ads served to children are appropriate and compliant with our policies. Review google ads and monetization policy in the [Developer Policy Center](https://play.google.com/about/families/ads-monetization/).  
+
+If your app's target audience includes children and serves ads using an ad SDK, you must use one of the ad SDKs below. The following ad SDKs have self-certified that their compliance with Play’s [Families Ads Program](https://play.google.com/about/monetization-ads/families-ads-program/) requirements.
+
+> ❕Quote from the [Google Families Ads program page](https://support.google.com/googleplay/android-developer/answer/9283445?hl=en).
+
+### Advertising ID
+The [advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable ID for advertising, provided by Google Play services.  
+
+With Android 12 many mediation partners are starting to include the `com.google.android.gms.permission.AD_ID` permission in the SDK’s library manifest but Families Policy, require that apps not use the Ad ID.  
+You must prevent the permission from getting merged into your app by including the following element in your manifest.  
+To do this, just select `Removed` for `Advertiser ID permission` option in `Assets > CleverAdsSolutions > Android Settings > Other settings` window.

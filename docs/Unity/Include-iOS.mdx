@@ -1,0 +1,42 @@
+---
+title: Include iOS
+---
+
+The Clever Ads Solutions Unity plugin is distributed with the [EDM4U](https://github.com/googlesamples/unity-jar-resolver) library. This library is intended for use by any Unity plugin that requires access to iOS CocoaPods. It provides Unity plugins the ability to declare dependencies, which are then automatically resolved and copied into your Unity project.  
+
+## Install Cocoapods
+iOS dependencies are identified using  [Cocoapods](https://cocoapods.org). CocoaPods resolve is run as a post build process step.  
+Make sure that Cocoapods is installed: 
+In the Unity editor, select: `Assets > External Dependency Manager > iOS Resolver > Install Cocoapods`  
+
+<Error>  
+Use the generated `.xcworkspace` instead of the standard Xcode project. An xcworkspace is generated that includes the required dependency libraries. 
+</Error>
+
+## Add User Tracking usage description
+To use the AppTrackingTransparency framework:
+Set up a `NSUserTrackingUsageDescription` to display a system-permission alert request for your app installed on end-user devices.  
+In Unity, use `Assets > Clever Ads Solutions > iOS Settings` menu to check:  
+- [x] User Tracking Usage description  
+
+And fill table for every language yon want with the [ISO-639-1 code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) in the first column and localized description in second column.  
+If you want to use the description in English only, remove the rest of the languages.  
+
+## Application pause on background
+Indicates if the Unity app should be automatically paused when a full screen ad (Interstitial or Rewarded video ad) is displayed.  
+Enabled by default.  
+Change the flag at any time using the following method:
+```c#
+CAS.MobileAds.settings.iOSAppPauseOnBackground = false;
+```
+
+## SKAdNetwork
+SKAdNetwork is a privacy safe method provided by Apple for ad networks to track installs. Up until iOS 14, most ad network campaign attribution has been based on a user's IDFA, but on iOS 14 and beyond, IDFAs will be less usable as a way to attribute which users have installed based on which ads they have interacted with.
+
+The CAS Unity Plugin **automatically updates** your app’s `Info.plist` with network-specific identifiers.
+
+## Mute Other Audio Sources
+Known issue when the **sounds is disabled in the application** after closing advertising with enabled "Mute Other Audio Sources" option. We will continue to look for ways to solve the conflict.  
+
+Please turn off the option `Mute Other Audio Source` in `Edit > Project Settings > Player > iOS > Other Settings` menu.  
+- [ ] Mute Other Audio Source  

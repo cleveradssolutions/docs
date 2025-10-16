@@ -1,0 +1,184 @@
+---
+title: App Open Ads
+description: This guide explains how to integrate app open ads into an Android app.
+---
+
+App open ads are a special ad format intended for publishers wishing to monetize their app load screens. 
+App open ads can be closed at any time, and are designed to be shown when your users bring your app to the foreground.
+App open ads automatically show a small branding area so users know they're in your app.  
+
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
+
+
+## Create Ad instance
+Ad instance can be initialized along with the activity before `onCreate`.
+```java
+import com.cleveradssolutions.sdk.screen.CASAppOpen;
+
+class MyActivity extends Activity {
+
+    final CASAppOpen appOpenAd = new CASAppOpen(MyApplication.CAS_ID);
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ...
+    }
+```
+
+The SDK provides the capability to create and precache multiple ad instances, enabling uninterrupted sequential ad display. CAS SDK will load mediation ads in order for each created instance.
+
+## Create Ad Content callback
+The `com.cleveradssolutions.sdk.screen.ScreenAdContentCallback` handles events related to displaying your `CASAppOpen`. Callbacks are called on the main thread. Before showing ad, make sure to `setContentCallback()`.
+
+```java
+final ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() {  
+    @Override  
+    public void onAdLoaded(@NonNull AdContentInfo ad) {  
+        // (Optional) Called when the ad content has been successfully loaded.  
+    }  
+  
+    @Override  
+    public void onAdFailedToLoad(@NonNull AdFormat format, @NonNull AdError error) {  
+        // (Optional) Called when the ad content fails to load.  
+    }  
+  
+    @Override  
+    public void onAdFailedToShow(@NonNull AdFormat format, @NonNull AdError error) {  
+        // (Optional) Called when the ad content fails to show.  
+    }  
+  
+    @Override  
+    public void onAdShowed(@NonNull AdContentInfo ad) {  
+        // (Optional) Called when the ad content is successfully shown.  
+    }  
+  
+    @Override  
+    public void onAdClicked(@NonNull AdContentInfo ad) {  
+        // (Optional) Called when the ad content is clicked by the user.  
+    }  
+  
+    @Override  
+    public void onAdDismissed(@NonNull AdContentInfo ad) {  
+        // (Optional) Called when the ad content is dismissed.  
+    }  
+};
+```
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](Android/Impression-Level-Data).
+- Attempting to load a new ad from the `onAdFailedToLoad()` method is strongly discouraged. Limit ad load retries to avoid continuous failed ad requests in situations such as limited network connectivity.
+- When an error occurs during ad impression, executed the `onAdFailedToShow` only.  In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
+</Info>
+
+## Load Ad
+The next step is to fill out the `load()` method and handle the ad load callbacks.
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    appOpenAd.setContentCallback(adContentCallback);
+    appOpenAd.load(this);
+}
+```
+
+### Autoload mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    appOpenAd.setContentCallback(adContentCallback);
+    appOpenAd.setAutoloadEnabled(true);
+}
+```
+By default autoload disabled.
+
+## Show Ad
+The most common app open implementation is to attempt to show an app open ad near app launch, start app content if the ad isn't ready, and preload another ad for the next app open opportunity.
+
+```java
+@Override  
+protected void onResume() {  
+    super.onResume();  
+  
+    if (appOpenAd.isLoaded()) {  
+        appOpenAd.show(this);  
+    } else if (appOpenAd.isAutoloadEnabled() == false) {  
+        appOpenAd.load(this);  
+    } 
+}
+```
+
+Starting with CAS SDK version 4.3.0, all ads functions can be safely called from any thread.
+
+Once you’ve successfully call `show()`, you will have shown your user an App Open Ad.  
+In the case you want to serve another App Open Ad, you must repeat `load()` to request an additional ad.
+
+<Info>
+If a user returns to your app after having left it by clicking on an app open ad, it makes sure they're not presented with another app open ad.
+</Info>
+
+### Autoshow mode
+Use the `isAutoshowEnabled` property to automatically show a loaded ad when the user returns to the app.
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    ...
+    appOpenAd.setAutoshowEnabled(true);
+}
+```
+By default autoshow disabled.
+
+### Checking Ad Availability
+Use `isLoaded()` to check whether an ad is currently loaded.
+```java
+if (appOpenAd.isLoaded()) {
+}
+```
+Even if `isLoaded()` returns `true`, it does not guarantee that the ad will be shown successfully — various issues may still prevent it from being displayed. We strongly recommend handling potential display failures via `onAdFailedToShow(error)` callback to ensure a smoother user experience.
+
+By relying on these callbacks, you ensure that your application can react appropriately to real-time conditions, rather than making assumptions based on ad load state at a single point in time.
+
+## Release ad resource
+It is important to `destroy()` loaded but not displayed ads.
+```java
+@Override  
+protected void onDestroy() {  
+    appOpenAd.destroy();  
+    super.onDestroy();  
+}
+```
+
+## Cold starts and loading screens
+The documentation thus far assumes that you only show app open ads when users foreground your app when it is suspended in memory. "Cold starts" occur when your app is launched but was not previously suspended in memory.  
+
+An example of a cold start is when a user opens your app for the first time. With cold starts, you won't have a previously loaded app open ad that's ready to be shown right away. The delay between when you request an ad and receive an ad back can create a situation where users are able to briefly use your app before being surprised by an out of context ad. This should be avoided because it is a bad user experience.  
+
+The preferred way to use app open ads on cold starts is to use a loading screen to load your game or app assets, and to only show the ad from the loading screen. If your app has completed loading and has sent the user to the main content of your app, do not show the ad.  
+
+<Info>
+In order to continue loading app assets while the app open ad is being displayed, always load assets in a background thread.
+</Info>
+
+## Best practices
+App open ads help you monetize your app's loading screen, when the app first launches and during app switches, but it's important to keep best practices in mind so that your users enjoy using your app. It's best to:
+- Show your first app open ad after your users have used your app a few times.
+- Show app open ads during times when your users would otherwise be waiting for your app to load.
+- If you have a loading screen under the app open ad, and your loading screen completes loading before the ad is dismissed, you may want to dismiss your loading screen in the `onAdDismissed()` and `onAdFailedToShow()` methods.
+
+## Samples
+- [Kotlin AppOpen Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/appopen/AppOpenAdActivity.kt)
+- [Java AppOpen Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/appopen/AppOpenAdActivity.java)
+

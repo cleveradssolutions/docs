@@ -1,0 +1,27 @@
+---
+title: Manager Ad object
+---
+
+To display ads, you must initialize the mediation manager with a unique Manager ID.   
+This needs to be done only once for each manager, ideally on first scene.  
+
+1. Add an GameObject to your scene using `GameObject > Create Empty` in the Unity Editor.
+2. Add Component `CleverAdsSolutions/Initialize Manager Ad Object` in the inspector to new GameObject.
+3. Select [Manager ID](Unity/Configuring-SDK#manager-ids) from settings asset for each runtime platform.  
+4. Invoke a `Initialize()` method to begin initialization.
+
+<Image width="421" alt="image" src="/assets/unity/Manager-Ad-object-1.png" />
+
+- **Initialize On Awake**  
+Automatically invoke the `Initialize()` method when the component is awake.
+ - **Consent Flow Enabled**  
+ Use Consent Flow in ads initialization.
+  - **Consent Flow**  
+   If desired, select an ConsentFlow Ad Object for additional options or leave it blank.
+- **Meta Audience Network Privacy**  
+Read more about [Additional Meta AudienceNetwork steps](Unity/Additional-Meta-AudienceNetwork-steps).
+- **OnInitialized**  
+The Unity event will be invoked when the Mediation Manager is initialized and ready.
+- **OnInitializationFailed**  
+The Unity event will be invoked when the Mediation Manager initialization failed.  
+Wait for the OnInitialized event to call the manager.

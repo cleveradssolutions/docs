@@ -1,0 +1,81 @@
+---
+title: CAS.AI plugin for Unity
+---
+
+Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
+Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
+
+
+| Prerequisites       | Version |
+| ------------------- | ------- |
+| Unity Editor        | 2021.3+ |
+| Android Minimum API | 23+     |
+| Android Target API  | 34+     |
+| iOS Target Minimum  | 13.0+   |
+| iOS XCode           | 16.1+   |
+
+## Add the CAS package to Your Project
+Choose one of the following methods to import the CAS Unity plugin into your Unity project.
+1. OpenUPM-CLI
+2. OpenUPM
+3. Add package from git URL
+4. Import .unitypackage
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Unity/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
+
+### (Option 1) OpenUPM-CLI
+If you have the [OpenUPM CLI](https://github.com/openupm/openupm-cli#installation) installed, you can install the OpenUPM registry with the following command:
+```
+openupm add com.cleversolutions.ads.unity
+```
+
+### (Option 2) OpenUPM
+1. Open the [package manager settings](https://docs.unity3d.com/Manual/class-PackageManager.html) by selecting the Unity menu option **Edit > Project Settings > Package Manager**.
+2. Add OpenUPM as a scoped registry to the Package Manager window:
+```
+Name: OpenUPM
+URL: https://package.openupm.com
+Scopes: com.cleversolutions
+```
+3. Open the [package manager menu](https://docs.unity3d.com/Manual/upm-ui-install.html) by selecting the Unity menu option **Window > Package Manager**.
+4. Set the manager scope drop-down to select **My Registries**.
+
+![image](https://docs.unity3d.com/uploads/Main/upm-ui-unityregistry.png)
+
+5. Select the **CleverAdsSolutions** package from the package list.
+6. Press **Install**.
+
+### (Option 3) Add package from git URL
+In your open Unity project, navigate to `Window -> Package Manager -> + -> Add package from Git URL` and add url:   
+
+1. Open the [package manager menu](https://docs.unity3d.com/Manual/upm-ui-install.html) by selecting the Unity menu option **Window > Package Manager**.
+2. Press the **plus (+)** drop-down to select **Add package from Git URL**.
+
+![image](https://user-images.githubusercontent.com/22005013/135641554-c38422fa-995e-4e56-9c3a-a89a72172081.png)
+
+3. Enter the CAS Git URL in the text box and click **Add**:
+```
+https://github.com/cleveradssolutions/CAS-Unity.git#{{ versions.unity }}
+```
+The CAS Git URL end with the tag name after `#`.
+
+<Info>
+Check Prerequisites and Troubleshooting on [Install a package from a Git URL](https://docs.unity3d.com/Manual/upm-ui-giturl.html) page of Unity Documentation.  
+</Info>
+
+### (Option 4) Import `.unitypackage`
+1. Download latest [CleverAdsSolutions.unitypackage](https://github.com/cleveradssolutions/CAS-Unity/releases/latest)
+2. In your open Unity project, navigate to `Assets > Import Package > Custom Package`.
+3. In the `Import Unity Package` window, make sure all of the files are selected and click **Import**.
+
+### Remove `.unitypackage` plugin assets
+If you are migrating from using a `.unitypackage` to using OpenUPM, you must manually uninstall the assets from the old location. Remove the following directories that were imported from the `.unitypackage`:
+- `Assets/CleverAdsSolutions`
+
+## Add the External Dependency Manager for Unity  
+The CAS Unity plugin is distributed with the [External Dependency Manager for Unity](https://github.com/googlesamples/unity-jar-resolver#external-dependency-manager-for-unity) library. This library is intended for use by any Unity plugin that requires access to Android specific libraries (e.g., AARs) or iOS CocoaPods. It provides Unity plugins the ability to declare dependencies, which are then automatically resolved and copied into your Unity project.
+1. Download latest [external-dependency-manager.unitypackage](https://github.com/googlesamples/unity-jar-resolver/blob/master/external-dependency-manager-latest.unitypackage).
+2. In your open Unity project, navigate to `Assets > Import Package > Custom Package`.
+3. In the `Import Unity Package` window, make sure all of the files are selected and click **Import**.

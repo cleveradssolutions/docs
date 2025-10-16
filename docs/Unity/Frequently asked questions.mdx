@@ -1,0 +1,30 @@
+---
+title: Frequently asked questions
+---
+
+
+## Android build failed
+
+### java.lang.UnsupportedClassVersionError
+```
+java.lang.UnsupportedClassVersionError: has been compiled 
+by a more recent version of the Java Runtime (class file version 61.0), 
+this version of the Java Runtime only recognizes class file versions up to 55.0
+```
+
+1. Check Unity [Supported SDK Build tools version](https://docs.unity3d.com/6000.0/Documentation/Manual/android-supported-dependency-versions.html)
+2. Remove not supported SDK Build tools versions
+3. Remove not supported SDK Command-line tools version
+
+### Execution failed for task ':launcher:dexBuilderRelease'.
+```
+- Could not resolve all files for configuration ':launcher:detachedConfiguration'.
+- Failed to transform jetified-ysonetwork-1.2.9-runtime.jar to match attributes {artifactType=ext-dex-dexBuilderRelease, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+- Execution failed for DexingExternalLibArtifactTransform:
+
+/.../transformed/jetified-ysonetwork-1.2.9-runtime.jar.
+- Error while dexing.
+```
+
+1. Increase min Android API level to 24
+2. Enable `Project Settings > Publishing Settings > Minify > Release/Debug`

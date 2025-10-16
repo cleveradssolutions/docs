@@ -1,0 +1,69 @@
+---
+title: Interstitial Ad object
+---
+
+
+Interstitial ads are full-screen ads that cover the interface of their host app. They're typically displayed at natural transition points in the flow of an app, such as during the pause between levels in a game. When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.  
+
+This guide explains how to integrate interstitial ads into a Unity app.    
+
+## Add an InterstitialAdObject to the scene
+1. Add an GameObject to your scene using `GameObject > Create Empty` in the Unity Editor.
+2. Add Component `CleverAdsSolutions/Interstitial Ad Object` in the inspector to new GameObject.
+3. Select [Manager ID](Unity/Configuring-SDK#manager-ids) from settings asset for each runtime platform.
+4. Invoke `Present()` method to show the interstitial ad.  
+
+<Image width="326" alt="image" src="/assets/unity/Interstitial-Ad-object-1.png" />
+
+
+<Info>
+An InterstitialAdObject does not have any rendered components. Therefore, you can place the GameObject anywhere in the scene.
+</Info>
+
+## Load Ad callbacks
+- **On Ad Loaded**  
+The event is invoked when the interstitial ad has finished loading.
+- **On Ad Failed To Load**  
+The event is invoked when the interstitial ad fails to load. The Message parameter describes the type of failure that occurred.
+
+## Content callbacks
+- **On Ad Failed To Show**  
+The event is invoked when the interstitial ad failed to show. The Message parameter describes the type of failure that occurred.
+- **On Ad Shown**  
+The event is invoked when the interstitial ad is shown.
+- **On Ad Clicked**  
+The event is invoked when the user clicks on the interstitial ad.
+- **On Ad Impression**  
+The event is invoked when the ad count impression with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.
+- **On Ad Closed**  
+The event is invoked when the interstitial ad is closed.
+
+## Unity Events sample
+You can implement functions that correspond to ad callbacks. For example, if you want to handle when a interstitial ad fails to show:
+1. Create a function compatible with the ad callback in custom component.
+```c#
+public void OnInterstitialAdFailedToShow(string reason) {
+    Debug.Log("Interstitial ad failed to show: " + reason);
+}
+```
+2. Attach the script which contains the above function to any GameObject in the scene.
+3. Click the **+** button, then drag & drop the GameObject that you've attached the script to.
+4. Select the function that you want to link to the ad callback. For the parameterized ad callbacks, select the function to accept the dynamic variable so you can get the parameter value from the SDK.
+
+## Use InterstitialAdObject from script
+Get the interstitial ad instance from the script:
+```c#
+InterstitialAdObject interstitial = adObject.GetComponent<InterstitialAdObject>();
+```
+Show the interstitial ad:
+```c#
+interstitial.Present();
+```
+
+## Some best practices
+- **Consider whether interstitial ads are the right type of ad for your app.**  
+Interstitial ads work best in apps with natural transition points. The conclusion of a task within an app, such as sharing an image or completing a game level, creates such a point. Because the user is expecting a break in the action, it's easy to present an interstitial ad without disrupting their experience. Make sure you consider at which points in your app's workflow you'll display interstitial ads and how the user is likely to respond.  
+- **Remember to pause the action when displaying an interstitial ad.**  
+There are a number of different types of interstitial ads: text, image, video, and more. It's important to make sure that when your app displays an interstitial ad, it also suspends its use of some resources to allow the ad to take advantage of them. For example, when you make the call to display an interstitial ad, be sure to pause any audio output being produced by your app. You can resume playing sounds in the `OnInterstitialAdClosed` event handler, which will be invoked when the user has finished interacting with the ad. In addition, consider temporarily halting any intense computation tasks (such as a game loop) while the ad is being displayed. This will make sure the user doesn't experience slow or unresponsive graphics or stuttered video.
+- **Don't flood the user with ads.**  
+While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.

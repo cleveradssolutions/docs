@@ -1,0 +1,44 @@
+---
+title: Affiliate program
+---
+
+## Add Firebase Analytics
+Google Analytics collects usage and behavior data for your app.  
+Add the [Firebase Unity SDK](https://firebase.google.com/docs/unity/setup#prerequisites) (specifically, `FirebaseAnalytics.unitypackage`) to your Unity project.
+
+## Collect user loss analytics
+To collect user loss analytics, you need to add the following script to the project.  
+The script automatically sends the transition to a new scene.  
+If your game has a single game scene, call a `UserProgressAnalytics.Send()` method with more information about the user's current progress.
+```cs
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Firebase.Analytics;
+
+namespace CAS
+{
+  public static class UserProgressAnalytics
+  {
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    public static void Init()
+    {
+      SceneManager.activeSceneChanged += OnActiveSceneChanged;
+    }
+
+    private static void OnActiveSceneChanged(Scene current, Scene next)
+    {
+      Send(next.name);
+    }
+
+    public static void Send(string progress)
+    {
+      Parameter[] fParams = new Parameter[]
+      {
+        new Parameter(FirebaseAnalytics.ParameterScreenClass, "game.scene"),
+        new Parameter(FirebaseAnalytics.ParameterScreenName, progress)
+      }
+      FirebaseAnalytics.LogEvent(FirebaseAnalytics.EventScreenView, fParams);
+    }
+  }
+}
+```

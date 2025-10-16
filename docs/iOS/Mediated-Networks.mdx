@@ -1,0 +1,77 @@
+---
+title: Mediated Networks
+description: This guide shows the ad sources CAS.AI Mediation supports.
+---
+
+Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
+
+Feel free not to use ready-made (`Optimal` or `Families`) solutions, and choose which mediated ad networks you want to integrate by copy following `pods` to `Podfile`: 
+
+The following ad pods are available for monetization to everyone:
+```ruby
+  pod 'CASMediationGoogleAds'
+  pod 'CASMediationUnityAds'
+  pod 'CASMediationIronSource'
+  pod 'CASMediationLiftoffMonetize'
+  pod 'CASMediationInMobi'
+  pod 'CASMediationKidoz'
+  pod 'CASMediationMintegral'
+  pod 'CASMediationChartboost'
+  pod 'CASMediationDTExchange'
+```
+
+## The following ad pods do NOT provide monetization for users under COPPA restrictions.
+```ruby
+  pod 'CASMediationAppLovin'
+  pod 'CASMediationYandexAds'
+  pod 'CASMediationPangle'
+  pod 'CASMediationAudienceNetwork'
+  pod 'CASMediationBigo'
+  pod 'CASMediationCASExchange'
+  pod 'CASMediationYsoNetwork'
+  pod 'CASMediationOgury'
+  pod 'CASMediationStartIO'
+  pod 'CASMediationHyprMX'
+```
+
+<Info>
+Read more about the adapter versions [here](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Adapters#casai-mediation-adapters).
+</Info>
+
+After any change to `Podfile`, you need to run a terminal command to apply the changes:
+```
+pod update
+```
+
+<Info>
+- The Meta Audience Network requires [Additional implementations](iOS/Additional-Meta-AudienceNetwork-steps).
+- The HyprMX is focused on the USA and Canada regions only and your apps must be approved for monetization.
+</Info>
+
+## Closed beta ad SDKs
+<Warning>  
+Access to the monetization of the beta ad sources is closed.  
+If you would like to monetize by one of these ad sources, please contact your account manager.
+</Warning>
+
+```ruby
+  pod 'CASMediationPrado'
+  pod 'CASMediationMaticoo'
+  pod 'CASMediationMadex'
+  pod 'CASMediationSmaato'
+```
+
+<Info>
+- The Madex is focused on the CIS region only.
+</Info>
+
+## Cross-promotion
+Cross promotion is an app marketing strategy in which app developers promote one of their titles on another one of their titles. Cross promoting is especially effective for developers with large portfolios of games as a means to move users across titles and use the opportunity to scale each of their apps. This is most commonly used by hyper-casual publishers who have relatively low retention, and use cross promotion to keep users within their app portfolio.
+
+```ruby
+  pod 'CASMediationCrossPromo'
+```
+
+<Info>
+Contact our account manager if you are interested in cross-promotion.
+</Info>

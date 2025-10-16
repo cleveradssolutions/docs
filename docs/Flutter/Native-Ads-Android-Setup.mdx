@@ -1,0 +1,163 @@
+---
+title: Native Ads Android Setup
+previous: /Flutter/Native-Ads
+previousTitle: Load Native Ad
+description: This guide shows you how to load, display, and customize native ads using Android platform-specific code.
+---
+
+Native ads are presented to users using UI components native to the platform: a `View` on Android or a `UIView` on iOS.
+
+<Steps>
+<Step title="Import the CASMobileAdsPlugin class">
+The Android implementation of the CAS Mobile Ads plugin requires a class implementing the`NativeAdFactory` API. In order to reference this API from your Android project, add the following lines to your `android/settings.gradle`:
+```groovy
+def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
+def plugins = new Properties()
+def pluginsFile = new File(flutterProjectRoot.toFile(), '.flutter-plugins')
+if (pluginsFile.exists()) {
+    pluginsFile.withInputStream { stream -> plugins.load(stream) }
+}
+
+plugins.each { name, path ->
+    def pluginDirectory = flutterProjectRoot.resolve(path).resolve('android').toFile()
+    include ":$name"
+    project(":$name").projectDir = pluginDirectory
+}
+```
+</Step>
+<Step title="Layout the views">
+Navigate to `<project>/android/app/main/res/layout` and create a new XML layout file.
+
+The view hierarchy for a native ad that uses a `CASNativeView` to display its asset views might look like this:
+```xml
+<com.cleveradssolutions.sdk.nativead.CASNativeView
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical">
+        <LinearLayout android:orientation="horizontal">
+            <ImageView android:id="@+id/ad_icon" />
+            <TextView android:id="@+id/ad_headline" />
+            <com.cleveradssolutions.sdk.nativead.CASChoicesView
+                android:id="@+id/ad_choices_view" />
+        </LinearLayout>
+        <com.cleveradssolutions.sdk.nativead.CASMediaView
+            android:id="@+id/ad_media_view" />
+        <com.cleveradssolutions.sdk.nativead.CASStarRatingView
+            android:id="@+id/ad_star_rating" />
+
+        <!-- Other assets such as image or call to action, etc follow. -->
+    </LinearLayout>
+</com.cleveradssolutions.sdk.nativead.CASNativeView>
+```
+
+<Success>
+For an example of configuring your `CASNativeAdView` layout, see [native_ad_layout.xml](https://github.com/cleveradssolutions/CAS-Flutter/tree/main/example/android/app/src/main/res/layout/native_ad_layout.xml).
+</Success>
+
+<Info>
+Note that all asset views for a given native ad should be rendered inside the `CASNativeView` layout.  
+Please review the description and requirements of native ad assets on [CAS Android wiki page](Android/Native-Ad-assets).
+</Info>
+</Step>
+
+<Step title="Implement Native Ad Factory">
+Navigate to `<project>/android/app/main` and create a new class that implements the `CASNativeAdViewFactory`interface. Override the `createNativeAdView` function, in which you need to create and return the `CASNativeView`. 
+
+Register all the view assets you use in the layout to the `adView`, and the CAS SDK will automatically populate them with ad content, or make the view invisible if the corresponding asset is not provided in the ad content.
+
+```kotlin
+import android.content.Context  
+import android.view.LayoutInflater  
+import com.cleveradssolutions.plugin.flutter.CASMobileAdsPlugin  
+import com.cleveradssolutions.plugin.flutter.CASNativeAdViewFactory  
+import com.cleveradssolutions.sdk.nativead.CASNativeView  
+import com.cleveradssolutions.sdk.nativead.NativeAdContent
+
+class NativeAdFactoryExample : CASNativeAdViewFactory {  
+    override fun createNativeAdView(  
+        context: Context,  
+        nativeAd: NativeAdContent,  
+        customOptions: Map<String, Any?>  
+    ): CASNativeView? {  
+        val adView = LayoutInflater.from(context).inflate(  
+            R.layout.native_ad_layout, null, false  
+        ) as CASNativeView  
+  
+        adView.mediaView = adView.findViewById(R.id.ad_media_view)  
+        adView.adLabelView = adView.findViewById(R.id.ad_label)  
+        adView.headlineView = adView.findViewById(R.id.ad_headline)  
+        adView.iconView = adView.findViewById(R.id.ad_icon)  
+        adView.callToActionView = adView.findViewById(R.id.ad_call_to_action)  
+        adView.bodyView = adView.findViewById(R.id.ad_body)  
+        adView.advertiserView = adView.findViewById(R.id.ad_advertiser)  
+        adView.storeView = adView.findViewById(R.id.ad_store)  
+        adView.priceView = adView.findViewById(R.id.ad_price)  
+        adView.reviewCountView = adView.findViewById(R.id.ad_review_count)  
+        adView.starRatingView = adView.findViewById(R.id.ad_star_rating)  
+  
+        return adView  
+    }  
+}
+```
+The CAS Flutter plugin will automatically call `adView.setNativeAd(nativeAd)` later in any case.
+
+You can find more details about the implementation of platform native ad view on the [CAS Android wiki page](Android/Display-Native-Ad#manual-display-native-ad).
+</Step>
+
+<Step title="Register Native Ad Factory in CAS Plugin">
+Each `CASNativeAdViewFactory` implementation is required to be registered with a `factoryId`, a unique `String` identifier, when calling `configureFlutterEngine()`. The `factoryId` will be used later when loading a native ad from Dart code.
+
+A `CASNativeAdViewFactory` can be implemented and registered for each unique native ad layout used by your app, or a single one can handle all layouts.
+
+Note that when building with [add-to-app](https://flutter.dev/docs/development/add-to-app#add-to-app), the `NativeAdFactory` should also be unregistered in`cleanUpFlutterEngine()`.
+
+Once you've created `NativeAdFactoryExample`, set up your`FlutterActivity` as follows:
+```kotlin
+import com.cleveradssolutions.plugin.flutter.CASMobileAdsPlugin 
+
+class MainActivity : FlutterActivity() {  
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {  
+        super.configureFlutterEngine(flutterEngine)  
+  
+        CASMobileAdsPlugin.nativeAdFactories = mapOf( // [!code highlight]
+            "nativeFactoryIdExample" to NativeAdFactoryExample() // [!code highlight]  
+        ) // [!code highlight]
+    }  
+  
+    override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {  
+        super.cleanUpFlutterEngine(flutterEngine)  
+  
+        CASMobileAdsPlugin.nativeAdFactories = null // [!code highlight]
+    }  
+}
+```
+</Step>
+
+<Step title="Load ad content with factory ID">
+After you've added your platform-specific code, turn to Dart to load ads. 
+- Make sure `factoryId` match the ID you registered earlier.
+- `сustomOptions` are optional parameters for creating your native ad view. These parameters will be passed as a `Map` to the ad view creation function on both Android and iOS.
+
+```dart
+class NativeAdExampleState extends State<NativeAdExample> {
+  AdViewInstance? _nativeAd;
+  
+  void _loadAd() {
+    CASNativeContent.load( 
+      factoryId: 'nativeFactoryIdExample', // [!code highlight]  
+      customOptions: {  
+        'exampleOptionKey': 'exampleValue', // [!code highlight]  
+      },
+      onAdLoaded: (AdViewInstance ad) { 
+        // Called when an ad is successfully loaded. 
+        print('$ad loaded'); 
+        setState(() { 
+          _nativeAd = ad;
+        });
+      },  
+    );
+  }
+}
+```
+</Step>
+<Step title="Continue to use Native Ad as usual"/>
+</Steps>

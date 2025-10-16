@@ -1,0 +1,151 @@
+---
+title: Interstitial Ads
+description: This guide explains how to integrate interstitial ads into an Unreal Engine project.
+---
+
+Interstitial ads are full-screen ads that cover the interface of their host app. 
+They're typically displayed at natural transition points in the flow of an app, such as between screens or during the pause between levels in a game. 
+When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.  
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
+
+
+## Load an Ad
+Call manual load ad before each show if `Autoload Interstitial Ads` not checked.  
+In Blueprints you can use Load node just for register Loaded/Failed events.
+```cpp
+UCASMobileAds::LoadInterstitialAd();
+```
+<Image width="235" alt="image" src="/assets/unreal/Interstitial-Ads-1.png" />
+
+<Info>
+The `Event Once` checkbox will fire the Loaded/Failed event only once. if `Autoload Ads` used, events can be triggered many times while the game world exists.
+</Info>
+
+### Autoload mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+```cpp
+UCASMobileAds::SetAutoloadInterstitialAd(true);
+```
+
+<Image width="211" alt="Image" src="/assets/unreal/Interstitial-Ads-2.png" />
+
+You should call `LoadInterstitialAd()` once to create Ad Instance.
+
+By default, autoloading is defined in the `Project Settings -> Plugins -> CAS.AI Config -> Autoload Interstitial Ads`.
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```cpp
+// Called when ad ready to shown.
+UCASMobileAds::OnInterstitialAdLoaded.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Interstitial loaded"));
+});
+// Called when ad failed to load with error.
+UCASMobileAds::OnInterstitialAdLoadFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("Interstitial failed to load: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the ad shown.
+UCASMobileAds::OnInterstitialAdDisplayed.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Interstitial displayed"));
+});
+// Called when the ad is failed to display.
+UCASMobileAds::OnInterstitialAdShowFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("Interstitial failed to show: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the user clicks on the Ad.
+UCASMobileAds::OnInterstitialAdClicked.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Interstitial clicked"));
+});
+// Called when the ad is closed.
+UCASMobileAds::OnInterstitialAdDismissed.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Interstitial dismissed"));
+});
+```
+<Info>
+Ad events in Blueprints are registered in the Load and Show nodes. Each new Load/Show Ad node cancels previous node events.
+</Info>
+
+## Show the Ad
+To display the ad, call the following method:
+```cpp
+UCASMobileAds::ShowInterstitialAd();
+```
+<Image width="177" alt="image" src="/assets/unreal/Interstitial-Ads-3.png" />
+
+### Autoshow mode
+Use the `AutoshowInterstitialAd` method to automatically show the loaded ad when the user returns to the app.
+
+```cpp
+UCASMobileAds::AutoshowInterstitialAd();
+```
+
+Use the `DisableAutoshowInterstitialAd` method to disable automatically show the ad.
+```cpp
+UCASMobileAds::DisableAutoshowInterstitialAd();
+```
+
+<Image width="497" alt="Image" src="/assets/unreal/Interstitial-Ads-4.png" />
+
+## Release ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
+
+```cpp
+UCASMobileAds::DestroyInterstitialAd();
+```
+<Image width="207" alt="Image" src="/assets/unreal/Interstitial-Ads-5.png" />
+
+Call `LoadInterstitialAd` to load new ad and restore autoload mode if used.
+
+## Ad Availability
+You can ask for the ad availability directly by calling the following function:
+```cpp
+bool AdLoaded = UCASMobileAds::IsInterstitialAdReady();
+```
+<Image width="179" alt="image" src="/assets/unreal/Interstitial-Ads-6.png" />
+
+<Error>  
+We don’t recommend waiting for `IsInterstitialAdReady` to change each frame. This method call the native SDK and can affect the performance of your game.  
+Subscribe to the `OnInterstitialAdLoaded` event instead.
+</Error>
+
+## Minimum interval between impressions
+You can limit the posting of an interstitial ad to a period of time in seconds after the ad is closed, during which display attempts will fail.
+That the interval starts only after the Interstitial Ad **closes** `OnInterstitialAdDismissed`.  
+During interval after ad closed, display attempts will fire event `OnInterstitialAdShowFailed` with `ECASError::IntervalNotYetPassed`.  
+
+Change the interstitial ad impression interval using the following method:
+```cpp
+UCASMobileAds::SetInterstitialAdMinimumInterval(Interval);
+```
+<Image width="248" alt="image" src="/assets/unreal/Interstitial-Ads-7.png" />
+
+If you need to wait for a period of time after the start of the game or after showing a Rewarded Ad until next Interstitial Ad impression then please call the following method:
+```cpp
+UCASMobileAds::RestartInterstitialAdInterval();
+```
+<Image width="213" alt="image" src="/assets/unreal/Interstitial-Ads-8.png" />
+
+<Info>
+We recommend define the interstitial ad impression interval once before mediation manager is initialized to be able to override the value remotely via the web interface.
+</Info>
+
+## Muted Ads Sounds
+Sounds in Interstitial and Rewarded ads mute state. Disabled by default.  
+```cpp
+UCASMobileAds::SetAdsMuted(Mute);
+```
+<Image width="134" alt="image" src="/assets/unreal/Interstitial-Ads-9.png" />
+
+## Some best practices
+- **Consider whether interstitial ads are the right type of ad for your app.**  
+Interstitial ads work best in apps with natural transition points. The conclusion of a task within an app, such as sharing an image or completing a game level, creates such a point. Because the user is expecting a break in the action, it's easy to present an interstitial ad without disrupting their experience. Make sure you consider at which points in your app's workflow you'll display interstitial ads and how the user is likely to respond.  
+- **Remember to pause the action when displaying an interstitial ad.**  
+There are a number of different types of interstitial ads: text, image, video, and more. It's important to make sure that when your app displays an interstitial ad, it also suspends its use of some resources to allow the ad to take advantage of them. For example, when you make the call to display an interstitial ad, be sure to pause any audio output being produced by your app. You can resume playing sounds in the `OnInterstitialAdClosed` event handler, which will be invoked when the user has finished interacting with the ad. In addition, consider temporarily halting any intense computation tasks (such as a game loop) while the ad is being displayed. This will make sure the user doesn't experience slow or unresponsive graphics or stuttered video.
+- **Don't flood the user with ads.**  
+While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.

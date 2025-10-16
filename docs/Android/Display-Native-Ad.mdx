@@ -1,0 +1,166 @@
+---
+title: Display Native Ad
+description: Once you have loaded an native ad, all that remains is to display it to your users. 
+---
+
+For the Native Ad format, there is the corresponding `com.cleveradssolutions.sdk.nativead.CASNativeView` class. This class is a `ViewGroup` that publishers should use as the root for the `NativeAdContent`. A single `CASNativeView` corresponds to a single native ad. Each view used to display that ad's assets (the `ImageView` that displays the screenshot asset, for instance) should be a child of the `CASNativeView` object.
+
+Here are the individual tasks:
+<Steps>
+<Step title="Inflate the layout">
+See below how you can layout the views using Templates or Manual. 
+</Step>
+<Step title="Register the asset views">
+See below how you can register the asset views using Templates or Manual.
+Values for registered views will be set automatically when calling `setNativeAd()`.  
+Note that views for which the loaded ad does not provide content will be hidden with `view.setVisibility(View.GONE)`.
+See below for the implementation of `registerAdAssetViews(adView)` function.
+</Step>
+<Step title="Handle clicks">
+Don't implement any custom click handlers on any views over or within the native ad view. To observe click events yourself, use the ad callback `onNativeAdClicked`. Clicks on the ad view assets are handled by the SDK as long as you correctly populate and register the asset views, as discussed in the previous section.
+</Step>
+<Step title="Register the native ad content">
+This final step registers the native ad object with the view that's responsible for displaying it. Note that you can also reuse an existing `CASNativeView` if one is already present in your fragment or activity, or you can create an instance dynamically without using a layout file. Simply call `setNativeAd` for each new `NativeAdContent` as shown in `registerNativeAdContent()` function.
+</Step>
+</Steps>
+
+```java
+CASNativeView adView;
+
+@Override  
+protected void onCreate(@Nullable Bundle savedInstanceState) {  
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    ViewGroup container = (ViewGroup) findViewById(R.id.native_ad_container);
+    inflateNativeAdView(container);
+    registerAdAssetViews(adView);
+}
+
+void registerNativeAdContent(NativeAdContent nativeAd) {
+    adView.setNativeAd(nativeAd)
+}
+```
+
+<Warning>  
+The `setNativeAd(NativeAdContent)` method must be called from the main (UI) thread.
+</Warning>
+
+## Validate Ad Content (Optional)
+Native ads can be preloaded and cached to reduce latency when displaying ads to users. However, these ads have a limited lifespan and may expire after a certain period. To ensure a seamless user experience, you should validate the ad content before displaying it.
+
+Use the `NativeAdContent.isExpired` method to check if the ad has expired. If you attempt to display an expired ad, it will trigger an `onNativeAdFailedToShow` callback.
+
+```java
+void registerNativeAdContent(NativeAdContent nativeAd) {
+    if (nativeAd.isExpired()) {
+        loadNativeAds()
+        return
+    }
+    
+    adView.setNativeAd(nativeAd)
+}
+```
+
+If you display the ad immediately in `onNativeAdLoaded`, there's no need to check its validity, as it is guaranteed to be fresh at that moment. 
+
+## Display native ad Templates
+#### Inflate the layout
+The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
+```java
+void inflateNativeAdView(ViewGroup container) {
+    adView = new CASNativeView(this);
+    AdSize size = AdSize.MEDIUM_RECTANGLE;
+    adView.setAdTemplateSize(size);
+
+    customizeAdViewAppearance(adView);
+    
+    container.addView(adView);
+}
+```
+<Info>
+Creating the layout may cause UI rendering to freeze briefly, so it is recommended to set the template size only once when initializing the view.  
+The `setAdTemplateSize(AdSize)` method must be called from the main (UI) thread.
+</Info>
+
+**Optional:** Customize the appearance of asset views after calling `setAdTemplateSize` by modifying properties from the `CASNativeView`.
+```java
+void customizeAdViewAppearance(CASNativeView adView) {
+    // Default values are shown below:
+    adView.setBackgroundColor(Color.WHITE);
+    
+    adView.getCallToActionView().setBackgroundResource(R.drawable.cas_rounded_button);
+    adView.getHeadlineView().setTextColor(Color.parseColor("#80000000"));
+}
+```
+
+#### Register the asset views
+When you set the ad template size using `setAdTemplateSize`, the `CASNativeView` automatically registers all native asset views with the corresponding template assets for the selected size. 
+```java
+void registerAdAssetViews(CASNativeView adView) {
+    // No manual registration is required.
+}
+```
+
+## Manual display native ad
+#### Inflate the layout
+The view hierarchy for a native ad that uses a `LinearLayout` to display its asset views might look like this:
+```xml
+<com.cleveradssolutions.sdk.nativead.CASNativeView
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="vertical">
+        <LinearLayout android:orientation="horizontal">
+            <ImageView android:id="@+id/ad_icon" />
+            <TextView android:id="@+id/ad_headline" />
+            <com.cleveradssolutions.sdk.nativead.CASChoicesView
+                android:id="@+id/ad_choices_view" />
+        </LinearLayout>
+        <com.cleveradssolutions.sdk.nativead.CASMediaView
+            android:id="@+id/ad_media_view" />
+        <com.cleveradssolutions.sdk.nativead.CASStarRatingView
+            android:id="@+id/ad_star_rating" />
+
+        <!-- Other assets such as image or call to action, etc follow. -->
+    </LinearLayout>
+</com.cleveradssolutions.sdk.nativead.CASNativeView>
+```
+Note that all assets for a given native ad should be rendered inside the `CASNativeView` layout.
+
+Here is an example that inflate a `CASNativeView` and populates it with a `NativeAdContent`:
+```java
+void inflateNativeAdView(ViewGroup container) {
+    boolean attachToContainer = false; // to return AdView
+    CASNativeView adView = (CASNativeView) LayoutInflater.from(container.getContext())
+    .inflate(R.layout.native_ad_layout, container, attachToContainer); 
+    
+    container.addView(adView);
+}
+```
+Assumes that your ad layout is in a file called `native_ad_layout.xml` in the `res/layout` folder.
+
+#### Register the asset views
+To register the ad view with content, you need to register all the asset views that may be used. 
+```java
+void registerAdAssetViews(CASNativeView adView) {
+    // You can also omit adChoicesView and it will be created automatically.
+    adView.setAdChoicesView((CASChoicesView) adView.findViewById(R.id.ad_choices_view));
+
+    adView.setMediaView((CASMediaView) adView.findViewById(R.id.ad_media_view));
+    adView.setAdLabelView((TextView) adView.findViewById(R.id.ad_label));
+    adView.setHeadlineView((TextView) adView.findViewById(R.id.ad_headline));
+    adView.setIconView((ImageView) adView.findViewById(R.id.ad_icon));
+    adView.setCallToActionView((Button) adView.findViewById(R.id.ad_call_to_action));
+    adView.setBodyView((TextView) adView.findViewById(R.id.ad_body));
+    adView.setAdvertiserView((TextView) adView.findViewById(R.id.ad_advertiser));
+    adView.setStoreView((TextView) adView.findViewById(R.id.ad_store));
+    adView.setPriceView((TextView) adView.findViewById(R.id.ad_price));
+    adView.setReviewCountView((TextView) adView.findViewById(R.id.ad_review_count));
+    adView.setStarRatingView(adView.findViewById(R.id.ad_star_rating));
+}
+```
+
+## Samples
+- [Kotlin Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.kt)
+- [Kotlin Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.kt)
+- [Java Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.java)
+- [Java Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.java)

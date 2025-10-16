@@ -1,0 +1,87 @@
+---
+title: App Open Ad object
+---
+
+App open ads are a special ad format intended for publishers wishing to monetize their app load screens. App open ads can be closed at any time, and are designed to be shown when your users bring your app to the foreground.  App open ads automatically show a small branding area so users know they're in your app.  
+
+This guide explains how to integrate app open ads into a Unity app.
+
+Pros compared to Interstitial ads:
+- Much faster ad loading.
+- End user-friendly interface.  
+
+Cons:
+- Only Google Ads (AdMob) is supported.
+
+## Add an AppOpenAdObject to the scene
+1. Add an GameObject to your scene using `GameObject > Create Empty` in the Unity Editor.
+2. Add Component `CleverAdsSolutions/AppOpen Ad Object` in the inspector to new GameObject.
+3. Select [Manager ID](Unity/Configuring-SDK#manager-ids) from settings asset for each runtime platform.
+4. Invoke `Load()` method to load ad.
+5. Invoke `Show()` method to show ad.  
+
+<Image width="326" alt="image" src="/assets/unity/App-Open-Ad-object-1.png" />
+
+- **Autoshow loaded Ad when user open the app**  
+The ad will be shown when the user opens the app. Additionally, the ad must be loaded, and this component must not be destroyed.
+
+## Load Ad callbacks
+- **On Ad Loaded**  
+The event is invoked when the ad has finished loading.
+- **On Ad Failed To Load**  
+The event is invoked when the ad fails to load. The Message parameter describes the type of failure that occurred.
+
+## Content callbacks
+- **On Ad Failed To Show**  
+The event is invoked when the ad failed to show. The Message parameter describes the type of failure that occurred.
+- **On Ad Shown**  
+The event is invoked when the ad is shown.
+- **On Ad Clicked**  
+The event is invoked when the user clicks on the ad.
+- **On Ad Impression**  
+The event is invoked when the ad count impression with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.
+- **On Ad Closed**  
+The event is invoked when the ad is closed.
+
+## Unity Events sample
+You can implement functions that correspond to ad callbacks. For example, if you want to handle when the app open ad fails to show:
+1. Create a function compatible with the ad callback in custom component.
+```c#
+public void OnAppOpenAdFailedToShow(string reason) {
+    Debug.Log("AppOpen ad failed to show: " + reason);
+}
+```
+2. Attach the script which contains the above function to any GameObject in the scene.
+3. Click the **+** button, then drag & drop the GameObject that you've attached the script to.
+4. Select the function that you want to link to the ad callback. For the parameterized ad callbacks, select the function to accept the dynamic variable so you can get the parameter value from the SDK.
+
+## Use AdObject from script
+Get the interstitial ad instance from the script:
+```c#
+AppOpenAdObject appOpenAd = adObject.GetComponent<AppOpenAdObject>();
+```
+Load the ad:
+```c#
+appOpenAd.Load();
+```
+Show the ad:
+```c#
+appOpenAd.Show();
+```
+
+## Cold starts and loading screens
+The documentation thus far assumes that you only show app open ads when users foreground your app when it is suspended in memory. "Cold starts" occur when your app is launched but was not previously suspended in memory.  
+
+An example of a cold start is when a user opens your app for the first time. With cold starts, you won't have a previously loaded app open ad that's ready to be shown right away. The delay between when you request an ad and receive an ad back can create a situation where users are able to briefly use your app before being surprised by an out of context ad. This should be avoided because it is a bad user experience.  
+
+The preferred way to use app open ads on cold starts is to use a loading screen to load your game or app assets, and to only show the ad from the loading screen. If your app has completed loading and has sent the user to the main content of your app, do not show the ad.  
+
+<Info>
+In order to continue loading app assets while the app open ad is being displayed, always load assets in a background thread.
+</Info>
+
+## Best practices
+App open ads help you monetize your app's loading screen, when the app first launches and during app switches, but it's important to keep best practices in mind so that your users enjoy using your app. It's best to:
+- Show your first app open ad after your users have used your app a few times.
+- Show app open ads during times when your users would otherwise be waiting for your app to load.
+- If you have a loading screen under the app open ad, and your loading screen completes loading before the ad is dismissed, you may want to dismiss your loading screen from the `OnAppOpenAdClosed` and  `OnAppOpenAdFailedToShow` events.

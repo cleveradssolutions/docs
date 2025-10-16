@@ -1,0 +1,103 @@
+---
+title: Impression Level Data
+---
+
+CAS.AI SDK enables you to access detailed information for each impression through the impressions callback APIs. The information includes, for example, which demand source served the ad, the expected or exact revenue associated with it. In addition, it contains granular details to allow you to analyze and, ultimately, optimize user acquisition strategies. 
+
+### OnAdImpressionListener
+A delegate for receive ad impression info from each ad format.
+```swift
+import CleverAdsSolutions
+
+extension MyViewController: CASImpressionDelegate {
+    func adDidRecordImpression(info: AdContentInfo) {
+        // Called when an ad impression occurs. 
+    }
+}
+```
+
+Each ad format have a `weak var impressionDelegate` property to receive `AdContentInfo` with impression details.  
+```swift
+let impressionDelegate: CASImpressionDelegate = self
+
+let appOpenAd: CASAppOpen
+appOpenAd.impressionDelegate = impressionDelegate
+
+let interstitialAd: CASInterstitial
+interstitialAd.impressionDelegate = impressionDelegate
+
+let rewardedAd: CASRewarded
+rewardedAd.impressionDelegate = impressionDelegate
+
+let nativeAd: NativeAdContent
+nativeAd.impressionDelegate = impressionDelegate
+```
+
+### AdContentInfo
+The `AdContentInfo` data structure, which contains information about the loaded/displayed ad. 
+
+Additionally to `impressionDelegate`, each ad format has a `contentInfo` property that returns `AdContentInfo`, but the info may be `nil` before the ad is loaded.
+```swift
+let info: AdContentInfo? = eachAd.contentInfo
+```
+
+| Name               | Type       | Description                                                                                                                                                             |
+| ------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `format`           | `AdFormat` | Gets the format of the ad that is shown. See new `AdFormat` enum.                                                                                                       |
+| `sourceName`       | `String`   | Gets the display name of the mediated network that purchased the impression.                                                                                            |
+| `sourceId`         | `enum`     | Gets the ID of the mediated network that purchased the impression. See new `AdSourceId` enum.                                                                           |
+| `sourceUnitId`     | `String`   | Gets the Ad Unit ID from the mediated network that purchased the impression.                                                                                            |
+| `creativeId`       | `String?`  | Gets the Creative ID associated with the ad, if available. May be null. You can use this ID to report creative issues to the Ad review team.                            |
+| `revenue`          | `Double`   | Gets the revenue generated from the impression, in USD. The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. |
+| `revenuePrecision` | `enum`     | Gets the precision type of the revenue field. See new `AdRevenuePrecision` constants.                                                                                   |
+| `impressionDepth`  | `Int`      | Gets the total number of impressions across all ad formats for the current user, across all sessions.                                                                   |
+| `revenueTotal`     | `Double`   | Gets the accumulated value of user ad revenue in USD from all ad format impressions.                                                                                    |
+
+### User ad summary 
+CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression. 
+```swift
+let totalImpressions: Int = impression.impressionDepth
+let totalRevenue: Double = impression.revenueTotal
+```
+
+<Info>
+Progress is saved between sessions until the user clears your app's data.
+</Info>
+
+## Automatic collect ad revenue
+The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
+### Google Analytics
+If you haven't already, make sure to complete the following tasks:
+1. Set up your project and app as described in [Get Started with Analytics](https://firebase.google.com/docs/analytics/get-started).
+2. Make sure that you've linked your Firebase project to a Google Analytics account.
+3. Ensure that you've included in your app the CAS SDK 3.5.0+.
+
+To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.  
+
+### Tenjin
+If you haven't already, make sure to complete the following tasks:
+1. Set up your project and app as described in [Get Started with Analytics](https://docs.tenjin.com/docs/ios-sdk#sdk-integration).
+2. Make sure that you've initialize Tenjin session. Or provide `TENJIN_SDK_KEY` with CAS SDK initialization to allow CAS initialize Tenjin SDK automatically. 
+   `builder.withMediationExtras(TENJIN_SDK_KEY, forKey: "tenjin_key")`
+3. Ensure that you've included in your app the CAS SDK 3.7.2+.
+
+
+## Custom collect ad revenue
+The following code shows an implementation example for log `ad_impression` event to Google Analytics.
+```swift
+extension MyViewController: CASImpressionDelegate {
+    func adDidRecordImpression(info: AdContentInfo) {
+        Analytics.logEvent(
+           AnalyticsEventAdImpression,
+           parameters: [
+               AnalyticsParameterAdPlatform: "CAS",
+               AnalyticsParameterAdSource: info.sourceName,
+               AnalyticsParameterAdUnitName: info.sourceUnitID,
+               AnalyticsParameterAdFormat: info.format.description,
+               AnalyticsParameterValue: info.revenue,
+               // All CAS revenue is sent in USD
+               AnalyticsParameterCurrency: "USD",
+           ])
+   }
+}
+```

@@ -1,0 +1,196 @@
+---
+title: Display Native Ad
+description: Once you have loaded an native ad, all that remains is to display it to your users. 
+---
+
+For the Native Ad format, there is the corresponding `CASNativeView` class. This class is a `UIView` that publishers should use as the root for the `NativeAdContent`. A single `CASNativeView` corresponds to a single native ad. Each view used to display that ad's assets (the `UIImageView` that displays the screenshot asset, for instance) should be a child of the `CASNativeView` object.
+
+Here are the individual tasks:
+<Steps>
+<Step title="Inflate the layout">
+See below how you can layout the views using Templates or Manual. 
+</Step>
+<Step title="Register the asset views">
+See below how you can register the asset views using Templates or Manual.
+Values for registered views will be set automatically when calling `setNativeAd()`.  
+Note that views for which the loaded ad does not provide content will be hidden with `view.isHidden = true`.
+</Step>
+<Step title="Handle clicks">
+Don't implement any custom click handlers on any views over or within the native ad view. To observe click events yourself, use the ad delegate `nativeAdDidClickContent`. Clicks on the ad view assets are handled by the SDK as long as you correctly populate and register the asset views, as discussed in the previous section.
+</Step>
+<Step title="Register the native ad content">
+This final step registers the native ad object with the view that's responsible for displaying it. Note that you can also reuse an existing `CASNativeView` if one is already present in your fragment or activity, or you can create an instance dynamically without using a layout file. Simply call `setNativeAd` for each new `NativeAdContent`.
+
+```swift
+func registerNativeAdContent(_ nativeAd: NativeAdContent) {
+    adView.setNativeAd(nativeAd)
+}
+```
+
+<Warning>  
+The `setNativeAd(NativeAdContent)` method must be called from the main (UI) thread.
+</Warning>
+
+</Step>
+</Steps>
+
+## Validate Ad Content (Optional)
+Native ads can be preloaded and cached to reduce latency when displaying ads to users. However, these ads have a limited lifespan and may expire after a certain period. To ensure a seamless user experience, you should validate the ad content before displaying it.
+
+Use the `NativeAdContent.isExpired` property to check if the ad has expired. If you attempt to display an expired ad, it will trigger an `nativeAd(_:didFailToPresentWithError)` callback.
+
+```swift
+func registerNativeAdContent(_ nativeAd: NativeAdContent) {
+    if nativeAd.isExpired {
+        loadNativeAds()
+        return
+    }
+    
+    adView.setNativeAd(nativeAd)
+}
+```
+
+If you display the ad immediately in `nativeAdDidLoadContent(_:)`, there's no need to check its validity, as it is guaranteed to be fresh at that moment. 
+
+## Display native ad Templates
+#### Layout the views
+The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
+```swift
+@IBOutlet var adView: CASNativeView!
+    
+override func viewDidLoad() {
+    super.viewDidLoad()
+    loadNativeAds()
+    
+    let size = AdSize.mediumRectangle
+    adView.setAdTemplateSize(size)
+
+    customizeAdViewAppearance(adView)
+}
+```
+
+<Info>
+Creating the layout may cause UI rendering to freeze briefly, so it is recommended to set the template size only once when initializing the view.  
+The `setAdTemplateSize(AdSize)` method must be called from the main (UI) thread.
+</Info>
+
+**Optional:** Customize the appearance of asset views after calling `setAdTemplateSize` by modifying properties from the `CASNativeView`.
+```kotlin
+fun customizeAdViewAppearance(_ adView: CASNativeView) {
+    // Default values are shown below:
+    adView.backgroundColor = UIColor.white
+    adView.callToActionView?.configuration?.baseBackgroundColor = UIColor.tintColor
+    adView.headlineView?.textColor = UIColor.darkText
+}
+```
+
+#### Register the asset views
+When you set the ad template size using `setAdTemplateSize(_:)`, the `CASNativeView` automatically registers all ad asset views with the corresponding template assets for the selected size. 
+
+## Manual display native ad
+
+### Layout the views
+The first step is to lay out the `UIViews` that will display native ad assets. You can do this in the Interface Builder as you would when creating any other xib file. 
+
+The Custom Class value it's set to `CASNativeView`. This is the ad view class that is used to display a `NativeAdContent`.
+
+<Image width="257" alt="Image" src="/assets/ios/Native-NativeView.png" />
+
+You'll also need to set the custom class for the `CASMediaView`, which is used to display the video or image for the ad.
+
+<Image width="262" alt="Image" src="/assets/ios/Native-MediaView.png" />
+
+### Register the asset views 
+Register the asset views lets the SDK know which `UIView` displays which asset. It's also important to remember that these outlets represent the views that are clickable in the ad.
+
+#### Register the asset views using view tags
+Assign unique tag IDs to the asset views. The example image below sets the ID to `100` for the Media View.
+
+<Image width="298" alt="Image" src="/assets/ios/Native-ViewTags.png" />
+
+In your ViewController code, assign each created view using unique tag IDs for ad assets to the corresponding properties of `CASNativeView`.
+```swift
+@IBOutlet var adView: CASNativeView!
+    
+override func viewDidLoad() {
+    super.viewDidLoad()
+    loadNativeAds()
+
+    registerAdAsetViews()
+}
+
+func registerAdAsetViews() {
+    // You can also omit adChoicesView and it will be created automatically.
+    adView.registerAdChoicesView(tag: 99)
+
+    adView.registerMediaView(tag: 100)
+    adView.registerIconView(tag: 101)
+    adView.registerHeadlineView(tag: 102)
+    adView.registerAdLabelView(tag: 103)
+    adView.registerBodyView(tag: 104)
+    adView.registerCallToActionView(tag: 105)
+    adView.registerAdvertiserView(tag: 106)
+    adView.registerStoreView(tag: 107)
+    adView.registerPriceView(tag: 108)
+    adView.registerStarRatingView(tag: 109)
+    adView.registerReviewCountView(tag: 110)
+}
+```
+
+#### Register the asset views using outlets
+Once the views are in place and you've assigned the correct ad view class to the layout, link the ad view's asset outlets to your ViewController. Here's how you might link the ad view's asset outlets to the `UIViews` created for an ad:
+
+<Image width="255" alt="Image" src="/assets/ios/Display-Native-Ad-4.png" />
+
+In your ViewController code, assign each created view for ad assets to the corresponding properties of `CASNativeView`.
+```swift
+@IBOutlet var adView: CASNativeView!
+
+@IBOutlet var mediaView: CASMediaView!
+@IBOutlet var adChoicesView: CASChoicesView?
+@IBOutlet var adLabelView: UILabel!
+@IBOutlet var headlineView: UILabel!
+@IBOutlet var callToActionView: UIButton!
+@IBOutlet var iconView: UIImageView!
+@IBOutlet var bodyView: UILabel!
+@IBOutlet var priceView: UILabel!
+@IBOutlet var advertiserView: UILabel!
+@IBOutlet var storeView: UILabel!
+@IBOutlet var starRatingView: UIView!
+@IBOutlet var reviewCountView: UILabel!
+    
+override func viewDidLoad() {
+    super.viewDidLoad()
+    loadNativeAds()
+
+    registerAdAsetViews()
+}
+
+func registerAdAsetViews() {
+    // You can also omit adChoicesView and it will be created automatically.
+    adView.adChoicesView = adChoicesView
+
+    adView.mediaView = mediaView
+    adView.adLabelView = adLabelView
+    adView.headlineView = headlineView
+    adView.callToActionView = callToActionView
+    adView.iconView = iconView
+    adView.bodyView = bodyView
+    adView.priceView = priceView
+    adView.advertiserView = advertiserView
+    adView.storeView = storeView
+    adView.starRatingView = starRatingView
+    adView.reviewCountView = reviewCountView
+}
+```
+
+## Samples
+- SwiftUI:
+    -  [Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20SwiftUI/CASSwiftUIDemoApp/NativeAd/NativeAdView.swift)
+    -  [Native Ad Template View](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20SwiftUI/CASSwiftUIDemoApp/NativeAd/NativeAdTemplateView.swift)
+- Swift:
+    -  [Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Swift/CASSample/NativeAd/NativeVC.swift)
+    -  [Native Ad Template View](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Swift/CASSample/NativeAd/NativeTemplateVC.swift)
+- Objective-C:
+    -  [Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Objective-C/CASSample/NativeAd/NativeVC.m)
+    -  [Native Ad Template View](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Objective-C/CASSample/NativeAd/NativeTemplateVC.m)

@@ -1,0 +1,204 @@
+---
+title: User Consent Flow
+---
+
+
+<Info>
+It is optional to use the CMP flow included with the CAS SDK. If you integrate your own CMP flow, make sure that flow completes before you initialize the CAS SDK.
+</Info>
+
+<Info>
+If you implement a CMP that is compliant with IAB TCF v2 ([Transparency & Consent Framework](https://iabeurope.eu/tcf-2-0/)) for your user consent flow, the CAS SDK supports sending the TCF v2 consent to networks. In this case, the CAS Consent Flow will not be shown to the user.
+</Info>
+
+In order for CAS and our ad providers to deliver ads that are more relevant to your users, as a mobile app publisher, you need to collect explicit user consent for use of personal data in the regions covered by GDPR, CCPA, LGPD, PIPEDA.
+
+
+### 1. Opt-in consent for the collection and use of personal data in the regions covered by GDPR, CCPA, LGPD, PIPEDA.
+Any businesses established are required to comply with GDPR in Europe, CCPA in California, LGPD in Brazil, PIPEDA in Canada or risk facing heavy fines.
+
+Keep in mind that it’s best to contact qualified legal professionals, if you haven’t done so already, to get more information and be well-prepared for compliance.  
+
+Read more about:
+- GDPR - [General Data Protection Regulation](https://gdpr-info.eu)
+- CCPA - [The California Consumer Privacy Act](https://theccpa.org)
+- LGPD - [General Personal Data Protection Act](https://lgpd-brazil.info)
+- PIPEDA - [The Personal Information Protection and Electronic Documents Act](https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/)
+
+<Image height="400" alt="image" src="/assets/User-Consent-Flow-1.png" />
+
+#### Users will not see the Consent dialog if at least one of following is true
+- Users located in regions that are not covered by information protection
+- Users who are subject to COPPA restrictions.
+
+### 2. Asking user permission to track them or access their device’s advertising identifier
+With iOS 14.5 and later, you need to receive the user’s permission through the `AppTrackingTransparency` framework in order to track them or access their device’s advertising identifier.  Read more about Asking Permission to Track and AppTrackingTransparency Framework on [Apple developer page](https://developer.apple.com/app-store/user-privacy-and-data-use/)
+
+<Warning>  
+If an app does not present this request, the IDFA will automatically be zeroed out, which may lead to a significant loss in ad revenue.
+</Warning>
+
+#### Users will not see the ATT request if at least one of the following is true
+- Users using iOS versions below 14.5
+- Users who have indicated that they do not allow apps to ask to track them, by setting *Settings > Privacy, Allow Apps to Request to Track*
+- Users with child accounts, or who are under age 18, who are signed in via their Apple ID
+- Users who have already answered so far
+- The app does not have a usage tracking description in **Info.plist** under `NSUserTrackingUsageDescription` key
+
+
+## Automatic consent flow
+The automatic consent flow is enabled by default and described on the [CAS initialization page](iOS/Initialize-CAS).
+
+## Manual consent flow
+Call `presentIfRequired()` on the `CASConsentFlow` class. If the consent is required, the SDK loads a form and immediately presents it . 
+The `withCompletionHandler` is called after the form is dismissed. If consent is not required, the `withCompletionHandler` is called immediately.
+```swift
+CASConsentFlow()
+    .withCompletionHandler { status in
+         if status == CASConsentFlowStatus.obtained {
+            // User consent obtained.
+        }
+     }
+    .withViewControllerToPresent(controller)
+    .presentIfRequired()
+```
+
+<Warning>  
+The `present()` and `presentIfRequired()` methods must be called from the main (UI) thread.
+</Warning>
+
+| ConsentFlow.Status | Description                                                        |
+| ------------------ | ------------------------------------------------------------------ |
+| obtained           | User consent obtained. Personalized vs non-personalized undefined. |
+| notRequired        | User consent not required.                                         |
+| unavailable        | User consent unavailable.                                          |
+| internalError      | There was an internal error.                                       |
+| networkError       | There was an error loading data from the network                   |
+| flowStillShowing   | There was an error with another form is still being displayed      |
+
+<Warning>  
+The cache consent status on your app or a previously saved consent string, could lead to a [TCF 3.3](https://support.google.com/admanager/answer/9999955) error if consent is expired.
+</Warning>
+
+## Privacy options button
+Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
+1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
+2. When a user interacts with your UI element, call `present()` to show the form so the user can update their privacy options at any time.
+```csharp
+func showPrivacyOptionsForm() {
+    CASConsentFlow()
+        .withCompletionHandler { status in
+             if status == CASConsentFlowStatus.obtained {
+                // User consent obtained.
+            }
+         }
+        .withViewControllerToPresent(controller)
+        .present()
+}
+```
+
+## Debug geography
+The SDK provides a way to test your app's behavior as though the device was located in the EEA or UK using the `WithDebugGeography` option. 
+```swift
+CASConsentFlow()
+    .withDebugGeography(ConsentFlow.DebugGeography.EEA)
+#if DEBUG
+    .withForceTesting(true)
+#endif
+    .presentIfRequired();
+```
+
+<Info>
+Note that debug geography only work if:
+- Active test device defined in `CAS.settings.setTestDevice(ids:)`.
+- `withForceTesting` value is true.
+</Info>
+
+## Meta Audience Network Data Processing Options for Users in California
+The CAS does not support your handling of CCPA opt-out values for Meta Audience Network, you must work directly with the network to  purposes of your obligations for CCPA compliance.  
+
+To learn how to implement Meta Audience Network’s “Limited Data Use” flag, read the [Additional Meta AudienceNetwork steps](iOS/Additional-Meta-AudienceNetwork-steps).
+
+## Custom Consent Logic
+The following instructions apply if you are using your own or a third-party party consent mechanism. 
+
+<Error>  
+If you access Google demand through CAS, it’s critical that you review the [Google CMP requirements](https://support.google.com/adsense/answer/13554116) before you start the integration process.
+</Error>
+
+<Warning>  
+You must set the privacy options before creating the CAS Manager to disable the automatic CAS consent flow and advertising SDKs are initialized respecting the user's consent.
+</Warning>
+
+## Request App Tracking Transparency framework
+To present the authorization request, call `requestTrackingAuthorizationWithCompletionHandler:`. We recommend waiting for the completion callback prior to initialize ads, so that if the user grants the App Tracking Transparency permission, the CAS mediation can use the IDFA in ad requests.
+```swift
+import AppTrackingTransparency
+...
+func requestIDFA() {
+  ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
+    // Tracking authorization completed. 
+    // Start initialize CAS here.
+  })
+}
+```
+
+For a better user experience, we recommend adding a **Pre permission pop-up** preceding the call to `ATTrackingManager.requestTrackingAuthorization` to clarify the permission and data usage to users.  
+
+### Consent in GDPR and Other regions
+CAS shares these set consent values via adapters to supported mediation partners.  
+
+If the user consents to interest-based advertising, set the user consent `accepted` flag:
+
+<CodeGroup synchronize="true">
+    ```swift
+    CAS.settings.userConsent = CASConsentStatus.accepted
+    ```
+
+    ```objc
+    CAS.settings.userConsent = CASConsentStatusAccepted;
+    ```
+</CodeGroup>
+
+If the user does NOT consent to interest-based advertising, set the user consent `denied` flag:
+
+<CodeGroup synchronize="true">
+    ```swift
+    CAS.settings.userConsent = CASConsentStatus.denied
+    ```
+
+    ```objc
+    CAS.settings.userConsent = CASConsentStatusDenied;
+    ```
+</CodeGroup>
+
+Once you set the consent value, CAS will continue to respect that value for the lifetime of your application or until the user consents to interest-based advertising.
+
+### Multi-State Consumer privacy laws
+California and Virginia laws may require you to display a “Do Not Sell or Share My Personal Information” link or provide other options to users located in those states to opt out of interest-based advertising. You must set a flag that indicates whether users in those states opt out of interest-based advertising or the sale or share of personal information for interest-based advertising.
+
+If a user does NOT opt out of interest-based advertising, set the `optInSale` flag: 
+
+<CodeGroup synchronize="true">
+    ```swift
+    CAS.settings.userCCPAStatus = CASCCPAStatus.optInSale
+    ```
+
+    ```objc
+    CAS.settings.userCCPAStatus = CASCCPAStatusOptInSale;
+    ```
+</CodeGroup>
+
+If a user does opt out of interest-based advertising, set the `optOutSale` flag:
+
+<CodeGroup synchronize="true">
+    ```swift
+    CAS.settings.userCCPAStatus = CASCCPAStatus.optOutSale
+    ```
+
+    ```objc
+    CAS.settings.userCCPAStatus = CASCCPAStatusOptOutSale;
+    ```
+</CodeGroup>
+
+You do not need to set this flag for users who are outside California. If you do set this flag for such users, this will not impact how ads are served to them.

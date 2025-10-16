@@ -1,0 +1,74 @@
+---
+title: Banner Ad object
+description: Banner ads are rectangular image or text ads that occupy a spot on screen. They stay on screen while users are interacting with the app, and can refresh automatically after a certain period of time. If you're new to mobile advertising, they're a great place to start.  
+---
+
+This guide shows you how to integrate banner ads into a Unity app. In addition to code snippets and instructions, it also includes information about sizing banners properly.  
+
+## Add an BannerAdObject to the scene
+1. Add an GameObject to your scene using `GameObject > Create Empty` in the Unity Editor.
+2. Add Component `CleverAdsSolutions/Banner Ad Object` in the inspector to new GameObject.
+3. Select [Manager ID](Unity/Configuring-SDK#manager-ids) from settings asset for each runtime platform.
+4. Select [Ad position](Unity/Banner-Ads#ad-position)
+5. Select [Ad size](Unity/Banner-Ads#ad-size)
+6. Invoke `gameObject.SetActive(true)` method to show the banner ad.  
+
+![image](https://user-images.githubusercontent.com/22005013/111324084-1fee3d00-8673-11eb-94a2-6cd2b6d001fd.png)
+
+<Info>
+An BannerAdObject does not have any rendered components. Therefore, you can place the GameObject anywhere in the scene.
+</Info>
+
+## Load Ad callbacks
+- **On Ad Loaded**  
+The event is invoked when the banner ad has finished loading.
+- **On Ad Failed To Load**  
+The event is invoked when the banner ad fails to load. The Message parameter describes the type of failure that occurred.
+
+## Content callbacks
+- **On Ad Shown**  
+The event is invoked when the banner ad is displayed.
+- **On Ad Clicked**  
+The event is invoked when the user clicks on the banner ad.
+- **On Ad Hidden**  
+The event is invoked when the banner ad is hidden from screen.
+
+## Unity Events sample
+You can implement functions that correspond to ad callbacks. For example, if you want to handle when a banner ad fails to load:
+1. Create a function compatible with the ad callback in custom component.
+```c#
+public void OnBannerAdFailedToLoad(string reason) {
+    Debug.Log("Banner ad failed to load: " + reason);
+}
+```
+2. Attach the script which contains the above function to any GameObject in the scene.
+3. Click the **+** button, then drag & drop the GameObject that you've attached the script to.
+4. Select the function that you want to link to the ad callback. For the parameterized ad callbacks, select the function to accept the dynamic variable so you can get the parameter value from the SDK.
+
+## Use BannerAdObject from script
+Get the active banner ad instance from the script:
+```c#
+BannerAdObject activeBanner = BannerAdObject.Instance;
+```
+Show the banner ad on screen:
+```c#
+activeBanner.gameObject.SetActive(true);
+```
+Hide the banner ad from screen:
+```c#
+activeBanner.gameObject.SetActive(false);
+```
+Set the banner Ad position on screen:
+```c#
+activeBanner.SetAdPosition(AdPosition.TopCenter);
+```
+Set the banner ad size:
+```c#
+activeBanner.SetAdSize(AdSize.Adaptive);
+```
+Calculate the actual size of an ad banner in pixels on the screen:
+```csharp
+Rect rect = activeBanner.rectInPixels;
+Vector2 adSizePixels = rect.size;
+Vector2 adPositionInPixels = rect.position; 
+```

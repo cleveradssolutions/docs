@@ -1,0 +1,177 @@
+---
+title: Banner Ads
+description: Banner ads are rectangular image or text ads that occupy a spot on screen. They stay on screen while users are interacting with the app, and can refresh automatically after a certain period of time. If you're new to mobile advertising, they're a great place to start.  
+---
+
+This guide shows you how to integrate banner ads from CAS into a Unity app. In addition to code snippets and instructions, it also includes information about sizing banners properly.  
+
+Enable Banner Ads for your game in `Assets > CleverAdsSolutions > Settings` menu.
+
+> For easier ads integration using the Unity Editor, try the new [BannerAdObject](Unity/Banner-Ad-object).
+
+## Ad size
+| Size in dp (WxH) |      Description     |    Availability    |  AdSize |
+|:----------------:|:--------------------:|:------------------:|:----------------:|
+|      320x50      |    Standard Banner   | Phones and Tablets |      Banner      |
+|      728x90      |    IAB Leaderboard   |       Tablets      |    Leaderboard   |
+|      300x250     | IAB Medium Rectangle | Phones and Tablets | MediumRectangle |
+| Adaptive | Adaptive banner | Phones and Tablets | AdaptiveBanner |
+| 320x50 or 728x90 | Smart Banner | Phones and Tablets | SmartBanner |
+
+>❕ Typically, Smart Banners on phones have a `Banner` size. Or on tablets a `Leaderboard` size.
+
+Get the ad view interface for specific `AdSize`:
+```cs
+IAdView adView = manager.GetAdView( AdSize.Banner );
+```
+
+<Info>
+If a view for specific size has already been created then a reference to it will be returned without creating a new one.  
+</Info>
+
+### Adaptive banners 
+Adaptive banners are the next generation of responsive ads, maximizing performance by optimizing ad size for each device.  
+To pick the best ad size, adaptive banners use fixed aspect ratios instead of fixed heights. This results in banner ads that occupy a more consistent portion of the screen across devices and provide opportunities for improved performance.
+
+When implementing adaptive banners in your app, keep the following points in mind:
+- The adaptive banner sizes are designed to work best when using the full available width. In most cases, this will be the full width of the screen of the device in use. Be sure to take into account applicable safe areas.
+- After changing the screen orientation, the banner width automatically changes to the current screen width. This will destroy the current ad content and initiate the load of new one.
+- The height is never larger than the lesser of 15% of the device's height or 90 density independent pixels and never smaller than 50 density independent pixels.
+- The width cannot be less than 300 density independent pixels and larger than 728 density independent pixels.  
+- For full width banners, you can use the `AdSize.AdaptiveFullWidth` instead of the `AdSize.AdaptiveBanner`.
+
+## Load an Ad
+By default, the **auto-load ads mode is used** and a load method does not need to be called.  
+Call manual load ad after `manager.GetAdView()` if you use `LoadingManagerMode.Manual` only.  
+ 
+```cs
+adView.Load();
+```
+
+Also you can use the load for cancel current impression and load next ad.
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, clicking, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```cs
+adView.OnLoaded += AdLoaded;
+adView.OnFailed += AdFailedToLoad;
+adView.OnClicked += AdClicked;
+
+void AdLoaded()
+{
+    // Called when the ad loaded and ready to present.
+    Debug.Log("Banner ad loaded");
+}
+void AdFailedToLoad(AdError error)
+{
+    // Сalled when an error occurred with the ad.
+    Debug.Log("Banner failed to load an ad with error: " + error.GetMessage());
+}
+void AdClicked()
+{
+    // Called when the user clicks on the Ad.
+    Debug.Log("Banner ad was clicked");
+}
+```
+Read more about event `OnImpression` with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.  
+
+## Ad Availability
+You can ask for the ad availability directly by calling the following function:
+```cs
+bool bannerLoaded = adView.isReady;
+```
+
+<Error>  
+We don’t recommend waiting for `isReady` to change in an Update or Coroutine. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnLoaded` event instead.
+</Error>
+
+## Display the Ad
+The newly created `AdView` has an inactive state.  
+When you are ready to show the ad on the screen, simply call the following method:
+```cs
+adView.SetActive(true);
+```
+When you need to hide AdView from the user, just deactivate it:
+```cs
+adView.SetActive(false);
+```
+
+<Info>
+You can change the banner's activity even if it is not ready to be shown yet. When the ad is ready, banner will shown automatically.
+</Info>
+
+## Ad position
+The position where the banner ad should be placed. The `CAS.AdPosition` enum lists the valid ad position values.  By default, the banner ad is centered at the bottom.  
+
+The table for all positions on the screen. Some position values ​​do not support offset on the X or Y axis, this can be seen in the table as (X, Y). 
+
+|        | Left     | Center |    Right |
+| ------ | -------- | :----: | -------: |
+| Top    | TL(X, Y) | TC(Y)  | TR(X, Y) |
+| Middle | ML(X)    | MC(-)  |    MR(X) |
+| Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
+
+Use the `SetPosition(int, int, AdPosition)` to place AdView at the X and Y offset, where the origin is the selected  corner (AdPosition) of the screen. 
+
+The coordinates on the screen are determined in Density-independent Pixels(DP):
+```cs
+adView.SetPosition(xOffsetInDP, yOffsetInDP, AdPosition.TopLeft);
+```
+
+The coordinates on the screen are determined in pixels:
+ ```cs
+adView.SetPositionPx(xOffsetInPx, yOffsetInPx, AdPosition.TopLeft);
+```
+
+To specify a position on the screen without offset, use the position property. 
+```cs
+adView.position = AdPosition.TopCenter;
+```
+This line is the same as calling `SetPosition(0, 0, AdPosition.TopCenter)`
+
+## Rect in pixels
+You can calculate the actual rect of the Ad Banner in pixels on the screen.
+```cs
+Rect rect = adView.rectInPixels;
+Vector2 adSizePixels = rect.size;
+Vector2 adPositionInPixels = rect.position; 
+```
+This value is buffered after calculation, feel free to check ad view rect each frame.  
+The position on the screen is calculated with the addition of indents for the cutouts.
+
+CAS plugin provides the ability to get the correct device screen scale value to convert Pixels to Density-independent Pixels(DP) and vice versa.
+```c#
+float scale = CAS.MobileAds.GetDeviceScreenScale();
+float widthInDP = adSizePixels.x / scale;
+float heightInDP = adSizePixels.y / scale;
+
+float someValueInPixels = someValueInDP * scale;
+```
+
+## Ad Refresh rate
+An ad unit’s automatic refresh rate (in seconds) determines how often a new ad request is generated for that ad unit.  
+We recommended using refresh rate 30 seconds. However, you can choose any value you want longer than 10 seconds.  
+
+<Info>
+Ad requests should not be made when the device screen is turned off.  
+</Info>
+
+Change the banner automatic refresh rate using the following method:
+```cs
+adView.refreshInterval = refreshIntervalInSeconds;
+```
+Or disable automatic refresh ads with method:
+```cs
+adView.DisableRefresh();
+```
+
+## Free ad memory
+If you no longer need the `AdView` with specific size, please call `IDisposable.Dispose()` to free memory.
+```cs
+adView.Dispose();
+```
+After calling `Dispose()`, you can use [GetAdView()](#ad-size) method to create a new view.
+
+<Success>  
+[HelloWorld example](https://github.com/cleveradssolutions/CAS-Unity-Sample/blob/master/Assets/SampleCSharp/CSharpSampleController.cs) — a minimal implementation of all ad formats 
+</Success>

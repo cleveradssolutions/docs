@@ -1,0 +1,81 @@
+---
+title: Mediated Networks
+description: This guide shows the ad sources CAS.AI Mediation supports.
+---
+
+Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
+
+Feel free not to use ready-made (`Optimal` or `Families`) solutions, and choose which mediated ad networks you want to integrate by copy following adapter names to `build.gradle` file: 
+
+Just specify `true` for the adapters you want to use and all the necessary dependencies will be included in your application automatically.
+
+```groovy
+cas {  
+    adapters {  
+        ironSource = true  
+        googleAds = true  
+        unityAds = true  
+        liftoffMonetize = true  
+        chartboost = true  
+        dtExchange = true  
+        inMobi = true  
+        kidoz = true    
+        mintegral = true  
+        appLovin = true  
+        audienceNetwork = true  
+        pangle = true  
+        yandexAds = true  
+        bigoAds = true  
+        casExchange = true
+        ysoNetwork = true
+        ogury = true
+        startIO = true  
+        hyprMX = true  
+    }  
+}
+```
+
+<Info>
+- Read more about the adapter versions [here](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters).
+- The Meta Audience Network requires [Additional implementations](Additional-Meta-AudienceNetwork-steps).
+- The Yandex Ads requires [Additional implementations](Additional-Yandex-Mobile-Ads-steps), also do NOT provide monetization in COPPA protected regions.
+- The HyprMX is focused on the USA and Canada regions only. Your apps must be approved for monetization.
+</Info>
+
+## Closed beta ad adapters
+
+<Warning>  
+Access to the monetization of the beta ad sources is closed.  
+If you would like to monetize by one of these ad sources, please contact your account manager.
+</Warning>
+
+```groovy
+cas {  
+    adapters {
+        prado = true
+        maticoo = true
+        madex = true  
+        smaato = true  
+    }  
+}
+```
+
+<Info>
+- Please note that you may need to add additional [maven repositories](Android) for your project.
+- The Madex is focused on the CIS region only. Permission to access geolocation is already enabled in the SDK. Read more about [Geolocation data collection](https://madex.gitbook.io/madex-documentation/android-sdk/installing-and-configuring-the-sdk#geolocation-data-collection)
+</Info>
+
+## Cross promotion adapter
+Cross promotion is an app marketing strategy in which app developers promote one of their titles on another one of their titles. Cross promoting is especially effective for developers with large portfolios of games as a means to move users across titles and use the opportunity to scale each of their apps. This is most commonly used by hyper-casual publishers who have relatively low retention, and use cross promotion to keep users within their app portfolio.
+
+```groovy
+cas {  
+    adapters {  
+        crossPromo = true  
+    }  
+}
+```
+
+<Success>
+Contact our account manager if you are interested in cross-promotion.
+</Success>

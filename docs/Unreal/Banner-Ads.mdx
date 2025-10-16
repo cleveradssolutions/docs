@@ -1,0 +1,141 @@
+---
+title: Banner Ads
+description: This guide shows you how to integrate banner ads from CAS into an Unreal Engine project.
+---
+
+Banner ad units display rectangular ads that occupy a portion of an app's layout. 
+They can refresh automatically after a set period of time. 
+This means users view a new ad at regular intervals, even if they stay on the same screen in your app. 
+They're also the simplest ad format to implement.
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
+
+
+## Get the Ad size
+To load a banner ad, you need to specify the ad size. To do this, choose one of the methods for obtaining an `ECASBannerSize` from the list below:
+1. **Adaptive banner** ads have a fixed aspect ratio for the maximum screen width. The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50.
+```cpp
+ECASBannerSize adSize = ECASBannerSize::Adaptive;
+```
+2. **Smart ad size** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+```cpp
+ECASBannerSize adSize = ECASBannerSize::SmartBanner;
+```
+3. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+```cpp
+ECASBannerSize adSize = ECASBannerSize::Leaderboard;
+```
+4. **Standard banner** has a fixed size of 320x50 and is the minimum ad size.
+```cpp
+ECASBannerSize adSize = ECASBannerSize::Banner;
+```
+
+## Load an Ad
+Call manual load ad before each show if `Autoload Banner Ads` not checked.  
+In Blueprints you can use Load node just for register Loaded/Failed events.
+```cpp
+UCASMobileAds::LoadBannerAd(adSize);
+```
+<Image width="240" alt="image" src="/assets/unreal/Banner-Ads-1.png" />
+
+<Info>
+The `Event Once` checkbox will fire the Loaded/Failed event only once. if `Autoload Ads` used, events can be triggered many times while the game world exists.
+</Info>
+
+### Autoload mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+```cpp
+UCASMobileAds::SetAutoloadBannerAd(true);
+```
+
+<Image width="221" alt="Image" src="/assets/unreal/Banner-Ads-2.png" />
+
+You should call `LoadBannerAd()` once to create Ad Instance.
+
+By default, autoloading is defined in the `Project Settings -> Plugins -> CAS.AI Config -> Autoload Banner Ads`.
+
+## Display the Ad
+When you are ready to show the ad on the screen, just call the following method:
+```cpp
+UCASMobileAds::ShowBannerAd();
+```
+When you need to hide the ad from the user, just call the following method:
+```cpp
+UCASMobileAds::HideBannerAd();
+```
+<Image width="310" alt="image" src="/assets/unreal/Banner-Ads-3.png" />
+
+<Info>
+You can change the banner's activity even if it is not ready to be shown yet. When the ad is ready, banner will shown automatically.
+</Info>
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```cpp
+// Called when the ad loaded and ready to present.
+UCASMobileAds::OnBannerAdLoaded.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Banner loaded"));
+});
+// Сalled when an error occurred with the ad.
+UCASMobileAds::OnBannerAdFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("Banner failed to load: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the user clicks on the Ad.
+UCASMobileAds::OnBannerAdClicked.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Banner clicked"));
+});
+```
+<Info>
+Ad events in Blueprints are registered in the Load nodes. Each new Load Ad node cancels previous node events.
+</Info>
+
+## Ad position
+The position where the banner ad should be placed. The `ECASPosition` enum lists the valid ad position values.  
+By default, the banner ad is centered at the bottom.  
+Changing the position of a banner ad **does not destroy** the current banner or load a new one.  
+
+Change the banner position on screen using the following method:
+```cpp
+UCASMobileAds::SetBannerAdPosition(ECASPosition::TopCenter);
+```
+<Image width="255" alt="image" src="/assets/unreal/Banner-Ads-4.png" />
+
+## Ad Refresh rate
+An ad unit’s automatic refresh rate (in seconds) determines how often a new ad request is generated for that ad unit.  
+We recommended using refresh rate 30 seconds. However, you can choose any value you want. Or set 0 to disable automatic refresh ads.
+
+Change the banner automatic refresh rate using the following method:
+```cpp
+UCASMobileAds::SetBannerAdRefreshInterval(RefreshIntervalInSeconds);
+```
+<Image width="217" alt="image" src="/assets/unreal/Banner-Ads-5.png" />
+
+<Info>
+- Ad requests should not be made when the device screen is turned off.  
+- The `setAutoloadBannerAd()` has no effect on refreshing the banner ad.
+</Info>
+
+## Release ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
+
+```cpp
+UCASMobileAds::DestroyBannerAd();
+```
+<Image width="147" alt="image" src="/assets/unreal/Banner-Ads-6.png" />
+
+Call `LoadBannerAd` to load new ad and restore autoload mode if used.
+
+## Ad Availability
+You can ask for the ad availability directly by calling the following function:
+```cpp
+bool BannerLoaded = UCASMobileAds::IsBannerAdReady();
+```
+<Image width="159" alt="image" src="/assets/unreal/Banner-Ads-7.png" />
+
+<Error>  
+We don’t recommend waiting for `IsBannerAdReady` to change each frame. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnBannerAdLoaded` event instead.
+</Error>

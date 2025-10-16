@@ -1,0 +1,25 @@
+---
+title: Additional Meta AudienceNetwork steps
+---
+
+## Data Processing Options for US Users
+Meta Audience Network Data Processing Options for US Users Limited Data Use is a data processing option that gives you more control over how your data is used in Meta’s systems and better supports your compliance efforts with various US state privacy regulations. To utilize this feature, you must proactively enable Limited Data Use.  
+Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
+
+Set native the `setDataProcessingOptions` flag values:
+- `ECASUserCCPAStatus::OptInSale` (`[]` empty) - To explicitly not enable Limited Data Use (LDU) mode
+- `ECASUserCCPAStatus::OptOutSale` (`['LDU'], 0, 0`) - To enable LDU mode using geolocation
+- `ECASUserCCPAStatus::Undefined` - Do nothing
+```cpp
+UCASMobileAds::SetMetaDataProcessingOptions(ECASUserCCPAStatus::OptInSale);
+```
+<Image width="220" alt="image" src="/assets/unreal/Additional-Meta-AudienceNetwork-steps-1.png" />
+
+<Info>
+Flag will be applied before CAS Initialization only.
+</Info>
+
+## iOS Advertising Tracking Enabled for Audience Network
+Implement the [setAdvertiserTrackingEnabled](https://developers.facebook.com/docs/audience-network/setting-up/platform-setup/ios/advertising-tracking-enabled) flag, irrespective of the use of mediation, to inform Meta whether to use the data to deliver personalized ads.  
+
+The CAS plugin will automatically pass the value from `Use Advertising Id` property in the CAS.AI Config window to native Audience Network `setAdvertiserTrackingEnabled` flag.

@@ -1,0 +1,247 @@
+---
+title: CAS.AI Android SDK
+---
+
+Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
+Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
+
+### App prerequisites
+Make sure that your app's build file uses the following values:
+- Minimum SDK version of `23` or higher
+- Compile SDK version of `35` or higher
+
+### Maven repositories
+In your Gradle settings file (`<project>/settings.gradle.kts`), include the
+following `repositories` block so that Gradle can download the artifacts of ad networks:
+
+<AccordionGroup>
+<Accordion defaultOpen title="Manven Ads repositories">
+```kotlin
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+  repositories {
+    google()  
+    mavenCentral()  
+    maven {  
+        name = "MintegralAdsRepo"  
+        url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")  
+        content { includeGroup("com.mbridge.msdk.oversea") }  
+    }  
+    maven {  
+        name = "PangleAdsRepo"  
+        url = uri("https://artifact.bytedance.com/repository/pangle")  
+        content { includeGroup("com.pangle.global") }  
+    }
+    maven {  
+        name = "ChartboostAdsRepo"  
+        url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/")  
+        content { includeGroup("com.chartboost") }  
+    }
+    maven {  
+        name = "YSONetworkRepo"  
+        url = uri("https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android")  
+        content { includeGroup("com.ysocorp") }  
+    }
+    maven {  
+        name = "OguryAdsRepo"  
+        url = uri("https://maven.ogury.co")  
+        content {  
+            includeGroup("co.ogury")  
+            includeGroup("co.ogury.module")  
+        }  
+    }  
+  }
+}
+```
+</Accordion>
+<Accordion title="Maven Ads repositories for Closed beta">
+
+Read more about Closed beta ads partners on [Mediation Networks](Android/Mediated-Networks) page.  
+```kotlin
+    maven {  
+        name = "MadexAdsRepo"  
+        url = uri("https://sdkpkg.sspnet.tech")  
+        content {  
+            includeGroup("sspnet.tech")  
+            includeGroup("sspnet.tech.adapters")  
+        }  
+    }
+    maven {  
+        name = "SmaatoAdsRepo"  
+        url = uri("https://s3.amazonaws.com/smaato-sdk-releases/")  
+        content { includeGroup("com.smaato.android.sdk") }  
+    }  
+```
+
+</Accordion>
+</AccordionGroup>
+
+If your project is using Gradle version below 7.0, the `repositories` block should be added to the `allprojects` block in the root-level `build.gradle` file.
+
+## Integration options
+You can integrate CAS to your Android app using one of the following options:
+- **Option 1**: Use the CAS Gradle plugin setup workflow _(recommended, below)_.
+- **Option 2**: Use the [default Gradle setup](Android/Manual-setup) _(may require additional configuration)_.
+
+## CAS Gradle Plugin
+The CAS SDK provide a Gradle Plugin to simplify and automate certain integration steps. 
+Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
+
+In your module **(app-level)** Gradle file (usually `<project>/<app-module>/build.gradle`), add the CAS services plugin inside the `plugins` block.
+```groovy
+plugins {
+    id("com.android.application") // before CAS plugin
+    id("com.cleveradssolutions.gradle-plugin") version "{{ versions.ios }}"
+}
+
+cas {
+    // Plugin configuration
+}
+```
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Android/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
+
+<AccordionGroup>
+<Accordion title="What is CAS ID?">
+
+In most cases, a `casId` is the same as your application package name.
+- A [package name](https://developer.android.com/studio/build/application-id) uniquely identifies your app on the device and in the Google Play Store.
+- The package name value is case-sensitiv and is often referred to as an `APPLICATION_ID`.
+- Find your app's package name in your module (app-level) Gradle file, usually `app/build.gradle` (example package name: `com.yourcompany.yourproject`).
+
+</Accordion>
+<Accordion title="How integrate CAS plugin in library module?">
+
+To integrating the plugin into the module `id("com.android.library")` (**library-level**) you must define the `cas.casId` property. 
+```groovy
+plugins {
+    id("com.android.library") // before CAS plugin
+    id("com.cleveradssolutions.gradle-plugin") version $casVersion
+}
+
+cas {
+    casId = "com.yourcompany.yourproject"
+}
+```
+
+</Accordion>
+<Accordion title="How override CAS ID for Product Flavors in app module?">
+
+For the application module as a CAS Id will be selected the final `applicationId` with all modifications.
+```groovy
+android {
+    flavorDimensions.add("version")
+    productFlavors {  
+        create("first") {  
+            dimension = "version"  
+            applicationIdSuffix = ".fisrt"  
+        }  
+        create("second") {  
+            dimension = "version"  
+            applicationIdSuffix = ".second" 
+        }  
+    }
+}
+```
+
+`casId` settings will be ignored when integrating into app-level modules, as the `applicationId` (with all modifications for Build Variant and Product Flavor) will always be used as the CAS ID.
+
+Note that you must register each final `applicationId` as a separate CAS ID in platform.
+
+</Accordion>
+<Accordion title="How override CAS ID for Product Flavors in library module?">
+
+To integrate a CAS plugin into the `id("com.android.library")` module (**library level**), you must define the `cas.casId` property in the body of each product flavor.
+```groovy
+cas {
+   casId = "com.yourcompany.yourproject"
+   addCasIdVariant("second", "com.yourcompany.yourproject.second")
+}
+
+android {
+    flavorDimensions.add("version")
+    productFlavors {  
+        create("first") {  
+            dimension = "version"  
+        }  
+        create("second") {  
+            dimension = "version"  
+        }  
+    }
+}
+```
+
+Note that you cannot use `applicationId` because the library module does not have information about the application.
+
+</Accordion>
+</AccordionGroup>
+
+## Mediated Networks
+CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
+If you're unsure which solution best fits your application, please contact your account manager.
+
+#### Optimal Ads Solution
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:  
+Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yandex Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
+
+```groovy
+cas {
+    includeOptimalAds = true
+}
+```
+
+#### Families Ads Solution
+Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en). Networks included:
+Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
+
+```groovy
+cas {
+    includeFamiliesAds = true
+}
+```
+
+#### Choice networks
+Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
+
+Follow the instructions on the [Mediated Networks](Android/Mediated-Networks) page.
+
+### Google Advertising Identifier
+The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.
+
+```groovy
+cas {
+    useAdvertisingId = true
+}
+```
+
+<Info>
+An application must not use an advertising identifier if **at least one** of the following conditions is true:
+- The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
+- The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
+</Info>
+
+### Code minification
+Enabling `minifyEnabled` is a crucial step in optimizing your mobile application, especially when integrating ad mediation SDKs that augment your codebase's size. By leveraging code minification, you not only reduce the overall footprint of your app but also enhance its performance, security, and compatibility.
+```kotlin
+android {
+    buildTypes {  
+        release {  
+            isMinifyEnabled = true
+            proguardFiles(...)
+        }  
+    }
+    ...
+}
+```
+
+<Info>
+The CAS SDK and adapters come bundled with the required ProGuard rules in the AARs. Therefore, you do not need to add any additional ProGuard rules to your project.
+</Info>
+
+### Optional permissions 
+The following permissions are not required for our SDK or 3rd-party SDKs to function, but including them in your `AndroidManifest.xml` may result in improved eCPM and user experience.
+```xml
+<uses-permission android:name="android.permission.READ_PHONE_STATE"/>  
+```

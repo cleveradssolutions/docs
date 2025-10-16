@@ -1,0 +1,99 @@
+---
+title: Native Ads
+description: This guide explains how to integrate native ads into a Flutter app.
+---
+
+Native ads are ad assets presented to users with UI components native to the platform. In coding terms, this means that when a native ad loads, your app receives a `NativeAdContent` object that contains its assets, and your app is then responsible for displaying them. Additionally, these ads can be customized to align with your app's visual design, ensuring they feel like a natural part of the content rather than intrusive advertisements.
+
+Native Ad management in Dart code is handled through the [CASNativeContent](https://pub.dev/documentation/clever_ads_solutions/latest/clever_ads_solutions/CASNativeContent-class.html) class, which extends the shared `AdViewInstance` class used for all ads displayed in a widgets. The `AdViewInstance` class, inherits from the base `AdInstance` class, which is common for all CAS ad formats. To display a `AdViewInstance` as a widget, you must instantiate an `CASWidget` for each ad instance. 
+
+There are two ways to build native ads view in Flutter app:
+#### 1. Native templates 
+Native templates are code-complete views for your native ads, designed for fast implementation and easy modification. With native templates, the plugin provides prebuilt Android and iOS layouts for you, and you can customize the style of the native assets using a Dart API.
+
+For native templates implementation details in Dart, see [Native templates](Flutter/Native-Ads-templates) page.
+
+#### 2. Platform setup 
+Custom platform-specific layouts defined using Android and iOS layout tools.  
+Platform setup is better when you need complete control of the look and feel for your ads on both Android and iOS platforms, but you'll need to write code for both.
+
+For platform-specific setup instructions, see [Android setup](Flutter/Native-Ads-Android-Setup) and [iOS setup](Flutter/Native-Ads-iOS-Setup) pages.
+
+## Load Ad content
+The following example loads an native ad content.
+- The `adChoicesPlacement` option specifies where to place the AdChoices icon.
+- The `startVideoMuted` option controls whether the video content starts muted or unmuted.
+- Use the `onAdLoaded` callback to be notified when the ad is ready for display.
+- The remaining callbacks are optional and can be implemented as needed.
+```dart
+class NativeAdExampleState extends State<NativeAdExample> {
+  AdViewInstance? _nativeAd;
+  
+  void _loadAd() {
+    CASNativeContent.load( 
+      adChoicesPlacement: AdChoicesPlacement.topRightCorner,  
+      startVideoMuted: true,
+      onAdLoaded: (AdViewInstance ad) { 
+        // Called when an ad is successfully loaded. 
+        print('$ad loaded');  
+        setState(() { 
+          _nativeAd = ad;
+        });
+      },  
+      onAdFailedToLoad: (AdInstance ad, AdError error) { 
+        // Called when an ad load failed. 
+        print('$ad failed to load: ${error.message}.'); 
+      }, 
+      onAdImpression: (AdInstance ad, AdContentInfo contentInfo) { 
+        // Called when an impression occurs on the ad.  
+        print('$ad impression');  
+      },  
+      onAdClicked: (AdInstance ad) {  
+        // Called when a click is recorded for an ad.
+        print('$ad clicked');  
+      },
+    ); 
+  }
+}
+```
+
+<Info>
+Read more about `AdContentInfo` structure in [Impression Level Data](Flutter/Impression-Level-Data).
+</Info>
+
+## Show Ad Widget
+`CASWidget` inherits from Flutter's Widget class and can be used like any other widget.  
+Ensure that you define the desired widget size, as native ads do not have an intrinsic size and will expand to fit the constraints of their container. You may provide a fixed size or use `LayoutBuilder` to dynamically allocate space for the ad.
+```dart
+@override  
+Widget build(BuildContext context) {  
+  return LayoutBuilder(  
+    builder: (BuildContext context, BoxConstraints constraints) {  
+      if (_nativeAd != null) {  
+        return CASWidget(  
+          ad: _nativeAd!,  
+          width: constraints.maxWidth,  
+          height: 400,  
+        );  
+      }  
+      return const Text("Ad Loading...");  
+    },  
+  );  
+}
+```
+Native ads do not require reloading when the widget size changes, the content will automatically adapt to the new size.
+
+## Release ad resource
+Be sure to release ad resources if you’re no longer going to use the ad instance.
+```dart
+  @override
+  void dispose() {
+    _nativeAd?.dispose();
+    super.dispose();
+  }
+```
+
+## Complete example
+- [Native Ad Template example](https://github.com/cleveradssolutions/CAS-Flutter/tree/main/example/lib/native_template_example.dart)
+- [Native Ad Factory example](https://github.com/cleveradssolutions/CAS-Flutter/tree/main/example/lib/native_factory_example.dart)
+

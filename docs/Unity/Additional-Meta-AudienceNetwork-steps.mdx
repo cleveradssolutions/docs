@@ -1,0 +1,36 @@
+---
+title: Additional Meta AudienceNetwork steps
+---
+
+## Data Processing Options for US Users
+Meta Audience Network Data Processing Options for US Users Limited Data Use is a data processing option that gives you more control over how your data is used in Meta’s systems and better supports your compliance efforts with various US state privacy regulations. To utilize this feature, you must proactively enable Limited Data Use.  
+Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
+
+CAS provide an alternative way of pass `FBAdSettings.setDataProcessingOptions` flags using `MediationExtras.facebookDataProcessing` with values:
+- `""` to explicitly not enable Limited Data Use (LDU) mode
+- `"LDU"` to enable LDU mode using geolocation
+- `"LDU_1_1000"` to enable LDU for users and specify user geography  
+
+Define LDU flag in CAS manager builder before initialization:
+```cs
+CAS.MobileAds.BuildManager()
+    .WithMediationExtras(MediationExtras.facebookDataProcessing, "LDU")
+    ... //Other parameters
+    .Initialize();
+```
+## iOS Advertising Tracking Enabled for Audience Network
+Implement the [setAdvertiserTrackingEnabled](https://developers.facebook.com/docs/audience-network/setting-up/platform-setup/ios/advertising-tracking-enabled) flag, irrespective of the use of mediation, to inform Meta whether to use the data to deliver personalized ads.  
+CAS provide an alternative way of pass `FBAdSettings.setAdvertiserTrackingEnabled` flags using `MediationExtras.facebookAdvertiserTracking`.  
+- Value `"1"` flag to inform Audience Network to use the data to deliver personalized ads in line with your own legal obligations, platform terms, and commitments you’ve made to your users.
+- Value `"0"` flag to inform Audience Network to not be able to deliver personalized ads.
+```cs
+CAS.ATTrackingStatus.Request((status) => {
+  CAS.MobileAds.BuildManager()
+    .WithMediationExtras(MediationExtras.facebookAdvertiserTracking, isTrack ? "1" : "0")
+    ... //Other parameters
+    .Initialize();
+});
+```
+<Info>
+This functionality is for iOS only and will not have any effect on Android.
+</Info>

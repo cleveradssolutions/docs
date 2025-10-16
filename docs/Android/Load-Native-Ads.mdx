@@ -1,0 +1,120 @@
+---
+title: Load Native Ads
+description: This guide explains how to integrate native ads into an Android app.
+---
+
+Native ads are advertising assets seamlessly integrated into the user interface using components that are native to the platform.
+They are displayed through the same views you use to construct your app's layouts, allowing for a cohesive user experience. 
+Additionally, these ads can be customized to align with your app's visual design, ensuring they feel like a natural part of the content rather than intrusive advertisements.
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Native-Ad.png" alt="Diagram" height="500" />
+
+
+## Create Ad Content callback
+A `com.cleveradssolutions.sdk.nativead.NativeAdContentCallback` class for handling events related to native ad content.  
+
+```java
+final NativeAdContentCallback nativeAdCallback =  new NativeAdContentCallback() {  
+    @Override  
+    public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {  
+        keepNativeAdInMemory(nativeAd);  
+        registerNativeAdContent(nativeAd);  
+    }  
+  
+    @Override  
+    public void onNativeAdFailedToLoad(@NonNull AdError error) {  
+        // (Optional) Handle Ad load errors    
+    }  
+  
+    @Override  
+    public void onNativeAdFailedToShow(@NonNull NativeAdContent nativeAd, @NonNull AdError error) {  
+        // (Optional) Handle Ad render errors.   
+        // Called from CASNativeView.setNativeAd(nativeAd)   
+    }  
+  
+    @Override  
+    public void onNativeAdClicked(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {  
+        // (Optional) Called when the native ad is clicked by the user.    
+    }  
+};
+```
+
+## Load ad
+Native ads are loaded with the `com.cleveradssolutions.sdk.nativead.CASNativeLoader` class. 
+
+```java
+void loadNativeAd() {  
+    CASNativeLoader adLoader = new CASNativeLoader(MyActivity.this, MyApplication.CAS_ID, nativeAdCallback);  
+    adLoader.setAdChoicesPlacement(AdChoicesPlacement.TOP_LEFT); // by default  
+    adLoader.setStartVideoMuted(true); // by default
+  
+    adLoader.load();  
+}
+
+void keepNativeAdInMemory(NativeAdContent nativeAd) {
+    loadedNativeAds.add(nativeAd);
+}
+```
+After a call to `load()`, a single callback is made to the previously defined `NativeAdContentCallback` to deliver the native ad object or report an error.
+
+### Autoload Ad mode
+The `CASNativeLoader` does not have an autoload ad mode like other ad formats, so you need to implement error handling and ad reloading manually.
+
+## Load multiple ads (optional)
+The `load()` method takes an additional parameter: the number of ads the SDK should attempt to load for the request. It's not guaranteed that the SDK will return the exact number of ads requested.
+```java
+int maxNumberOfAdsToLoad = 3;
+adLoader.load(maxNumberOfAdsToLoad);
+```
+
+The `onNativeAdLoaded` will be called multiple times, once for each ad that is successfully loaded, up to the specified maximum number of ads.  
+If the load operation fails, the `onNativeAdFailedToLoad` will be called once with the error details.
+
+Apps requesting multiple ads should call `CASNativeLoader.isLoading` in their callback implementations to determine whether the loading process has finished.
+```java
+@Override  
+public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {  
+    keepNativeAdInMemory(nativeAd);
+    registerNativeAdContent(nativeAd);
+    
+    if (adLoader.isLoading()) {
+        // The AdLoader is still loading ads.
+        // Expect more onNativeAdLoaded or onNativeAdFailedToLoad callbacks.
+    } else {
+        // The AdLoader has finished loading ads.
+    }   
+} 
+```
+
+## Release ad resources
+It’s crucial to call the `destroy()` method on all loaded native ads, even if they were not used or referenced. This action releases utilized resources and helps prevent memory leaks.
+
+When you invoke the `load()` function, the `CASNativeLoader` will continue running until the ad finishes loading. This can lead to the `NativeAdContentCallback` being triggered after the `Activity` has been destroyed or at unexpected times. Therefore, you should implement checks to destroy the loaded ad if you do not plan to display it to the user.
+
+```java
+@Override  
+public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {      
+    // If this callback is invoked after the activity is destroyed,
+    // call destroy and return to avoid potential memory leaks.
+    // Note: `isDestroyed()` is a method available on Activity.
+    if (isDestroyed()) {
+        nativeAd.destroy()
+        return
+    }
+    
+    keepNativeAdInMemory(nativeAd)
+    registerNativeAdContent(nativeAd)
+}
+```
+
+Make sure to destroy all `NativeAdContent` references in your activity’s `onDestroy()` function:
+```java
+@Override
+public void onDestroy() {
+    for (NativeAdContent ad : loadedNativeAds) {
+        ad.destroy();
+    }
+    super.onDestroy();
+}
+```

@@ -1,0 +1,136 @@
+---
+title: Impression Level Data
+---
+
+
+CleverAdsSolutions enables you to access detailed information for each impression through the impressions callback APIs. The information includes, for example, which demand source served the ad, the expected or exact revenue associated with it. In addition, it contains granular details to allow you to analyze and, ultimately, optimize user acquisition strategies. 
+
+## Ad Impression
+`AdMetaData` is an class for getting detailed information about the current ad impression, such as revenue and ad creative details.  
+
+Each ad format has a callback to receive an `AdImpression` about the current impression.  
+The code below demonstrates how to handle impression events for Interstitial ad and Banner ad:
+```csharp
+void OnEnable()
+{
+    if (manager == null) return;
+    manager.GetAdView(AdSize.Banner).OnImpression += HandleAdViewImpression;
+    manager.OnInterstitialAdImpression += HandleInterstitialAdImpression;
+    manager.OnRewardedAdImpression += HandleRewardedAdImpression;
+    manager.OnAppReturnAdImpression += HandleAppReturnAdImpression;
+}
+void OnDisable()
+{
+    if (manager == null) return;
+    manager.GetAdView(AdSize.Banner).OnImpression -= HandleAdViewImpression;
+    manager.OnInterstitialAdImpression -= HandleInterstitialAdImpression;
+    manager.OnRewardedAdImpression -= HandleRewardedAdImpression;
+    manager.OnAppReturnAdImpression -= HandleAppReturnAdImpression;
+}
+
+private void HandleAdViewImpression(IAdView view, AdMetaData impression)
+{
+    // Get ad details of Banner Ad using impression parameter
+}
+private void HandleInterstitialAdImpression(AdMetaData impression)
+{
+    // Get ad details of Interstitial Ad using impression parameter
+}
+private void HandleRewardedAdImpression(AdMetaData impression)
+{
+    // Get ad details of Rewarded Ad using impression parameter
+}
+private void HandleAppReturnAdImpression(AdMetaData impression)
+{
+    // Get ad details of AppReturn Ad using impression parameter
+}
+```
+
+### Ad revenue
+The revenue generated for the impression (USD). The revenue value is either estimated or exact, according to the `priceAccuracy` property. 
+```csharp
+double revenue = impression.revenue;
+```
+You can also check the precision estimate for the `revenue` value, as shown in the following example:
+```csharp
+PriceAccuracy precision = impression.priceAccuracy;
+if (precision == PriceAccuracy.Floor)
+{
+    // The estimated revenue, can also be a minimum price (floor) for ad impression.
+}
+else if (precision == PriceAccuracy.Bid)
+{
+    // The revenue provided as part of the real-time auction.
+}
+else
+{
+    // The revenue is '0', when the demand source does not agree to disclose the payout of impression. 
+}
+```
+
+### Ad creative
+You can also retrieve information about the current ad (such as its mediated network and creative ID), and you will be able to report creative issues for that ad to our Ad review team.
+```csharp
+AdType placementType = impression.type;
+string creativeId = impression.creativeIdentifier;
+AdNetwork network = impression.network;
+string networkUnitId = impression.identifier;
+string networkSDKVersion = impression.versionInfo;
+```
+
+<Warning>  
+`impression.creativeIdentifier` may return null.
+</Warning>
+
+A list of all supported networks can be found in `AdNetwork` class. For example:
+```csharp
+if (networkName == AdNetwork.GoogleAds)
+{
+    // Impression from Google Ads network.
+}
+```
+
+### User ad summary 
+CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression. 
+```csharp
+int totalImpressions = impression.impressionDepth;
+double totalRevenue = impression.lifetimeRevenue;
+```
+
+<Info>
+Progress is saved between sessions until the user clears your app's data.
+</Info>
+
+## Automatic collect ad revenue
+The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
+#### Google Analytics
+If you haven't already, make sure to complete the following tasks:
+1. Set up your project and app as described in [Get Started with Analytics](https://firebase.google.com/docs/analytics/get-started).
+2. Make sure that you've linked your Firebase project to a Google Analytics account.
+3. Ensure that you've included in your app the CAS SDK 3.5.0+.
+
+To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.  
+
+#### Tenjin
+If you haven't already, make sure to complete the following tasks:
+1. Set up your project and app as described in [Get Started with Analytics](https://docs.tenjin.com/docs/unity-sdk#sdk-integration).
+2. Make sure that you've [initialize tenjin session](https://docs.tenjin.com/docs/unity-sdk#app-initialization). Or provide `TENJIN_SDK_KEY` with CAS SDK initialization to allow CAS initialize Tenjin SDK automatically. 
+   `builder.WithMediationExtras("tenjin_key", <TENJIN_SDK_KEY>)`
+3. Ensure that you've included in your app the CAS SDK 3.7.2+.
+
+## Custom collect ad revenue
+The following code shows an implementation example for log `AD_IMPRESSION` event to Google Analytics.
+```csharp
+void CollectImpression(AdMetaData impression)
+{   
+    Firebase.Analytics.Parameter[] AdParameters = {
+        new Firebase.Analytics.Parameter("ad_platform", "CAS"),
+        new Firebase.Analytics.Parameter("ad_source", impression.network.ToString()),
+        new Firebase.Analytics.Parameter("ad_unit_name", impression.identifier),
+        new Firebase.Analytics.Parameter("ad_format", impression.type.ToString()),
+        new Firebase.Analytics.Parameter("currency", "USD"), // All CAS revenue is sent in USD 
+        new Firebase.Analytics.Parameter("value", impression.revenue)
+    };
+    Firebase.Analytics.FirebaseAnalytics.LogEvent("ad_impression", AdParameters);
+}
+```

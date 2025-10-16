@@ -1,0 +1,44 @@
+---
+title: Google Plays Families Policy
+---
+
+<Info>
+If your application does not participate in Families Ads program, then you can safely skip this page.   
+  
+Quote from the [Google Families Ads program page](https://support.google.com/googleplay/android-developer/answer/9283445?hl=en).
+</Info>
+
+Google is focused on providing a great experience for families on Google Play and wants to help make sure that any ads served to children are appropriate and compliant with our policies. Review google ads and monetization policy in the [Developer Policy Center](https://play.google.com/about/families/ads-monetization/).  
+
+If your app's target audience includes children and serves ads using an ad SDK, you must use one of the ad SDKs below. The following ad SDKs have self-certified that their compliance with Play’s [Families Ads Program](https://play.google.com/about/monetization-ads/families-ads-program/) requirements.
+
+## Advertising ID
+The [advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable ID for advertising, provided by Google Play services.  
+
+With Android 12 many mediation partners are starting to include the `com.google.android.gms.permission.AD_ID` permission in the SDK’s library manifest but Families Policy, require that apps not use the Ad ID.  
+You must prevent the permission from getting merged into your app by including the following element in your manifest.
+To do this, just add the following line to your app `AndroidManifest.xml` file inside the `<manifest>` tag but outside the `<application>` tag:
+```xml
+<manifest>
+   <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+</manifest>
+```
+
+## Publishing Status Rejected
+### Families APIs and SDKs issue
+> We have detected that your app includes ads SDKs that have not self-certified their compliance with Families policies or SDKs that are not approved for use in child-directed services.
+
+This may be related to the inclusion of adapters for uncertified ad networks in your build. You are permitted to use only those ad network adapters that are part of the Families Ads Solution.
+
+Another possible cause is the disabled ProGuard in your app's build. Google may identify outdated code in your application and consider it part of an uncertified ad SDK. We recommend enabling ProGuard for the build of your application at all times.
+```gradle
+android {
+    buildTypes {  
+        release {  
+            minifyEnabled true
+            ...
+        }  
+    }
+    ...
+}
+```

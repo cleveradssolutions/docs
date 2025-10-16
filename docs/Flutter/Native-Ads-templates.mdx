@@ -1,0 +1,61 @@
+---
+title: Native Ads templates
+previous: /Flutter/Native-Ads
+previousTitle: Load Native Ad
+---
+
+Native templates are code-complete views for your native ads, designed for fast implementation and easy modification. With native templates, the plugin provides prebuilt Android and iOS layouts for you, and you can customize the style of the native assets using a Dart API.
+
+By default, if no `factoryId` is specified when loading a native ad, the standard CAS Template will be used to display the native ad content. Below is an example of how the CAS Template appears depending on the size of the `CASWidget`.
+
+1. If the height is greater than 500, a large native ad layout is used.
+<Image height="500" alt="Image" src="/assets/Native-Template-Screen.jpg" />
+
+2. If the height is greater than 200, a medium layout is used.
+<Image width="300" alt="Image" src="/assets/Native-Template-MRec.jpg" />
+
+3. Otherwise, a banner layout is used.
+<Image width="300" alt="Image" src="/assets/Native-Template-Small.jpg" />
+
+## Customize ad
+The CAS Template can be customized by changing the colors of individual components and the font style using `NativeTemplateStyle` parameters when loading a native ad in Dart code.
+
+- The background color.  
+- The primary color for "Call to action" button background.  
+- The text color for "Call To Action" button.  
+- The Headline text color.  
+- The Headline text font style.  
+- The Secondary (other) text color.  
+- The Secondary (other) text font style.  
+
+## Load ad content
+The following example loads a native ad using the `NativeTemplateStyle` with the default configuration:
+```dart
+class NativeAdExampleState extends State<NativeAdExample> {
+  AdViewInstance? _nativeAd;
+  
+  void _loadAd() {
+    CASNativeContent.load( 
+      factoryId: 'nativeFactoryIdExample',  
+        templateStyle: NativeTemplateStyle(  
+        backgroundColor: Colors.white,  
+        primaryColor: Colors.blueAccent,  
+        primaryTextColor: Colors.white,  
+        headlineTextColor: Colors.black,  
+        headlineFontStyle: NativeTemplateFontStyle.bold,  
+        secondaryTextColor: Colors.black12,  
+        secondaryFontStyle: null,  
+      ),
+      onAdLoaded: (AdViewInstance ad) { 
+        // Called when an ad is successfully loaded. 
+        print('$ad loaded'); 
+        setState(() { 
+          _nativeAd = ad;
+        });
+      },  
+    );
+  }
+}
+```
+
+**Continue to use Native Ad as usual.**

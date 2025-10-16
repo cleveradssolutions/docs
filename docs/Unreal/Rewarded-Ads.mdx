@@ -1,0 +1,114 @@
+---
+title: Rewarded Ads
+description: This guide explains how to integrate rewarded video ads into an Unreal Engine project.
+---
+
+Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads. 
+Rewarded ads boost engagement because users receive a tangible benefit for their time.
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
+
+
+## Load an Ad
+Call manual load ad before each show if `Autoload Rewarded Ads` not checked.  
+In Blueprints you can use Load node just for register Loaded/Failed events.
+```cpp
+UCASMobileAds::LoadRewardedAd();
+```
+<Image width="234" alt="image" src="/assets/unreal/Rewarded-Ads-1.png" />
+
+<Info>
+The `Event Once` checkbox will fire the Loaded/Failed event only once. if `Autoload Ads` used, events can be triggered many times while the game world exists.
+</Info>
+
+### Autoload mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+```cpp
+UCASMobileAds::SetAutoloadRewardedAd(true);
+```
+
+<Image width="232" alt="Image" src="/assets/unreal/Rewarded-Ads-2.png" />
+
+You should call `LoadRewardedAd()` once to create Ad Instance.
+
+By default, autoloading is defined in the `Project Settings -> Plugins -> CAS.AI Config -> Autoload Rewarded Ads`.
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```cpp
+// Called when user earned reward.
+UCASMobileAds::OnRewardedAdEarnedReward.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("User Earned reward"));
+});
+// Called when ad ready to shown.
+UCASMobileAds::OnRewardedAdLoaded.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Rewarded loaded"));
+});
+// Called when ad failed to load with error.
+UCASMobileAds::OnRewardedAdLoadFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("Rewarded failed to load: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the ad shown.
+UCASMobileAds::OnRewardedAdDisplayed.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Rewarded displayed"));
+});
+// Called when the ad is failed to display.
+UCASMobileAds::OnRewardedAdShowFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("Rewarded failed to show: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the user clicks on the Ad.
+UCASMobileAds::OnRewardedAdClicked.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Rewarded clicked"));
+});
+// Called when the ad is closed.
+UCASMobileAds::OnRewardedAdDismissed.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("Rewarded dismissed"));
+});
+```
+<Info>
+Ad events in Blueprints are registered in the Load and Show nodes. Each new Load/Show Ad node cancels previous node events.
+</Info>
+
+## Show the Ad
+Before displaying a rewarded ad to users, you must present the user with an explicit choice to view rewarded ad content in exchange for a reward. Rewarded ads must always be an opt-in experience.
+
+Subscribe to `OnRewardedAdEarnedReward` event to reward the user.
+
+```cpp
+UCASMobileAds::ShowRewardedAd();
+```
+<Image width="196" alt="image" src="/assets/unreal/Rewarded-Ads-3.png" />
+
+## Release ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
+
+```cpp
+UCASMobileAds::DestroyRewardedAd();
+```
+<Image width="201" alt="Image" src="/assets/unreal/Rewarded-Ads-4.png" />
+
+Call `LoadRewardedAd` to load new ad and restore autoload mode if used.
+
+## Ad Availability
+You can ask for the ad availability directly by calling the following function:
+```cpp
+bool AdLoaded = UCASMobileAds::IsRewardedAdReady();
+```
+<Image width="175" alt="image" src="/assets/unreal/Rewarded-Ads-5.png" />
+
+<Error>  
+We don’t recommend waiting for `IsRewardedAdReady` to change each frame. This method call the native SDK and can affect the performance of your game.  
+Subscribe to the `OnRewardedAdLoaded` event instead.
+</Error>
+
+## Muted Ads Sounds
+Sounds in Rewarded and Rewarded ads mute state. Disabled by default.  
+```cpp
+UCASMobileAds::SetAdsMuted(Mute);
+```
+<Image width="134" alt="image" src="/assets/unreal/Rewarded-Ads-6.png" />

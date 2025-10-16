@@ -1,0 +1,56 @@
+---
+title: Other Options
+---
+
+
+## Verbose Debug logging
+The enabled Debug Mode will display a lot of useful information for debugging about the states of the SDK with tag `CAS.AI`.  
+Disabled by default. Disabling Debug Mode may improve application performance.  
+You can enable logging in `Assets > CleverAdsSolutions > Settings` menu or change the flag at any time using the following method:
+```cs
+CAS.MobileAds.settings.isDebugMode = enabled;
+```
+
+<Info>
+If you have discovered the problem in the work of the SDK, please provide us with a description of the problem along with the full log of your device.
+</Info>
+
+## Loading mode
+Managing ad availability is not easy. Keeping a balance between maximum ad availability while minimizing waste (network calls - which may affect user experience and data usage - and calls to mediated networks APIs - which may negatively impact eCPM if their inventory never gets to be shown to a user) can turn out to be harder than expected. In fact, often, it is simply guess work as you cannot predict ahead of time when a user will reach a moment in your application or game where it makes sense to show an Interstitial or offer the possibility to watch a Rewarded ad.
+
+When you try to time your ad requests, this often results in not having a fill when you need it or having wasted fills that are never shown.  
+
+<Info>
+The CAS SDK provides an “auto-request” feature to address this problem.   
+By default, CAS SDK starts with auto-request enabled for all managers.  
+</Info>
+
+This means two things:
+- When a user finishes watching an ad, CAS immediately tries to replace that ad.
+- When a certain placement has trouble obtaining a fill (no traditional mediated network has available inventory and no programmatic demand is bidding within a predetermined amount of time), CAS continues trying to ensure that placement gets a fill by restarting the entire ad request process. This is performed in exponentially increasing time intervals to optimize the chances of getting a fill while minimizing usage of device resources.  
+
+However, you can choose to disable auto-request when you set `Manual` loading mode.
+
+|        Mode        |  Load<sup>[*1](#load-f-1)</sup>  | Impact on App performance | Memory usage |        Actual ads<sup>[*2](#actual-f-2)</sup>       |
+|:------------------:|:------:|:-------------------------:|:------------:|:------------------------:|
+|   FastestRequests  |  Auto  |         Very high         |     High     |       Most relevant      |
+|    FastRequests    |  Auto  |            High           |    Balance   |      High relevance      |
+|  Optimal *(Default)*  |  Auto  |          Balance          |    Balance   |          Balance         |
+|   HighPerformance  |  Auto  |            Low            |      Low     |       Possible loss      |
+| HighestPerformance |  Auto  |          Very low         |      Low     |       Possible loss      |
+|       Manual      | Manual<sup>[*3](#manual-f-3)</sup> |          Very low         |      Low     | Depends on the frequency |
+
+Change the Waterfall loading mode using the following method:
+```c#
+CAS.MobileAds.settings.loadingMode = mode;
+```
+<Info>
+You can set this option using the `Assets > CleverAdsSolutions > Settings > Other Settings`  window.
+</Info>
+
+## Auto check for CAS updates
+CAS check for new versions of the unity plugin when opening the settings window. If a new version is found then you will be prompted to update the plugin.  
+You can disable the auto check update and use the `Check for Updated` button at the top of the settings window.
+<Info>
+You can set this option using the `Assets > CleverAdsSolutions > Settings > Other Settings`  window.
+</Info>

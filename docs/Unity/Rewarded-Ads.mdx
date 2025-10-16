@@ -1,0 +1,111 @@
+---
+title: Rewarded Ads
+---
+
+
+Rewarded ads are ads that users have the option of interacting with in exchange for in-app rewards. 
+
+This guide shows you how to integrate rewarded ads into a Unity app.  
+
+Enable Rewarded Ads for your game in `Assets > CleverAdsSolutions > Settings` menu:  
+<Image width="250" alt="image" src="/assets/unity/Rewarded-Ads-1.png"/>
+
+> ❕For easier ads integration using the Unity Editor, try the new [RewardedAdObject](Unity/Rewarded-Ad-object).
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+
+```csharp
+manager.OnRewardedAdCompleted += AdCompleted;
+manager.OnRewardedAdLoaded += AdLoaded;
+manager.OnRewardedAdFailedToLoad += AdFailedToLoad;
+manager.OnRewardedAdShown += AdShown;
+manager.OnRewardedAdFailedToShow += AdFailedToShow;
+manager.OnRewardedAdClicked += AdClicked;
+manager.OnRewardedAdClosed += AdClosed;
+
+void AdCompleted()
+{
+    Debug.Log("The user earned the reward.")
+}
+void AdLoaded()
+{
+    Debug.Log("Rewarded ad loaded");
+}
+void AdFailedToLoad(AdError error)
+{
+    Debug.Log("Rewarded failed to load an ad with error: " + error.GetMessage());
+}
+void AdShown()
+{
+    Debug.Log("Rewarded ad full screen content opened");
+}
+void AdFailedToShow(string error)
+{
+    Debug.LogError("Rewarded ad failed to open full screen content: " + error);
+}
+void AdClicked()
+{
+    Debug.Log("Rewarded ad was clicked");
+}
+void AdClosed()
+{
+    Debug.Log("Rewarded ad full screen content closed");
+}
+```
+
+<Info>
+When an error occurs during ad impression, executed the `OnRewardedAdFailedToShow` only.  In this case the `OnRewardedAdClosed` will not be executed, since the impression is not considered successful.
+</Info>
+
+Read more about event `OnRewardedAdImpression` with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.  
+## Load an Ad
+By default, the **auto-load ads mode is used** and a load method does not need to be called.  
+Call manual load ad before each show if you use `LoadingManagerMode.Manual` only.  
+
+Use `AdType.Rewarded` parameter for load ad:
+```csharp
+manager.LoadAd(AdType.Rewarded);
+```
+
+## Check the ad availability
+You can ask for the ad availability directly by calling the following function:
+```cs
+bool adLoaded = manager.IsReadyAd(AdType.Rewarded);
+```
+
+Avoid using `IsReadyAd` every frame in `Update` or `Coroutine`; instead, subscribe to the `OnRewardedAdLoaded` event. This method call the native SDK and can affect the performance of your game. 
+
+You don't have to check `IsReadyAd` before showing an ad; instead, subscribe to the `OnRewardedAdFailedToShow` event, which will be triggered if the ad isn't ready to show.
+
+## Show the Ad
+Before displaying a rewarded ad to users, you must present the user with an explicit choice to view rewarded ad content in exchange for a reward. Rewarded ads must always be an opt-in experience.  
+
+Subscribe to `OnRewardedAdCompleted` event to reward the user.
+
+Use `AdType.Rewarded` parameter to show ad:
+```cs
+manager.ShowAd(AdType.Rewarded);
+```
+
+## Muted Ads Sounds
+Sounds in Interstitial and Rewarded ads mute state. Disabled by default.  
+```cs
+CAS.MobileAds.settings.isMutedAdSounds = mute;
+```
+
+## Allow Interstitial ads
+Sometimes a situation occurs when filling Rewarded ads is not enough, in this case, you can allow the display of Interstitial ads to receiving a reward in any case.  
+This option will compare ad cost and serve regular interstitial ads when rewarded video ads are expected to generate less revenue.  
+Interstitial Ads does not require to watch the video to the end, but the `OnRewardedAdCompleted` event will be invoked in any case.  
+Enabled by default.
+
+Change the flag at any time using the following method:
+```c#
+CAS.MobileAds.settings.allowInterstitialAdsWhenVideoCostAreLower = allow;
+```
+
+<Success>  
+[HelloWorld example](https://github.com/cleveradssolutions/CAS-Unity-Sample/blob/master/Assets/SampleCSharp/CSharpSampleController.cs) — a minimal implementation of all ad formats 
+</Success>

@@ -1,0 +1,192 @@
+---
+title: User Consent Flow
+---
+
+In order for CAS and our ad providers to deliver ads that are more relevant to your users, as a mobile app publisher, you need to collect explicit user consent.
+
+<Info>
+If you implement a CMP that is compliant with IAB TCF v2 ([Transparency & Consent Framework](https://iabeurope.eu/tcf-2-0/)) for your user consent flow, the CAS SDK supports sending the TCF v2 consent to networks. In this case, the CAS Consent Flow will not be shown to the user.
+</Info>
+
+<Warning>  
+If you integrate your own CMP flow, make sure the flow completes before you initialize the CAS SDK.
+</Warning>
+
+### 1. Opt-in consent for the collection and use of personal data in the regions covered by GDPR, CCPA, LGPD, PIPEDA.
+Any businesses established are required to comply with GDPR in Europe, CCPA in California, LGPD in Brazil, PIPEDA in Canada or risk facing heavy fines.
+
+<Info>
+Keep in mind that it’s best to contact qualified legal professionals, if you haven’t done so already, to get more information and be well-prepared for compliance.  
+
+Read more about:
+- GDPR - [General Data Protection Regulation](https://gdpr-info.eu)
+- CCPA - [The California Consumer Privacy Act](https://theccpa.org)
+- LGPD - [General Personal Data Protection Act](https://lgpd-brazil.info)
+- PIPEDA - [The Personal Information Protection and Electronic Documents Act](https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/)
+</Info>
+
+To provide users of your app with a consent dialog, review the possible solutions and select one for your app.
+ - Standalone CAS [Automatic Consent Flow](#automatic-consent-flow). This means you don't need to add anything else.
+ - [Custom Consent Logic](#custom-consent-logic) if you are using your own or a third-party party consent mechanism. 
+
+### 2. Asking Apple's user permission to track them or access their device’s advertising identifier
+With iOS 14.5 and later, you need to receive the user’s permission through the `AppTrackingTransparency` framework in order to track them or access their device’s advertising identifier. Read more about Asking Permission to Track and AppTrackingTransparency Framework on [Apple developer page](https://developer.apple.com/app-store/user-privacy-and-data-use/)
+
+<Warning>  
+If an iOS App does not present this request, the IDFA will automatically be zeroed out, which may lead to a significant loss in ad revenue.
+</Warning>
+
+## Overview flow
+<Image height="400" alt="image" src="/assets/User-Consent-Flow-1.png" />
+
+#### Users will not see the Consent dialog if at least one of following is true
+- Users located in regions that are not covered by information protection
+- Users who are subject to COPPA restrictions.
+#### Users will not see the ATT request if at least one of the following is true
+- Users using iOS versions below 14.5
+- Users who have indicated that they do not allow apps to ask to track them, by setting *Settings > Privacy, Allow Apps to Request to Track*
+- Users with child accounts, or who are under age 18, who are signed in via their Apple ID
+- Users who have already answered so far
+- The app does not have a usage tracking description in **Info.plist** under `NSUserTrackingUsageDescription` key
+
+## Automatic consent flow
+To get consent for collecting personal data of your users, we suggest you use a built-in Consent Flow, comes with a pre-made consent form that you can easily present to your users. That means you no longer need to create your own consent window.  
+
+The user will see the consent flow when your app initialize ads. When the user completes the flow, the SDK fire `OnConsentFlowDismissed` event.
+```cpp
+UCASMobileAds::OnConsentFlowDismissed.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("User Consent Flow dismissed"));
+});
+```
+
+The initialization completion event will also be called only after the consent dialog is dismissed, so you can simple use one event.
+```cpp
+UCASMobileAds::OnAdsInitialized.AddLambda([=](const FCASInitialConfig& Config){
+    UE_LOG(LogTemp, Log, TEXT("User Consent Flow dismissed and Ads Initialized"));
+});
+```
+<Image width="271" alt="image" src="/assets/unreal/User-Consent-Flow-2.png" />
+
+CAS consent flow is enabled by default. You can disable the consent flow in `Edit > Project Settings > Plugins > CAS.AI Config - [Platform]` menu.
+
+<Error>  
+You must wait until the user finishes the consent flow before you initialize third-party SDKs (such as MMPs or analytics SDKs). For this reason, initialize such SDKs from within your initialization-completion callback. If you were to initialize these third-party SDKs before the user completes the consent flow, these third-party SDKs would not be able to access relevant identifiers and you would suffer a material impact on measurement, reporting, and ad revenue.
+</Error>
+
+## Manual consent flow
+Call `ShowAdConsentFlowIfRequired()`. If the consent is required, the SDK loads a form and immediately presents it . 
+The `OnConsentFlowResult` is called after the form is dismissed. If consent is not required, the `OnConsentFlowResult` is called immediately. The `FCASConsentFlowStatus` with which the form is dismissed will be passed to the event argument.
+```cpp
+void UHandlerClass::ShowConsentFlow() {
+    UCASMobileAds::OnConsentFlowResult.AddUObject(this, &UHandlerClass::HandleResult);
+    UCASMobileAds::ShowAdConsentFlowIfRequired();
+}
+
+void UHandlerClass::HandleResult(FCASConsentFlowStatus Status) {
+    if(Status == FCASConsentFlowStatus::Obtained) {
+        // User consent obtained.
+    }
+}
+```
+<Image width="204" alt="image" src="/assets/unreal/User-Consent-Flow-3.png" />
+
+- **OnCompleted**  
+The delegate will be invoked when the Consent Flow is dismissed with one of the statuses: `Obtained`, `NotRequired`, `Unavailable`.
+- **OnFailed**  
+The delegate event will be invoked when the Consent Flow is failed with error.
+
+| ECASConsentFlowStatus | Description                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| Undefined             | Not used                                                           |
+| Obtained              | User consent obtained. Personalized vs non-personalized undefined. |
+| NotRequired           | User consent not required.                                         |
+| Unavailable           | User consent unavailable.                                          |
+| InternalError         | There was an internal error.                                       |
+| NetworkError          | There was an error loading data from the network                   |
+| NotForegroundApp      | There was the app not foreground error.                            |
+| FlowStillPresenting   | There was an error with another form is still being displayed      |
+
+<Warning>  
+The cache consent status on your app or a previously saved consent string, could lead to a [TCF 3.3](https://support.google.com/admanager/answer/9999955) error if consent is expired.
+</Warning>
+
+## Privacy options button
+Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
+1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
+2. Once `ShowAdConsentFlowIfRequired()` completes, check `IsUserAdConsentRequired` to determine whether to display the UI element that can present the privacy options form.
+3. When a user interacts with your UI element, call `ShowAdConsentFlow()` to show the form so the user can update their privacy options at any time.
+
+```cpp
+void UConsentHandlerClass::InitPrivacyOptionsButton() {
+    if (UCASMobileAds::IsUserAdConsentRequired()) {
+        // Add button to UI
+    }
+}
+```
+<Image width="179" alt="image" src="/assets/unreal/User-Consent-Flow-4.png" />
+
+```cpp
+void UConsentHandlerClass::ShowPrivacyOptionsForm() {
+    UCASMobileAds::OnConsentFlowResult.AddUObject(this, &UHandlerClass::HandleResult);
+    UCASMobileAds::ShowAdConsentFlow();
+}
+```
+<Image width="202" alt="image" src="/assets/unreal/User-Consent-Flow-5.png" />
+
+## Debug geography
+The SDK provides a way to test your app's behavior as though the device was located in the EEA or UK using the `Edit > Project Settings > Plugins > CAS.AI Config - [Platform]` menu and `User Debug Geography` property.
+
+<Image width="401" alt="image" src="/assets/unreal/User-Consent-Flow-6.png" />
+
+<Info>
+Note that debug geography only work if in CAS Settings window:
+- Active test device defined.
+- Active Test Ads Mode
+</Info>
+
+## Meta Audience Network Data Processing Options for Users in California
+The CAS does not support your handling of CCPA opt-out values for Meta Audience Network, you must work directly with the network to  purposes of your obligations for CCPA compliance.  
+
+To learn how to implement Meta Audience Network’s “Limited Data Use” flag, read the [Additional Meta AudienceNetwork steps](Unreal/Additional-Meta-AudienceNetwork-steps).
+
+# Custom Consent Logic
+The following instructions apply if you are using your own or a third-party party consent mechanism. 
+
+<Error>  
+If you access Google demand through CAS, it’s critical that you review the [Google CMP requirements](https://support.google.com/adsense/answer/13554116) before you start the integration process.
+</Error>
+
+<Warning>  
+You must set the privacy options before creating the CAS Manager to disable the automatic CAS consent flow and advertising SDKs are initialized respecting the user's consent.
+</Warning>
+
+### Consent in GDPR and Other regions
+CAS shares these set consent values via adapters to supported mediation partners.  
+
+If the user consents to interest-based advertising, set the user consent `Accepted` flag:
+```cpp
+UCASMobileAds::SetUserConsentForAds(ECASUserConsentStatus::Accepted);
+```
+<Image width="220" alt="image" src="/assets/unreal/User-Consent-Flow-7.png" />
+
+If the user does NOT consent to interest-based advertising, set the user consent `Denied` flag:
+```cpp
+UCASMobileAds::SetUserConsentForAds(ECASUserConsentStatus::Denied);
+```
+
+Once you set the consent value, CAS will continue to respect that value for the lifetime of your application or until the user consents to interest-based advertising.
+
+### Multi-State Consumer privacy laws
+California and Virginia laws may require you to display a “Do Not Sell or Share My Personal Information” link or provide other options to users located in those states to opt out of interest-based advertising. You must set a flag that indicates whether users in those states opt out of interest-based advertising or the sale or share of personal information for interest-based advertising.
+
+If a user does NOT opt out of interest-based advertising, set the `OptInSale` flag: 
+```cpp
+UCASMobileAds::SetUserOptOutSaleForAds(ECASUserCCPAStatus::OptInSale);
+```
+<Image width="221" alt="image" src="/assets/unreal/User-Consent-Flow-8.png" />
+
+If a user does opt out of interest-based advertising, set the `OptOutSale` flag:
+```cpp
+UCASMobileAds::SetUserOptOutSaleForAds(ECASUserCCPAStatus::OptOutSale);
+```
+You do not need to set this flag for users who are outside California. If you do set this flag for such users, this will not impact how ads are served to them.

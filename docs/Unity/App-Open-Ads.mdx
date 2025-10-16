@@ -1,0 +1,147 @@
+---
+title: App Open Ads
+---
+
+App open ads are a special ad format intended for publishers wishing to monetize their app load screens. App open ads can be closed at any time, and are designed to be shown when your users bring your app to the foreground.  App open ads automatically show a small branding area so users know they're in your app.  
+
+This guide explains how to integrate app open ads into a Unity app.
+
+Pros compared to Interstitial ads:
+- Much faster ad loading.
+- End user-friendly interface.  
+
+Cons:
+- Only Google Ads (AdMob) is supported.
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```csharp
+manager.OnAppOpenAdLoaded += AdLoaded;
+manager.OnAppOpenAdFailedToLoad += AdFailedToLoad;
+manager.OnAppOpenAdShown += AdShown;
+manager.OnAppOpenAdFailedToShow += AdFailedToShow;
+manager.OnAppOpenAdClicked += AdClicked;
+manager.OnAppOpenAdClosed += AdClosed;
+
+void AdLoaded()
+{
+    Debug.Log("AppOpen ad loaded");
+}
+void AdFailedToLoad(AdError error)
+{
+    Debug.Log("AppOpen failed to load an ad with error: " + error.GetMessage());
+}
+void AdShown()
+{
+    Debug.Log("AppOpen ad full screen content opened");
+}
+void AdFailedToShow(string error)
+{
+    Debug.LogError("AppOpen ad failed to open full screen content: " + error);
+}
+void AdClicked()
+{
+    Debug.Log("AppOpen ad was clicked");
+}
+void AdClosed()
+{
+    Debug.Log("AppOpen ad full screen content closed");
+}
+```
+
+<Info>
+- When an error occurs during ad impression, executed the `OnAppOpenAdFailedToShow` only.  In this case the `OnAppOpenAdClosed` will not be executed, since the impression is not considered successful.
+- If a user returns to your app after having left it by clicking on an app open ad (`OnAppOpenAdClicked`), it makes sure they're not presented with another app open ad.
+</Info>
+
+Read more about event `OnAppOpenAdImpression` with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.  
+## Load an ad
+Use `AdType.AppOpen` parameter for load ad:
+```c#
+void LoadAd()
+{
+    manager.LoadAd(AdType.AppOpen);
+}
+```
+The AppOpen Ad format does not support auto-load ads mode.
+
+<Info>
+Attempting to load a new ad from the `OnAppOpenAdFailedToLoad` event is strongly discouraged. If you must load an ad from `OnAppOpenAdFailedToLoad` event, limit ad load retries to avoid continuous failed ad requests in situations such as limited network connectivity.
+</Info>
+
+## Check the ad availability
+You can ask for the ad availability directly by calling the following function:
+```c#
+bool adLoaded = manager.IsReadyAd(AdType.AppOpen);
+```
+
+Avoid using `IsReadyAd` every frame in `Update` or `Coroutine`; instead, subscribe to the `OnAppOpenAdLoaded` event. This method call the native SDK and can affect the performance of your game. 
+
+You don't have to check `IsReadyAd` before showing an ad; instead, subscribe to the `OnAppOpenAdFailedToShow` event, which will be triggered if the ad isn't ready to show.
+
+## Listen to app state events
+To display ads to the user when they open the application, it's important for you to use `OnApplicationBackground` and `OnApplicationForeground` events that will be triggered every time the application switches between foreground or background mode.
+```csharp
+void Awake()
+{
+    // This is used to launch the loaded ad when user open the app
+    CAS.MobileAds.OnApplicationForeground += ApplicationForeground;
+}
+
+void OnDestroy()
+{
+    // Always unlisten to events when complete.
+    CAS.MobileAds.OnApplicationForeground -= ApplicationForeground;
+}
+
+void ApplicationForeground()
+{
+    // Show the Ad
+}
+```
+
+<Info>
+Note that the Android runtime triggers app state events not from the main Unity thread. However, you can call CAS plugin methods without leaving the current thread
+</Info>
+
+## Show the ad
+Use `AdType.AppOpen` parameter to show loaded ad:
+```c#
+manager.ShowAd(AdType.AppOpen);
+```
+
+Once you’ve successfully call `ShowAd()`, you will have shown your user an App Open Ad.  
+In the case you want to serve another App Open Ad, you must repeat `LoadAd()` to request an additional ad.
+
+To prepare an app open ad for the next impression opportunity, preload the app open ad once the `OnAppOpenAdClosed` or `OnAppOpenAdFailedToShow` ad event is raised.
+```c#
+void AdClosed()
+{
+    Debug.Log("AppOpen ad full screen content closed");
+    LoadAd();
+}
+
+void AdFailedToShow(string error)
+{
+    Debug.LogError("AppOpen ad failed to open full screen content: " + error);
+    LoadAd();
+}
+```
+
+## Cold starts and loading screens
+The documentation thus far assumes that you only show app open ads when users foreground your app when it is suspended in memory. "Cold starts" occur when your app is launched but was not previously suspended in memory.  
+
+An example of a cold start is when a user opens your app for the first time. With cold starts, you won't have a previously loaded app open ad that's ready to be shown right away. The delay between when you request an ad and receive an ad back can create a situation where users are able to briefly use your app before being surprised by an out of context ad. This should be avoided because it is a bad user experience.  
+
+The preferred way to use app open ads on cold starts is to use a loading screen to load your game or app assets, and to only show the ad from the loading screen. If your app has completed loading and has sent the user to the main content of your app, do not show the ad.  
+
+<Info>
+In order to continue loading app assets while the app open ad is being displayed, always load assets in a background thread.
+</Info>
+
+## Best practices
+App open ads help you monetize your app's loading screen, when the app first launches and during app switches, but it's important to keep best practices in mind so that your users enjoy using your app. It's best to:
+- Show your first app open ad after your users have used your app a few times.
+- Show app open ads during times when your users would otherwise be waiting for your app to load.
+- If you have a loading screen under the app open ad, and your loading screen completes loading before the ad is dismissed, you may want to dismiss your loading screen from the `OnAppOpenAdClosed` and  `AdFailedToShow` events.

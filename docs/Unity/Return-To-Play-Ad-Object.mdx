@@ -1,0 +1,70 @@
+---
+title: Return To Play Ad Object
+---
+
+
+This guide explains how to integrate interstitial ads into a Unity app.    
+
+<Warning>  
+- The Ad on Return to App is a regular Interstitial Ad. 
+- Automatic display is only possible when using autoload Interstitial Ad. 
+- The Ad will be displayed only if the Interstitial Ad is currently loaded. After displaying the Interstitial Ad, it will be necessary to load a new advertisement.
+- The Ad will not be shown if the interval since the last closure of the Interstitial Ad has not elapsed.
+- Do not activate this ad format if your application displays an AppOpen Ad when returning to the app.
+</Warning>
+
+## Add a ReturnToPlayAdObject to the scene
+1. Add a GameObject to your scene using `GameObject > Create Empty` in the Unity Editor.
+2. Add Component `CleverAdsSolutions/Return To Play Ad Object` in the inspector to new GameObject.
+3. Select [Manager ID](Unity/Configuring-SDK#manager-ids) from the settings asset for each runtime platform.
+4. Check flag `allowReturnToPlayAd`
+
+<Image width="327" alt="image" src="/assets/unity/Return-To-Play-Ad-Object-1.png" />
+
+<Info>
+An ReturnToPlayAdObject does not have any rendered components. Therefore, you can place the GameObject anywhere in the scene.
+</Info>
+
+## Load Ad callbacks
+- **On Ad Loaded**  
+The event is invoked when the ad has finished loading.
+- **On Ad Failed To Load**  
+The event is invoked when the ad fails to load. The Message parameter describes the type of failure that occurred.
+
+## Content callbacks
+- **On Ad Failed To Show**  
+The event is invoked when the ad failed to show. The Message parameter describes the type of failure that occurred.
+- **On Ad Shown**  
+The event is invoked when the ad is shown.
+- **On Ad Clicked**  
+The event is invoked when the user clicks on the ad.
+- **On Ad Impression**  
+The event is invoked when the ad count impression with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.
+- **On Ad Closed**  
+The event is invoked when the ad is closed.
+
+## Unity Events sample
+You can implement functions that correspond to ad callbacks. For example, if you want to handle when the ad fails to shown:
+1. Create a function compatible with the ad callback in custom component.
+```c#
+public void OnReturnToPlayAdFailedToShow(string reason) {
+    Debug.Log("ReturnToPlay ad failed to show: " + reason);
+}
+```
+2. Attach the script which contains the above function to any GameObject in the scene.
+3. Click the **+** button, then drag & drop the GameObject that you've attached the script to.
+4. Select the function that you want to link to the ad callback. For the parameterized ad callbacks, select the function to accept the dynamic variable so you can get the parameter value from the SDK.
+
+## Use ReturnToPlayAdObject from script
+Get the ReturnToPlay ad instance from the script:
+```c#
+ReturnToPlayAdObject adObject = adObject.GetComponent<ReturnToPlayAdObject>();
+```
+Enable ReturnToPlay ad:
+```c#
+adObject.allowReturnToPlayAd = true;
+```
+Disable ReturnToPlay ad:
+```c#
+adObject.allowReturnToPlayAd = false;
+```

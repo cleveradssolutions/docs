@@ -1,0 +1,120 @@
+---
+title: Medium Rectangle Banner Ads
+description: This guide shows you how to integrate medium rectangle banner ads from CAS into an Unreal Engine project.
+---
+
+Medium Rectangle (MREC) are rectangular image or text ads that occupy a spot with size in dp (300x250) on screen. 
+They stay on screen while users are interacting with the app, and can refresh automatically after a certain period of time. 
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
+
+
+## Load an Ad
+Call manual load ad before each show if `Autoload MRec Ads` not checked.  
+In Blueprints you can use Load node just for register Loaded/Failed events.
+```cpp
+UCASMobileAds::LoadMRecAd();
+```
+<Image width="236" alt="image" src="/assets/unreal/MREC-Ads-1.png" />
+
+<Info>
+The `Event Once` checkbox will fire the Loaded/Failed event only once. if `Autoload Ads` used, events can be triggered many times while the game world exists.
+</Info>
+
+### Autoload mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+```cpp
+UCASMobileAds::SetAutoloadMRecAd(true);
+```
+
+<Image width="211" alt="Image" src="/assets/unreal/MREC-Ads-2.png" />
+
+You should call `LoadMRecAd()` once to create Ad Instance.
+
+By default, autoloading is defined in the `Project Settings -> Plugins -> CAS.AI Config -> Autoload MRec Ads`.
+
+## Display the Ad
+When you are ready to show the ad on the screen, just call the following method:
+```cpp
+UCASMobileAds::ShowMRecAd();
+```
+When you need to hide the ad from the user, just call the following method:
+```cpp
+UCASMobileAds::HideMRecAd();
+```
+<Image width="287" alt="image" src="/assets/unreal/MREC-Ads-3.png" />
+
+<Info>
+You can change the MRec's activity even if it is not ready to be shown yet. When the ad is ready, MRec will shown automatically.
+</Info>
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```cpp
+// Called when the ad loaded and ready to present.
+UCASMobileAds::OnMRecAdLoaded.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("MRec loaded"));
+});
+// Сalled when an error occurred with the ad.
+UCASMobileAds::OnMRecAdFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("MRec failed to load: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the user clicks on the Ad.
+UCASMobileAds::OnMRecAdClicked.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("MRec clicked"));
+});
+```
+<Info>
+Ad events in Blueprints are registered in the Load nodes. Each new Load Ad node cancels previous node events.
+</Info>
+
+## Ad position
+The position where the MRec ad should be placed. The `ECASPosition` enum lists the valid ad position values.  
+By default, the MRec ad is centered at the bottom.  
+Changing the position of a MRec ad **does not destroy** the current MRec or load a new one.  
+
+Change the MRec position on screen using the following method:
+```cpp
+UCASMobileAds::SetMRecAdPosition(ECASPosition::TopCenter);
+```
+<Image width="257" alt="image" src="/assets/unreal/MREC-Ads-4.png" />
+
+## Ad Refresh rate
+An ad unit’s automatic refresh rate (in seconds) determines how often a new ad request is generated for that ad unit.  
+We recommended using refresh rate 30 seconds. However, you can choose any value you want. Or set 0 to disable automatic refresh ads.
+
+Change the MRec automatic refresh rate using the following method:
+```cpp
+UCASMobileAds::SetMRecAdRefreshInterval(RefreshIntervalInSeconds);
+```
+<Image width="210" alt="image" src="/assets/unreal/MREC-Ads-5.png" />
+
+<Info>
+- Ad requests should not be made when the device screen is turned off.  
+- The `setAutoloadMRecAd()` has no effect on refreshing the banner ad.
+</Info>
+
+## Release ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
+
+```cpp
+UCASMobileAds::DestroyMRecAd();
+```
+<Image width="147" alt="image" src="/assets/unreal/MREC-Ads-6.png" />
+
+Call `LoadMRecAd` to load new ad and restore autoload mode if used.
+
+## Ad Availability
+You can ask for the ad availability directly by calling the following function:
+```cpp
+bool MRecLoaded = UCASMobileAds::IsMRecAdReady();
+```
+<Image width="149" alt="image" src="/assets/unreal/MREC-Ads-7.png" />
+
+<Error>  
+We don’t recommend waiting for `IsMRecAdReady` to change each frame. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnMRecAdLoaded` event instead.
+</Error>

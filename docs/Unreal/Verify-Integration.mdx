@@ -1,0 +1,35 @@
+---
+title: Verify Integration
+---
+
+The CAS SDK provides an easy way to verify that you’ve successfully integrated any additional adapters; it also makes sure all required dependencies and frameworks were added for the various mediated ad networks.   
+After you have finished your integration, call the following static method and confirm that all networks you have implemented are marked as VERIFIED:  
+```cpp
+UCASMobileAds::ValidateAdsIntegration();
+```
+
+<Image width="185" alt="image" src="/assets/unreal/Verify-Integration-1.png" />
+
+Find log information by tag: **CASIntegrationHelper**
+
+Once you’ve successfully verified your integration, please remember to **remove the integration helper from your code**.
+
+The Integration Helper tool reviews everything, including ad networks you may have intentionally chosen NOT to include in your application. These will appear as MISSING and there is no reason for concern. In the case the ad network’s integration has not been completed successfully, it will be marked as NOT VERIFIED.
+
+## Verbose Debug logging
+The enabled Debug Mode will display a lot of useful information for debugging about the states of the SDK with tag `CAS.AI`.  
+Disabled by default. Disabling Debug Mode may improve application performance.  
+You can enable logging change the flag at any time using the following method:
+```cpp
+UCASMobileAds::SetVerboseAdsLogs(Enabled);
+```
+
+<Image width="174" alt="image" src="/assets/unreal/Verify-Integration-2.png" />
+
+<Info>
+If you have discovered the problem in the work of the SDK, please provide us with a description of the problem along with the full log of your device.
+</Info>
+
+## Don’t forget to implement app-ads.txt
+For both iOS and Android integrations, we encourage our partners to adopt this file and help us combat ad fraud.  
+Read detailed instructions on [how to create and upload your app-ads.txt file](https://github.com/cleveradssolutions/App-ads.txt#cleveradssolutions-app-adstxt).

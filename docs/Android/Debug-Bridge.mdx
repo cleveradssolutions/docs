@@ -1,0 +1,79 @@
+---
+title: Debug bridge
+---
+
+<Warning>
+This document is intended only for internal debugging of applications in release.
+</Warning>
+
+Android Debug Bridge (`adb`) is a versatile command-line tool that lets you communicate with a device.  
+`adb` is included in the Android SDK Platform Tools package. Download this package with the [SDK Manager](https://developer.android.com/studio/intro/update#sdk-manager), which installs it at `android_sdk/platform-tools/`. If you want the standalone Android SDK Platform Tools package, [download it here](https://developer.android.com/studio/releases/platform-tools).
+
+## Query for devices
+[Enable adb debugging on your device](https://developer.android.com/tools/adb#Enabling) and connect the device over USB.
+
+Before issuing `adb` commands, it is helpful to know what device instances are connected to the `adb` server. Generate a list of attached devices using the `devices` command:
+```
+adb devices
+```
+
+## Enable CAS Debugging
+To enable debug mode for all applications using the CAS.AI SDK on a connected device, use the following command. This mode is required for other debug bridge commands and activates all SDK logs. 
+
+```bash
+adb shell setprop debug.clever.ads.solutions.enabled 1
+```
+
+To disable debug mode, use the following command:
+```bash
+adb shell setprop debug.clever.ads.solutions.enabled .
+```
+
+<Info>
+The debugging features will remain active until you disable them manually or restart the device.
+</Info>
+
+## Filter Active Ad Sources
+You can manage the active ad sources using the whitelist and blacklist properties. Enter one or more adapter names separated by commas without spaces.
+
+To specify a whitelist of source adapters for processing:
+```bash
+adb shell setprop debug.clever.ads.solutions.whitelist AdMob,Kidoz
+```
+
+To specify a blacklist of source adapters to filter out from processing:
+```bash
+adb shell setprop debug.clever.ads.solutions.filter AdMob,Kidoz
+```
+
+<Info>
+Make sure you clear the filters after testing to activate the full list of sources for proper operation of the SDK.
+</Info>
+
+To clear the whitelist and blacklist, use the following commands:
+```bash
+adb shell setprop debug.clever.ads.solutions.whitelist .
+adb shell setprop debug.clever.ads.solutions.filter .
+```
+
+
+## Switch to Test Ads mode
+Switch all ad impressions to CAS Test Ads.
+```
+adb shell setprop debug.clever.ads.solutions.testmode 1
+```
+
+<Info>Introduced with CAS 4.1.2.</Info>
+
+## Open Test Suite
+To open a selected test suite upon application launch, use the command below. Supported values include 'cas', 'max', and 'is'.
+
+Open Test Suite command:
+```bash
+adb shell setprop debug.clever.ads.solutions.testsuit cas
+```
+
+To clear the selected test suite, use:
+```bash
+adb shell setprop debug.clever.ads.solutions.testsuit .
+```

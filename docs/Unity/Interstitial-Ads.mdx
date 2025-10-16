@@ -1,0 +1,116 @@
+---
+title: Interstitial Ads
+---
+
+
+Interstitial ads are full-screen ads that cover the interface of their host app. They're typically displayed at natural transition points in the flow of an app, such as during the pause between levels in a game. When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.  
+
+This guide explains how to integrate interstitial ads into a Unity app.  
+
+Enable Interstitial Ads for your game in `Assets > CleverAdsSolutions > Settings` menu:  
+<Image width="257" alt="image" src="/assets/unity/Interstitial-Ads-1.png" />
+
+> ❕For easier ads integration using the Unity Editor, try the new [InterstitialAdObject](Unity/Interstitial-Ad-object).
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```csharp
+manager.OnInterstitialAdLoaded += AdLoaded;
+manager.OnInterstitialAdFailedToLoad += AdFailedToLoad;
+manager.OnInterstitialAdShown += AdShown;
+manager.OnInterstitialAdFailedToShow += AdFailedToShow;
+manager.OnInterstitialAdClicked += AdClicked;
+manager.OnInterstitialAdClosed += AdClosed;
+
+void AdLoaded()
+{
+    Debug.Log("Interstitial ad loaded");
+}
+void AdFailedToLoad(AdError error)
+{
+    Debug.Log("Interstitial failed to load an ad with error: " + error.GetMessage());
+}
+void AdShown()
+{
+    Debug.Log("Interstitial ad full screen content opened");
+}
+void AdFailedToShow(string error)
+{
+    Debug.LogError("Interstitial ad failed to open full screen content: " + error);
+}
+void AdClicked()
+{
+    Debug.Log("Interstitial ad was clicked");
+}
+void AdClosed()
+{
+    Debug.Log("Interstitial ad full screen content closed");
+}
+```
+
+<Info>
+When an error occurs during ad impression, executed the `OnInterstitialAdFailedToShow` only.  In this case the `OnInterstitialAdClosed` will not be executed, since the impression is not considered successful.
+</Info>
+
+Read more about event `OnInterstitialAdImpression` with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.  
+## Load an Ad
+By default, the **auto-load ads mode is used** and a load method does not need to be called.  
+Call manual load ad before each show if you use `LoadingManagerMode.Manual` only.  
+
+Use `AdType.Interstitial` parameter for load ad:
+```c#
+manager.LoadAd(AdType.Interstitial);
+```
+
+## Check the ad availability
+You can ask for the ad availability directly by calling the following function:
+```c#
+bool adLoaded = manager.IsReadyAd(AdType.Interstitial);
+```
+Avoid using `IsReadyAd` every frame in `Update` or `Coroutine`; instead, subscribe to the `OnInterstitialAdLoaded` event. This method call the native SDK and can affect the performance of your game. 
+
+You don't have to check `IsReadyAd` before showing an ad; instead, subscribe to the `OnInterstitialAdFailedToShow` event, which will be triggered if the ad isn't ready to show.
+
+## Show the Ad
+Use `AdType.Interstitial` parameter to show ad:
+```c#
+manager.ShowAd(AdType.Interstitial);
+```
+
+## Minimum interval between impressions
+You can limit the posting of an interstitial ad to a period of time in seconds after the ad is closed, during which display attempts will fail.
+That the interval starts only after the Interstitial Ad **closes** `OnInterstitialAdClosed`.  
+During interval after ad closed, display attempts will fire event `OnInterstitialAdFailedToShow` with `AdError.IntervalNotYetPassed`.  
+
+Change the interstitial ad impression interval using the following method:
+```cs
+CAS.MobileAds.settings.interstitialInterval = interval;
+```
+
+If you need to wait for a period of time after the start of the game or after showing a Rewarded Ad until next Interstitial Ad impression then please call the following method:
+```cs
+CAS.MobileAds.settings.RestartInterstitialInterval();
+```
+
+<Info>
+We recommend define the interstitial ad impression interval once before mediation manager is initialized to be able to override the value remotely via the web interface.
+</Info>
+
+## Muted Ads Sounds
+Sounds in Interstitial and Rewarded ads mute state. Disabled by default.  
+```cs
+CAS.MobileAds.settings.isMutedAdSounds = mute;
+```
+
+## Some best practices
+- **Consider whether interstitial ads are the right type of ad for your app.**  
+Interstitial ads work best in apps with natural transition points. The conclusion of a task within an app, such as sharing an image or completing a game level, creates such a point. Because the user is expecting a break in the action, it's easy to present an interstitial ad without disrupting their experience. Make sure you consider at which points in your app's workflow you'll display interstitial ads and how the user is likely to respond.  
+- **Remember to pause the action when displaying an interstitial ad.**  
+There are a number of different types of interstitial ads: text, image, video, and more. It's important to make sure that when your app displays an interstitial ad, it also suspends its use of some resources to allow the ad to take advantage of them. For example, when you make the call to display an interstitial ad, be sure to pause any audio output being produced by your app. You can resume playing sounds in the `OnInterstitialAdClosed` event handler, which will be invoked when the user has finished interacting with the ad. In addition, consider temporarily halting any intense computation tasks (such as a game loop) while the ad is being displayed. This will make sure the user doesn't experience slow or unresponsive graphics or stuttered video.
+- **Don't flood the user with ads.**  
+While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.
+
+<Success>  
+[HelloWorld example](https://github.com/cleveradssolutions/CAS-Unity-Sample/blob/master/Assets/SampleCSharp/CSharpSampleController.cs) — a minimal implementation of all ad formats 
+</Success>

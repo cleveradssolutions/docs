@@ -1,0 +1,75 @@
+---
+title: Include Android
+---
+
+
+| Prerequisites         |        |
+| --------------------- | ------ |
+| Minimum SDK version   | 23     |
+| Compile SDK version   | 35     |
+
+## Disable Unreal Engine's built-in AdMob support
+The CAS plugin automatically performs all configurations for AdMob in mediation integration.  
+
+Navigate to the `Editor > Project Settings > Platform > Android > Google Play Services` section and disable the option:
+ - [ ] Include AdMob support for ads
+
+Additionally, use the advertising management functions from CAS Mobile Ads, not the built-in functions for AdMob. 
+
+<Warning>  
+Be cautious, as some Blueprint Nodes have identical names: `Show Interstitial Ad`, `Show Ad Banner`.  
+You should exclusively use nodes from the CAS Mobile Ads category.
+</Warning>
+
+## Upgrade the Gradle wrapper
+To select the Gradle version, navigate to the directory for your version of the Unreal Engine and follow the file path.
+```
+Engine/Build/Android/Java/gradle/gradle/wrapper/gradle-wrapper.properties
+```
+Change the `distributionUrl` property to the desired version.
+```
+distributionUrl=https\://services.gradle.org/distributions/gradle-6.7.1-all.zip
+```
+
+<Info>
+If your UE is already using a newer version of Gradle than 6.7.1, you don't need to do anything further. The Android Gradle plugin version will also be at least 4.2.2.
+</Info>
+
+## Upgrade the Android Gradle plugin
+To select the Android Gradle plugin version, navigate to the directory for your version of the Unreal Engine and follow the file path.
+```
+Engine/Build/Android/Java/gradle/build.gradle
+```
+Change the line with `com.android.tools.build:gradle` to the desired version.
+```gradle
+buildscript {
+    repositories { ... }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.2'
+    }
+    ...
+}
+```
+
+## Unreal Engine 4 compatibility for API 34
+The AppCache API is no longer supported, so its use must be removed from the engine java script.  
+
+Navigate to the directory for your version of the Unreal Engine and follow the file path.
+```
+Engine/Build/Android/Java/src/com/epicgames/ue4/WebViewControl.java
+```
+Remove (comment) the following lines of code:
+```java
+viewer.getSettings().setAppCacheMaxSize(1024*1024*8);
+viewer.getSettings().setAppCachePath("/data/data/com.your.package.appname/cache"‌​);
+viewer.getSettings().setAppCacheEnabled(true);
+```
+
+## Unreal Engine 4 compatibility for API 32
+Applications which has an activity, activity alias, service or broadcast receiver with intent filter, must explicitly declare the `android:exported` attribute.  
+
+Navigate to the `Editor > Project Settings > Platform > Android > Advanced APK Packaging` section and add `Extra Tags for UE4 GameActivity <activity> node`:
+```
+android:exported="true"
+```
+

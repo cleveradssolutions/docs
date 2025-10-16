@@ -1,0 +1,56 @@
+---
+title: Initialize CAS SDK
+---
+
+To display ads, you must initialize the Mobile Ads once, ideally at app launch.  
+
+```cpp
+#include "CASMobileAds.h"
+
+UCASMobileAds::OnAdsInitialized.AddLambda([this](const FCASInitialConfig &Config) {
+    if (Config.Error.IsEmpty()) {
+        // Ads initialization completed
+    } else {
+        // Ads initialization failed with Config.Error
+    }
+    // The CAS SDK initializes if the error IsEmpty()
+    FString InitErrorOrEmpty = Config.getError;
+    FString UserCountryISO2OrEmpty = Config.CountryCode;
+    
+    // The user completes the consent flow
+    ECASConsentFlowStatus ConsentFlowStatus = Config.ConsentFlowStatus; 
+});
+
+UCASMobileAds::InitializeMobileAds();
+```
+<Image width="271" alt="image" src="/assets/unreal/Initialize-CAS-1.png" />
+
+The `OnAdsInitialized` event may be called with an error. In this case, the SDK will attempt to reinitialize and the listener will be called again until the error is resolved.
+
+## Check initialized ads
+You can also check whenever CAS was initialized. Use `IsInitializedAds` if you are unsure before using ad interfaces or want to do additional checks.
+```cpp
+UCASMobileAds::IsInitializedAds();
+```
+
+<Image width="144" alt="image" src="/assets/unreal/Initialize-CAS-2.png" />
+
+## Retrieve the Version Number
+To programmatically retrieve the SDK version number at runtime, the plugin provides the following method:
+```cpp
+UCASMobileAds::GetMobileAdsVersion();
+```
+
+<Image width="178" alt="image" src="/assets/unreal/Initialize-CAS-3.png" />
+
+## (Optional) Trial ad-free interval
+Set the time interval during which users can enjoy an ad-free experience while retaining access
+to Rewarded Ads and App Open Ads formats. This interval is defined from the moment of the initial
+app installation, in seconds. Within this interval, users enjoy privileged access to the
+application's features without intrusive advertisements.
+
+```cpp
+int SecondsIn7Days = 604800;
+UCASMobileAds::SetTrialAdFreeInterval(secondsIn7Days);
+```
+<Image width="185" alt="image" src="/assets/unreal/Initialize-CAS-4.png" />

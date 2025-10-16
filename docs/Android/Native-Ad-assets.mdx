@@ -1,0 +1,108 @@
+---
+title: Native Ad assets
+---
+
+
+| Name             | Type                          | Required    | Included                   | Description                                                                                                                                 |
+| ---------------- | ----------------------------- | ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| adChoicesView    | CASChoicesView                | Yes         | Always                     | Read below about [AdChoices overlay](#adchoices-overlay).                                                                                   |
+| mediaView        | CASMediaView                  | Yes         | Always                     | Read below about [Media Content](#media-content).                                                                                           |
+| headlineView     | TextView                      | Yes         | Always                     | The headline text of the native ad.                                                                                                         |
+| adLabelView      | TextView                      | If provided | Not always                 | Read below about [Ad attribution](#ad-attribution).                                                                                         |
+| callToActionView | Button                        | If provided | Not always                 | Button that encourages users to take action (for example, "Visit site" or "Install"). This text may truncate after 15 characters.           |
+| iconView         | TextView                      | If provided | Always for app install ads | The small app icon or advertiser logo with square aspect ratio (1:1).                                                                       |
+| bodyView         | TextView                      | No          | Always                     | The body text of the native ad. This text may truncate after 90 characters.                                                                 |
+| advertiserView   | TextView                      | No          | Always for content ads     | Text that identifies the advertiser (for example, advertiser name, brand name, or visible URL). This text may truncate after 25 characters. |
+| storeView        | TextView                      | No          | Not always                 | The name of the store where the product or service is available.                                                                            |
+| priceView        | TextView                      | No          | Not always                 | The price of the product or service advertised.                                                                                             |
+| reviewCountView  | TextView                      | No          | Not always                 | The number of reviews the app has received.                                                                                                 |
+| starRatingView   | CASStarRatingView or any View | No          | Not always                 | Read below about [Star Rating](#star-rating-view).                                                                                          |
+
+## Advertising requirements
+- Native ads smaller than 32x32dp won't serve. Ads this small can be difficult to see or interact with and may adversely affect the display quality of advertiser assets.
+- For native video ads, the main asset `mediaView` must be at least 120x120dp. Video ads won't serve to implementations with main asset `CASMediaViews`smaller than 120dp in any dimension.
+- The Ad View must be visible and non-transparent.
+- At a single point in time, a loaded ad can only be served in one View. Simultaneous display of a single ad in multiple Views may result in the loss of impression.
+- The app must be active (not running in the background).
+- Don't edit the text content of assets.
+- Don't edit the content of images.
+
+### Media Content
+You're required to use the `CASMediaView` asset instead of the `ImageView` asset if you want to include a main image asset in the layout for your native ad.  
+The `CASMediaView` is a special `View` designed to display the main media asset, either video or image. Can be defined in an XML layout or constructed dynamically. It should be placed within the view hierarchy of a `CASNativeView`, just like any other asset view.  The media view will be populated automatically when calling `setNativeAd()`.
+- Check if the video asset is available using `nativeAd.hasVideoContent`.
+- Check if the image asset is available using `nativeAd.hasImageContent`.
+- Obtain the recommended aspect ratio of the media content using `nativeAd.getMediaContentAspectRatio`.
+
+### Ad attribution
+You must clearly display the text "Ad", "Advertisement", or "Sponsored" (localized appropriately). The badge is required to be a minimum of 15px height and width. Ad attribution must be displayed at the top of the ad.
+
+### AdChoices overlay
+Ad AdChoices overlay logo must be displayed at the top of the ad 
+Each ad view must display an AdChoices overlay logo. Also, it's important that the AdChoices overlay be easily seen, so choose background colors and images appropriately.
+
+#### Use AdChoices placements
+An AdChoices overlay can be added by the SDK if `CASNativeView.adChoicesView` not registered. Leave space in your preferred corner of your native ad view for the automatically inserted AdChoices logo.  
+Use `AdChoicesPlacement` constants to set preferred corner. 
+```java
+adLoader.setAdChoicesPlacement(AdChoicesPlacement.TOP_RIGHT);
+```
+By default the AdChoices icon position is set to the top right.
+
+#### Use custom AdChoices view
+The AdChoices custom view feature lets you position the AdChoices icon in a custom location. This is different from AdChoices position controls, which only allows specification of one of the four corners.  
+The following example demonstrates how to set a custom AdChoices view, with the AdChoices icon rendered inside the `CASChoicesView`.
+```java
+adView.setAdChoicesView((CASChoicesView) adView.findViewById(R.id.ad_choices_view));
+```
+
+<Info>
+Google Ads does not support `adView.setAdChoicesView`. Instead, specify the desired `AdChoicesPlacement` for the logo. Other ad sources will display their logo in your custom view.
+</Info>
+
+### Star Rating view
+The rating from 0.0-5.0 that represents the average rating of the app in a store.
+#### Use template view with auto populate rating value
+Add `CASStarRatingView` to view hierarchy and CAS SDK populate rating value for you.
+```java
+CASStarRatingView starRatingView = (CASStarRatingView) adView.findViewById(R.id.ad_star_rating);
+// Optionaly change space and color
+starRatingView.setSpace(spaceInPixels);
+starRatingView.setColor(Color.parseColor("#4285F4"));
+
+adView.setStarRatingView(starRatingView);
+```
+
+#### Use custom view with auto populate rating value 
+Implement `NativeAdStarRating` interface in your custom view.
+```java
+class CustomRatingView extends View implements NativeAdStarRating {
+    @Nullable  
+    @Override  
+    public Double getRating() {  
+        return 5.0;  
+    }  
+      
+    @Override  
+    public void setRating(@Nullable Double aDouble) {  
+        // Update star rating view
+    }
+}
+
+adView.setStarRatingView((CustomRatingView) adView.findViewById(R.id.ad_star_rating));
+```
+
+#### Use custom view with manual populate rating value
+You need populate `nativeAd.starRating` value to custom view, for example `RatingBar` view:
+```java
+RatingBar customRatingView = (RatingBar) adView.findViewById(R.id.ad_star_rating);
+customRatingView.setNumStars(5);
+customRatingView.setStepSize(0.5f);
+
+Double rating = nativeAd.getStarRating();
+if (rating != null) {
+    customRatingView.setRating(rating);
+}
+
+adView.setStarRatingView(customRatingView);
+```

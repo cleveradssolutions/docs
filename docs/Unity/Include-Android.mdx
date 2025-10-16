@@ -1,0 +1,60 @@
+---
+title: Include Android
+---
+
+The Clever Ads Solutions Unity plugin is distributed with the [EDM4U](https://github.com/googlesamples/unity-jar-resolver) library. This library is intended for use by any Unity plugin that requires access to Android specific libraries (e.g., AARs) or iOS CocoaPods. It provides Unity plugins the ability to declare dependencies, which are then automatically resolved and copied into your Unity project.  
+
+## Configure Gradle
+Using [EDM4U](https://github.com/googlesamples/unity-jar-resolver), you will be able to avoid downloading the Android artifacts into your project. Instead, the artifacts will be added to your gradle file during the compilation. 
+To enable this process, follow these steps:  
+- Go to: `Player Settings > Publishing Settings > Build`
+- [x] `Custom Main Gradle Template` to configure third party dependencies.
+- [x] `Custom Base Gradle Template` to update Gradle plugin with fix support Android 11.  
+  You can read more about fix Gradle plugin with support Android 11 on the [Android Deleveloper page](https://android-developers.googleblog.com/2020/07/preparing-your-build-for-package-visibility-in-android-11.html).  
+- [x] `Custom Gradle Properties Template` to use Jetfier by EDM4U.
+- [x] `Custom Main Manifest` to modify application manifest.
+- [x] `Custom Gradle Settings Template` to include maven repositories  
+  Support Android Gradle Plugin version 7.1.0+
+
+![image](https://user-images.githubusercontent.com/22005013/118801877-2afb5e80-b8aa-11eb-8cbf-1a59499c5d5d.png)
+
+## Configure EDM4U
+- Go to: `Assets > External Dependency Manager > Android > Settings`  
+- [x] `Patch mainTemplate.gradle`  
+  The mainTemplate.gradle file will be patched with dependencies managed by the Android Resolver.
+- Save your changes, by pressing `OK`
+
+In the Unity editor, select `Assets > External Dependency Manager > Android Resolver > Resolve`. The Unity External Dependency Manager library will append dependencies to `mainTemplate.gradle` of your Unity app.
+
+## Execute events on Unity Thread
+Advertising events for the Android runtime are queued to be called during the next `Update()` cycle. This behavior is safe for using UnityEngine components in advertising events. However, because Unity does not call `Update` while displaying fullscreen ads, all ad events will only be triggered after closing the fullscreen ad and returning to the Unity game.  
+
+If you want to receive callbacks from the ad without waiting for the ad to close, you can disable the `isExecuteEventsOnUnityThread` property in the settings. Enabled by default.
+
+```c#
+CAS.MobileAds.settings.isExecuteEventsOnUnityThread = false;
+```
+You will also need to use `CAS.EventExecutor.Add(Action)` to access Unity Engine components, where Action will be executed during the next `Update()` cycle.
+
+<Info>
+isExecuteEventsOnUnityThread property used Android runtime only and enabled by default.
+</Info>
+
+## (Optional) Override Gradle versions
+CAS have option to override Gradle Wrapper and Android Gradle Plugin versions in CAS Other Settings. The specified versions will be pre-set for the Android Studio project without requiring manual project export. 
+
+Leave the fields empty to use unity original Gradle versions.
+
+#### Gradle Wrapper version
+Supported strings with full https url or just version number, for example `7.2` or full url:
+```
+https\://services.gradle.org/distributions/gradle-7.2-bin.zip
+```
+
+#### Android Gradle Plugin version
+Supported version strings only, for example `4.2.2`.
+
+
+<Info>
+Please ensure compatibility of all build components when using this option. See official Gradle and Android Gradle Plugin [compatibility table here](https://developer.android.com/build/releases/gradle-plugin#updating-gradle)
+</Info>

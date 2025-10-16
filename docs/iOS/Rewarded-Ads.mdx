@@ -1,0 +1,139 @@
+---
+title: Rewarded Ads
+description: This guide explains how to integrate rewarded video ads into an iOS app.
+---
+
+Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads. 
+Rewarded ads boost engagement because users receive a tangible benefit for their time.
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/ios/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
+
+
+## Create Ad instance
+Ad instance can be initialized along with the UIViewController before `viewDidLoad`.
+```swift
+import CleverAdsSolutions
+
+class MyViewController: UIViewController, CASScreenContentDelegate {
+
+    let rewardedAd = CASRewarded(casID: MyAppDelegate.casID)
+
+```
+
+The SDK provides the capability to create and precache multiple ad instances, enabling uninterrupted sequential ad display. CAS SDK will load mediation ads in order for each created instance.
+
+## Receive Ad events
+The `CASScreenContentDelegate` handles events related to displaying your `CASInterstitial`. Callbacks are called on the main thread. Before showing ad, make sure to set `delegate`.
+
+```swift
+func screenAdDidLoadContent(_ ad: any CASScreenContent) {
+    // Called when the ad content has been successfully loaded.
+}
+
+func screenAd(_ ad: any CASScreenContent, didFailToLoadWithError error: AdError) {
+    // Called when the ad content fails to load.
+}
+
+func screenAd(_ ad: any CASScreenContent, didFailToPresentWithError error: AdError) {
+    // Called when the ad content fails to present.
+}
+
+func screenAdWillPresentContent(_ ad: any CASScreenContent) {
+    // Called when the ad content is successfully shown.
+}
+
+func screenAdDidClickContent(_ ad: any CASScreenContent) {
+    // Called when the ad content is clicked by the user.
+}
+
+func screenAdDidDismissContent(_ ad: any CASScreenContent) {
+    // Called when the ad content is dismissed.
+}
+```
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](iOS/Impression-Level-Data).
+- Attempting to load a new ad from the `didFailToLoadWithError` method is strongly discouraged. Limit ad load retries to avoid continuous failed ad requests in situations such as limited network connectivity.
+- When an error occurs during ad impression, executed the `didFailToPresentWithError` only.  In this case the `didDismissContent` will not be executed, since the impression is not considered successful.
+</Info>
+
+## Load Ad
+The next step is to fill out the `loadAd()` method and handle the ad load callbacks.
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
+
+    let screenContentDelegate: CASScreenContentDelegate = self
+    rewardedAd.delegate = screenContentDelegate
+    rewardedAd.loadAd();
+}
+```
+
+You can use ad load calls to build up a cache of preloaded ads before you intend to show them, so that ads can be shown with zero latency when needed. Since ads expire after an hour, you should clear this cache and reload with new ads every hour.
+
+### Autoload mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+```swift
+override func viewDidLoad() {
+    super.viewDidLoad()
+
+    let screenContentDelegate: CASScreenContentDelegate = self
+    rewardedAd.delegate = screenContentDelegate
+    rewardedAd.isAutoloadEnabled = true
+}
+```
+By default autoload disabled.
+
+## Show Ad
+When you present a rewarded ad, you will use an `userDidEarnRewardHandler` to handle reward  for the user.
+
+```swift
+rewardedAd.present(from: self, userDidEarnRewardHandler: { (info: AdContentInfo) in
+    // Called when a user earns a reward from the ad.
+    // TODO: Reward the user
+})
+```
+
+The `UIViewController` parameter is an optional. The SDK uses the app’s main window to look up view controllers automatically when one is not provided.
+
+Starting with CAS SDK version 4.3.0, all ads functions can be safely called from any thread.
+
+### Checking Ad Availability
+Use `isAdLoaded` to check whether an ad is currently loaded.
+```swift
+if rewardedAd.isAdLoaded {
+}
+```
+Even if `isAdLoaded` returns `true`, it does not guarantee that the ad will be shown successfully — various issues may still prevent it from being displayed. We strongly recommend handling potential display failures via `screenAd(_:didFailToPresentWithError:)` delegate to ensure a smoother user experience.
+
+By relying on these delegate, you ensure that your application can react appropriately to real-time conditions, rather than making assumptions based on ad load state at a single point in time.
+
+## Extra fill Interstitial Ad
+Controls whether interstitial ads are shown as a fallback when a rewarded video ad has no available fill. Interstitial ads do not require the user to watch the entire ad to completion. However, the `userDidEarnRewardHandler` will still be triggered as if the user completed the rewarded video.
+This option is enabled by default. You can disable extra fill by following line:
+```java
+rewardedAd.isExtraFillInterstitialAdEnabled = false
+```
+
+## Mute Ad sounds
+Indicates if the application’s audio is muted. Affects initial mute state for all ads.  
+Use this method only if your application has its own volume controls.  
+```swift
+CAS.settings.mutedAdSounds = true
+```
+
+## Release ad resource
+It is important to `destroy()` loaded but not displayed ads.
+```swift
+deinit {  
+    rewardedAd.destroy();
+}
+```
+
+## Samples
+- [SwiftUI Rewarded Ad ViewModel](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20SwiftUI/CASSwiftUIDemoApp/RewardedAd/RewardedAdModel.swift)
+- [Swift Rewarded Ad UIViewController](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Swift/CASSample/RewardedAd/RewardedVC.swift)
+- [Objective-C Rewarded Ad UIViewController](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Objective-C/CASSample/RewardedAd/RewardedVC.m)
+

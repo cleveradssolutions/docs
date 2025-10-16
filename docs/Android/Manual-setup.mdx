@@ -1,0 +1,191 @@
+---
+title: Manual setup
+description: This guide explains how to manually set up your project if, for any reason, you're unable to integrate the CAS Gradle plugin from the Home page. 
+---
+
+Follow the step-by-step guide below. Optional steps can be completed at your discretion.
+
+### 1. Include maven repositories
+Find the repositories on the [Home page](Android).
+
+### 2. Add the dependencies for the CAS SDK to your module-level build file:
+```groovy
+dependencies {
+    implementation("com.cleveradssolutions:cas-sdk:{{ versions.android }}")
+    ...
+}
+```
+
+All adapters for supported networks are found in the `com.cleveradssolutions` dependency group, and do not require additional SDK dependencies to be added.  
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Android/subscription">
+SDK and Adapters versions are updated frequently and you should use the latest versions. 
+
+Subscribe to receive notifications about CAS updates.
+</Card>
+
+### 3. Add mediated networks that are fully compatible with Google Play Families policies:
+
+```groovy
+implementation("com.cleveradssolutions:ironsource:+")   // IronSource
+implementation("com.cleveradssolutions:google:+")       // Google Ads | Admob
+implementation("com.cleveradssolutions:unity:+")        // Unity Ads
+implementation("com.cleveradssolutions:vungle:+")       // LiftoffMonetize
+implementation("com.cleveradssolutions:inmobi:+")       // InMobi
+implementation("com.cleveradssolutions:chartboost:+")   // Chartboost
+implementation("com.cleveradssolutions:fyber:+")        // DT Exchange 
+implementation("com.cleveradssolutions:kidoz:+")        // Kidoz
+```
+
+<Info>
+- Read more about the adapter versions [here](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters).
+- For applications targeting children or audiences under the age of 13, monetization is only allowed using ad SDKs that are certified under the **Google Play Families Program**.
+- **Kidoz and SuperAwesome** provide monetization for children adience only.
+</Info>
+
+### 4. Add mediated networks that are always recommended for app monetization.
+For applications not targeting children (adult or mixed audiences), it is recommended to include the following dependencies **in addition to those listed above**.
+
+```groovy
+implementation("com.cleveradssolutions:cas-exchange:+") // CASExchange
+implementation("com.cleveradssolutions:mintegral:+")    // Mintegral
+implementation("com.cleveradssolutions:applovin:+")     // AppLovin
+implementation("com.cleveradssolutions:facebook:+")     // Meta Audience Network
+implementation("com.cleveradssolutions:pangle:+")       // Pangle
+implementation("com.cleveradssolutions:yandex:+")       // Yandex Ads
+implementation("com.cleveradssolutions:bigo:+")         // Bigo
+```
+
+### 5. (Optional) Add other mediated networks.
+
+```groovy
+implementation("com.cleveradssolutions:ysonetwork:+")   // YSO Network
+implementation("com.cleveradssolutions:ogury:+")        // Ogury
+implementation("com.cleveradssolutions:hyprmx:+")       // HyprMX
+implementation("com.cleveradssolutions:startio:+")      // StartIO
+```
+
+### 6. (Optional) Add Cross Promo adapter.  
+   Contact our account manager if you are interested in cross-promotion.
+
+```groovy
+implementation("com.cleveradssolutions:cas-promo:+")
+```
+
+### 7. (Optional) Add **Closed beta** mediated networks.
+   
+```groovy
+implementation("com.cleveradssolutions:maticoo:+")      // Maticoo
+implementation("com.cleveradssolutions:prado:+")        // Prado
+implementation("com.cleveradssolutions:madex:+")        // Madex
+implementation("com.cleveradssolutions:smaato:+")       // Smaato
+```
+
+<Info>
+Access to the monetization of the beta ad sources is closed. Please note that you may need to add additional [maven repositories](Android) for your project.
+If you would like to monetize by one of these ad sources, please contact your account manager.
+</Info>
+
+### 8.  Add Play Services Ads identifier
+The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.
+
+Add the Play Services Ads identifier into the `dependencies` block to allow GAID information to be retrieved.
+```groovy
+implementation("com.google.android.gms:play-services-ads-identifier:18.1.0")
+```
+
+Additionally, apps will need to declare a Google Play Services normal permission in the `AndroidManifest.xml` file as follows:
+```xml
+<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+```
+
+Some SDKs, such as the Google Mobile Ads SDK may already declare this permission in the SDK’s library manifest.
+> If your app uses these SDKs as dependencies, the AD_ID permission from the SDK’s library manifest will be merged with your app’s main manifest by default, even if you don’t explicitly declare the permission in your app’s main manifest.
+
+To prevent the permission from getting merged into your app by including the following element in your manifest:
+```xml
+<uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+```
+
+To learn more about the `com.google.android.gms.permission.AD_ID` permission declaration, including how to disable it, refer to this [Play Console article](https://support.google.com/googleplay/android-developer/answer/6048248).
+
+<Info>
+An application must not use an advertising identifier if **at least one** of the following conditions is true:
+- The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
+- The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
+</Info>
+
+### 9. Enable code minify
+Enabling `minifyEnabled` is a crucial step in optimizing your mobile application, especially when integrating ad mediation SDKs that augment your codebase's size. By leveraging code minification, you not only reduce the overall footprint of your app but also enhance its performance, security, and compatibility.
+```kotlin
+android {
+    buildTypes {  
+        release {  
+            isMinifyEnabled = true
+            ...
+        }  
+    }
+    ...
+}
+```
+
+<Info>
+The CAS SDK and adapters come bundled with the required ProGuard rules in the AARs. Therefore, you do not need to add any additional ProGuard rules to your project.
+</Info>
+
+### 10. Click Sync Now gradle files.
+
+### 11. Link the project
+To link your project with the mediation settings, you need to have a registered account and an application in the CAS system.
+
+If you haven't created an CAS account and registered the app yet, now's a great time to do so.
+If you just want to experiment or test the SDK, you can skip link your project.
+
+1. Sign In https://cas.ai.
+2. Select the Applications section on the right panel.
+3. Click the plus(**+**) button and follow the instructions on the form. It may take up to 30 minutes to register the app in the CAS system.
+4. After the registration completed, click the **Action** button in the row of your application
+
+![dashboardcasapps](https://user-images.githubusercontent.com/22005013/225905839-6b494a90-a400-49d9-a070-ae930e4ff225.jpg)  
+
+5. Click **Download CAS settings** button. The CAS SDK uses a mediation configuration caching system to handle unexpected situations. 
+6. A `cas_settings[settings_id].json` file will be downloaded.
+7. Move your config file into the **module (app-level)** `/src/res/raw/` directory of your app.  
+
+<Accordion title="What do you need to know about this config file?">
+
+- The CAS config file contains unique, but non-secret identifiers for your project. 
+- The configuration file is updated frequently, so we recommend that you regularly download the latest file for each new release.
+- Please do not change the name of the file. Make sure the config file name is not appended with additional characters, like `(2)`.
+- The `[settings_id]` is the internal unique identifier of the resource.  
+- If you have multiple CAS manager IDs in your project, you must associate each CAS ID with a registered app in the CAS console so that each app can have its own `cas_settings[settings_id].json` file.
+  
+</Accordion>
+  
+
+### 12. Add Google Ads App ID 
+CAS assigns a new Google Ads (AdMob) App ID for your application to the correct operation of all features. Find the ID for each application in the CAS UI.
+
+1. After the registration completed, click the **Action** button in the row of your application
+2. Click the **Show AdMob App ID** button.
+3. Copy the id from the form.
+4. Add a `<meta-data>` tag with `android:name="com.google.android.gms.ads.APPLICATION_ID"` in your app's `AndroidManifest.xml` file.
+5. Insert AdMob app ID to `android:value`, surrounded by quotation marks, as shown below.
+```xml
+<manifest>
+  <application>
+    ...
+    <!-- Sample AdMob App ID: ca-app-pub-3940256099942544~3347511713 -->
+    <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy"/>
+  </application>
+</manifest>
+```
+In a real app, replace the sample app ID with your **actual AdMob app ID**. You can use the sample ID if you're just experimenting with the SDK in a Hello World app.
+
+Also, note that failure to add the `<meta-data>` tag exactly as shown results in a crash with the message: `Missing application ID`
+
+<Error>  
+You cannot use your own identifier and must replace it with a new one generated by CAS system. 
+</Error>

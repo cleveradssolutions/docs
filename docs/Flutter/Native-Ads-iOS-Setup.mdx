@@ -1,0 +1,132 @@
+---
+title: Native Ads iOS Setup
+previous: /Flutter/Native-Ads
+previousTitle: Load Native Ad
+description: This guide shows you how to load, display, and customize native ads using iOS platform-specific code.
+---
+
+Native ads are presented to users using UI components native to the platform: a `View` on Android or a `UIView` on iOS.
+
+<Steps>
+<Step title="Layout the views">
+The first step is to lay out the `UIViews` that will display native ad assets. You can do this in the Xcode Interface Builder as you would when creating any other xib file. Create a new View `xib` file in `ios` project.
+
+Set Custom Class value to `CASNativeView`. This is the ad view class that is used to display a `NativeAdContent`.
+
+<Image width="257" alt="Image" src="/assets/ios/Native-NativeView.png" />
+
+You'll also need to set the custom class for the `CASMediaView`, which is used to display the video or image for the ad.
+
+<Image width="262" alt="Image" src="/assets/ios/Native-MediaView.png" />
+
+Assign unique tag IDs to the asset views. The example image below sets the ID to `100` for the Media View.
+
+<Image width="298" alt="Image" src="/assets/ios/Native-ViewTags.png" />
+
+<Success>  
+For an example of configuring your `CASNativeAdView` layout, see [NativeAdView.xib](https://github.com/cleveradssolutions/CAS-Flutter/tree/main/example/ios/Runner/NativeAdView.xib).
+</Success>
+
+<Info>
+Note that all asset views for a given native ad should be rendered inside the `CASNativeView` layout.  
+Please review the description and requirements of native ad assets on [CAS iOS wiki page](iOS/Native-Ad-assets).
+</Info>
+</Step>
+
+<Step title="Implement Native Ad Factory">
+Create a new class that implements the `CASNativeAdViewFactory`protocol from `clever_ads_solutions` module. Implement the `createNativeAdView` function, in which you need to create and return the `CASNativeView`. 
+
+Register all the views by tag ID you use in the layout to the `adView`, and the CAS SDK will automatically populate them with ad content, or make the view invisible if the corresponding asset is not provided in the ad content.
+
+```swift
+import clever_ads_solutions // CAS Flutter module
+import CleverAdsSolutions // CAS iOS SDK
+import Foundation
+
+class NativeAdFactoryExample: NSObject, CASNativeAdViewFactory {
+    func createNativeAdView(for adContent: NativeAdContent,
+                            customOptions: [String: Any]) -> CASNativeView? {
+        let adView = Bundle.main.loadNibNamed(
+            "NativeAdView", owner: nil
+        )!.first as! CASNativeView
+
+        adView.registerMediaView(tag: 100)
+        adView.registerIconView(tag: 101)
+        adView.registerHeadlineView(tag: 102)
+        adView.registerAdLabelView(tag: 103)
+        adView.registerBodyView(tag: 104)
+        adView.registerCallToActionView(tag: 105)
+        adView.registerAdvertiserView(tag: 106)
+        adView.registerStoreView(tag: 107)
+        adView.registerPriceView(tag: 108)
+        adView.registerStarRatingView(tag: 109)
+        adView.registerReviewCountView(tag: 110)
+
+        return adView
+    }
+}
+```
+The CAS Flutter plugin will automatically call `adView.setNativeAd(nativeAd)` later in any case.
+
+You can find more details about the implementation of platform native ad view on the [CAS iOS wiki page](iOS/Display-Native-Ad#manual-display-native-ad).
+</Step>
+
+<Step title="Register Native Ad Factory in CAS Plugin">
+Each `CASNativeAdViewFactory` implementation is required to be registered with a `factoryId`, a unique `String` identifier, when calling `application(_:didFinishLaunchingWithOptions:)`. The `factoryId` will be used later when loading a native ad from Dart code.
+
+A `CASNativeAdViewFactory` can be implemented and registered for each unique native ad layout used by your app, or a single one can handle all layouts.
+
+Once you've created `NativeAdFactoryExample`, set up your`AppDelegate` as follows:
+```swift
+import clever_ads_solutions
+import Flutter
+import UIKit
+
+@main
+@objc class AppDelegate: FlutterAppDelegate {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        GeneratedPluginRegistrant.register(with: self)
+
+        // Register map of NativeAdFactory to CAS Flutter Plugin
+        CASMobileAdsPlugin.nativeAdFactories = [ // [!code highlight]
+            "nativeFactoryIdExample": NativeAdFactoryExample(), // [!code highlight]
+        ] // [!code highlight]
+
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+```
+</Step>
+
+<Step title="Load ad content with factory ID">
+After you've added your platform-specific code, turn to Dart to load ads. 
+- Make sure `factoryId` match the ID you registered earlier.
+- `сustomOptions` are optional parameters for creating your native ad view. These parameters will be passed as a `Map` to the ad view creation function on both Android and iOS.
+
+```dart
+class NativeAdExampleState extends State<NativeAdExample> {
+  AdViewInstance? _nativeAd;
+  
+  void _loadAd() {
+    CASNativeContent.load( 
+      factoryId: 'nativeFactoryIdExample', // [!code highlight]  
+      customOptions: {  
+        'exampleOptionKey': 'exampleValue', // [!code highlight]  
+      },
+      onAdLoaded: (AdViewInstance ad) { 
+        // Called when an ad is successfully loaded. 
+        print('$ad loaded'); 
+        setState(() { 
+          _nativeAd = ad;
+        });
+      },  
+    );
+  }
+}
+```
+</Step>
+
+<Step title="Continue to use Native Ad as usual"/>
+</Steps>

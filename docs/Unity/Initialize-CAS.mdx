@@ -1,0 +1,92 @@
+---
+title: Initialize CAS SDK
+---
+
+
+# Initialize MediationManager
+To display ads, you must initialize the mediation manager with a unique `managerID`.   
+This needs to be done only once for each manager, ideally at app launch.  
+
+If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai. In a real app, it is important that you use your actual CAS manager ID.  
+
+The settings for initializing the mediation manager are contained in a [IManagerBuilder](Unity/Configuring-SDK#allowed-ads-types-in-app) implementation.  
+The IManagerBuilder is unique for each supported runtime platform and can be created and modified using the editor `Assets > CleverAdsSolutions > Platform Settings` menu.  
+Also you can change any properties of the asset using `CAS.MobileAds.BuildManager()`.  
+
+Here's an example of how to call `Build()` within the `Start()` method of a script attached to a GameObject:
+
+```c#
+using CAS;
+
+class CleverAdsSolutionsDemoScript : MonoBehaviour
+{
+    public void Start()
+    {
+        IMediationManager manager = GetAdManager();
+    }
+    
+    public static IMediationManager GetAdManager()
+    {
+        // Configure MobileAds.settings before initialize
+        return MobileAds.BuildManager()
+           // Optional initialize listener
+           .WithCompletionListener((config) => {
+                // The CAS SDK initializes if the error is `null`
+                string initErrorOrNull = config.error;
+                string userCountryISO2OrNull = config.countryCode;
+                IMediationManager manager = config.manager;
+                
+                // True if the user is protected by GDPR or other regulations
+                bool protectionApplied = config.isConsentRequired;
+                
+                // The user completes the consent flow
+                ConsentFlow.Status consentFlowStatus = config.consentFlowStatus;
+           })
+           .Build();
+    }
+}
+```
+
+The `WithCompletionListener` may be called with an error. In this case, the SDK will attempt to reinitialize and the listener will be called again until the error is resolved.
+
+<Error>  
+Do not initialize mediated advertising SDKs (CAS does that for you).  
+Not following this step will result in noticeable integration issues.
+</Error>
+
+<Info>
+If you are using Assembly Definition for scripts and see the following  
+`error CS0103: The name 'MobileAds' does not exist in the current context`  
+then add Assembly Definition Reference to our assembly with name `CleverAdsSolutions`.
+</Info>
+
+## Ads processing
+CAS have functionality to limit the processing of specific `AdType`.  
+This can be useful when you need to improve application performance by turning off unused formats.  
+Or if you have determined that the user will no longer need to be shown ads, for example after purchase.   
+The default ad type activity is selected in the [settings window](Unity/Configuring-SDK#allowed-ads-types-in-app).  
+However, the state can be changed after initialization using the following methods:
+```cs
+manager.SetEnableAd(AdType.Interstitial, false);
+```
+- If processing is inactive then all calls to the selected ad type will fail with error `AdError.ManagerIsDisabled`.  
+- ⚠️ Turning off the processing leads to the complete destruction of the ready ads from memory. And reactivation after destruction requires a new load of ads to memory.
+- The state will not be saved between sessions.
+
+## Retrieve the Version Number
+To programmatically retrieve the Unity Plugin and the native SDK version number at runtime, CAS provides the following strings:
+```cs
+string pluginVersion = CAS.MobileAds.wrapperVersion;
+string nativeSDKVersion = CAS.MobileAds.GetSDKVersion();
+```
+
+## (optional) Trial ad-free interval
+Set the time interval during which users can enjoy an ad-free experience while retaining access
+to Rewarded Ads and App Open Ads formats. This interval is defined from the moment of the initial
+app installation, in seconds. Within this interval, users enjoy privileged access to the
+application's features without intrusive advertisements.
+
+```csharp
+int secondsIn7Days = 604800;
+CAS.MobileAds.settings.trialAdFreeInterval = secondsIn7Days;
+```

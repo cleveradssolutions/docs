@@ -1,0 +1,68 @@
+---
+title: Rewarded Ad object
+---
+
+Rewarded ads are ads that users have the option of interacting with in exchange for in-app rewards. 
+
+This guide shows you how to integrate rewarded ads into a Unity app. 
+
+## Add an RewardedAdObject to the scene
+1. Add an GameObject to your scene using `GameObject > Create Empty` in the Unity Editor.
+2. Add Component `CleverAdsSolutions/Rewarded Ad Object` in the inspector to new GameObject.
+3. Select [Manager ID](Unity/Configuring-SDK#manager-ids) from settings asset for each runtime platform.
+4. Attach function to `OnReward` event to handle reward.
+5. Invoke `Present()` method to show the rewarded video ad.  
+
+<Image width="326" alt="image" src="/assets/unity/Rewarded-Ad-object-1.png" />
+
+- **Restart Interstitial Ad interval on rewarded ad closed**  
+The interstitial ad interval will restart after the rewarded ad is closed.
+- **OnReward**  
+The most important event is called when the user is rewarded for watching a video
+
+<Info>
+An RewardedAdObject does not have any rendered components. Therefore, you can place the GameObject anywhere in the scene.
+</Info>
+
+## Load Ad callbacks
+- **On Ad Loaded**  
+The event is invoked when the rewarded ad has finished loading.
+- **On Ad Failed To Load**  
+The event is invoked when the rewarded ad fails to load. The Message parameter describes the type of failure that occurred.
+
+## Content callbacks
+- **On Ad Failed To Show**  
+The event is invoked when the rewarded ad failed to show. The Message parameter describes the type of failure that occurred.
+- **On Ad Shown**  
+The event is invoked when the rewarded ad is shown.
+- **On Ad Clicked**  
+The event is invoked when the user clicks on the rewarded ad.
+- **On Ad Impression**  
+The event is invoked when the ad count impression with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.
+- **On Ad Closed**  
+The event is invoked when the rewarded ad is closed.
+
+## Unity Events sample
+You can implement functions that correspond to ad callbacks. For example, if you want to handle when a banner ad fails to load:
+1. Create a function compatible with the ad callback in custom component.
+```c#
+public void OnReward() {
+    Debug.Log("The user earned the reward.");
+}
+```
+2. Attach the script which contains the above function to any GameObject in the scene.
+3. Click the **+** button, then drag & drop the GameObject that you've attached the script to.
+4. Select the function that you want to link to the ad callback. For the parameterized ad callbacks, select the function to accept the dynamic variable so you can get the parameter value from the SDK.
+
+## Use RewardedAdObject from script
+Get the rewarded ad instance from the script:
+```c#
+RewardedAdObject rewarded = rewardedObject.GetComponent<RewardedAdObject>();
+```
+
+Before displaying a rewarded ad to users, you must present the user with an explicit choice to view rewarded ad content in exchange for a reward. Rewarded ads must always be an opt-in experience.  
+
+Show the rewarded ad:
+```c#
+rewarded.Present();
+```

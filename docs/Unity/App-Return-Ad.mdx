@@ -1,0 +1,52 @@
+---
+title: App Return Ad
+---
+
+The Return Ads which is displayed once the user returns to your application after a certain period of time.  
+To minimize the intrusiveness, short time periods are ignored.  
+Return ads are disabled by default.
+
+<Warning>  
+- The Ad on Return to App is a regular Interstitial Ad. 
+- Automatic display is only possible when using autoload Interstitial Ad. 
+- The Ad will be displayed only if the Interstitial Ad is currently loaded. After displaying the Interstitial Ad, it will be necessary to load a new advertisement.
+- The Ad will not be shown if the interval since the last closure of the Interstitial Ad has not elapsed.
+- Do not activate this ad format if your application displays an AppOpen Ad when returning to the app.
+</Warning>
+
+### Enable the ad
+If you want to enable the Return Ads, simply invoke the following method.
+```c#
+manager.SetAppReturnAdsEnabled(true);
+```
+
+### Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+```c#
+// Executed when the ad is displayed.
+manager.OnAppReturnAdShown += () => Debug.Log("App return ad shown");
+// Executed when the ad is failed to display.
+manager.OnAppReturnAdFailedToShow += (error) => Debug.LogError(error);
+// Executed when the user clicks on an Ad.
+manager.OnAppReturnAdClicked += () => Debug.Log("App return ad clicked");
+// Executed when the ad is closed.
+manager.OnAppReturnAdClosed += () => Debug.Log("App return ad closed");
+```
+
+<Info>
+When an error occurs during ad impression, executed the `OnAppReturnAdFailedToShow` only.  In this case the `OnAppReturnAdClosed` will not be executed, since the impression is not considered successful.
+</Info>
+
+Read more about event `OnAppReturnAdImpression` with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.  
+
+### Skip next return
+You can call this method when you intentionally redirect the user to another application (for example Google Play) and do not want them to see ads when they return to your application.
+```c#
+manager.SkipNextAppReturnAds()
+```
+
+### Disable the ad
+When you no longer want to show ads to users after they return to the app, invoke the following method.
+```c#
+manager.SetAppReturnAdsEnabled(false);
+```

@@ -1,0 +1,743 @@
+{
+    "name": "CAS.AI Developer Docs",
+    "description": "Increase your mobile app monetization efficiency with CAS.AI.",
+    "variables": {
+        "versions": {
+            "android": "4.3.0",
+            "ios": "4.3.0",
+            "unity": "4.3.0",
+            "flutter": "4.3.0",
+            "unreal": "4.3.0",
+            "cordova": "1.0.3",
+            "solar": "18",
+            "construct": "0.0.3.0"
+        }
+    },
+    "favicon": "https://cas.ai/wp-content/uploads/2025/08/favicon-80x80.png",
+    "logo": {
+        "light": "https://cas.ai/wp-content/uploads/2025/08/favicon.png"
+    },
+    "theme": {
+        "primaryLight": "#2563EB",
+        "primaryDark": "#3B82F6"
+    },
+    "content": {
+        "showPageTitle": true,
+        "showPageImage": true
+    },
+    "header": {
+        "showGitHubCard": false,
+        "links": [
+            {
+                "href": "https://cas.ai/contacts/",
+                "title": "Contact us",
+                "cta": true
+            },
+            {
+                "href": "https://cas.ai/",
+                "title": "cas.ai"
+            }
+        ]
+    },
+    "social": {
+        "website": "https://cas.ai",
+        "github": "cleveradssolutions",
+        "youtube": "@CAS.AIMobileAppMonetization",
+        "instagram": "clever_ads_solutions"
+    },
+    "tabs": [
+        {
+            "id": "general",
+            "title": "General",
+            "href": "/general"
+        },
+        {
+            "id": "android",
+            "title": "Android",
+            "href": "/Android"
+        },
+        {
+            "id": "ios",
+            "title": "iOS",
+            "href": "/iOS"
+        },
+        {
+            "id": "unity",
+            "title": "Unity",
+            "href": "/Unity"
+        },
+        {
+            "id": "flutter",
+            "title": "Flutter",
+            "href": "/Flutter"
+        },
+        {
+            "id": "unreal",
+            "title": "Unreal",
+            "href": "/Unreal"
+        }
+    ],
+    "sidebar": [
+        {
+            "group": "General",
+            "tab": "general",
+            "pages": [
+                {
+                    "title": "Home",
+                    "href": "/general"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "Apple Kids category",
+                    "href": "/general/Apple-Kids-Category"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "android",
+            "pages": [
+                {
+                    "group": "Integration",
+                    "href": "/Android",
+                    "pages": [
+                        {
+                            "title": "Mediated Networks",
+                            "href": "/Android/Mediated-Networks"
+                        },
+                        {
+                            "title": "Manual setup",
+                            "href": "/Android/Manual-setup"
+                        }
+                    ]
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/Android/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "Privacy Regulations",
+                            "href": "/Android/Privacy-Regulations"
+                        },
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/Android/User-Consent-Flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/Android/Enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/Android/Additional-Meta-AudienceNetwork-steps"
+                        },
+                        {
+                            "title": "Yandex Mobile Ads",
+                            "href": "/Android/Additional-Yandex-Mobile-Ads-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "android",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/Android/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/Android/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/Android/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/Android/Banner-Ads"
+                },
+                {
+                    "group": "Native Ad",
+                    "href": "/Android/Load-Native-Ads",
+                    "pages": [
+                        {
+                            "title": "Display Native Ad",
+                            "href": "/Android/Display-Native-Ad"
+                        },
+                        {
+                            "title": "Native Ad assets",
+                            "href": "/Android/Native-Ad-assets"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "android",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/Android/Targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/Android/Ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/Android/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "ios",
+            "pages": [
+                {
+                    "group": "Integration",
+                    "href": "/iOS",
+                    "pages": [
+                        {
+                            "title": "Mediated Networks",
+                            "href": "/iOS/Mediated-Networks"
+                        },
+                        {
+                            "title": "Manual setup",
+                            "href": "/iOS/Manually-configure-project"
+                        }
+                    ]
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/iOS/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "Privacy Regulations",
+                            "href": "/iOS/Privacy-Regulations"
+                        },
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/iOS/User-Consent-Flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/iOS/Enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/iOS/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "ios",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/iOS/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/iOS/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/iOS/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/iOS/Banner-Ads"
+                },
+                {
+                    "group": "Native Ad",
+                    "href": "/iOS/Load-Native-Ads",
+                    "pages": [
+                        {
+                            "title": "Display Native Ad",
+                            "href": "/iOS/Display-Native-Ad"
+                        },
+                        {
+                            "title": "Native Ad assets",
+                            "href": "/iOS/Native-Ad-assets"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "ios",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/iOS/Targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/iOS/Ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/iOS/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "unity",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/Unity"
+                },
+                {
+                    "group": "Configuration",
+                    "href": "/Unity/Configuring-SDK",
+                    "pages": [
+                        {
+                            "title": "Test ads",
+                            "href": "/Unity/Enabling-test-ads"
+                        },
+                        {
+                            "title": "Privacy Regulations",
+                            "href": "/Unity/Privacy-Regulations"
+                        }
+                    ]
+                },
+                {
+                    "group": "Include Android",
+                    "href": "/Unity/Include-Android",
+                    "pages": [
+                        {
+                            "title": "Google Play data disclosure",
+                            "href": "/general/Google-Play-data-disclosure"
+                        }
+                    ]
+                },
+                {
+                    "group": "Include iOS",
+                    "href": "/Unity/Include-iOS",
+                    "pages": [
+                        {
+                            "title": "App Store data disclosure",
+                            "href": "/general/AppStore-data-disclosure"
+                        }
+                    ]
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/Unity/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "Inspector",
+                            "href": "/Unity/Manager-Ad-object"
+                        },
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/Unity/User-Consent-Flow"
+                        }
+                    ]
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/Unity/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "unity",
+            "pages": [
+                {
+                    "group": "Banner Ad",
+                    "href": "/Unity/Banner-Ads",
+                    "pages": [
+                        {
+                            "title": "Inspector",
+                            "href": "/Unity/Banner-Ad-object"
+                        }
+                    ]
+                },
+                {
+                    "group": "App Open Ad",
+                    "href": "/Unity/App-Open-Ads",
+                    "pages": [
+                        {
+                            "title": "Inspector",
+                            "href": "/Unity/App-Open-Ad-object"
+                        }
+                    ]
+                },
+                {
+                    "group": "Interstitial Ad",
+                    "href": "/Unity/Interstitial-Ads",
+                    "pages": [
+                        {
+                            "title": "Inspector",
+                            "href": "/Unity/Interstitial-Ad-object"
+                        }
+                    ]
+                },
+                {
+                    "group": "Rewarded Ad",
+                    "href": "/Unity/Rewarded-Ads",
+                    "pages": [
+                        {
+                            "title": "Inspector",
+                            "href": "/Unity/Rewarded-Ad-object"
+                        }
+                    ]
+                },
+                {
+                    "group": "App Return Ad",
+                    "href": "/Unity/App-Return-Ad",
+                    "pages": [
+                        {
+                            "title": "Inspector",
+                            "href": "/Unity/Return-To-Play-Ad-Object"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "unity",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/Unity/Targeting-options"
+                },
+                {
+                    "title": "Other Options",
+                    "href": "/Unity/Other-Options"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/Unity/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "flutter",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/Flutter"
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/Flutter/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/Flutter/User-Consent-Flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/Flutter/Enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/Flutter/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "flutter",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/Flutter/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/Flutter/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/Flutter/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/Flutter/Banner-Ads"
+                },
+                {
+                    "group": "Native Ad",
+                    "href": "/Flutter/Native-Ads",
+                    "pages": [
+                        {
+                            "title": "Native Ad templates",
+                            "href": "/Flutter/Native-Ads-templates"
+                        },
+                        {
+                            "title": "Android setup",
+                            "href": "/Flutter/Native-Ads-Android-Setup"
+                        },
+                        {
+                            "title": "iOS setup",
+                            "href": "/Flutter/Native-Ads-iOS-Setup"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "flutter",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/Flutter/Targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/Flutter/Ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/Flutter/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "unreal",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/Unreal"
+                },
+                {
+                    "title": "Configuration",
+                    "href": "/Unreal/Configuring-SDK"
+                },
+                {
+                    "group": "Include Android",
+                    "href": "/Unreal/Include-Android",
+                    "pages": [
+                        {
+                            "title": "Google Play data disclosure",
+                            "href": "/general/Google-Play-data-disclosure"
+                        }
+                    ]
+                },
+                {
+                    "group": "Include iOS",
+                    "href": "/Unreal/Include-iOS",
+                    "pages": [
+                        {
+                            "title": "App Store data disclosure",
+                            "href": "/general/AppStore-data-disclosure"
+                        }
+                    ]
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/Unreal/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "Test ads",
+                            "href": "/Unreal/Enabling-test-ads"
+                        },
+                        {
+                            "title": "Privacy Regulations",
+                            "href": "/Unreal/Privacy-Regulations"
+                        },
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/Unreal/User-Consent-Flow"
+                        }
+                    ]
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "title": "FAQ",
+                    "href": "/Unreal/FAQ"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/Unreal/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "unreal",
+            "pages": [
+                {
+                    "title": "Banner Ad",
+                    "href": "/Unreal/Banner-Ads"
+                },
+                {
+                    "title": "MREC Ad",
+                    "href": "/Unreal/MREC-Ads"
+                },
+                {
+                    "title": "App Open Ad",
+                    "href": "/Unreal/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/Unreal/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/Unreal/Rewarded-Ads"
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "unreal",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/Unreal/Targeting-options"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/Unreal/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        }
+    ],
+    "anchors": [
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "android",
+            "href": "https://github.com/cleveradssolutions/CAS-Android/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "ios",
+            "href": "https://github.com/cleveradssolutions/CAS-iOS/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "unity",
+            "href": "https://github.com/cleveradssolutions/CAS-Unity/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "flutter",
+            "href": "https://github.com/cleveradssolutions/CAS-Flutter/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "unreal",
+            "href": "https://github.com/cleveradssolutions/CAS-Unreal/releases"
+        }
+    ]
+}

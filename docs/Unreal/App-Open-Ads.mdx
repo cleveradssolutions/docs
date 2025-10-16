@@ -1,0 +1,122 @@
+---
+title: App Open Ads
+description: This guide explains how to integrate app open ads into an Unreal Engine project.  
+---
+
+App open ads are a special ad format intended for publishers wishing to monetize their app load screens.
+App open ads can be closed at any time, and are designed to be shown when your users bring your app to the foreground.  
+App open ads automatically show a small branding area so users know they're in your app.  
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
+
+
+## Load an Ad
+Call manual load ad before each show if `Autoload App Open Ads` not checked.  
+In Blueprints you can use Load node just for register Loaded/Failed events.
+```cpp
+UCASMobileAds::LoadAppOpenAd();
+```
+<Image width="265" alt="Image" src="/assets/unreal/App-Open-Ads-1.png" />
+
+<Info>
+The `Event Once` checkbox will fire the Loaded/Failed event only once. if `Autoload Ads` used, events can be triggered many times while the game world exists.
+</Info>
+
+### Autoload mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+```cpp
+UCASMobileAds::SetAutoloadAppOpenAd(true);
+```
+
+<Image width="237" alt="Image" src="/assets/unreal/App-Open-Ads-2.png" />
+
+You should call `LoadAppOpenAd()` once to create Ad Instance.
+
+By default, autoloading is defined in the `Project Settings -> Plugins -> CAS.AI Config -> Autoload App Open Ads`.
+
+## Ad events
+To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, opening, closing, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
+
+```cpp
+// Called when ad ready to shown.
+UCASMobileAds::OnAppOpenAdLoaded.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("AppOpen loaded"));
+});
+// Called when ad failed to load with error.
+UCASMobileAds::OnAppOpenAdLoadFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("AppOpen failed to load: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the ad shown.
+UCASMobileAds::OnAppOpenAdDisplayed.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("AppOpen displayed"));
+});
+// Called when the ad is failed to display.
+UCASMobileAds::OnAppOpenAdShowFailed.AddLambda([=](ECASError Error){
+    UE_LOG(LogTemp, Log, TEXT("AppOpen failed to show: %s"),
+        UCASMobileAds::GetAdsErrorMessage(Error));
+});
+// Called when the user clicks on the Ad.
+UCASMobileAds::OnAppOpenAdClicked.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("AppOpen clicked"));
+});
+// Called when the ad is closed.
+UCASMobileAds::OnAppOpenAdDismissed.AddLambda([=](){
+    UE_LOG(LogTemp, Log, TEXT("AppOpen dismissed"));
+});
+```
+<Info>
+Ad events in Blueprints are registered in the Load and Show nodes. Each new Load/Show Ad node cancels previous node events.
+</Info>
+
+## Show the Ad
+To display the ad, call the following method:
+```cpp
+UCASMobileAds::ShowAppOpenAd();
+```
+<Image width="205" alt="Image" src="/assets/unreal/App-Open-Ads-3.png" />
+
+### Autoshow mode
+Use the `AutoshowAppOpenAd` method to automatically show the loaded ad when the user returns to the app.
+
+```cpp
+UCASMobileAds::AutoshowAppOpenAd();
+```
+
+Use the `DisableAutoshowInterstitialAd` method to disable automatically show the ad.
+```cpp
+UCASMobileAds::DisableAutoshowAppOpenAd();
+```
+
+<Image width="495" alt="Image" src="/assets/unreal/App-Open-Ads-4.png" />
+
+## Release ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
+
+```cpp
+UCASMobileAds::DestroyAppOpenAd();
+```
+<Image width="199" alt="Image" src="/assets/unreal/App-Open-Ads-5.png" />
+
+Call `LoadAppOpenAd` to load new ad and restore autoload mode if used.
+
+## Ad Availability
+You can ask for the ad availability directly by calling the following function:
+```cpp
+bool AdLoaded = UCASMobileAds::IsAppOpenAdReady();
+```
+<Image width="208" alt="Image" src="/assets/unreal/App-Open-Ads-6.png" />
+
+<Error>  
+We don’t recommend waiting for `IsAppOpenAdReady` to change each frame. This method call the native SDK and can affect the performance of your game.  
+Subscribe to the `OnAppOpenAdLoaded` event instead.
+</Error>
+
+## Muted Ads Sounds
+Sounds in Interstitial and Rewarded ads mute state. Disabled by default.  
+```cpp
+UCASMobileAds::SetAdsMuted(Mute);
+```
+<Image width="134" alt="image" src="/assets/unreal/App-Open-Ads-7.png" />

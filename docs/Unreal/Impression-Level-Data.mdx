@@ -1,0 +1,57 @@
+---
+title: Impression Level Data
+---
+
+CAS.AI enables you to access detailed information for each impression through the impressions callback APIs. The information includes, for example, which demand source served the ad, the expected or exact revenue associated with it. In addition, it contains granular details to allow you to analyze and, ultimately, optimize user acquisition strategies. 
+
+## Ad Impression
+`FCASImpressionInfo` is an struct for getting detailed information about the current ad impression, such as revenue and ad creative details.  
+
+```cpp
+
+UCASMobileAds::OnAdsImpression.AddLambda([=](const FCASImpressionInfo& info){
+    // Get ad details using info parameter
+});
+```
+<Image width="468" alt="image" src="/assets/unreal/Impression-Level-Data-1.png" />
+
+### Ad revenue
+The revenue generated for the 1000 impressions in USD. 
+```cpp
+float cpm = info.RevenueCPM;
+```
+
+### Ad creative
+You can also retrieve information about the current ad (such as its mediated network and creative ID), and you will be able to report creative issues for that ad to our Ad review team.
+```cpp
+FString PlacementType = info.PlacementType;
+FString CreativeId = info.CreativeID;
+FString NetworkName = info.Network;
+FString NetworkUnitId = info.UnitID;
+```
+### User ad summary 
+CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression. 
+```cpp
+int totalImpressions = info.TotalImpressions;
+float totalRevenue = info.LifetimeRevenue;
+```
+
+<Info>
+Progress is saved between sessions until the user clears your app's data.
+</Info>
+
+## Automatic collect ad revenue
+The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
+#### Google Analytics
+If you haven't already, make sure to complete the following tasks:
+1. Set up your project and app as described in [Get Started with Analytics](https://firebase.google.com/docs/analytics/get-started).
+2. Make sure that you've linked your Firebase project to a Google Analytics account.
+3. Ensure that you've included in your app the CAS SDK 3.5.0+.
+
+To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.  
+
+#### Tenjin
+If you haven't already, make sure to complete the following tasks:
+1. Set up your project and app as described in [Get Started with Analytics](https://docs.tenjin.com/docs/android-sdk#basic-integration).
+2. Make sure that you've [initialize tenjin session](https://docs.tenjin.com/docs/android-sdk#app-initialization).
+3. Ensure that you've included in your app the CAS SDK 3.7.2+.

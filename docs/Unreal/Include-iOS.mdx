@@ -1,0 +1,76 @@
+---
+title: Include iOS
+---
+
+
+| Prerequisites |       |
+| ------------- | ----- |
+| Target iOS    | 13.0  |
+| Xcode         | 16.2+ |
+
+<Info>
+When changing the included adapter set, you will also need to delete the `Project/Binaries/IOS` folder to reset the cache of previous application builds
+</Info>
+
+## Install CocoaPods
+iOS dependencies are identified using  [CocoaPods](https://guides.cocoapods.org/using/getting-started.html).  
+Make sure that CocoaPods is installed called terminal command:
+```sh
+pod --version
+```
+Install if not found command to Homebrew:
+```sh
+brew install cocoapods
+```
+Or RubyGems:
+```sh
+sudo gem install cocoapods
+```
+
+The CAS plugin will **automatically integrate third-party frameworks** and resource bundles from the CocoaPods repository for the selected ad networks in the CAS Config window before packaging the application.
+
+## Disable Bitcode
+Building with bitcode is no longer supported. [Apple deprecated Bitcode](https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-14-release-notes) in Xcode 14.  
+You should disable Bitcode by navigating to `Edit > Project Settings > Platforms > iOS` section.
+
+<Info>
+Starting from version 5.2, Unreal Engine no longer utilizes Bitcode in iOS builds.  
+</Info>
+
+## SKAdNetwork
+SKAdNetwork is a privacy safe method provided by Apple for ad networks to track installs. Up until iOS 14, most ad network campaign attribution has been based on a user's IDFA, but on iOS 14 and beyond, IDFAs will be less usable as a way to attribute which users have installed based on which ads they have interacted with.
+
+The CAS Unreal Plugin **automatically updates** your app’s `Info.plist` with network-specific identifiers.
+
+## Exclude Frameworks
+Sometimes when multiple different plugins are used in a project, they may utilize the same frameworks. Each plugin will package its own version of frameworks, which can lead to issues during code linking. You will need to decide which frameworks should remain in the package and which ones need to be excluded.  
+To exclude frameworks required for the CAS Plugin, utilize the `Config/DefaultEngine.ini` file in your project. Add the following lines to the file with the names of the frameworks that need to be excluded from the package.
+```ini
+[CASPluginBuildConfig]
++ExcludeFrameworks="Framework1NameWitoutExtension"
++ExcludeFrameworks="Framework2NameWitoutExtension"
+```
+
+<Info>
+Be cautious, although you can exclude frameworks from the package, the package will not build if the referenced code is not found.
+</Info>
+
+## Unreal Engine 4 compatibility for XCode (Apple clang) 15
+The Clang 15 update introduced some compilation flags. You need to disable these new flags to ensure that Unreal Engine 4 code remains compatible and compiles without errors.
+
+Open the files of your project `Source/ProjectName.Target.cs` and `Source/ProjectNameEditor.Target.cs` and add the following lines to the constructor of the class.
+```csharp
+if (Target.Platform == UnrealTargetPlatform.Mac || Target.Platform == UnrealTargetPlatform.IOS)
+{
+	bOverrideBuildEnvironment = true;
+	// Xcode 15
+	AdditionalCompilerArguments += " -Wno-deprecated-builtins";
+	AdditionalCompilerArguments += " -Wno-error=single-bit-bitfield-constant-conversion";
+
+	// Xcode 14
+	AdditionalCompilerArguments += " -Wno-error=bitwise-instead-of-logical";
+	AdditionalCompilerArguments += " -Wno-error=deprecated-declarations";
+	AdditionalCompilerArguments += " -Wno-error=unqualified-std-cast-call";
+	AdditionalCompilerArguments += " -Wno-error=unused-but-set-variable";
+}
+```

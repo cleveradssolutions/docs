@@ -1,0 +1,34 @@
+---
+title: Ad errors
+---
+
+In cases where an ad fails to load/show, a callback is called which provides a `AdError` object.
+
+AdError is commonly used in ad-related callbacks such as `didFailToLoadWithError` or `didFailToPresentWithError`.
+ 
+This ad error object has the following methods:
+- `code: AdErrorCode`  
+    Returns the unique `AdErrorCode` that identifies the type of error. 
+    Use to programmatically handle specific error cases.
+- `description: String`  or  `localizedDescription` same
+    Returns a human-readable message describing the error.  
+    Use for for logging or debugging purposes.
+
+### AdErrorCode constants
+All errors are divided into the following categories defined in `AdErrorCode`.
+
+| Code | Constant           | Description                                                                                                                                                                                            |
+| ---- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0    | internalError      | Indicates an internal error occurred.                                                                                                                                                                  |
+| 1    | notReady           | Indicates that ads are not ready to be shown. Ensure to call the appropriate ad loading method or use automatic load mode. If using automatic load mode, wait a little longer for ads to be ready.     |
+| 2    | rejected           | Indicates that the device is rejected for services. Services may not be available for some devices that do not meet the requirements. For example, the country or version of the OS.                   |
+| 3    | noFill             | Indicates that no ads are available to be served. If ads are visible in test ads mode, your implementation is correct, and ads will be served once live.                                               |
+| 6    | reachedCap         | Indicates that the ad creative has reached its daily cap for the user. This is typically relevant for cross-promotion ads only.                                                                        |
+| 7    | notInitialized     | Indicates that the CAS Mediation is not initialized. Ensure to add SDK initialization code in your App delegate.                                                                                       |
+| 8    | timeout            | Indicates a timeout error occurred because the advertising source did not respond in time. The system will continue waiting for a response, which may delay ad loading or cause a loading error.       |
+| 9    | noConnection       | Indicates that there is no internet connection available, which prevents ads from loading.                                                                                                             |
+| 10   | configurationError | Indicates that there is a configuration error in one of the mediation ad sources. Report this error to your support manager for further assistance.                                                    |
+| 11   | notPassedInterval  | Indicates that the interval between impressions of interstitial ads has not yet passed. This error may also occur if a trial ad-free interval has been defined and has not yet passed since app start. |
+| 12   | alreadyDisplayed   | Indicates that another fullscreen ad is currently being displayed, preventing new ads from showing. Review your ad display logic to avoid duplicate impressions.                                       |
+| 13   | notForeground      | Indicates that ads cannot be shown because the application is not currently in the foreground.                                                                                                         |
+

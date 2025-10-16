@@ -1,0 +1,65 @@
+---
+title: Configuring SDK
+---
+
+In your Unity project, navigate to `Assets > CleverAdsSolutions > Settings` to create and modify default settings for each native platform.  
+<Info>
+Repeat the following steps for each platform in Android Settings and iOS Settings windows.
+</Info>
+
+<Image width="398" alt="image" src="/assets/unity/Configuring-SDK-1.png" />
+
+## Manager Ids
+In most cases, a CAS Manager Id is the same as the Android App's package name, and the iOS App's store Id.
+- A [package name](https://developer.android.com/studio/build/application-id) uniquely identifies your app on the device and in the Google Play Store.
+- The store ID of an iOS app uniquely identifies your app in the Apple App Store.
+- You can find an app's store ID in the URL of your app’s Apple App Store listing. For example, the URL of an app page is `apps.apple.com/us/app/id123456789`. The app's store ID is `123456789`.
+-  If you haven't created an CAS account and registered an app yet, now's a great time to do so at [CAS.ai](https://cas.ai). 
+- In a real app, it is important that you use your actual CAS manager ID.  
+
+## Select ad formats to use
+To improve the performance of your application, we recommend that you only allow ad types that will actually be used in the application.  
+Your choice helps us configuring mediation in the most effective way for you, depending on the chosen ad formats.  
+
+## Select target audience
+Select the audience your game is targeting.  
+The changing audience will change the availability of the mediation network dependency.  
+- Mixed - The app is intended for audiences of all ages.
+- Children - Children restrictions and [Google Play Families Policies](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) participation apply to the app. Audience under 12 years old.
+- NotChildren - Audience over 12 years old only. There are no restrictions on ad filling.  
+
+<Info>
+Follow the instructions provided in the settings window.   
+Read more about [COPPA compliance](Unity/Privacy-Regulations).
+</Info>
+
+## Add Ads Solution
+Clever Ads Solutions provide ready-made solutions for you to choose from.
+- An **Optimal Ads Solutions** contains a number of stable partner networks that are recommended for use in most applications.  
+- A **Families Ads Solutions** designed for applications tagged at a children's audience.  
+  - For Android, solution is fully compatible with the Google Play Families Policies.
+  - For iOS, solution is NOT intended for apps in [Apple Kids Category].
+
+In the following table, you can see all the ad networks supported by Clever Ads Solutions. And a list of partners that are included in the Optimal and Families Ads solutions.  
+
+<Warning>  
+Some ad networks require you to do Additional integration steps: [Meta AudienceNetwork](Unity/Additional-Meta-AudienceNetwork-steps)
+</Warning>
+
+<Error>  
+Changing dependencies will change the Android project setting. Use Android Resolver at bottom of the window after the dependencies changed.
+</Error>
+
+## Advanced Integration
+Advanced integration makes it possible to choose any variations of mediation networks.
+Feel free not to use ready-made solutions, and choose which mediated ad networks you want to integrate by checking the boxes in `Mediation Adapters` section of settings window.
+
+<Warning>  
+Access to the monetization of the `beta` ad sources is closed.  
+If you would like to monetize by one of these ad sources, please contact your account manager.
+</Warning>
+
+## Cross-promotion
+Cross-promotion is an app marketing strategy in which app developers promote one of their titles on another one of their titles. Cross promoting is especially effective for developers with large portfolios of games as a means to move users across titles and use the opportunity to scale each of their apps. This is most commonly used by hyper-casual publishers who have relatively low retention, and use cross promotion to keep users within their app portfolio.  
+
+Start your cross promotion campaign with CAS [here](https://cas.ai).  

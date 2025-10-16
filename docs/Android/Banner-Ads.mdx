@@ -1,0 +1,215 @@
+---
+title: Banner Ads
+description: This guide shows you how to integrate banner ads from CAS into an Android app.
+---
+
+Banner Ad units display rectangular ads that occupy a portion of an app's layout. 
+They can refresh automatically after a set period of time. 
+This means users view a new ad at regular intervals, even if they stay on the same screen in your app. 
+They're also the simplest ad format to implement.
+
+Banner ads are displayed in `CASBannerView` objects, so the first step toward integrating banner ads is to include a `CASBannerView` in your view hierarchy. 
+This is typically done either with the layout or programmatically.
+
+Below is a diagram showing the ad lifecycle.
+<Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
+
+
+## Create Ad View in Layout
+The first step toward displaying a banner is to place `CASBannerView` in the layout for the Activity or Fragment in which you'd like to display it. The easiest way to do this is to add one to the corresponding XML layout file. Here's an example that shows an activity's `CASBannerView`:  
+```xml
+# main_activity.xml
+...
+  <com.cleversolutions.ads.android.CASBannerView 
+      xmlns:ads="http://schemas.android.com/apk/res-auto"
+      android:id="@+id/bannerView"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center"
+      ads:bannerSize="Standard320x50"/>
+...
+```
+Note the following required attributes:  
+`ads:bannerSize` - Set the ad size you'd like to use.  
+See the banner size section below for details.  
+
+On create activity you should set CAS Id to the ad view:
+```java
+import com.cleversolutions.ads.android.CASBannerView;
+
+class MyActivity extends Activity {
+
+    CASBannerView bannerView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        bannerView = (CASBannerView)findViewById(R.id.bannerView);
+        bannerView.setCasId(MyApplication.CAS_ID);
+    }
+```
+
+## Create Ad View programmatically
+Create an `CASBannerView` using the ad size to add to your app's layout:
+
+```java
+import com.cleversolutions.ads.android.CASBannerView;
+
+class MyActivity extends Activity {
+
+    CASBannerView bannerView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    
+        bannerView = new CASBannerView(this, MyApplication.CAS_ID);
+        bannerView.setSize(AdSize...);
+        
+        // Replace ad container with new ad view.
+        adContainerView.removeAllViews();
+        adContainerView.addView(bannerView, 
+            new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        );
+    }
+```
+
+## Set Ad Size
+| Size in dp (WxH) |      Description     |    Availability    |  AdSize |
+|:----------------:|:--------------------:|:------------------:|:----------------:|
+|      320x50      |    Standard Banner   | Phones and Tablets |      BANNER      |
+|      728x90      |    IAB Leaderboard   |       Tablets      |    LEADERBOARD   |
+|      300x250     | IAB Medium Rectangle | Phones and Tablets | MEDIUM_RECTANGLE |
+| Adaptive | Adaptive banner | Phones and Tablets | getAdaptiveBanner() |
+| 320x50 or 728x90 | Smart Banner | Phones and Tablets | getSmartBanner() |
+
+> ❕Typically, Smart Banners on phones have a `BANNER` size. Or on tablets a `LEADERBOARD` size.
+
+### Adaptive Banners
+Adaptive banners are the next generation of responsive ads, maximizing performance by optimizing ad size for each device.  
+To pick the best ad size, adaptive banners use fixed aspect ratios instead of fixed heights. This results in banner ads that occupy a more consistent portion of the screen across devices and provide opportunities for improved performance.
+
+When implementing adaptive banners in your app, keep the following points in mind:
+- The adaptive banner sizes are designed to work best when using the full available width. In most cases, this will be the full width of the screen of the device in use. Be sure to take into account applicable safe areas.
+- The height is never larger than the lesser of 15% of the device's height or 90 density independent pixels and never smaller than 50 density independent pixels.
+- The width cannot be less than 300 density independent pixels.  
+
+Use the appropriate static methods on the ad size class to get an adaptive `AdSize` object.
+```java
+// Get adaptive size with width parameter:
+adSize = AdSize.getAdaptiveBanner(context, maxWidthDPI);
+// Get adaptive size in full screen width:
+adSize = AdSize.getAdaptiveBannerInScreen(context);
+```
+
+<Warning>  
+After changing the screen orientation, you should get the new adaptive ad size using the same method. And pass the size to the view. This will destroy the current ad content and load a new one.
+</Warning>
+
+## Listen Ad events
+To further customize the behavior of your ad, you can hook onto a number of events in the ad's lifecycle: loading, clicking, and so on. You can listen for these events through the `AdViewListener` interface.
+To use an `AdViewListener` with Banner View, call the `setAdListener()` method before loading the banner:
+```java
+bannerView.setAdListener(new AdViewListener() {
+    @Override
+    public void onAdViewLoaded(@NonNull CASBannerView view) {
+      // Invokes this callback when ad loaded and ready to present.
+    }
+
+    @Override
+    public void onAdViewFailed(@NonNull CASBannerView view, @NonNull AdError error) {
+      // Invokes this callback when an error occurred with the ad.
+    }
+
+    @Override
+    public void onAdViewClicked(@NonNull CASBannerView view) {
+      // Invokes this callback when a user clicks the ad.
+    }
+
+    @Override
+    public void onAdViewPresented(@NonNull CASBannerView view, @NonNull AdStatusHandler info) {
+      // Deprecated. Same as onAdImression(AdContentInfo).
+    }
+});
+```
+
+## Load Ad 
+Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class.
+```java
+bannerView.load();
+```
+
+### Autoload Ad mode
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+```java
+bannerView.setAutoloadEnabled(false);
+```
+By default enabled.
+
+### Ad refresh interval
+The ad view’s automatic refresh interval determines how often a new ad request is generated for that ad view. You have the option to set a custom refresh interval longer than 10 seconds or to disable the Automatic refresh option for the ad view.
+
+Change the banner automatic refresh interval using the following method:
+```java
+bannerView.setRefreshInterval(interval);
+```
+
+We recommend using optimal automatic refresh interval 30 seconds, by default.
+
+To disable refresh ad use following method:
+```java
+bannerView.disableAdRefresh();
+```
+
+<Info>
+- The automatic refresh occurs only if the banner is visible on screen.  
+- The `isAutoloadEnabled` has no effect on refreshing the banner ad.
+</Info>
+
+## Ad view visibility
+The banner is a normal view so you can feel free to change the visibility with the following method:
+```java
+bannerView.setVisibility(View.GONE);
+```
+
+### Checking Ad Availability
+Use `isLoaded()` to check whether an ad is currently loaded.
+```java
+if (bannerView.isLoaded()) {
+}
+```
+
+## Release ad resource
+It is important to `destroy()` loaded ads.
+```java
+@Override
+protected void onDestroy() {
+  super.onDestroy();
+  bannerView.destroy();
+}
+```
+
+## Samples
+- [Kotlin Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.kt)
+- [Kotlin Adaptive Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/xml/AdaptiveBannerAdActivity.kt)
+- [Java Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.java)
+- [Java Adaptive Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/banner/xml/AdaptiveBannerAdActivity.java)
+
+## Hardware acceleration for video ads
+In order for video ads to show successfully in your banner ad views, [hardware acceleration](https://developer.android.com/guide/topics/graphics/hardware-accel) must be enabled.  
+
+Hardware acceleration is enabled by default, but some apps may choose to disable it. If this applies to your app, we recommend enabling hardware acceleration for Activity classes that use ads.  
+
+If your app does not behave properly with hardware acceleration turned on globally, you can control it for individual activities as well. To enable or disable hardware acceleration, you can use the `android:hardwareAccelerated` attribute for the [application](https://developer.android.com/guide/topics/manifest/application-element) and [activity](https://developer.android.com/guide/topics/manifest/activity-element) elements in your **AndroidManifest.xml**. The following example enables hardware acceleration for the entire app but disables it for one activity:
+```xml
+<application android:hardwareAccelerated="true">
+    <!-- For activities that use ads, hardwareAcceleration should be true. -->
+    <activity android:hardwareAccelerated="true" />
+    <!-- For activities that don't use ads, hardwareAcceleration can be false. -->
+    <activity android:hardwareAccelerated="false" />
+</application>
+```
+See the [HW acceleration](https://developer.android.com/guide/topics/graphics/hardware-accel) guide for more information about options for controlling hardware acceleration. Note that individual ad views cannot be enabled for hardware acceleration if the Activity is disabled, so the Activity itself must have hardware acceleration enabled.
