@@ -65,6 +65,7 @@ class MyActivity extends Activity {
     
         bannerView = new CASBannerView(this, MyApplication.CAS_ID);
         bannerView.setSize(AdSize...);
+        bannerView.setAutoloadEnabled(true);
         
         // Replace ad container with new ad view.
         adContainerView.removeAllViews();
@@ -108,6 +109,7 @@ class MyActivity extends Activity {
 
         bannerView = (CASBannerView)findViewById(R.id.bannerView);
         bannerView.setCasId(MyApplication.CAS_ID);
+        bannerView.setAutoloadEnabled(true);
     }
 ```
 </TabItem>
@@ -177,7 +179,27 @@ bannerView.setAutoloadEnabled(false);
 ```
 By default enabled.
 
-### Ad refresh interval
+### Handle Orientation Changes
+When using an `AdSize` based on screen width, you should recalculate the size whenever 
+the device orientation changes and reload the banner ad to match the new layout.
+```kotlin
+@Override
+public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    bannerView.setSize(AdSize...);
+    if (bannerView.isAutoloadEnabled == false) {
+        bannerView.load();
+    }
+}
+```
+
+## Ad view visibility
+The banner is a normal view so you can feel free to change the visibility with the following method:
+```java
+bannerView.setVisibility(View.GONE);
+```
+
+## Ad refresh interval
 The ad view’s automatic refresh interval determines how often a new ad request is generated for that ad view. You have the option to set a custom refresh interval longer than 10 seconds or to disable the Automatic refresh option for the ad view.
 
 Change the banner automatic refresh interval using the following method:
@@ -197,19 +219,6 @@ bannerView.disableAdRefresh();
 - The `isAutoloadEnabled` has no effect on refreshing the banner ad.
 </Info>
 
-## Ad view visibility
-The banner is a normal view so you can feel free to change the visibility with the following method:
-```java
-bannerView.setVisibility(View.GONE);
-```
-
-### Checking Ad Availability
-Use `isLoaded()` to check whether an ad is currently loaded.
-```java
-if (bannerView.isLoaded()) {
-}
-```
-
 ## Release ad resource
 Be sure to release ad resources if you’re no longer going to use the ad view.
 
@@ -228,6 +237,13 @@ protected void onDestroy() {
 }
 ```
 </CodeGroup>
+
+## Check Ad availability
+Use `isLoaded()` to check whether an ad is currently loaded.
+```java
+if (bannerView.isLoaded()) {
+}
+```
 
 ## Samples
 - [Kotlin Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.kt)

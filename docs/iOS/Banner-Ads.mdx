@@ -15,7 +15,38 @@ Below is a diagram showing the ad lifecycle.
 <Image zoom src="/assets/ios/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
 
 
-## Create Ad View programmatically
+## Get the Ad size
+To load a banner ad, you need to specify the ad size. To do this, choose one of the methods for obtaining an `CASSize` from the list below:
+1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50.
+```swift
+let adSize = AdSize.getAdaptiveBanner(forMaxWidth: 360)
+```
+2. **Inline banner** ads have a desired width and a maximum height, useful when you want to limit the banner's height. Inline banners are larger and taller compared to adaptive banners. They have variable height, including Medium Rectangle size, and can be as tall as the device screen.
+```swift
+let adSize = CASSize.getInlineBanner(width: 360, maxHeight: 400)
+```
+3. **Smart ad size** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+```swift
+let adSize = CASSize.getSmartBanner()
+```
+4. **Medium Rectangle** has a fixed size of 300x250.
+```swift
+let adSize = CASSize.mediumRectangle
+```
+5. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+```swift
+let adSize = CASSize.leaderboard
+```
+6. **Standard banner** has a fixed size of 320x50 and is the minimum ad size.
+```swift
+let adSize = CASSize.banner
+```
+
+## Create Ad View
+The first step toward displaying a banner is to create `CASBannerView` in the layout. 
+
+<Tabs>
+<TabItem label="Programmatically" value="script">
 The `CASBannerView` can be instantiated directly. In this case, we instantiate the banner with desired ad size and CAS ID.
 
 ```swift
@@ -28,6 +59,7 @@ class MyViewController: UIViewController, CASBannerDelegate {
         bannerView = CASBannerView(casID: MyAppDelegate.casID, adSize: adSize)      
         let bannerDelegate: CASBannerDelegate = self
         bannerView.delegate = bannerDelegate
+        bannerView.isAutoloadEnabled = true
         
         addBannerViewToView()
     }
@@ -54,14 +86,16 @@ class MyViewController: UIViewController, CASBannerDelegate {
     }
 }
 ```
+
 This example doesn't give width or height constraints, as the provided ad size gives the banner an intrinsic content size to size the view.
 
-<Info>
-Banner ads view must be placed in the "[Safe Area](https://developer.apple.com/ios/human-interface-guidelines/visual-design/adaptivity-and-layout/#layout-guides-and-safe-area)" to avoid being obscured by rounded corners, sensor housing, and the Home indicator.
-</Info>
-
-## Create Ad View in Interface Builder
-You can add the `CASBannerView` module to a storyboard or xib file. When using this method, be sure to only add position constraints on the banner. For example, when displaying an adaptive banner at the bottom of the screen, set the bottom of the banner view equal to the top of the Bottom Layout Guide, and set the `centerX` constraint equal to the `centerX`of the superview.
+</TabItem>
+<TabItem label="Interface Builder" value="builder">
+You can add the `CASBannerView` module to a storyboard or xib file. 
+When using this method, be sure to only add position constraints on the banner. 
+For example, when displaying an adaptive banner at the bottom of the screen, 
+set the bottom of the banner view equal to the top of the Bottom Layout Guide, 
+and set the `centerX` constraint equal to the `centerX`of the superview.
 
 The banner's ad size and CAS ID is still set programmatically:
 
@@ -76,47 +110,16 @@ class MyViewController: UIViewController, CASBannerDelegate {
         bannerView.delegate = bannerDelegate
         bannerView.casID = MyAppDelegate.casID
         bannerView.adSize = AdSize...    
+        bannerView.isAutoloadEnabled = true
     }
 }
 ```
+</TabItem>
+</Tabs>
 
-## Set Ad Size
-| Size in points (WxH) |      Description     |    Availability    |  CASSize |
-|:----------------:|:--------------------:|:------------------:|:----------------:|
-|      320x50      |    Standard Banner   | Phones and Tablets |      banner      |
-|      728x90      |    IAB Leaderboard   |       Tablets      |    leaderboard   |
-|      300x250     | IAB Medium Rectangle | Phones and Tablets | mediumRectangle |
-| Adaptive | Adaptive banner | Phones and Tablets | getAdaptiveBanner() |
-| 320x50 or 728x90 | Smart Banner | Phones and Tablets | getSmartBanner() |
-
-> ❕Typically, Smart Banners on phones have a `banner` size. Or on tablets a `leaderboard` size.
-
-```swift
-let adSize = AdSize.banner
-```
-
-### Adaptive Banners
-Adaptive banners are the next generation of responsive ads, maximizing performance by optimizing ad size for each device.  
-To pick the best ad size, adaptive banners use fixed aspect ratios instead of fixed heights. This results in banner ads that occupy a more consistent portion of the screen across devices and provide opportunities for improved performance.
-
-When implementing adaptive banners in your app, keep the following points in mind:
-- The adaptive banner sizes are designed to work best when using the full available width. In most cases, this will be the full width of the screen of the device in use. Be sure to take into account applicable safe areas.
-- The height is never larger than the lesser of 15% of the device's height or 90 density independent pixels and never smaller than 50 density independent pixels.
-- The width cannot be less than 300 density independent pixels.  
-
-Use the appropriate static methods on the ad size class to get an adaptive `CASSize` object.
-```swift
-// Get adaptive size with width parameter:
-let adSize = AdSize.getAdaptiveBanner(forMaxWidth: maxWidth)
-// Get adaptive size in container view group:
-let adSize = AdSize.getAdaptiveBanner(inContainer: containerView)
-// Get adaptive size in full screen width:
-let adSize = AdSize.getAdaptiveBanner(inWindow: containerWindow)
-```
-
-<Warning>  
-After changing the screen orientation, you should get the new adaptive ad size using the same method. And pass the size to the view. This will destroy the current ad content and load a new one.
-</Warning>
+<Info>
+Banner ads view must be placed in the [Safe Area](https://developer.apple.com/ios/human-interface-guidelines/visual-design/adaptivity-and-layout/#layout-guides-and-safe-area) to avoid being obscured by rounded corners, sensor housing, and the Home indicator.
+</Info>
 
 ## Receive Ad events
 To further customize the behavior of your ad, you can hook onto a number of events in the ad's lifecycle: loading, failing, clicking, and so on. You can listen for these events through the `CASBannerDelegate` protocol.  
@@ -143,7 +146,8 @@ func bannerAdView(_ adView: CASBannerView, willPresent impression: CASImpression
 Note that the reference to `delegate` is weak and can be removed from memory.
 
 ## Load Ad 
-Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class.
+Once the ad view is in place, the next step is to load an ad. 
+That's done with the `loadAd()` method in the `CASBannerView`class.
 ```swift
 bannerView.loadAd()
 ```
@@ -155,7 +159,27 @@ bannerView.isAutoloadEnabled = false
 ```
 By default enabled.
 
-### Ad refresh interval
+## Handle Orientation Changes
+When using an `CASSize` based on screen width, you should recalculate the size whenever 
+the device orientation changes and reload the banner ad to match the new layout.
+
+```swift
+override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    super.viewWillTransition(to: size, with: coordinator)
+    bannerView.adSize = AdSize...  
+    if bannerView.isAutoloadEnabled == false {
+      bannerView.loadAd()
+    }
+}
+```
+
+## Banner Ad visibility
+The banner is a normal view so you can feel free to change the visibility with the following method:
+```swift
+bannerView.isHidden = true
+```
+
+## Ad refresh interval
 The ad view’s automatic refresh interval determines how often a new ad request is generated for that ad view. You have the option to set a custom refresh interval longer than 10 seconds or to disable the Automatic refresh option for the ad view.
 
 Change the banner automatic refresh interval using the following method:
@@ -175,24 +199,18 @@ bannerView.disableAdRefresh();
 - The `isAutoloadEnabled` has no effect on refreshing the banner ad.
 </Info>
 
-## Banner Ad visibility
-The banner is a normal view so you can feel free to change the visibility with the following method:
-```swift
-bannerView.isHidden = true
-```
-
-### Checking Ad Availability
-Use `isAdLoaded` to check whether an ad is currently loaded.
-```swift
-if bannerView.isAdLoaded {
-}
-```
-
 ## Release ad resource
-It is important to `destroy()` loaded ads.
+Be sure to release ad resources if you’re no longer going to use the ad view.
 ```swift
 deinit {
   bannerView.destroy()
+}
+```
+
+## Check Ad availability
+Use `isAdLoaded` to check whether an ad is currently loaded.
+```swift
+if bannerView.isAdLoaded {
 }
 ```
 

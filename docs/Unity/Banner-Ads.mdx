@@ -10,35 +10,42 @@ Enable Banner Ads for your game in `Assets > CleverAdsSolutions > Settings` menu
 > For easier ads integration using the Unity Editor, try the new [BannerAdObject](Unity/Banner-Ad-object).
 
 ## Ad size
-| Size in dp (WxH) |      Description     |    Availability    |  AdSize |
-|:----------------:|:--------------------:|:------------------:|:----------------:|
-|      320x50      |    Standard Banner   | Phones and Tablets |      Banner      |
-|      728x90      |    IAB Leaderboard   |       Tablets      |    Leaderboard   |
-|      300x250     | IAB Medium Rectangle | Phones and Tablets | MediumRectangle |
-| Adaptive | Adaptive banner | Phones and Tablets | AdaptiveBanner |
-| 320x50 or 728x90 | Smart Banner | Phones and Tablets | SmartBanner |
-
->❕ Typically, Smart Banners on phones have a `Banner` size. Or on tablets a `Leaderboard` size.
+To load a banner ad, you need to specify the ad size. To do this, choose one of the `AdSize` from the list below:
+1. **Adaptive banner** ads have a fixed aspect ratio for the maximum screen width. The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50.
+```csharp
+AdSize adSize = AdSize.AdaptiveBanner;
+```
+The width cannot be less than 300 density independent pixels and larger than 728 density independent pixels.  
+2. **Adaptive Full Width Banner** ads are similar to `AdaptiveBanner`, but they can have a width greater than 728 pixels in landscape orientation.
+```csharp
+AdSize adSize = AdSize.AdaptiveFullWidth;
+```
+3. **Smart ad size** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+```csharp
+AdSize adSize = AdSize.SmartBanner;
+```
+4. **Medium Rectangle** has a fixed size of 300x250.
+```csharp
+AdSize adSize = AdSize.MediumRectangle;
+```
+5. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+```csharp
+AdSize adSize = AdSize.Leaderboard;
+```
+6. **Standard banner** has a fixed size of 320x50 and is the minimum ad size.
+```csharp
+AdSize adSize = AdSize.Banner;
+```
 
 Get the ad view interface for specific `AdSize`:
 ```cs
-IAdView adView = manager.GetAdView( AdSize.Banner );
+IAdView adView = manager.GetAdView(adSize);
 ```
 
 <Info>
 If a view for specific size has already been created then a reference to it will be returned without creating a new one.  
 </Info>
 
-### Adaptive banners 
-Adaptive banners are the next generation of responsive ads, maximizing performance by optimizing ad size for each device.  
-To pick the best ad size, adaptive banners use fixed aspect ratios instead of fixed heights. This results in banner ads that occupy a more consistent portion of the screen across devices and provide opportunities for improved performance.
-
-When implementing adaptive banners in your app, keep the following points in mind:
-- The adaptive banner sizes are designed to work best when using the full available width. In most cases, this will be the full width of the screen of the device in use. Be sure to take into account applicable safe areas.
-- After changing the screen orientation, the banner width automatically changes to the current screen width. This will destroy the current ad content and initiate the load of new one.
-- The height is never larger than the lesser of 15% of the device's height or 90 density independent pixels and never smaller than 50 density independent pixels.
-- The width cannot be less than 300 density independent pixels and larger than 728 density independent pixels.  
-- For full width banners, you can use the `AdSize.AdaptiveFullWidth` instead of the `AdSize.AdaptiveBanner`.
 
 ## Load an Ad
 By default, the **auto-load ads mode is used** and a load method does not need to be called.  
@@ -53,20 +60,32 @@ Also you can use the load for cancel current impression and load next ad.
 To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, clicking, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
 
 ```cs
-adView.OnLoaded += AdLoaded;
-adView.OnFailed += AdFailedToLoad;
-adView.OnClicked += AdClicked;
+void OnEnable()
+{
+    adView.OnLoaded += AdLoaded;
+    adView.OnFailed += AdFailedToLoad;
+    adView.OnClicked += AdClicked;
+}
+
+void OnDisable()
+{
+    adView.OnLoaded -= AdLoaded;
+    adView.OnFailed -= AdFailedToLoad;
+    adView.OnClicked -= AdClicked;
+}
 
 void AdLoaded()
 {
     // Called when the ad loaded and ready to present.
     Debug.Log("Banner ad loaded");
 }
+
 void AdFailedToLoad(AdError error)
 {
     // Сalled when an error occurred with the ad.
     Debug.Log("Banner failed to load an ad with error: " + error.GetMessage());
 }
+
 void AdClicked()
 {
     // Called when the user clicks on the Ad.
@@ -75,18 +94,8 @@ void AdClicked()
 ```
 Read more about event `OnImpression` with [Impression Level Data](Unity/Impression-Level-Data) and `AdMetaData`.  
 
-## Ad Availability
-You can ask for the ad availability directly by calling the following function:
-```cs
-bool bannerLoaded = adView.isReady;
-```
-
-<Warning>  
-We don’t recommend waiting for `isReady` to change in an Update or Coroutine. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnLoaded` event instead.
-</Warning>
-
 ## Display the Ad
-The newly created `AdView` has an inactive state.  
+The newly created `AdView` has an **inactive state**.  
 When you are ready to show the ad on the screen, simply call the following method:
 ```cs
 adView.SetActive(true);
@@ -170,8 +179,18 @@ If you no longer need the `AdView` with specific size, please call `IDisposable.
 ```cs
 adView.Dispose();
 ```
-After calling `Dispose()`, you can use [GetAdView()](#ad-size) method to create a new view.
+After calling `Dispose()`, you can use `GetAdView(AdSize)` method to create a new view.
 
-<Success>  
-[HelloWorld example](https://github.com/cleveradssolutions/CAS-Unity-Sample/blob/master/Assets/SampleCSharp/CSharpSampleController.cs) — a minimal implementation of all ad formats 
-</Success>
+## Ad Availability
+You can ask for the ad availability directly by calling the following function:
+```cs
+bool bannerLoaded = adView.isReady;
+```
+
+<Warning>  
+We don’t recommend waiting for `isReady` to change in an Update or Coroutine. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnLoaded` event instead.
+</Warning>
+
+## Complete example
+ - [HelloWorld example](https://github.com/cleveradssolutions/CAS-Unity-Sample/blob/master/Assets/SampleCSharp/CSharpSampleController.cs) — a minimal implementation of all ad formats 
+

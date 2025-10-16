@@ -85,9 +85,12 @@ class BannerAdExampleState extends State<BannerAdExample> {
 }
 ```
 
-Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, create the ad instance in advance. Use the `onAdLoaded` callback to be notified when the ad is ready for display.
+Ad content may take some time to load after creating an ad instance. 
+To ensure the ad displays instantly when needed, create the ad instance in advance. 
+Use the `onAdLoaded` callback to be notified when the ad is ready for display.
 
-When using an `AdSize` based on screen width, you should recalculate the size whenever the device orientation changes and reload the banner ad to match the new layout.
+When using an `AdSize` based on screen width, you should recalculate the size whenever 
+the device orientation changes and reload the banner ad to match the new layout.
 ```dart
 late Orientation _currentOrientation;
 
