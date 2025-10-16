@@ -101,10 +101,10 @@ bool AdLoaded = UCASMobileAds::IsRewardedAdReady();
 ```
 <Image width="175" alt="image" src="/assets/unreal/Rewarded-Ads-5.png" />
 
-<Error>  
+<Warning>  
 We don’t recommend waiting for `IsRewardedAdReady` to change each frame. This method call the native SDK and can affect the performance of your game.  
 Subscribe to the `OnRewardedAdLoaded` event instead.
-</Error>
+</Warning>
 
 ## Muted Ads Sounds
 Sounds in Rewarded and Rewarded ads mute state. Disabled by default.  

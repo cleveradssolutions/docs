@@ -81,9 +81,9 @@ You can ask for the ad availability directly by calling the following function:
 bool bannerLoaded = adView.isReady;
 ```
 
-<Error>  
+<Warning>  
 We don’t recommend waiting for `isReady` to change in an Update or Coroutine. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnLoaded` event instead.
-</Error>
+</Warning>
 
 ## Display the Ad
 The newly created `AdView` has an inactive state.  

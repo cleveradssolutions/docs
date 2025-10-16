@@ -109,10 +109,10 @@ bool AdLoaded = UCASMobileAds::IsInterstitialAdReady();
 ```
 <Image width="179" alt="image" src="/assets/unreal/Interstitial-Ads-6.png" />
 
-<Error>  
+<Warning>  
 We don’t recommend waiting for `IsInterstitialAdReady` to change each frame. This method call the native SDK and can affect the performance of your game.  
 Subscribe to the `OnInterstitialAdLoaded` event instead.
-</Error>
+</Warning>
 
 ## Minimum interval between impressions
 You can limit the posting of an interstitial ad to a period of time in seconds after the ad is closed, during which display attempts will fail.

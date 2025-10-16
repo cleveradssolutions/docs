@@ -109,10 +109,10 @@ bool AdLoaded = UCASMobileAds::IsAppOpenAdReady();
 ```
 <Image width="208" alt="Image" src="/assets/unreal/App-Open-Ads-6.png" />
 
-<Error>  
+<Warning>  
 We don’t recommend waiting for `IsAppOpenAdReady` to change each frame. This method call the native SDK and can affect the performance of your game.  
 Subscribe to the `OnAppOpenAdLoaded` event instead.
-</Error>
+</Warning>
 
 ## Muted Ads Sounds
 Sounds in Interstitial and Rewarded ads mute state. Disabled by default.  

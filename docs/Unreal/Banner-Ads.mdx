@@ -20,7 +20,7 @@ ECASBannerSize adSize = ECASBannerSize::Adaptive;
 ```
 2. **Smart ad size** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
 ```cpp
-ECASBannerSize adSize = ECASBannerSize::SmartBanner;
+ECASBannerSize adSize = ECASBannerSize::Smart;
 ```
 3. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
 ```cpp
@@ -136,6 +136,6 @@ bool BannerLoaded = UCASMobileAds::IsBannerAdReady();
 ```
 <Image width="159" alt="image" src="/assets/unreal/Banner-Ads-7.png" />
 
-<Error>  
+<Warning>  
 We don’t recommend waiting for `IsBannerAdReady` to change each frame. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnBannerAdLoaded` event instead.
-</Error>
+</Warning>

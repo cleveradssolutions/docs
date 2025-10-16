@@ -2,8 +2,12 @@
 title: Initialize CAS Framework
 ---
 
+The `initializeCAS()` method initializes the SDK and invokes a completion handler once the CAS SDK has been successfully initialized.
+This should be done only once, ideally during the app launch.
+
 To begin, create a string constant with your `casID`. This constant will be needed when creating each ad format instance.
 
+<CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
 
@@ -28,6 +32,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 }
 ```
 
+```objc
+@import CleverAdsSolutions;
+
+@implementation AppDelegate
+
++ (NSString *)casId {
+    return @"demo";
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [self initializeCAS];
+    return YES;
+}
+```
+</CodeGroup>
+
 <Accordion title="What is CAS ID?">
 
 In most cases, a CASID is the same as your app store ID.  
@@ -40,6 +60,7 @@ If you just want to experiment or test the SDK, you can skip the configuration y
 
 You can skip the manual call for ad initialization, and then the SDK will automatically perform the initialization before the first ad load. However, if it's important for you to change the configuration or listen to states of the Consent Flow, make sure to initialize it at least once before the first ad load.
 
+<CodeGroup synchronize="true">
 ```swift
 func initializeCAS() {
     let builder = CAS.buildManager()
@@ -56,9 +77,31 @@ func initializeCAS() {
         let trackingAuthorized: Bool = config.isATTrackingAuthorized
     }
         
-    builder.create(withCasId: casID)
+    builder.create(withCasId: AppDelegate.casID)
 }
 ```
+
+```objc
+- (void)initializeCAS {
+    CASManagerBuilder *builder = [CAS buildManager];
+    
+    [builder withCompletionHandler:^(CASInitialConfig *config) {
+        // The CAS SDK initializes if the error is `nil`
+        NSString *error = config.error;
+        NSString *userCountryISO2 = config.countryCode;
+
+        // YES if the user is protected by GDPR or other regulations
+        BOOL protectionApplied = config.isConsentRequired;
+
+        // The user completes the consent flow
+        CASConsentFlowStatus consentStatus = config.consentFlowStatus;
+        BOOL trackingAuthorized = config.isATTrackingAuthorized;
+    }];
+        
+    [builder createWithCasId:[AppDelegate casId]];
+}
+```
+</CodeGroup>
 
 The `withCompletionHandler` may be called with an error. In this case, the SDK will attempt to reinitialize and the listener will be called again until the error is resolved.
 
@@ -67,7 +110,7 @@ Do not initialize mediated advertising SDKs (CAS does that for you).
 Not following this step will result in noticeable integration issues.
 </Error>
 
-#### SwiftUI
+### SwiftUI support
 To handle app delegate callbacks in an app that uses the SwiftUI lifecycle, you must create an application delegate and attach it to your `App` struct using `UIApplicationDelegateAdaptor`.
 ```swift
 @main
@@ -84,23 +127,24 @@ struct YourApp: App {
 }
 ```
 
-#### Objective-C
-Use the CleverAdsSolutions module import. All classes have the `CAS` prefix and use the same names as in Swift.
-```objc
-@import CleverAdsSolutions;
-```
-
-### Automatic user consent flow
+## Automatic user consent flow
 To get consent for collecting personal data of your users, we suggest you use a built-in Consent Flow, comes with a pre-made consent form that you can easily present to your users. That means you no longer need to create your own consent window.  
 
 The user will see the consent flow when your app initialize CAS SDK. When the user completes the flow, the SDK calls your initialization-completion handler.
 
 CAS consent flow is enabled by default. You can disable the consent flow by add disabled  `CASConsentFlow` to `withConsentFlow()`:
+<CodeGroup synchronize="true">
 ```swift
 builder.withConsentFlow(
     CASConsentFlow(isEnabled: false)
 )
 ```
+
+```objc
+CASConsentFlow *consentFlow = [[CASConsentFlow alloc] initWithEnabled:NO];
+[builder withConsentFlow:consentFlow];
+```
+</CodeGroup>
 
 Make sure to apply all configurations before calling `builder.build()`.
 
@@ -110,32 +154,73 @@ You must wait until the user finishes the consent flow before you initialize thi
 Read more about "Privacy options button" and "Debug geography" on [CAS User Consent Flow page](iOS/User-Consent-Flow)
 </Info>
 
-### Always test with test ads
+## Always test with test ads
 When building and testing your apps, make sure you use test ads rather than live, production ads. Failure to do so can lead to suspension of your account.
 
 By default, CAS initializes mediation in live mode. To enable test ad mode, you should manually call `initializeCAS()` with the following option:
+
+<CodeGroup synchronize="true">
 ```swift
 #if DEBUG
 builder.withTestAdMode(true)
 #endif
 ```
 
+```objc
+#ifdef DEBUG
+[builder withTestAdMode:YES];
+#endif
+```
+</CodeGroup>
+
 For more information about how the CAS.AI SDK's test ads work, see [Enable test ads](iOS/Enabling-test-ads)
 
-### Legacy support MediationManager
+## Prohibition on Personal Information from Children
+Apps can be marked as child-directed or [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy) applicable through the CAS UI.  
+
+If the app determines that a user falls under COPPA regulations, the `taggedAudience` must be called before initializing the CAS SDK.
+<CodeGroup synchronize="true">
+```swift
+CAS.settings.taggedAudience = CASAudience.children
+```
+
+```objc
+CAS.settings.taggedAudience = CASAudienceNotChildren;
+```
+</CodeGroup>
+
+If your app targets both children and older users, all ads that may be shown to children must comply with COPPA.  
+To ensure compliance, a **neutral age screen** must be implemented so that ads unsuitable for children are only shown to appropriate audiences.  
+A neutral age screen is a tool—such as an age gate—that verifies a user’s age without encouraging them to misrepresent it, and prevents children from accessing content not intended for them.
+
+
+## (Optional) Legacy support MediationManager
 We are not removing support for managing ads using `CASMediationManager` at this time, but we recommend migrating to the new `CASInterstitial` and `CASRewarded` components whenever possible.
 
 To continue using `MediationManager`, you still need to specify the ad formats you want to work with, just as before.  
+<CodeGroup synchronize="true">
 ```swift
 builder.withAdTypes(CASType.interstitial, CASType.rewarded)
 ```
+
+```objc
+[builder withAdFlags:CASTypeFlagsInterstitial | CASTypeFlagsRewarded];
+```
+</CodeGroup>
+
 If your app no longer uses `CASMediationManager` for Interstitial and Rewarded formats, simply do not define any formats during initialization.
 
-## Retrieve the Version Number
+## (Optional) Retrieve the Version Number
 To programmatically retrieve the SDK version number at runtime, CAS provides the following method:
+<CodeGroup synchronize="true">
 ```swift
 String sdkVersion = CAS.getSDKVersion();
 ```
+
+```objc
+NSString *sdkVersion = [CAS getSDKVersion];
+```
+</CodeGroup>
 
 ## (Optional) Trial ad-free interval
 Set the time interval during which users can enjoy an ad-free experience while retaining access
@@ -143,7 +228,19 @@ to Rewarded Ads and App Open Ads formats. This interval is defined from the mome
 app installation, in seconds. Within this interval, users enjoy privileged access to the
 application's features without intrusive advertisements.
 
+<CodeGroup synchronize="true">
 ```swift
 let secondsIn7Days = 604800
 CAS.settings.trialAdFreeInterval = secondsIn7Days
 ```
+
+```objc
+NSInteger secondsIn7Days = 604800;
+CAS.settings.trialAdFreeInterval = secondsIn7Days;
+```
+</CodeGroup>
+
+## Complete sample
+- [Swift Sample Application](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Swift/CASSample/AppDelegate.swift)
+- [SwiftUI Sample Application](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20SwiftUI/CASSwiftUIDemoApp/AppDelegate.swift)
+- [Objective-C Sample Application](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Objective-C/CASSample/AppDelegate.m)

@@ -131,10 +131,6 @@
                     "href": "/Android/Initialize-CAS",
                     "pages": [
                         {
-                            "title": "Privacy Regulations",
-                            "href": "/Android/Privacy-Regulations"
-                        },
-                        {
                             "title": "User Consent Flow",
                             "href": "/Android/User-Consent-Flow"
                         },
@@ -247,10 +243,6 @@
                     "group": "Initialization",
                     "href": "/iOS/Initialize-CAS",
                     "pages": [
-                        {
-                            "title": "Privacy Regulations",
-                            "href": "/iOS/Privacy-Regulations"
-                        },
                         {
                             "title": "User Consent Flow",
                             "href": "/iOS/User-Consent-Flow"

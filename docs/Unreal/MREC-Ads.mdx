@@ -115,6 +115,6 @@ bool MRecLoaded = UCASMobileAds::IsMRecAdReady();
 ```
 <Image width="149" alt="image" src="/assets/unreal/MREC-Ads-7.png" />
 
-<Error>  
+<Warning>  
 We don’t recommend waiting for `IsMRecAdReady` to change each frame. This property call the native SDK and can affect the performance of your game. Subscribe to the `OnMRecAdLoaded` event instead.
-</Error>
+</Warning>

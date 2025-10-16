@@ -15,8 +15,69 @@ Below is a diagram showing the ad lifecycle.
 <Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
 
 
-## Create Ad View in Layout
-The first step toward displaying a banner is to place `CASBannerView` in the layout for the Activity or Fragment in which you'd like to display it. The easiest way to do this is to add one to the corresponding XML layout file. Here's an example that shows an activity's `CASBannerView`:  
+## Get the Ad size
+To load a banner ad, you need to specify the ad size. To do this, choose one of the methods for obtaining an `AdSize` from the list below:
+1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50.
+```java
+int maxWidth = 360;
+AdSize adSize = AdSize.getAdaptiveBanner(maxWidth);
+```
+2. **Inline banner** ads have a desired width and a maximum height, useful when you want to limit the banner's height. Inline banners are larger and taller compared to adaptive banners. They have variable height, including Medium Rectangle size, and can be as tall as the device screen.
+```java
+int maxWidth = 360;
+int maxHeight = 400;
+AdSize adSize = AdSize.getInlineBanner(maxWidth, maxHeight);
+```
+3. **Smart ad size** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+```java
+AdSize adSize = AdSize.getSmartBanner(context);
+```
+4. **Medium Rectangle** has a fixed size of 300x250.
+```java
+AdSize adSize = AdSize.MEDIUM_RECTANGLE;
+```
+5. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+```java
+AdSize adSize = AdSize.LEADERBOARD;
+```
+6. **Standard banner** has a fixed size of 320x50 and is the minimum ad size.
+```java
+AdSize adSize = AdSize.BANNER;
+```
+
+## Create Ad View
+The first step toward displaying a banner is to place `CASBannerView` in the layout for the Activity or Fragment in which you'd like to display it. 
+
+<Tabs>
+<TabItem label="Programmatically" value="script">
+Create an `CASBannerView` using the ad size to add to your app's layout:
+
+```java
+import com.cleversolutions.ads.android.CASBannerView;
+
+class MyActivity extends Activity {
+    CASBannerView bannerView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    
+        bannerView = new CASBannerView(this, MyApplication.CAS_ID);
+        bannerView.setSize(AdSize...);
+        
+        // Replace ad container with new ad view.
+        adContainerView.removeAllViews();
+        adContainerView.addView(bannerView, 
+            new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        );
+    }
+```
+</TabItem>
+<TabItem label="XML Layout" value="xml">
+
+The easiest way to do this is to add one to the corresponding XML layout file. 
+Here's an example that shows an activity's `CASBannerView`:  
 ```xml
 # main_activity.xml
 ...
@@ -38,7 +99,6 @@ On create activity you should set CAS Id to the ad view:
 import com.cleversolutions.ads.android.CASBannerView;
 
 class MyActivity extends Activity {
-
     CASBannerView bannerView;
 
     @Override
@@ -50,68 +110,35 @@ class MyActivity extends Activity {
         bannerView.setCasId(MyApplication.CAS_ID);
     }
 ```
-
-## Create Ad View programmatically
-Create an `CASBannerView` using the ad size to add to your app's layout:
-
-```java
-import com.cleversolutions.ads.android.CASBannerView;
-
-class MyActivity extends Activity {
-
-    CASBannerView bannerView;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    
-        bannerView = new CASBannerView(this, MyApplication.CAS_ID);
-        bannerView.setSize(AdSize...);
-        
-        // Replace ad container with new ad view.
-        adContainerView.removeAllViews();
-        adContainerView.addView(bannerView, 
-            new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-        );
-    }
-```
-
-## Set Ad Size
-| Size in dp (WxH) |      Description     |    Availability    |  AdSize |
-|:----------------:|:--------------------:|:------------------:|:----------------:|
-|      320x50      |    Standard Banner   | Phones and Tablets |      BANNER      |
-|      728x90      |    IAB Leaderboard   |       Tablets      |    LEADERBOARD   |
-|      300x250     | IAB Medium Rectangle | Phones and Tablets | MEDIUM_RECTANGLE |
-| Adaptive | Adaptive banner | Phones and Tablets | getAdaptiveBanner() |
-| 320x50 or 728x90 | Smart Banner | Phones and Tablets | getSmartBanner() |
-
-> ❕Typically, Smart Banners on phones have a `BANNER` size. Or on tablets a `LEADERBOARD` size.
-
-### Adaptive Banners
-Adaptive banners are the next generation of responsive ads, maximizing performance by optimizing ad size for each device.  
-To pick the best ad size, adaptive banners use fixed aspect ratios instead of fixed heights. This results in banner ads that occupy a more consistent portion of the screen across devices and provide opportunities for improved performance.
-
-When implementing adaptive banners in your app, keep the following points in mind:
-- The adaptive banner sizes are designed to work best when using the full available width. In most cases, this will be the full width of the screen of the device in use. Be sure to take into account applicable safe areas.
-- The height is never larger than the lesser of 15% of the device's height or 90 density independent pixels and never smaller than 50 density independent pixels.
-- The width cannot be less than 300 density independent pixels.  
-
-Use the appropriate static methods on the ad size class to get an adaptive `AdSize` object.
-```java
-// Get adaptive size with width parameter:
-adSize = AdSize.getAdaptiveBanner(context, maxWidthDPI);
-// Get adaptive size in full screen width:
-adSize = AdSize.getAdaptiveBannerInScreen(context);
-```
-
-<Warning>  
-After changing the screen orientation, you should get the new adaptive ad size using the same method. And pass the size to the view. This will destroy the current ad content and load a new one.
-</Warning>
+</TabItem>
+</Tabs>
 
 ## Listen Ad events
-To further customize the behavior of your ad, you can hook onto a number of events in the ad's lifecycle: loading, clicking, and so on. You can listen for these events through the `AdViewListener` interface.
+To further customize the behavior of your ad, you can hook onto a number of events in the ad's lifecycle: loading, clicking, and so on. 
+You can listen for these events through the `AdViewListener` interface.
 To use an `AdViewListener` with Banner View, call the `setAdListener()` method before loading the banner:
+
+<CodeGroup synchronize="true">
+```kotlin
+bannerAd.adListener = object : AdViewListener {
+    override fun onAdViewLoaded(view: CASBannerView) {
+        // Invokes this callback when ad loaded and ready to present.
+    }
+
+    override fun onAdViewFailed(view: CASBannerView, error: AdError) {
+        // Invokes this callback when an error occurred with the ad.
+    }
+
+    override fun onAdViewClicked(view: CASBannerView) {
+        // Invokes this callback when a user clicks the ad.
+    }
+
+    override fun onAdViewPresented(view: CASBannerView, info: AdStatusHandler) {
+        // Deprecated. Same as onAdImpression(AdContentInfo).
+    }
+}
+```
+
 ```java
 bannerView.setAdListener(new AdViewListener() {
     @Override
@@ -131,10 +158,11 @@ bannerView.setAdListener(new AdViewListener() {
 
     @Override
     public void onAdViewPresented(@NonNull CASBannerView view, @NonNull AdStatusHandler info) {
-      // Deprecated. Same as onAdImression(AdContentInfo).
+      // Deprecated. Same as onAdImpression(AdContentInfo).
     }
 });
 ```
+</CodeGroup>
 
 ## Load Ad 
 Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class.
@@ -183,7 +211,15 @@ if (bannerView.isLoaded()) {
 ```
 
 ## Release ad resource
-It is important to `destroy()` loaded ads.
+Be sure to release ad resources if you’re no longer going to use the ad view.
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onDestroy() {
+    super.onDestroy()
+    bannerView?.destroy()
+}
+```
 ```java
 @Override
 protected void onDestroy() {
@@ -191,6 +227,7 @@ protected void onDestroy() {
   bannerView.destroy();
 }
 ```
+</CodeGroup>
 
 ## Samples
 - [Kotlin Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.kt)
