@@ -1,0 +1,194 @@
+---
+title: Banner Ads
+description: This guide explains how to integrate banner ads into a ReactNative app.
+---
+
+Banner Ad units display rectangular ads that occupy a portion of an app's layout. 
+They can refresh automatically after a set period of time. 
+This means users view a new ad at regular intervals, even if they stay on the same screen in your app. 
+They're also the simplest ad format to implement.
+
+Banner Ad management in Dart code is handled through the [CASBanner](https://pub.dev/documentation/clever_ads_solutions/latest/clever_ads_solutions/CASBanner-class.html) class, 
+which extends the shared `AdViewInstance` class used for all ads displayed in a widgets. 
+The `AdViewInstance` class, inherits from the base `AdInstance` class, which is common for all CAS ad formats. 
+To display a `AdViewInstance` as a widget, you must instantiate an `CASWidget` for each ad instance. 
+
+CAS provides an option to enable `autoReload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code. 
+
+When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts. 
+```dart
+final bool isAutoReloadEnabled = true;
+```
+
+Manual load mode (`autoReload: false` ) is useful when you only need to show a single ad per app screen, and the screens change frequently.  
+
+Also, banner ads support automatic `refreshInterval` regardless of the `autoReload` setting.
+
+Below is a diagram showing the ad lifecycle and how `autoReload` (isAutoload) and `refreshInterval` affects it.
+
+<Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
+
+
+## Get the Ad size
+To load a banner ad, you need to specify the ad size. To do this, choose one of the methods for obtaining an `AdSize` from the list below:
+1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50.
+```dart
+final double maxWidth = MediaQuery.of(context).size.width;
+final AdSize adSize = AdSize.getAdaptiveBanner(maxWidth);
+```
+2. **Inline banner** ads have a desired width and a maximum height, useful when you want to limit the banner's height. Inline banners are larger and taller compared to adaptive banners. They have variable height, including Medium Rectangle size, and can be as tall as the device screen.
+```dart
+final int width = MediaQuery.of(context).size.width.truncate();
+final int maxHeight = 400;
+final adSize = AdSize.getInlineBanner(width, maxHeight);
+```
+3. **Smart ad size** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+```dart
+final adSize = AdSize.getSmartBanner(context);
+```
+4. **Medium Rectangle** has a fixed size of 300x250.
+```dart
+final adSize = AdSize.mediumRectangle;
+```
+5. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+```dart
+final adSize = AdSize.leaderboard;
+```
+6. **Standard banner** has a fixed size of 320x50 and is the minimum ad size.
+```dart
+final adSize = AdSize.banner;
+```
+
+## Create Ad instance
+The following example creates and loads an banner ad:
+```dart
+class BannerAdExampleState extends State<BannerAdExample> {
+  CASBanner? _bannerAd;
+  
+  void _loadAd(AdSize adSize) {
+    // Disposing of the current ad if there is one.
+    _bannerAd?.dispose();
+  
+    _bannerAd = CASBanner.createAndLoad( 
+      size: adSize,
+      autoReload: isAutoReloadEnabled, 
+      onAdLoaded: (AdViewInstance ad) { 
+        // Called when an ad is successfully loaded. 
+        print('$ad loaded');  
+      },  
+      onAdFailedToLoad: (AdInstance ad, AdError error) { 
+        // Called when an ad load failed. 
+        print('$ad failed to load: ${error.message}.'); 
+      }, 
+    ); 
+  }
+}
+```
+
+Ad content may take some time to load after creating an ad instance. 
+To ensure the ad displays instantly when needed, create the ad instance in advance. 
+Use the `onAdLoaded` callback to be notified when the ad is ready for display.
+
+When using an `AdSize` based on screen width, you should recalculate the size whenever 
+the device orientation changes and reload the banner ad to match the new layout.
+```dart
+late Orientation _currentOrientation;
+
+@override  
+void didChangeDependencies() {  
+  super.didChangeDependencies();
+  MediaQueryData mediaQuery = MediaQuery.of(context);
+  _currentOrientation = mediaQuery.orientation;
+  
+  final double maxWidth = mediaQuery.size.width;
+  final AdSize adSize = ...;
+  _loadAd(adSize);
+}
+```
+
+When using a fixed ad size, it's enough to load the ad instance once in `initState()`.
+```dart
+@override  
+void initState() {  
+  super.initState();  
+  
+  final AdSize adSize = ...;
+  _loadAd(adSize)  
+}
+```
+
+## Ad refresh interval
+The automatic refresh interval determines how often a new ad request is generated. Once the interval elapses, a new ad will automatically load and display.  The interval countdown runs only while the ad is visible on screen. Set a custom refresh interval longer than 10 seconds, or 0 to disable refresh option. Default refresh interval is 30 seconds.
+
+Override the automatic refresh interval in `createAndLoad()` arguments:
+```dart
+    _bannerAd = CASBanner.createAndLoad( 
+      size: adSize,
+      autoReload: isAutoReloadEnabled, 
+      refreshInterval: 30,
+    );
+```
+
+## Ad  content callbacks
+`CASBanner` has several optional callbacks for the ad lifecycle. These callbacks can be set either as arguments in the `createAndLoad()` function or later via the properties of the ad instance.
+
+```dart
+    _bannerAd = CASBanner.createAndLoad( 
+      size: adSize,
+      autoReload: isAutoReloadEnabled, 
+      onAdLoaded: (AdViewInstance ad) { 
+        // Called when an ad is successfully loaded. 
+        print('$ad loaded');  
+      },  
+      onAdFailedToLoad: (AdInstance ad, AdError error) { 
+        // Called when an ad load failed. 
+        print('$ad failed to load: ${error.message}.'); 
+      }, 
+      onAdImpression: (AdInstance ad, AdContentInfo contentInfo) { 
+        // Called when an impression occurs on the ad.  
+        print('$ad impression');  
+      },  
+      onAdClicked: (AdInstance ad) {  
+        // Called when a click is recorded for an ad.
+        print('$ad clicked');  
+      },
+    ); 
+```
+
+<Info>
+Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).
+</Info>
+
+## Show Ad Widget
+`CASWidget` inherits from ReactNative's Widget class and can be used like any other widget.
+```dart
+@override  
+Widget build(BuildContext context) {  
+  return CASWidget(ad: _bannerAd!);  
+}
+```
+While the ad is loading, the widget will have a size of (1x1). When the ad loads, the widget will automatically adopt the selected size.
+
+The size of the container in which you place your ad must be at least as large as the AdSize. Any padding effectively decreases the size of your container.
+
+## Release ad resource
+Be sure to release ad resources if you’re no longer going to use the ad instance.
+```dart
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+```
+
+## Manual reload Ad
+When you want to manually control ad loading, use the `load()` function on the created ad instance to retry loading with the same configuration.
+```dart
+_bannerAd!.load();
+```
+
+## Complete example
+- [Adaptive banner ad example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/lib/adaptive_banner_example.dart)
+- [Inline banner ad example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/lib/inline_banner_example.dart)
+- [Multi banners ad example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/lib/multi_banners_example.dart)
+
