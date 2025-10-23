@@ -1,7 +1,7 @@
----
-title: User Consent Flow
+
 ---
 
+## title: User Consent Flow
 
 <Info>
 It is optional to use the CMP flow included with the CAS SDK. If you integrate your own CMP flow, make sure that flow completes before you initialize the CAS SDK.
@@ -16,20 +16,20 @@ In order for CAS and our ad providers to deliver ads that are more relevant to y
 ### 1. Opt-in consent for the collection and use of personal data in the regions covered by GDPR, CCPA, LGPD, PIPEDA.
 Any businesses established are required to comply with GDPR in Europe, CCPA in California, LGPD in Brazil, PIPEDA in Canada or risk facing heavy fines.
 
-Keep in mind that it’s best to contact qualified legal professionals, if you haven’t done so already, to get more information and be well-prepared for compliance.  
+Keep in mind that it’s best to contact qualified legal professionals, if you haven’t done so already, to get more information and be well-prepared for compliance.
 
 Read more about:
-- GDPR - [General Data Protection Regulation](https://gdpr-info.eu)
-- CCPA - [The California Consumer Privacy Act](https://theccpa.org)
-- LGPD - [General Personal Data Protection Act](https://lgpd-brazil.info)
-- PIPEDA - [The Personal Information Protection and Electronic Documents Act](https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/)
+
+* GDPR - [General Data Protection Regulation](https://gdpr-info.eu)
+* CCPA - [The California Consumer Privacy Act](https://theccpa.org)
+* LGPD - [General Personal Data Protection Act](https://lgpd-brazil.info)
+* PIPEDA - [The Personal Information Protection and Electronic Documents Act](https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/)
 
 <Image height="400" alt="image" src="/assets/User-Consent-Flow-1.png" />
 
-
 #### Users will not see the Consent dialog if at least one of following is true
-- Users located in regions that are not covered by information protection
-- Users who are subject to COPPA restrictions.
+* Users located in regions that are not covered by information protection
+* Users who are subject to COPPA restrictions.
 
 ### 2. Asking user permission to track them or access their device’s advertising identifier
 With iOS 14.5 and later, you need to receive the user’s permission through the `AppTrackingTransparency` framework in order to track them or access their device’s advertising identifier.  Read more about Asking Permission to Track and AppTrackingTransparency Framework on [Apple developer page](https://developer.apple.com/app-store/user-privacy-and-data-use/)
@@ -39,27 +39,28 @@ If an app does not present this request, the IDFA will automatically be zeroed o
 </Warning>
 
 #### Users will not see the ATT request if at least one of the following is true
-- Users using iOS versions below 14.5
-- Users who have indicated that they do not allow apps to ask to track them, by setting *Settings > Privacy, Allow Apps to Request to Track*
-- Users with child accounts, or who are under age 18, who are signed in via their Apple ID
-- Users who have already answered so far
-- The app does not have a usage tracking description in **Info.plist** under `NSUserTrackingUsageDescription` key
+* Users using iOS versions below 14.5
+* Users who have indicated that they do not allow apps to ask to track them, by setting *Settings > Privacy, Allow Apps to Request to Track*
+* Users with child accounts, or who are under age 18, who are signed in via their Apple ID
+* Users who have already answered so far
+* The app does not have a usage tracking description in **Info.plist** under `NSUserTrackingUsageDescription` key
 
 ## Automatic consent flow
 The automatic consent flow is enabled by default and described on the [CAS initialization page](ReactNative/Initialize-CAS).
 
 ## Manual consent flow
 Call `showIfRequired()` on the `ConsentFlow` class. If the consent is required, the SDK loads a form and immediately presents it .
-The `Future<int>` completes after the form is dismissed. If consent is not required, the `Future` completes immediately.
+The `Promise<number>` completes after the form is dismissed. If consent is not required, the `Promise` completes immediately.
 
-```dart
-ConsentFlow.create().showIfRequired().then((int status){
-  if (status == ConsentFlow.statusObtained) {
+```ts
+import { ConsentFlow, ConsentFlowStatus } from 'react-native-cas';
+
+ConsentFlow.create().showIfRequired().then((status: number) => {
+  if (status === ConsentFlowStatus.OBTAINED) {
     // User consent obtained.
   }
 });
 ```
-
 
 | ConsentFlow constant   | Description                                                        |
 | ---------------------- | ------------------------------------------------------------------ |
@@ -80,50 +81,54 @@ Some consent forms require the user to modify their consent at any time. Adhere 
 1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
 2. Once `showIfRequired()` completes, check `isConsentObtained` to determine whether to display the UI element that can present the privacy options form.
 3. When a user interacts with your UI element, call `show()` to show the form so the user can update their privacy options at any time.
-```dart
-bool _isConsentObtained = false;
-  
-void main() {  
-  CASMobileAds.initialize(  
-    casId: casId,  
-  ).then((InitializationStatus status) {  
-     _onConsentFlowDismissed(status.consentFlowStatus) // [!code highlight]
-  }); 
-  ...
-} 
 
-void _onConsentFlowDismissed(int status) {
+```ts
+import { ConsentFlow, ConsentFlowStatus, CASMobileAds } from 'react-native-cas';
+
+let _isConsentObtained = false;
+
+CASMobileAds.initialize(casId, {
+  showConsentFormIfRequired: true,
+}).then((status) => {
+  _onConsentFlowDismissed(status.consentFlowStatus); // [!code highlight]
+});
+
+function _onConsentFlowDismissed(status: number) {
   // The user completes the consent flow
-  _isConsentObtained = status.consentFlowStatus == ConsentFlow.statusObtained;
+  _isConsentObtained = status === ConsentFlowStatus.OBTAINED;
 }
 
-void _showPrivacyOptionsForm() {
+function _showPrivacyOptionsForm() {
   ConsentFlow.create().show().then(_onConsentFlowDismissed);
 }
 ```
 
 ## Debug geography
-The SDK provides a way to test your app's behavior as though the device was located in the EEA or UK using the [PrivacyGeography](https://pub.dev/documentation/clever_ads_solutions/latest/clever_ads_solutions/PrivacyGeography.html) enum. 
-
+The SDK provides a way to test your app's behavior as though the device was located in the EEA or UK using the `PrivacyGeography` enum.
 Specify it in the SDK initialization arguments, and the setting will be applied only for test sessions.
-```dart
-CASMobileAds.initialize(  
-  casId: casId,  
-  forceTestAds: kDebugMode,
-  debugPrivacyGeography: PrivacyGeography.europeanEconomicArea, // [!code highlight]
-)
+
+```ts
+import { CASMobileAds, PrivacyGeography } from 'react-native-cas';
+
+CASMobileAds.initialize(casId, {
+  forceTestAds: __DEV__,
+  debugGeography: PrivacyGeography.EUROPEAN_ECONOMIC_AREA, // [!code highlight]
+});
 ```
 
 If you're showing the Consent Flow manually, define the `debugGeography` creation argument, and the setting will remain active even for production sessions. Leave it set to `.unknown` to allow the system to determine the user's geography automatically.
-```dart
-ConsentFlow.create(  
-  debugGeography: kDebugMode // [!code highlight]
-      ? PrivacyGeography.europeanEconomicArea // [!code highlight]
-      : PrivacyGeography.unknown, // [!code highlight]
-).showIfRequired();
+
+```ts
+import { ConsentFlow, PrivacyGeography } from 'react-native-cas';
+
+ConsentFlow.create({
+  debugGeography: __DEV__
+    ? PrivacyGeography.EUROPEAN_ECONOMIC_AREA // [!code highlight]
+    : PrivacyGeography.UNKNOWN, // [!code highlight]
+}).showIfRequired();
 ```
 
 ## Meta Audience Network Data Processing Options for Users in California
-The CAS does not support your handling of CCPA opt-out values for Meta Audience Network, you must work directly with the network to  purposes of your obligations for CCPA compliance.
+The CAS does not support your handling of CCPA opt-out values for Meta Audience Network, you must work directly with the network to purposes of your obligations for CCPA compliance.
 
 To learn how to implement Meta Audience Network’s “Limited Data Use” flag, read the [Additional Meta AudienceNetwork steps](ReactNative/Additional-Meta-AudienceNetwork-steps).

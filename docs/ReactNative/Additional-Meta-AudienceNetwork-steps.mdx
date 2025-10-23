@@ -7,18 +7,19 @@ Meta Audience Network Data Processing Options for US Users Limited Data Use is a
 Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
 
 If you do not want to enable Limited Data Use (LDU) mode, pass an empty string as a value of mediation extras with key `FB_dp` in initialize method:
-```dart
-CASMobileAds.initialize(
-    casId: casId,
-    mediationExtras: {'FB_dp': ''}, // [!code highlight]
-    ...
-);
+```ts
+import { CASMobileAds } from 'react-native-cas';
+
+await CASMobileAds.initialize({
+  casId: 'YOUR_CAS_ID',
+  mediationExtras: { FB_dp: '' }, // [!code highlight]
+});
 ```
 To enable LDU for users and specify user geography, set `'LDU'` to `mediationExtras`:
-```dart
-CASMobileAds.initialize(
-    casId: casId,
-    mediationExtras: {'FB_dp': 'LDU'}, // [!code highlight]
-    ...
-);
+
+```ts
+await CASMobileAds.initialize({
+  casId: 'YOUR_CAS_ID',
+  mediationExtras: { FB_dp: 'LDU' }, // [!code highlight]
+});
 ```

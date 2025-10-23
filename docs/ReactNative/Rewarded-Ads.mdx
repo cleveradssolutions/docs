@@ -1,142 +1,175 @@
----
-title: Rewarded Ads
-description: This guide explains how to integrate rewarded ads into a ReactNative app.
+
 ---
 
-Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads. 
+## title: Rewarded Ads
+## description: This guide explains how to integrate rewarded ads into a ReactNative app.
+Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
 Rewarded ads boost engagement because users receive a tangible benefit for their time.
 
-Rewarded Ad management in Dart code is handled through the [CASRewarded](https://pub.dev/documentation/clever_ads_solutions/latest/clever_ads_solutions/CASRewarded-class.html) class, 
-which extends the shared `AdScreenInstance` class used for all fullscreen ads. 
-The `AdScreenInstance` class, inherits from the base `AdInstance` class, which is common for all CAS ad formats. 
-The `AdScreenInstance` is displayed as an `Overlay` on top of all app content and is positioned statically; 
-therefore, it cannot be added to the ReactNative widget tree.
+Rewarded Ad management in React code is handled through the `RewardedAd` class from `react-native-cas`,
+which extends the shared fullscreen ad logic.
+The rewarded ad is displayed as an overlay on top of all app content and cannot be added to the ReactNative component tree.
 
-CAS provides an option to enable `autoReload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code. 
+CAS provides an option to enable `autoReload` to simplify your app logic.
+Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code.
+When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
 
-When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts. 
-```dart
-final bool isAutoReloadEnabled = true;
+```ts
+const isAutoReloadEnabled = true;
 ```
 
-Manual load mode (`autoReload: false` ) is useful when you only need to show a single ad per app screen, and the screens change frequently.  
-
+Manual load mode (`autoReload: false`) is useful when you only need to show a single ad per app screen, and the screens change frequently.
 Below is a diagram showing the ad lifecycle and how `autoReload` (isAutoload) affects it.
 
 <Image zoom src="/assets/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
 
+---
 
 ## Create Ad instance
-The following example creates and loads an rewarded video ad:
-```dart
-class AppScreenState extends State<AppScreen> {
-  late CASRewarded _rewardedAd;
-  
-  @override
-  void initState() {
-    super.initState();
-    
-    _rewardedAd = CASRewarded.createAndLoad( 
-      autoReload: isAutoReloadEnabled, 
-      onAdLoaded: (AdScreenInstance ad) { 
-        // Called when an ad is successfully loaded. 
-        print('$ad loaded');  
-      },  
-      onAdFailedToLoad: (AdInstance ad, AdError error) { 
-        // Called when an ad load failed. 
-        print('$ad failed to load: ${error.message}.'); 
-      }, 
-    ); 
-  }
-}
+The following example creates and loads a rewarded video ad:
+
+```ts
+import { useEffect } from 'react';
+import { RewardedAd } from 'react-native-cas';
+
+useEffect(() => {
+  (async () => {
+    try {
+      await RewardedAd.setAutoloadEnabled(true);
+      await RewardedAd.loadAd();
+      console.log('Rewarded loaded');
+    } catch (e) {
+      console.log('Rewarded failed to load:', e);
+    }
+  })();
+}, []);
 ```
 
-Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, create the ad instance in advance. Use the `onAdLoaded` callback to be notified when the ad is ready for display.
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, create the ad instance in advance.
+Use the `addAdLoadedEventListener` event to be notified when the ad is ready for display.
+CAS can preload multiple rewarded ads in advance for smoother delivery.
 
-CAS provides functionality to create and preload multiple ad instances in advance, ensuring uninterrupted sequential ad delivery. Mediation ads are loaded in order for each created instance.
+---
 
-## Ad  content callbacks
-`CASRewarded` has several optional callbacks for the ad lifecycle. These callbacks can be set either as arguments in the `createAndLoad()` function or later via the properties of the ad instance.
+## Ad content callbacks
+`RewardedAd` provides several lifecycle event listeners to handle ad behavior:
 
-```dart
-_rewardedAd.onAdFailedToShow = (AdInstance ad, AdError error) { 
-  // Called when the ad failed to show full screen content. 
-  print('$ad failed to show: ${error.message}.');  
-};  
-_rewardedAd.onAdShowed = (AdScreenInstance ad) {  
-  // Called when the ad showed the full screen content.
-  print('$ad showed');  
-};  
-_rewardedAd.onAdImpression = (AdInstance ad, AdContentInfo contentInfo) { 
-  // Called when an impression occurs on the ad. 
-  print('$ad impression');  
-};  
-_rewardedAd.onAdClicked = (AdInstance ad) {  
-  // Called when a click is recorded for an ad.
-  print('$ad clicked');  
-};  
-_rewardedAd.onAdDismissed = (AdScreenInstance ad) { 
-  // Called when the ad dismissed full screen content. 
-  print('$ad dismissed');  
-};
+```ts
+import { useEffect } from 'react';
+import { RewardedAd } from 'react-native-cas';
+
+useEffect(() => {
+  const offLoaded = RewardedAd.addAdLoadedEventListener(() => console.log('Loaded'));
+  const offLoadFailed = RewardedAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
+  const offShowed = RewardedAd.addAdShowedEventListener(() => console.log('Showed'));
+  const offFailedToShow = RewardedAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
+  const offClicked = RewardedAd.addAdClickedEventListener(() => console.log('Clicked'));
+  const offDismissed = RewardedAd.addAdDismissedEventListener(() => console.log('Dismissed'));
+  const offImpression = RewardedAd.addAdImpressionEventListener((imp) => console.log('Impression', imp));
+  const offReward = RewardedAd.addAdUserEarnRewardEventListener(() => console.log('User earned reward'));
+
+  return () => {
+    offLoaded();
+    offLoadFailed();
+    offShowed();
+    offFailedToShow();
+    offClicked();
+    offDismissed();
+    offImpression();
+    offReward();
+    RewardedAd.destroy?.();
+  };
+}, []);
 ```
 
 <Info>
-- Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).
-- When an error occurs during ad impression, executed the `onAdFailedToShow` only.  In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
+- Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).  
+- When an error occurs during ad impression, only `onAdFailedToShow` is triggered.  
+  In this case, `onAdDismissed` will not be executed since the impression is not considered successful.
 </Info>
 
+---
+
 ## Show Ad
-Be sure to implement `onUserEarnedReward` callback and reward the user for watching an ad.  
-You can choose when to show the ad by calling `show()`:
-```dart
-_rewardedAd.onUserEarnedReward = (AdScreenInstance ad) {  
-  print('Reward the user for watching the $ad');  
-};
-_rewardedAd.show();
+Be sure to handle the `onUserEarnedReward` event to grant rewards to users after watching an ad.
+
+```ts
+import { RewardedAd } from 'react-native-cas';
+
+RewardedAd.addAdUserEarnRewardEventListener(() => {
+  console.log('Reward the user for watching the ad');
+});
+
+await RewardedAd.showAd();
 ```
 
-The `onUserEarnedReward` callback differs from `onAdDismissed` because the user might not fulfill the requirements to receive the reward even after watching the ad.
+The `onUserEarnedReward` callback differs from `onAdDismissed` — the user might not complete the ad and thus not earn a reward.
+If the ad is not ready, `onAdFailedToShow` will trigger.
+You can check readiness before showing:
 
-If the ad is not ready at that moment, the `onAdFailedToShow` callback will be triggered with a reason provided in the `AdError`.
-
-You have the option to check `isLoaded` if it's required by your app's logic.
-```dart
-bool isAdLoaded = await _rewardedAd.isLoaded();
+```ts
+const isAdLoaded = await RewardedAd.isAdLoaded();
+if (isAdLoaded) {
+  await RewardedAd.showAd();
+}
 ```
+
+---
 
 ## Release ad resource
-Be sure to release ad resources if you’re no longer going to use the ad instance.
-```dart
-  @override
-  void dispose() {
-    _rewardedAd.dispose();
-    super.dispose();
-  }
+Be sure to release ad resources when no longer needed:
+
+```ts
+import { useEffect } from 'react';
+import { RewardedAd } from 'react-native-cas';
+
+useEffect(() => {
+  return () => {
+    RewardedAd.destroy?.();
+  };
+}, []);
 ```
-It may be useful to store the ad instance in static memory for reuse across multiple screens. This way, you don't need to call `dispose()` and can show the already loaded ad without delay.
+
+Keeping a global rewarded ad instance helps reuse it across screens without delays.
+
+---
 
 ## Manual reload Ad
-When you want to manually control ad loading, use the `load()` function on the created ad instance to retry loading with the same configuration.
-```dart
-_rewardedAd.load();
+To manually reload an ad, call:
+
+```ts
+import { RewardedAd } from 'react-native-cas';
+await RewardedAd.loadAd();
 ```
+
+---
 
 ## Extra fill by Interstitial Ad
-CAS provides the option to load the interstitial ads as a fallback when a rewarded video ad has no available fill. Interstitial ads do not require the user to watch the entire ad to completion. However, the `onUserEarnedReward` will still be triggered as if the user completed the rewarded video.
-```dart
-_rewardedAd = CASRewarded.createAndLoad(
-  extraFillByInterstitialAd: true, // [!code highlight]
-  ...
-)
+CAS allows using interstitial ads as fallback fill when rewarded ads are unavailable.
+`onUserEarnedReward` will still trigger as if the user completed a rewarded ad.
+
+```ts
+import { RewardedAd } from 'react-native-cas';
+await RewardedAd.setExtraFillByInterstitialAd(true); // [!code highlight]
+await RewardedAd.loadAd();
 ```
+
+---
 
 ## Mute Ad sounds
-Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
-```dart
+You can mute ad sounds if your app controls its own audio:
+
+```ts
+import { CASMobileAds } from 'react-native-cas';
 CASMobileAds.setAdSoundsMuted(true);
 ```
+
 Not muted by default.
 
+---
+
 ## Complete example
-- [AppOpen ad example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/lib/main.dart#L189)
+- [Rewarded ad example]()
+
+

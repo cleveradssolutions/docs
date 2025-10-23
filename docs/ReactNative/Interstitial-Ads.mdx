@@ -1,165 +1,202 @@
----
-title: Interstitial Ads
-description: This guide explains how to integrate interstitial ads into a ReactNative app.
+
 ---
 
-Interstitial ads are full-screen ads that cover the interface of their host app. 
-They're typically displayed at natural transition points in the flow of an app, such as between screens. 
+## title: Interstitial Ads
+## description: This guide explains how to integrate interstitial ads into a ReactNative app.
+Interstitial ads are full-screen ads that cover the interface of their host app.
+They're typically displayed at natural transition points in the flow of an app, such as between screens.
 When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.
 
-Interstitial Ad management in Dart code is handled through the [CASInterstitial](https://pub.dev/documentation/clever_ads_solutions/latest/clever_ads_solutions/CASInterstitial-class.html) class, 
-which extends the shared `AdScreenInstance` class used for all fullscreen ads. 
-The `AdScreenInstance` class, inherits from the base `AdInstance` class, which is common for all CAS ad formats. 
-The `AdScreenInstance` is displayed as an `Overlay` on top of all app content and is positioned statically; 
-therefore, it cannot be added to the ReactNative widget tree.
+Interstitial Ad management in React code is handled through the `InterstitialAd` class from `react-native-cas`,
+which extends the shared fullscreen ad logic.
+The interstitial ad is displayed as an overlay on top of all app content and cannot be added to the ReactNative component tree.
 
-CAS provides an option to enable `autoReload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code. 
+CAS provides an option to enable `autoReload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code.
+When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
 
-When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts. 
-```dart
-final bool isAutoReloadEnabled = true;
+```ts
+const isAutoReloadEnabled = true;
 ```
 
-Manual load mode (`autoReload: false` ) is useful when you only need to show a single ad per app screen, and the screens change frequently.  
-
+Manual load mode (`autoReload: false`) is useful when you only need to show a single ad per app screen, and the screens change frequently.
 Below is a diagram showing the ad lifecycle and how `autoReload` (isAutoload) affects it.
 
 <Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
 
+---
 
 ## Create Ad instance
 The following example creates and loads an interstitial ad:
-```dart
-class AppScreenState extends State<AppScreen> {
-  late CASInterstitial _interstitialAd;
-  
-  @override
-  void initState() {
-    super.initState();
-    
-    _interstitialAd = CASInterstitial.createAndLoad( 
-      autoReload: isAutoReloadEnabled, 
-      onAdLoaded: (AdScreenInstance ad) { 
-        // Called when an ad is successfully loaded. 
-        print('$ad loaded');  
-      },  
-      onAdFailedToLoad: (AdInstance ad, AdError error) { 
-        // Called when an ad load failed. 
-        print('$ad failed to load: ${error.message}.'); 
-      }, 
-    ); 
-  }
-}
+
+```ts
+import { useEffect } from 'react';
+import { InterstitialAd } from 'react-native-cas';
+
+useEffect(() => {
+  (async () => {
+    try {
+      await InterstitialAd.setAutoloadEnabled(true);
+      await InterstitialAd.loadAd();
+      console.log('Interstitial loaded');
+    } catch (e) {
+      console.log('Interstitial failed to load:', e);
+    }
+  })();
+}, []);
 ```
 
-Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, create the ad instance in advance. Use the `onAdLoaded` callback to be notified when the ad is ready for display.
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, create the ad instance in advance.
+Use the `addAdLoadedEventListener` event to be notified when the ad is ready for display.
 
-## Ad  content callbacks
-`CASInterstitial` has several optional callbacks for the ad lifecycle. These callbacks can be set either as arguments in the `createAndLoad()` function or later via the properties of the ad instance.
+---
 
-```dart
-_interstitialAd.onAdFailedToShow = (AdInstance ad, AdError error) { 
-  // Called when the ad failed to show full screen content. 
-  print('$ad failed to show: ${error.message}.');  
-};  
-_interstitialAd.onAdShowed = (AdScreenInstance ad) {  
-  // Called when the ad showed the full screen content.
-  print('$ad showed');  
-};  
-_interstitialAd.onAdImpression = (AdInstance ad, AdContentInfo contentInfo) { 
-  // Called when an impression occurs on the ad. 
-  print('$ad impression');  
-};  
-_interstitialAd.onAdClicked = (AdInstance ad) {  
-  // Called when a click is recorded for an ad.
-  print('$ad clicked');  
-};  
-_interstitialAd.onAdDismissed = (AdScreenInstance ad) { 
-  // Called when the ad dismissed full screen content. 
-  print('$ad dismissed');  
-};
+## Ad content callbacks
+`InterstitialAd` provides multiple lifecycle callbacks, which can be registered via event listeners or `setCallbacks()`.
+
+```ts
+import { useEffect } from 'react';
+import { InterstitialAd } from 'react-native-cas';
+
+useEffect(() => {
+  const offLoaded = InterstitialAd.addAdLoadedEventListener(() => console.log('Loaded'));
+  const offLoadFailed = InterstitialAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
+  const offShowed = InterstitialAd.addAdShowedEventListener(() => console.log('Showed'));
+  const offFailedToShow = InterstitialAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
+  const offClicked = InterstitialAd.addAdClickedEventListener(() => console.log('Clicked'));
+  const offDismissed = InterstitialAd.addAdDismissedEventListener(() => console.log('Dismissed'));
+  const offImpression = InterstitialAd.addAdImpressionEventListener((imp) => console.log('Impression', imp));
+
+  return () => {
+    offLoaded();
+    offLoadFailed();
+    offShowed();
+    offFailedToShow();
+    offClicked();
+    offDismissed();
+    offImpression();
+    InterstitialAd.destroy?.();
+  };
+}, []);
 ```
 
 <Info>
-- Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).
-- When an error occurs during ad impression, executed the `onAdFailedToShow` only.  In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
+- Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).  
+- When an error occurs during ad impression, only `onAdFailedToShow` is executed.  
+  In this case, `onAdDismissed` will not be called since the impression is not considered successful.
 </Info>
 
+---
+
 ## Show Ad
-Interstitial ads should be displayed during natural pauses in the flow of an app. Between app screens is a good example, or after the user completes a task. 
+Interstitial ads should be displayed during natural pauses in your app flow — for example, between screens or after a task completes.
+Show an ad by calling:
 
-You can choose when to show the ad by calling `show()`:
-```dart
-_interstitialAd.show();
+```ts
+import { InterstitialAd } from 'react-native-cas';
+await InterstitialAd.showAd();
 ```
 
-If the ad is not ready at that moment, the `onAdFailedToShow` callback will be triggered with a reason provided in the `AdError`.
+If the ad is not ready at that moment, `onAdFailedToShow` will be triggered.
+You can check beforehand:
 
-You have the option to check `isLoaded` if it's required by your app's logic.
-```dart
-bool isAdLoaded = await _interstitialAd.isLoaded();
+```ts
+const isLoaded = await InterstitialAd.isAdLoaded();
+if (isLoaded) await InterstitialAd.showAd();
 ```
+
+---
 
 ### Auto Show Ad mode
-CAS provides the option to automatically show a loaded ad when the user returns to the app. To enable this behavior, set the `autoShow` argument to `true`.
-```dart
-_interstitialAd = CASInterstitial.createAndLoad(
-  autoShow: true, // [!code highlight]
-  ...
-)
+CAS provides the option to automatically show a loaded ad when the user returns to the app.
+To enable this behavior:
+
+```ts
+import { InterstitialAd } from 'react-native-cas';
+
+await InterstitialAd.setAutoshowEnabled(true); // [!code highlight]
+await InterstitialAd.loadAd();
 ```
+
+---
 
 ## Release ad resource
 Be sure to release ad resources if you’re no longer going to use the ad instance.
-```dart
-  @override
-  void dispose() {
-    _interstitialAd.dispose();
-    super.dispose();
-  }
+
+```ts
+import { useEffect } from 'react';
+import { InterstitialAd } from 'react-native-cas';
+
+useEffect(() => {
+  return () => {
+    InterstitialAd.destroy?.();
+  };
+}, []);
 ```
-It may be useful to store the ad instance in static memory for reuse across multiple screens. This way, you don't need to call `dispose()` and can show the already loaded ad without delay.
+
+It may be useful to keep a global interstitial instance to reuse across multiple screens.
+This way, you can display an already loaded ad instantly without delay.
+
+---
 
 ## Manual reload Ad
-When you want to manually control ad loading, use the `load()` function on the created ad instance to retry loading with the same configuration.
-```dart
-_interstitialAd.load();
+When you want to manually control ad loading, call:
+
+```ts
+import { InterstitialAd } from 'react-native-cas';
+await InterstitialAd.loadAd();
 ```
+
+---
 
 ## Minimum interval between impressions
-The minimum interval between showing interstitial ads, in seconds.  
-Attempting to show a new interstitial ad before the interval has passed after the previous one was dismissed will trigger `onAdFailedToShow` with `AdError.codeNotPassedInterval`.
+The minimum interval between showing interstitial ads (in seconds).
+If another ad is shown before the interval passes, `onAdFailedToShow` will trigger with `AdError.codeNotPassedInterval`.
 
-```dart
-_interstitialAd = CASInterstitial.createAndLoad(
-  minInterval: 0, // [!code highlight]
-  ...
-)
+```ts
+import { InterstitialAd } from 'react-native-cas';
+await InterstitialAd.setMinInterval(0); // [!code highlight]
 ```
 
-Note that the timer for the minimum interval is shared across all interstitial ad instances, but the minimum interval value may differ for each ad instance.
+The interval timer is shared across all interstitial ad instances.
+You can reset it manually, e.g., after showing a Rewarded or AppOpen ad:
 
-If you need to reset the minimum interval timer after showing a Rewarded Ad or an AppOpen Ad, you can call the `_interstitialAd.restartInterval()` method in the `onAdDismissed` callback for these ad formats.
+```ts
+InterstitialAd.restartInterval();
+```
+
+---
 
 ## Mute Ad sounds
-Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
-```dart
+You can mute fullscreen ad sounds if your app manages its own audio:
+
+```ts
+import { CASMobileAds } from 'react-native-cas';
 CASMobileAds.setAdSoundsMuted(true);
 ```
+
 Not muted by default.
 
+---
+
 ## Some best practices
+
 #### Consider whether interstitial ads are the right type of ad for your app.
-Interstitial ads work best in apps with natural transition points. The conclusion of a task within an app, like sharing an image or completing a game level, creates such a point. Because the user is expecting a break in the action, it's easy to present an interstitial ad without disrupting their experience. Make sure you consider at which points in your app's workflow you'll display interstitial ads and how the user is likely to respond.
+Interstitial ads work best in apps with natural transition points.
+Display them when a task finishes or the user expects a short pause.
 
 #### Remember to pause the action when displaying an interstitial ad.
-There are a number of different types of interstitial ads: text, image, video, and more. It's important to make sure that when your app displays an interstitial ad, it also suspends its use of some resources to allow the ad to take advantage of them. For example, when you make the call to display an interstitial ad, be sure to pause any audio output being produced by your app.
+Pause any ongoing app activity (e.g., audio) when an interstitial ad is showing.
 
 #### Allow for adequate loading time.
-Just as it's important to make sure you display interstitial ads at an appropriate time, it's also important to make sure the user doesn't have to wait for them to load. Loading the ad in advance by calling `load()` before you intend to call `show()` can ensure that your app has a fully loaded interstitial ad at the ready when the time comes to display one.
+Load the ad in advance by calling `loadAd()` before `showAd()` so it’s instantly available.
 
 #### Don't flood the user with ads.
-While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.
+Avoid excessive frequency — too many interruptions degrade user experience and lower engagement.
+
+---
 
 ## Complete example
-- [Interstitial ad example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/lib/main.dart#L131)
+- [Interstitial ad example]()
+
+

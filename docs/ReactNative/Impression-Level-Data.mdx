@@ -1,79 +1,95 @@
----
-title: Impression Level Data
+
 ---
 
+## title: Impression Level Data
 CAS.AI SDK enables you to access detailed information for each impression through the impressions callback APIs. The information includes, for example, which demand source served the ad, the expected or exact revenue associated with it. In addition, it contains granular details to allow you to analyze and, ultimately, optimize user acquisition strategies.
 
 ### AdContentInfo
 The `AdContentInfo` data structure, which contains information about the loaded/displayed ad.
+Additionally to `onAdImpression` callback, each ad format has a way to obtain current impression info. In React Native, use the impression event to receive the info:
 
-Additionally to `onAdImpression` callback, each ad format has a `getContentInfo()` method that returns `AdContentInfo?`, but the content info may be `null` before the ad is loaded.
-```dart
-AdContentInfo? info = await eachAd.getContentInfo();
+```ts
+import { AppOpenAd } from 'react-native-cas';
+
+const off = AppOpenAd.addAdImpressionEventListener((info) => {
+  // info is AdContentInfo
+  console.log('AppOpen impression', info);
+});
 ```
 
 | Name               | Type      | Description                                                                                                                                                             |
 | ------------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sourceName`       | `String`  | Gets the display name of the mediated network that purchased the impression.                                                                                            |
-| `sourceUnitId`     | `String`  | Gets the Ad Unit ID from the mediated network that purchased the impression.                                                                                            |
-| `creativeId`       | `String?` | Gets the Creative ID associated with the ad, if available. May be null. You can use this ID to report creative issues to the Ad review team.                            |
-| `revenue`          | `Double`  | Gets the revenue generated from the impression, in USD. The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. |
-| `revenuePrecision` | `Int`     | Gets the precision type of the revenue field. See new `AdRevenuePrecision` constants.                                                                                   |
-| `revenueTotal`     | `Double`  | Gets the accumulated value of user ad revenue in USD from all ad format impressions.                                                                                    |
-| `impressionDepth`  | `Int`     | Gets the total number of impressions across all ad formats for the current user, across all sessions.                                                                   |
+| `sourceName`       | `string`  | Gets the display name of the mediated network that purchased the impression.                                                                                            |
+| `sourceUnitId`     | `string`  | Gets the Ad Unit ID from the mediated network that purchased the impression.                                                                                            |
+| `creativeId`       | `string?` | Gets the Creative ID associated with the ad, if available. May be null. You can use this ID to report creative issues to the Ad review team.                            |
+| `revenue`          | `number`  | Gets the revenue generated from the impression, in USD. The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. |
+| `revenuePrecision` | `string`  | Gets the precision type of the revenue field. See new `AdRevenuePrecision` constants.                                                                                   |
+| `revenueTotal`     | `number`  | Gets the accumulated value of user ad revenue in USD from all ad format impressions.                                                                                    |
+| `impressionDepth`  | `number`  | Gets the total number of impressions across all ad formats for the current user, across all sessions.                                                                   |
 
 ### Ad Impression callback
-A `onAdImpression` callback for ad impression with impression details in `AdContentInfo` for each ad formats:
-```dart
-CASAppOpen appOpenAd;
-CASInterstitial interstitialAd;
-CASRewarded rewardedAd;
-CASBanner bannerAd;
-NativeAdContent nativeAd;
+A `onAdImpression` callback for ad impression with impression details in `AdContentInfo` for each ad format:
 
-void setAdImpressionCallback() {
-  appOpenAd.onAdImpression = _onAdImpression;
-  interstitialAd.onAdImpression = _onAdImpression;
-  rewardedAd.onAdImpression = _onAdImpression;
-  bannerAd.onAdImpression = _onAdImpression;
-  nativeAd.onAdImpression = _onAdImpression;
+```ts
+import { AppOpenAd, InterstitialAd, RewardedAd, AdView } from 'react-native-cas';
+
+function setAdImpressionCallback() {
+  // Fullscreen formats: subscribe via event listeners (returns unsubscribe)
+  const offAppOpen = AppOpenAd.addAdImpressionEventListener(onAdImpression);
+  const offInterstitial = InterstitialAd.addAdImpressionEventListener(onAdImpression);
+  const offRewarded = RewardedAd.addAdImpressionEventListener(onAdImpression);
+
+  // Banner view (React component): pass prop
+  // <AdView onAdViewImpression={onAdImpression} />
 }
 
-void _onAdImpression(AdInstance ad, AdContentInfo contentInfo) {  
-  // Called when an ad impression occurs.  
-  String adPlatform = "CAS";  
-  String adFormat = ad.format.label;  
-  String adSource = contentInfo.sourceName;  
-  String adUnitName = contentInfo.sourceUnitId;  
-  double value = contentInfo.revenue;  
-  // All CAS revenue is sent in USD  
-  String currency = "USD";  
+function onAdImpression(impression) {
+  // Called when an ad impression occurs.
+  const adPlatform = 'CAS';
+  const adFormat = impression.format;
+  const adSource = impression.sourceName;
+  const adUnitName = impression.sourceUnitId;
+  const value = impression.revenue;
+  // All CAS revenue is sent in USD
+  const currency = 'USD';
 }
 ```
 
 ### User ad summary
-CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression.
-```dart
-int totalImpressions = impression.impressionDepth;
-double totalRevenue = impression.revenueTotal;
+CAS counts the number of ad impressions and the total revenue of all formats at the time of a new impression.
+
+```ts
+const totalImpressions = impression.impressionDepth;
+const totalRevenue = impression.revenueTotal;
 ```
-<Info>
-Progress is saved between sessions until the user clears your app's data.
-</Info>
+
+<Info>  
+Progress is saved between sessions until the user clears your app's data.  
+</Info>  
 
 ## Automatic collect ad revenue
-The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
+The CAS SDK has features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
+
 ### Google Analytics
 If you haven't already, make sure to complete the following tasks:
+
 1. Set up your project and app as described in [Get Started with Analytics](https://firebase.google.com/docs/analytics/get-started).
 2. Make sure that you've linked your Firebase project to a Google Analytics account.
 3. Ensure that you've included in your app the CAS SDK 3.5.0+.
 
-To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.
+To measure ad revenue, CAS SDK logs [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.
 
 ### Tenjin
 If you haven't already, make sure to complete the following tasks:
+
 1. Set up your project and app as described in [Get Started with Analytics](https://docs.tenjin.com/docs/android-sdk#basic-integration).
 2. Make sure that you've [initialize tenjin session](https://docs.tenjin.com/docs/android-sdk#app-initialization). Or provide `TENJIN_SDK_KEY` with CAS SDK initialization to allow CAS initialize Tenjin SDK automatically.
-   `CASMobileAds.initialize(mediationExtras: {'tenjin_key': TENJIN_SDK_KEY});`
+
+```ts
+import { CASMobileAds } from 'react-native-cas';
+
+CASMobileAds.initialize('your_cas_id', {
+  mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
+});
+```
 3. Ensure that you've included in your app the CAS SDK 3.7.2+.
