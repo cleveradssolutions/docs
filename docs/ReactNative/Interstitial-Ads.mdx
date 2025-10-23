@@ -1,8 +1,9 @@
 
 ---
+title: Interstitial Ads
+description: This guide explains how to integrate interstitial ads into a ReactNative app.
+---
 
-## title: Interstitial Ads
-## description: This guide explains how to integrate interstitial ads into a ReactNative app.
 Interstitial ads are full-screen ads that cover the interface of their host app.
 They're typically displayed at natural transition points in the flow of an app, such as between screens.
 When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.
@@ -29,20 +30,10 @@ Below is a diagram showing the ad lifecycle and how `autoReload` (isAutoload) af
 The following example creates and loads an interstitial ad:
 
 ```ts
-import { useEffect } from 'react';
-import { InterstitialAd } from 'react-native-cas';
-
 useEffect(() => {
-  (async () => {
-    try {
-      await InterstitialAd.setAutoloadEnabled(true);
-      await InterstitialAd.loadAd();
-      console.log('Interstitial loaded');
-    } catch (e) {
-      console.log('Interstitial failed to load:', e);
-    }
-  })();
+  InterstitialAd.setAutoloadEnabled(true);
 }, []);
+
 ```
 
 Ad content may take some time to load after creating an ad instance.
@@ -55,29 +46,27 @@ Use the `addAdLoadedEventListener` event to be notified when the ad is ready for
 `InterstitialAd` provides multiple lifecycle callbacks, which can be registered via event listeners or `setCallbacks()`.
 
 ```ts
-import { useEffect } from 'react';
-import { InterstitialAd } from 'react-native-cas';
-
 useEffect(() => {
-  const offLoaded = InterstitialAd.addAdLoadedEventListener(() => console.log('Loaded'));
-  const offLoadFailed = InterstitialAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
-  const offShowed = InterstitialAd.addAdShowedEventListener(() => console.log('Showed'));
-  const offFailedToShow = InterstitialAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
-  const offClicked = InterstitialAd.addAdClickedEventListener(() => console.log('Clicked'));
-  const offDismissed = InterstitialAd.addAdDismissedEventListener(() => console.log('Dismissed'));
-  const offImpression = InterstitialAd.addAdImpressionEventListener((imp) => console.log('Impression', imp));
+  const unsubscribeLoaded = InterstitialAd.addAdLoadedEventListener(() => console.log('Loaded'));
+  const unsubscribeLoadFailed = InterstitialAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
+  const unsubscribeShowed = InterstitialAd.addAdShowedEventListener(() => console.log('Showed'));
+  const unsubscribeFailedToShow = InterstitialAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
+  const unsubscribeClicked = InterstitialAd.addAdClickedEventListener(() => console.log('Clicked'));
+  const unsubscribeDismissed = InterstitialAd.addAdDismissedEventListener(() => console.log('Dismissed'));
+  const unsubscribeImpression = InterstitialAd.addAdImpressionEventListener((imp) => console.log('Impression', imp));
 
   return () => {
-    offLoaded();
-    offLoadFailed();
-    offShowed();
-    offFailedToShow();
-    offClicked();
-    offDismissed();
-    offImpression();
-    InterstitialAd.destroy?.();
+    unsubscribeLoaded();
+    unsubscribeLoadFailed();
+    unsubscribeShowed();
+    unsubscribeFailedToShow();
+    unsubscribeClicked();
+    unsubscribeDismissed();
+    unsubscribeImpression();
+    InterstitialAd.destroy();
   };
 }, []);
+
 ```
 
 <Info>
@@ -94,15 +83,15 @@ Show an ad by calling:
 
 ```ts
 import { InterstitialAd } from 'react-native-cas';
-await InterstitialAd.showAd();
+InterstitialAd.showAd();
 ```
 
 If the ad is not ready at that moment, `onAdFailedToShow` will be triggered.
 You can check beforehand:
 
 ```ts
-const isLoaded = await InterstitialAd.isAdLoaded();
-if (isLoaded) await InterstitialAd.showAd();
+const isLoaded = InterstitialAd.isAdLoaded();
+if (isLoaded) InterstitialAd.showAd();
 ```
 
 ---
@@ -114,8 +103,8 @@ To enable this behavior:
 ```ts
 import { InterstitialAd } from 'react-native-cas';
 
-await InterstitialAd.setAutoshowEnabled(true); // [!code highlight]
-await InterstitialAd.loadAd();
+InterstitialAd.setAutoshowEnabled(true); // [!code highlight]
+InterstitialAd.loadAd();
 ```
 
 ---
@@ -129,7 +118,7 @@ import { InterstitialAd } from 'react-native-cas';
 
 useEffect(() => {
   return () => {
-    InterstitialAd.destroy?.();
+    InterstitialAd.destroy();
   };
 }, []);
 ```
@@ -144,7 +133,7 @@ When you want to manually control ad loading, call:
 
 ```ts
 import { InterstitialAd } from 'react-native-cas';
-await InterstitialAd.loadAd();
+InterstitialAd.loadAd();
 ```
 
 ---
@@ -155,7 +144,7 @@ If another ad is shown before the interval passes, `onAdFailedToShow` will trigg
 
 ```ts
 import { InterstitialAd } from 'react-native-cas';
-await InterstitialAd.setMinInterval(0); // [!code highlight]
+InterstitialAd.setMinInterval(0); // [!code highlight]
 ```
 
 The interval timer is shared across all interstitial ad instances.

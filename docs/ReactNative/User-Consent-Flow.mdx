@@ -1,7 +1,7 @@
 
 ---
-
-## title: User Consent Flow
+title: User Consent Flow
+---
 
 <Info>
 It is optional to use the CMP flow included with the CAS SDK. If you integrate your own CMP flow, make sure that flow completes before you initialize the CAS SDK.
@@ -114,6 +114,7 @@ CASMobileAds.initialize(casId, {
   forceTestAds: __DEV__,
   debugGeography: PrivacyGeography.EUROPEAN_ECONOMIC_AREA, // [!code highlight]
 });
+
 ```
 
 If you're showing the Consent Flow manually, define the `debugGeography` creation argument, and the setting will remain active even for production sessions. Leave it set to `.unknown` to allow the system to determine the user's geography automatically.

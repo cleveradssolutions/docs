@@ -1,9 +1,8 @@
 
 ---
-
 title: App Open Ads
 description: This guide explains how to integrate app open ads into a React Native app.
----------------------------------------------------------------------------------------
+---
 
 App open ads are a special ad format intended for publishers wishing to monetize their app load screens.
 App open ads can be closed at any time, and are designed to be shown when your users bring your app to the foreground.
@@ -19,7 +18,7 @@ When `autoReload` is enabled, a new ad will be automatically loaded after each d
 
 ```ts
 const isAutoReloadEnabled = true as const;
-````
+```
 
 Manual load mode (`isAutoReloadEnabled = false`) is useful when you only need to show a single ad per screen and screens change frequently.
 
@@ -31,13 +30,10 @@ Below is a diagram showing the ad lifecycle and how `autoReload` affects it.
 The following example creates and loads an app open ad:
 
 ```ts
-import { useEffect } from 'react';
-import { AppOpenAd } from 'react-native-cas';
-
 useEffect(() => {
   AppOpenAd.setAutoloadEnabled(true);
-  AppOpenAd.loadAd();
 }, []);
+
 ```
 
 Ad content may take some time to load after calling `loadAd()`.
@@ -50,27 +46,24 @@ CAS can preload multiple ad instances in advance to ensure uninterrupted deliver
 `AppOpenAd` provides several optional event listeners for the ad lifecycle.
 
 ```ts
-import { useEffect } from 'react';
-import { AppOpenAd } from 'react-native-cas';
-
 useEffect(() => {
-  const offLoaded = AppOpenAd.addAdLoadedEventListener(() => console.log('AppOpen loaded'));
-  const offLoadFailed = AppOpenAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
-  const offShowed = AppOpenAd.addAdShowedEventListener(() => console.log('Ad showed'));
-  const offFailedToShow = AppOpenAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
-  const offDismissed = AppOpenAd.addAdDismissedEventListener(() => console.log('Ad dismissed'));
-  const offClicked = AppOpenAd.addAdClickedEventListener(() => console.log('Ad clicked'));
-  const offImpression = AppOpenAd.addAdImpressionEventListener((imp) => console.log('Ad impression', imp));
+  const unsubscribeLoaded = AppOpenAd.addAdLoadedEventListener(() => console.log('AppOpen loaded'));
+  const unsubscribeLoadFailed = AppOpenAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
+  const unsubscribeShowed = AppOpenAd.addAdShowedEventListener(() => console.log('Ad showed'));
+  const unsubscribeFailedToShow = AppOpenAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
+  const unsubscribeDismissed = AppOpenAd.addAdDismissedEventListener(() => console.log('Ad dismissed'));
+  const unsubscribeClicked = AppOpenAd.addAdClickedEventListener(() => console.log('Ad clicked'));
+  const unsubscribeImpression = AppOpenAd.addAdImpressionEventListener((imp) => console.log('Ad impression', imp));
 
   return () => {
-    offLoaded();
-    offLoadFailed();
-    offShowed();
-    offFailedToShow();
-    offDismissed();
-    offClicked();
-    offImpression();
-    AppOpenAd.destroy?.();
+    unsubscribeLoaded();
+    unsubscribeLoadFailed();
+    unsubscribeShowed();
+    unsubscribeFailedToShow();
+    unsubscribeDismissed();
+    unsubscribeClicked();
+    unsubscribeImpression();
+    AppOpenAd.destroy();
   };
 }, []);
 ```
@@ -85,14 +78,14 @@ useEffect(() => {
 App open ads help monetize your app's loading screen during launch or app switches.
 Best practices:
 
-- Show your first app open ad after users have opened the app a few times.
-- Show ads only during natural waiting periods (e.g., app load).
-- Avoid showing another app open ad immediately after returning from a previous one.
+* Show your first app open ad after users have opened the app a few times.
+* Show ads only during natural waiting periods (e.g., app load).
+* Avoid showing another app open ad immediately after returning from a previous one.
 
 Show an ad by calling:
 
 ```ts
-await AppOpenAd.showAd();
+AppOpenAd.showAd();
 ```
 
 If the ad is not ready, the `onAdFailedToShow` event will trigger with an error reason.
@@ -100,7 +93,7 @@ If the ad is not ready, the `onAdFailedToShow` event will trigger with an error 
 Optionally, you can check if the ad is loaded:
 
 ```ts
-const isAdLoaded = await AppOpenAd.isAdLoaded();
+const isAdLoaded = AppOpenAd.isAdLoaded();
 ```
 
 ### Auto Show mode
@@ -108,23 +101,21 @@ CAS provides the option to automatically show a loaded ad when the user returns 
 To enable this behavior, call:
 
 ```ts
-await AppOpenAd.setAutoshowEnabled(true);
-await AppOpenAd.loadAd();
+AppOpenAd.setAutoshowEnabled(true);
+// Рекомендовано разом ввімкнути автозавантаження, щоб не викликати loadAd() вручну
+AppOpenAd.setAutoloadEnabled(true);
 ```
 
 ## Release ad resource
 Release ad resources when no longer needed.
 
 ```ts
-import { useEffect } from 'react';
-import { AppOpenAd } from 'react-native-cas';
-
 useEffect(() => {
-  const offDismissed = AppOpenAd.addAdDismissedEventListener(() => console.log('Dismissed'));
+  const unsubscribe = AppOpenAd.addAdDismissedEventListener(() => console.log('Dismissed'));
 
   return () => {
-    offDismissed();
-    AppOpenAd.destroy?.();
+    unsubscribe();
+    AppOpenAd.destroy();
   };
 }, []);
 ```
@@ -135,7 +126,7 @@ You may also keep the ad instance preloaded globally to reuse across screens and
 When manually managing ads, call `loadAd()` again to retry:
 
 ```ts
-await AppOpenAd.loadAd();
+AppOpenAd.loadAd();
 ```
 
 ## Mute Ad sounds
@@ -154,14 +145,13 @@ Avoid showing app content briefly before the ad — use a loading screen first, 
 If your app already shows content after the loading screen, do not show an app open ad.
 
 ## Best Practices
-- Load the app open ad first on cold start.
+* Load the app open ad first on cold start.
   Load other formats (banner, interstitial, rewarded) afterward to avoid parallel loading.
-- If a loading screen finishes before the ad is dismissed, hide it in `onAdDismissed` or `onAdFailedToShow`.
-- Wait a few days after install before showing cold-start ads.
-- Show ads only if the app was backgrounded for a certain time (e.g., 30 seconds).
-- After showing a cold-start ad, wait before showing other fullscreen ads.
-- Optionally, inform users that an ad will appear during loading (e.g., “Watch an ad while the app loads.”).
+* If a loading screen finishes before the ad is dismissed, hide it in `onAdDismissed` or `onAdFailedToShow`.
+* Wait a few days after install before showing cold-start ads.
+* Show ads only if the app was backgrounded for a certain time (e.g., 30 seconds).
+* After showing a cold-start ad, wait before showing other fullscreen ads.
+* Optionally, inform users that an ad will appear during loading (e.g., “Watch an ad while the app loads.”).
 
 ## Complete example
-- [AppOpen ad example](https://github.com/cleveradssolutions/CAS-ReactNative)
-
+- [AppOpen ad example]()

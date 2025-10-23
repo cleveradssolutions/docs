@@ -1,3 +1,4 @@
+
 ---
 title: Additional Meta AudienceNetwork steps
 ---
@@ -10,16 +11,16 @@ If you do not want to enable Limited Data Use (LDU) mode, pass an empty string a
 ```ts
 import { CASMobileAds } from 'react-native-cas';
 
-await CASMobileAds.initialize({
-  casId: 'YOUR_CAS_ID',
+await CASMobileAds.initialize('YOUR_CAS_ID', {
   mediationExtras: { FB_dp: '' }, // [!code highlight]
 });
+
 ```
 To enable LDU for users and specify user geography, set `'LDU'` to `mediationExtras`:
 
 ```ts
-await CASMobileAds.initialize({
-  casId: 'YOUR_CAS_ID',
+await CASMobileAds.initialize('YOUR_CAS_ID', {
   mediationExtras: { FB_dp: 'LDU' }, // [!code highlight]
 });
+
 ```

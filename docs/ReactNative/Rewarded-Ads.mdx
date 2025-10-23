@@ -1,8 +1,9 @@
 
 ---
+title: Rewarded Ads
+description: This guide explains how to integrate rewarded ads into a ReactNative app.
+---
 
-## title: Rewarded Ads
-## description: This guide explains how to integrate rewarded ads into a ReactNative app.
 Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
 Rewarded ads boost engagement because users receive a tangible benefit for their time.
 
@@ -29,20 +30,10 @@ Below is a diagram showing the ad lifecycle and how `autoReload` (isAutoload) af
 The following example creates and loads a rewarded video ad:
 
 ```ts
-import { useEffect } from 'react';
-import { RewardedAd } from 'react-native-cas';
-
 useEffect(() => {
-  (async () => {
-    try {
-      await RewardedAd.setAutoloadEnabled(true);
-      await RewardedAd.loadAd();
-      console.log('Rewarded loaded');
-    } catch (e) {
-      console.log('Rewarded failed to load:', e);
-    }
-  })();
+  RewardedAd.setAutoloadEnabled(true);
 }, []);
+
 ```
 
 Ad content may take some time to load after creating an ad instance.
@@ -56,31 +47,29 @@ CAS can preload multiple rewarded ads in advance for smoother delivery.
 `RewardedAd` provides several lifecycle event listeners to handle ad behavior:
 
 ```ts
-import { useEffect } from 'react';
-import { RewardedAd } from 'react-native-cas';
-
 useEffect(() => {
-  const offLoaded = RewardedAd.addAdLoadedEventListener(() => console.log('Loaded'));
-  const offLoadFailed = RewardedAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
-  const offShowed = RewardedAd.addAdShowedEventListener(() => console.log('Showed'));
-  const offFailedToShow = RewardedAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
-  const offClicked = RewardedAd.addAdClickedEventListener(() => console.log('Clicked'));
-  const offDismissed = RewardedAd.addAdDismissedEventListener(() => console.log('Dismissed'));
-  const offImpression = RewardedAd.addAdImpressionEventListener((imp) => console.log('Impression', imp));
-  const offReward = RewardedAd.addAdUserEarnRewardEventListener(() => console.log('User earned reward'));
+  const unsubscribeLoaded = RewardedAd.addAdLoadedEventListener(() => console.log('Loaded'));
+  const unsubscribeLoadFailed = RewardedAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
+  const unsubscribeShowed = RewardedAd.addAdShowedEventListener(() => console.log('Showed'));
+  const unsubscribeFailedToShow = RewardedAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
+  const unsubscribeClicked = RewardedAd.addAdClickedEventListener(() => console.log('Clicked'));
+  const unsubscribeDismissed = RewardedAd.addAdDismissedEventListener(() => console.log('Dismissed'));
+  const unsubscribeImpression = RewardedAd.addAdImpressionEventListener((imp) => console.log('Impression', imp));
+  const unsubscribeReward = RewardedAd.addAdUserEarnRewardEventListener(() => console.log('User earned reward'));
 
   return () => {
-    offLoaded();
-    offLoadFailed();
-    offShowed();
-    offFailedToShow();
-    offClicked();
-    offDismissed();
-    offImpression();
-    offReward();
-    RewardedAd.destroy?.();
+    unsubscribeLoaded();
+    unsubscribeLoadFailed();
+    unsubscribeShowed();
+    unsubscribeFailedToShow();
+    unsubscribeClicked();
+    unsubscribeDismissed();
+    unsubscribeImpression();
+    unsubscribeReward();
+    RewardedAd.destroy();
   };
 }, []);
+
 ```
 
 <Info>
@@ -95,13 +84,11 @@ useEffect(() => {
 Be sure to handle the `onUserEarnedReward` event to grant rewards to users after watching an ad.
 
 ```ts
-import { RewardedAd } from 'react-native-cas';
-
 RewardedAd.addAdUserEarnRewardEventListener(() => {
   console.log('Reward the user for watching the ad');
 });
 
-await RewardedAd.showAd();
+RewardedAd.showAd();
 ```
 
 The `onUserEarnedReward` callback differs from `onAdDismissed` — the user might not complete the ad and thus not earn a reward.
@@ -109,9 +96,9 @@ If the ad is not ready, `onAdFailedToShow` will trigger.
 You can check readiness before showing:
 
 ```ts
-const isAdLoaded = await RewardedAd.isAdLoaded();
+const isAdLoaded = RewardedAd.isAdLoaded();
 if (isAdLoaded) {
-  await RewardedAd.showAd();
+  RewardedAd.showAd();
 }
 ```
 
@@ -121,12 +108,9 @@ if (isAdLoaded) {
 Be sure to release ad resources when no longer needed:
 
 ```ts
-import { useEffect } from 'react';
-import { RewardedAd } from 'react-native-cas';
-
 useEffect(() => {
   return () => {
-    RewardedAd.destroy?.();
+    RewardedAd.destroy();
   };
 }, []);
 ```
@@ -139,8 +123,7 @@ Keeping a global rewarded ad instance helps reuse it across screens without dela
 To manually reload an ad, call:
 
 ```ts
-import { RewardedAd } from 'react-native-cas';
-await RewardedAd.loadAd();
+RewardedAd.loadAd();
 ```
 
 ---
@@ -150,9 +133,8 @@ CAS allows using interstitial ads as fallback fill when rewarded ads are unavail
 `onUserEarnedReward` will still trigger as if the user completed a rewarded ad.
 
 ```ts
-import { RewardedAd } from 'react-native-cas';
-await RewardedAd.setExtraFillByInterstitialAd(true); // [!code highlight]
-await RewardedAd.loadAd();
+RewardedAd.setExtraFillByInterstitialAd(true); // [!code highlight]
+RewardedAd.loadAd();
 ```
 
 ---

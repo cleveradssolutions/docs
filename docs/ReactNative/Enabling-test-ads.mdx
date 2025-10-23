@@ -1,8 +1,8 @@
----
 
+---
 title: Enabling test ads
 description: This guide explains how to enable test ads in your ads integration.
---------------------------------------------------------------------------------
+---
 
 It's important to enable test ads during development so that you can click on them without charging CAS advertisers.
 
@@ -45,10 +45,10 @@ The easiest way to load test ads is to use:
 ```ts
 import { CASMobileAds } from 'react-native-cas';
 
-CASMobileAds.initialize({
-    casId: _casId,
-    forceTestAds: __DEV__, // [!code highlight]
+CASMobileAds.initialize(_casId, {
+  forceTestAds: __DEV__, // [!code highlight]
 });
+
 ```
 
 ## Enable test devices
@@ -70,10 +70,10 @@ To get test ads on this device, set "12345678901234567890123456789012"
 ```ts
 import { CASMobileAds } from 'react-native-cas';
 
-CASMobileAds.initialize({
-    casId: _casId,
-    testDeviceIds: ['12345678901234567890123456789012'],
+CASMobileAds.initialize(_casId, {
+  testDeviceIds: ['12345678901234567890123456789012'],
 });
+
 ```
 
 <Info>  
