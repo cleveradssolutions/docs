@@ -75,6 +75,11 @@
             "id": "unreal",
             "title": "Unreal",
             "href": "/Unreal"
+        },
+        {
+            "id": "reactnative",
+            "title": "ReactNative",
+            "href": "/ReactNative"
         }
     ],
     "sidebar": [
@@ -692,6 +697,95 @@
                 {
                     "title": "Impression Level Data",
                     "href": "/Unreal/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "reactnative",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/ReactNative"
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/ReactNative/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/ReactNative/User-Consent-Flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/ReactNative/Enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/ReactNative/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "reactnative",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/ReactNative/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/ReactNative/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/ReactNative/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/ReactNative/Banner-Ads"
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "reactnative",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/ReactNative/Targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/ReactNative/Ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/ReactNative/Impression-Level-Data"
                 },
                 {
                     "title": "Reporting API",
