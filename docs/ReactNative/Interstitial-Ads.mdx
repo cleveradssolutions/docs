@@ -84,7 +84,7 @@ useEffect(() => {
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).  
-- When an error occurs during ad impression, executed the `onAdFailedToShow` only. In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
+- When an error occurs while showing the ad, only `onAdFailedToShow` is fired. In this case, `onAdDismissed` will not be called because the impression is not considered successful.
 </Info>
 
 ---
@@ -101,7 +101,7 @@ If the ad is not ready at that moment, the `onAdFailedToShow` callback will be t
 You have the option to check `isLoaded` if it's required by your app's logic.
 
 ```ts
-const isAdLoaded = InterstitialAd.isAdLoaded();
+const isAdLoaded = await InterstitialAd.isAdLoaded();
 if (isAdLoaded) {
   InterstitialAd.showAd();
 }

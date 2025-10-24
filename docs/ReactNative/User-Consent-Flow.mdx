@@ -48,18 +48,20 @@ If an app does not present this request, the IDFA will automatically be zeroed o
 The automatic consent flow is enabled by default and described on the [CAS initialization page](ReactNative/Initialize-CAS).
 
 ## Manual consent flow
-Call `showIfRequired()` on the `ConsentFlow` class. If the consent is required, the SDK loads a form and immediately presents it .
-The `Promise<number>` completes after the form is dismissed. If consent is not required, the `Promise` completes immediately.
+Call `CASMobileAds.showConsentFlow()` to show the built-in consent form manually.  If the consent is required, the SDK loads the form and immediately presents it.  
+
+The `Promise<ConsentFlowStatus>` completes after the form is dismissed.  If consent is not required, the `Promise` resolves instantly.
+
 
 ```ts
-import { ConsentFlow, ConsentFlowStatus } from 'react-native-cas';
+import { CASMobileAds, ConsentFlowStatus } from 'react-native-cas';
 
-ConsentFlow.create().showIfRequired().then((status: number) => {
+CASMobileAds.showConsentFlow().then((status) => {
   if (status === ConsentFlowStatus.OBTAINED) {
     // User consent obtained.
   }
 });
-```
+
 
 | ConsentFlow constant   | Description                                                        |
 | ---------------------- | ------------------------------------------------------------------ |
@@ -82,23 +84,20 @@ Some consent forms require the user to modify their consent at any time. Adhere 
 3. When a user interacts with your UI element, call `show()` to show the form so the user can update their privacy options at any time.
 
 ```ts
-import { ConsentFlow, ConsentFlowStatus, CASMobileAds } from 'react-native-cas';
+import { CASMobileAds, ConsentFlowStatus } from 'react-native-cas';
 
 let _isConsentObtained = false;
 
 CASMobileAds.initialize(casId, {
   showConsentFormIfRequired: true,
 }).then((status) => {
-  _onConsentFlowDismissed(status.consentFlowStatus); // [!code highlight]
+  _isConsentObtained = status.consentFlowStatus === ConsentFlowStatus.OBTAINED; // [!code highlight]
 });
 
-function _onConsentFlowDismissed(status: number) {
-  // The user completes the consent flow
-  _isConsentObtained = status === ConsentFlowStatus.OBTAINED;
-}
-
 function _showPrivacyOptionsForm() {
-  ConsentFlow.create().show().then(_onConsentFlowDismissed);
+  CASMobileAds.showConsentFlow().then((status) => {
+    _isConsentObtained = status === ConsentFlowStatus.OBTAINED;
+  });
 }
 ```
 

@@ -11,19 +11,19 @@ They're also the simplest ad format to implement.
 Banner Ad management in **React Native** is handled through the `BannerAdView` component from **react-native-cas**,
 which represents an ad view used directly in JSX.
 
-CAS provides an option to enable `autoload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoload`, or manually manage each ad loading cycle in your code.
+CAS provides an option to enable `autoReload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code.
 
-When `autoload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
 
 ```ts
 const isAutoReloadEnabled = true as const;
 ```
 
-Manual load mode (`autoload: false`) is useful when you only need to show a single ad per app screen, and the screens change frequently.
+Manual load mode (`autoReload: false`) is useful when you only need to show a single ad per app screen, and the screens change frequently.
 
-Also, banner ads support automatic `refreshInterval` regardless of the `autoload` setting.
+Also, banner ads support automatic `refreshInterval` regardless of the `autoReload` setting.
 
-Below is a diagram showing the ad lifecycle and how `autoload` and `refreshInterval` affect it.
+Below is a diagram showing the ad lifecycle and how `autoReload` and `refreshInterval` affect it.
 
 <Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
 
@@ -71,7 +71,7 @@ export default function BannerAdExample() {
     <View style={{ alignItems: 'center' }}>
       <BannerAdView
         size={adSize}
-        autoload={true}
+        autoReload={true}
         refreshInterval={30}
         onAdViewLoaded={({ width, height }) =>
           console.log(`Banner loaded: ${width}x${height}`)
@@ -102,6 +102,7 @@ Set `refreshInterval={0}` to disable. Default interval: **30 seconds**.
 ```tsx
 <BannerAdView
   size={BannerAdSize.ADAPTIVE}
+  autoReload={true}
   refreshInterval={30}
 />
 ```
@@ -112,6 +113,7 @@ Set `refreshInterval={0}` to disable. Default interval: **30 seconds**.
 ```tsx
 <BannerAdView
   size={BannerAdSize.BANNER}
+  autoReload={true}
   onAdViewLoaded={() => console.log('Ad loaded')}
   onAdViewFailed={(e) => console.log('Failed to load:', e.message)}
   onAdViewImpression={(info) => console.log('Impression:', info)}
@@ -165,7 +167,7 @@ export default function ReloadExample() {
 
 ---
 
-<Property name="autoload" type="boolean" optional>
+<Property name="autoReload" type="boolean" optional>
   Automatically loads the next creative after a show or load failure.
 </Property>
 
@@ -178,13 +180,13 @@ export default function ReloadExample() {
 ---
 
 <Property name="maxWidth" type="number" optional>
-  Maximum width for **Adaptive**/**Inline** banners. Defaults to device width.
+  Maximum width for **Adaptive**/**Inline** banners. Defaults to screen width and is clamped to the screen bounds. Updates automatically on orientation changes.
 </Property>
 
 ---
 
 <Property name="maxHeight" type="number" optional>
-  Maximum height for **Inline** banners. Defaults to device height.
+  Maximum height for **Inline** banners. Defaults to screen height and is clamped to the screen bounds. Updates automatically on orientation changes.
 </Property>
 
 ---

@@ -67,6 +67,9 @@ useEffect(() => {
   const unsubscribeDismissed = RewardedAd.addAdDismissedEventListener(() => {
     console.log('Dismissed');
   });
+  const unsubscribeReward = RewardedAd.addAdUserEarnRewardEventListener(() => {
+    console.log('User earned reward');
+  });
 
   return () => {
     unsubscribeLoaded();
@@ -106,7 +109,7 @@ If the ad is not ready, `onAdFailedToShow` will trigger.
 You can check readiness before showing:
 
 ```ts
-const isAdLoaded = RewardedAd.isAdLoaded();
+const isAdLoaded = await RewardedAd.isAdLoaded();
 if (isAdLoaded) {
   RewardedAd.showAd();
 }
