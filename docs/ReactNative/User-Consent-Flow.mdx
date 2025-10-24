@@ -65,12 +65,12 @@ CASMobileAds.showConsentFlow().then((status) => {
 
 | ConsentFlow constant   | Description                                                        |
 | ---------------------- | ------------------------------------------------------------------ |
-| statusObtained         | User consent obtained. Personalized vs non-personalized undefined. |
-| statusNotRequired      | User consent not required.                                         |
-| statusUnavailable      | User consent unavailable.                                          |
-| statusInternalError    | There was an internal error.                                       |
-| statusNetworkError     | There was an error loading data from the network.                  |
-| statusFlowStillShowing | There was an error with another form is still being displayed.     |
+| OBTAINED         | User consent obtained. Personalized vs non-personalized undefined. |
+| NOT_REQUIRED     | User consent not required.                                         |
+| UNAVAILABLE      | User consent unavailable.                                          |
+| INTERNAL_ERROR   | There was an internal error.                                       |
+| NETWORK_ERROR    | There was an error loading data from the network.                  |
+| STILL_PRESENTING | There was an error with another form is still being displayed.     |
 
 <Warning>  
 The cache consent status on your app or a previously saved consent string, could lead to a [TCF 3.3](https://support.google.com/admanager/answer/9999955) error if consent is expired.
@@ -80,23 +80,25 @@ The cache consent status on your app or a previously saved consent string, could
 Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
 
 1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
-2. Once `showIfRequired()` completes, check `isConsentObtained` to determine whether to display the UI element that can present the privacy options form.
+2. Once `initialize()` completes, check `isConsentObtained` to determine whether to display the UI element that can present the privacy options form.
 3. When a user interacts with your UI element, call `show()` to show the form so the user can update their privacy options at any time.
 
 ```ts
 import { CASMobileAds, ConsentFlowStatus } from 'react-native-cas';
 
-let _isConsentObtained = false;
+var isConsentObtained = false;
 
-CASMobileAds.initialize(casId, {
-  showConsentFormIfRequired: true,
-}).then((status) => {
-  _isConsentObtained = status.consentFlowStatus === ConsentFlowStatus.OBTAINED; // [!code highlight]
-});
+function initialize() {
+  CASMobileAds.initialize(casId, {
+    showConsentFormIfRequired: true,
+  }).then((status) => {
+    isConsentObtained = status.consentFlowStatus === ConsentFlowStatus.OBTAINED; // [!code highlight]
+  });
+}
 
-function _showPrivacyOptionsForm() {
+function showPrivacyOptionsForm() {
   CASMobileAds.showConsentFlow().then((status) => {
-    _isConsentObtained = status === ConsentFlowStatus.OBTAINED;
+    isConsentObtained = status === ConsentFlowStatus.OBTAINED;
   });
 }
 ```
@@ -113,18 +115,6 @@ CASMobileAds.initialize(casId, {
   debugGeography: PrivacyGeography.EUROPEAN_ECONOMIC_AREA, // [!code highlight]
 });
 
-```
-
-If you're showing the Consent Flow manually, define the `debugGeography` creation argument, and the setting will remain active even for production sessions. Leave it set to `.unknown` to allow the system to determine the user's geography automatically.
-
-```ts
-import { ConsentFlow, PrivacyGeography } from 'react-native-cas';
-
-ConsentFlow.create({
-  debugGeography: __DEV__
-    ? PrivacyGeography.EUROPEAN_ECONOMIC_AREA // [!code highlight]
-    : PrivacyGeography.UNKNOWN, // [!code highlight]
-}).showIfRequired();
 ```
 
 ## Meta Audience Network Data Processing Options for Users in California

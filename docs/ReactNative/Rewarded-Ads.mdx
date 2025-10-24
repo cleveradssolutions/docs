@@ -6,116 +6,132 @@ description: This guide explains how to integrate rewarded ads into a ReactNativ
 Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
 Rewarded ads boost engagement because users receive a tangible benefit for their time.
 
-Rewarded Ad management in React code is handled through the `RewardedAd` class from `react-native-cas`,
-which extends the shared fullscreen ad logic.
+Rewarded Ad management in React code is handled through the `RewardedAd` class which extends the shared fullscreen ad logic.
 The rewarded ad is displayed as an overlay on top of all app content and cannot be added to the ReactNative component tree.
 
-CAS provides an option to enable `autoReload` to simplify your app logic.
-Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code.
-When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
-
 ```ts
-const isAutoReloadEnabled = true;
+import { RewardedAd } from 'react-native-cas';
 ```
 
-Manual load mode (`autoReload: false`) is useful when you only need to show a single ad per app screen, and the screens change frequently.
-Below is a diagram showing the ad lifecycle and how `autoReload` (isAutoload) affects it.
+Below is a diagram showing the ad lifecycle and how autoload affects it.
 
 <Image zoom src="/assets/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
 
----
+## Load Ad
+CAS provides an option to enable autoload to simplify your app logic. 
+Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
 
-## Create Ad instance
-The following example creates and loads a rewarded video ad:
-
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
 ```ts
 useEffect(() => {
   RewardedAd.setAutoloadEnabled(true);
 }, []);
 ```
 
-Ad content may take some time to load after creating an ad instance.
-To ensure the ad displays instantly when needed, create the ad instance in advance.
-Use the `addAdLoadedEventListener` event to be notified when the ad is ready for display.
-CAS can preload multiple rewarded ads in advance for smoother delivery.
+Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
 
----
+When you want to manually control ad loading, use the `loadAd()` function.
+```ts
+useEffect(() => {
+  RewardedAd.loadAd();
+}, []);
+```
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+Use the `addAdLoadedEventListener` event to be notified when the ad is ready for display.
 
 ## Ad content callbacks
 `RewardedAd` provides several lifecycle event listeners to handle ad behavior:
 
 ```ts
 useEffect(() => {
+  const unsubscribeReward = RewardedAd.addAdUserEarnRewardEventListener(() => {
+    console.log('Reward the user for watching the ad');
+  });
   const unsubscribeLoaded = RewardedAd.addAdLoadedEventListener(() => {
+    // Called when an ad is successfully loaded. 
     console.log('Loaded');
   });
-  const unsubscribeLoadFailed = RewardedAd.addAdLoadFailedEventListener((error) => {
+  const unsubscribeFailedToLoad = RewardedAd.addAdFailedToLoadEventListener((error) => {
+    // Called when an ad load failed. 
     console.log('Load failed:', error);
   });
-  const unsubscribeShowed = RewardedAd.addAdShowedEventListener(() => {
-    console.log('Showed');
-  });
   const unsubscribeFailedToShow = RewardedAd.addAdFailedToShowEventListener((error) => {
+    // Called when the ad failed to show full screen content. 
     console.log('Failed to show:', error);
   });
-  const unsubscribeImpression = RewardedAd.addAdImpressionEventListener((info) => {
-    console.log('Impression', info);
+  const unsubscribeShowed = RewardedAd.addAdShowedEventListener(() => {
+    // Called when the ad showed the full screen content.
+    console.log('Showed');
   });
   const unsubscribeClicked = RewardedAd.addAdClickedEventListener(() => {
+    // Called when a click is recorded for an ad.
     console.log('Clicked');
   });
-  const unsubscribeDismissed = RewardedAd.addAdDismissedEventListener(() => {
-    console.log('Dismissed');
+  const unsubscribeImpression = RewardedAd.addAdImpressionEventListener((info: AdContentInfo) => {
+    // Called when an impression occurs on the ad. 
+    console.log('Impression', info);
   });
-  const unsubscribeReward = RewardedAd.addAdUserEarnRewardEventListener(() => {
-    console.log('User earned reward');
+  const unsubscribeDismissed = RewardedAd.addAdDismissedEventListener(() => {
+    // Called when the ad dismissed full screen content. 
+    console.log('Dismissed');
   });
 
   return () => {
-    unsubscribeLoaded();
-    unsubscribeLoadFailed();
-    unsubscribeShowed();
-    unsubscribeFailedToShow();
-    unsubscribeClicked();
-    unsubscribeDismissed();
-    unsubscribeImpression();
     unsubscribeReward();
-    RewardedAd.destroy();
+    unsubscribeLoaded();
+    unsubscribeFailedToLoad();
+    unsubscribeFailedToShow();
+    unsubscribeShowed();
+    unsubscribeClicked();
+    unsubscribeImpression();
+    unsubscribeDismissed();
   };
 }, []);
 ```
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).  
-- When an error occurs during ad impression, only `onAdFailedToShow` is triggered.  
-  In this case, `onAdDismissed` will not be executed since the impression is not considered successful.
+- When an error occurs during ad impression, only `AdFailedToShowEvent` is triggered.  
+  In this case, `AdDismissedEvent` will not be executed since the impression is not considered successful.
 </Info>
 
----
-
 ## Show Ad
-Be sure to handle the `onUserEarnedReward` event to grant rewards to users after watching an ad.
+Be sure to `addAdUserEarnRewardEventListener` and reward the user for watching an ad.  
 
+You can choose when to show the ad by calling `show()`:
 ```ts
-RewardedAd.addAdUserEarnRewardEventListener(() => {
-  console.log('Reward the user for watching the ad');
-});
-
 RewardedAd.showAd();
 ```
 
-The `onUserEarnedReward` callback differs from `onAdDismissed` — the user might not complete the ad and thus not earn a reward.
-If the ad is not ready, `onAdFailedToShow` will trigger.
-You can check readiness before showing:
+The `AdUserEarnRewardEvent` differs from `AdDismissedEvent` — the user might not complete the ad and thus not earn a reward.
 
+If the ad is not ready at that moment, the `AdFailedToShowEvent` will be triggered with a reason provided in the `AdError`.
+
+You have the option to check `isAdLoaded()` if it's required by your app's logic.
 ```ts
 const isAdLoaded = await RewardedAd.isAdLoaded();
-if (isAdLoaded) {
-  RewardedAd.showAd();
-}
 ```
 
----
+## Extra fill by Interstitial Ad
+CAS provides the option to load the interstitial ads as a fallback when a rewarded video ad has no available fill. 
+Interstitial ads do not require the user to watch the entire ad to completion. 
+However, the `AdUserEarnRewardEvent` will still be triggered as if the user completed the rewarded video.
+
+```ts
+RewardedAd.setExtraFillByInterstitialAd(true); // [!code highlight]
+```
+
+## Mute Ad sounds
+Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
+
+```ts
+CASMobileAds.setAdSoundsMuted(true);
+```
+
+Not muted by default.
 
 ## Release ad resource
 Be sure to release ad resources when no longer needed:
@@ -127,41 +143,6 @@ useEffect(() => {
   };
 }, []);
 ```
-
-Keeping a global rewarded ad instance helps reuse it across screens without delays.
-
----
-
-## Manual reload Ad
-To manually reload an ad, call:
-
-```ts
-RewardedAd.loadAd();
-```
-
----
-
-## Extra fill by Interstitial Ad
-CAS allows using interstitial ads as fallback fill when rewarded ads are unavailable.
-`onUserEarnedReward` will still trigger as if the user completed a rewarded ad.
-
-```ts
-RewardedAd.setExtraFillByInterstitialAd(true); // [!code highlight]
-RewardedAd.loadAd();
-```
-
----
-
-## Mute Ad sounds
-You can mute ad sounds if your app controls its own audio:
-
-```ts
-CASMobileAds.setAdSoundsMuted(true);
-```
-
-Not muted by default.
-
----
 
 ## Complete example
 - [Rewarded ad example]()

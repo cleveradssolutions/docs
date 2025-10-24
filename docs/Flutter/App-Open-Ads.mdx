@@ -94,7 +94,6 @@ _appOpenAd.onAdDismissed = (AdScreenInstance ad) {
 App open ads help you monetize your app's loading screen, when the app first launches and during app switches, but it's important to keep best practices in mind so that your users enjoy using your app. It's best to:
 - Show your first app open ad after your users have used your app a few times.
 - Show app open ads during times when your users would otherwise be waiting for your app to load.
-- 
 - If a user returns to your app after having left it by clicking on an app open ad, it makes sure they're not presented with another app open ad.
 
 You can choose when to show the ad by calling `show()`:
@@ -143,7 +142,10 @@ CASMobileAds.setAdSoundsMuted(true);
 Not muted by default.
 
 ## Cold starts and Loading screens
-There is a delay between when you request an ad and when you receive an ad to show. If you do not design your app well, the user may briefly see your app and then be surprised by an out-of-context ad. Prevent this bad user experience. You can handle cold starts by showing a loading screen before any app content, and then showing the ad after the loading screen. If your app shows any app content after the loading screen, do not show the ad.
+There is a delay between when you request an ad and when you receive an ad to show. 
+If you do not design your app well, the user may briefly see your app and then be surprised by an out-of-context ad. 
+Prevent this bad user experience. You can handle cold starts by showing a loading screen before any app content, and then showing the ad after the loading screen. 
+If your app shows any app content after the loading screen, do not show the ad.
 
 ## Best Practices
 - When an app open ad is not yet loaded (i.e. on cold start), load it first. Load any other ad formats later so that you avoid loading them in parallel with the app open ad. Loading multiple ad formats in parallel is not good for the device’s resources or for ad demand SDKs.
