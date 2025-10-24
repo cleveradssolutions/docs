@@ -2,94 +2,28 @@
 title: Ad errors
 ---
 
-When an ad fails to **load** or **show**, the SDK triggers a callback providing an `AdError` object.
+In cases where an ad fails to load/show, a callback is called which provides a `AdError` object.
 
-`AdError` is commonly used in ad-related callbacks such as `onAdFailedToLoad` or `onAdFailedToShow`.
+AdError is commonly used in ad-related callbacks such as `onAdFailedToLoad` or `onAdFailedToShow`.
 
-Use **`AdError.code`** to retrieve the error code.  
-Use **`AdError.message`** to get a human-readable description.
+Use `AdError.code` to retrieve the error code.   
+Use `AdError.message` to get a human-readable error description.   
 
-See below for all available error code constants:
+See `code` constants for all available error codes.
 
----
+| Code | Constant               | Description                                                                                                                                                                                            |
+| ---- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0    | codeInternalError      | Indicates an internal error occurred.                                                                                                                                                                  |
+| 1    | codeNotReady           | Indicates that ads are not ready to be shown. Ensure to call the appropriate ad loading method or use automatic load mode. If using automatic load mode, wait a little longer for ads to be ready.     |
+| 2    | codeRejected           | Indicates that the device is rejected for services. Services may not be available for some devices that do not meet the requirements. For example, the country or version of the OS.                   |
+| 3    | codeNoFill             | Indicates that no ads are available to be served. If ads are visible in test ads mode, your implementation is correct, and ads will be served once live.                                               |
+| 6    | codeReachedCap         | Indicates that the ad creative has reached its daily cap for the user. This is typically relevant for cross-promotion ads only.                                                                        |
+| 7    | codeNotInitialized     | Indicates that the CAS SDK is not initialized. Ensure to add CAS initialization code.                                                                                                                  |
+| 8    | codeTimeout            | Indicates a timeout error occurred because the advertising source did not respond in time. The system will continue waiting for a response, which may delay ad loading or cause a loading error.       |
+| 9    | codeNoConnection       | Indicates that there is no internet connection available, which prevents ads from loading.                                                                                                             |
+| 10   | codeConfigurationError | Indicates that there is a configuration error in one of the mediation ad sources. Report this error to your support manager for further assistance.                                                    |
+| 11   | codeNotPassedInterval  | Indicates that the interval between impressions of interstitial ads has not yet passed. This error may also occur if a trial ad-free interval has been defined and has not yet passed since app start. |
+| 12   | codeAlreadyDisplayed   | Indicates that another fullscreen ad is currently being displayed, preventing new ads from showing. Review your ad display logic to avoid duplicate impressions.                                       |
+| 13   | codeNotForeground      | Indicates that ads cannot be shown because the application is not currently in the foreground.                                                                                                         |
 
-<Property name="codeInternalError">
-  **Code:** `0`  
-  Indicates an internal error occurred within the SDK.
-</Property>
 
----
-
-<Property name="codeNotReady" code="1">
-  Indicates that ads are not yet ready to be shown.  
-  Ensure you have called the appropriate ad loading method or enabled automatic load mode.  
-  If using automatic loading, wait slightly longer for the ad to become ready.
-</Property>
-
----
-
-<Property name="codeRejected" code="2">
-  Indicates that the device is rejected for ad services.  
-  Services may be unavailable for devices that do not meet regional or OS requirements.
-</Property>
-
----
-
-<Property name="codeNoFill" code="3">
-  Indicates that no ads are currently available to be served.  
-  If ads appear in test mode, your integration is correct and live ads will resume once inventory is available.
-</Property>
-
----
-
-<Property name="codeReachedCap" code="6">
-  Indicates that the ad creative has reached its daily serving cap for this user.  
-  This typically applies to cross-promotion ads only.
-</Property>
-
----
-
-<Property name="codeNotInitialized" code="7">
-  Indicates that the CAS SDK has not been initialized.  
-  Ensure proper initialization before loading or showing ads.
-</Property>
-
----
-
-<Property name="codeTimeout" code="8">
-  Indicates a timeout occurred because an ad source did not respond in time.  
-  The system will continue waiting for a response, which may delay or fail ad loading.
-</Property>
-
----
-
-<Property name="codeNoConnection" code="9">
-  Indicates that there is no active internet connection, preventing ad requests.
-</Property>
-
----
-
-<Property name="codeConfigurationError" code="10">
-  Indicates a configuration error in one of the mediation ad sources.  
-  Report this issue to your CAS support manager for further assistance.
-</Property>
-
----
-
-<Property name="codeNotPassedInterval" code="11">
-  Indicates that the minimum interval between fullscreen ad impressions has not passed yet.  
-  This may also occur when a trial ad-free interval is active and has not expired since app start.
-</Property>
-
----
-
-<Property name="codeAlreadyDisplayed" code="12">
-  Indicates that another fullscreen ad is currently being displayed,  
-  preventing new ads from showing. Review your ad display logic to avoid overlap.
-</Property>
-
----
-
-<Property name="codeNotForeground" code="13">
-  Indicates that ads cannot be shown because the app is not currently in the foreground.
-</Property>
