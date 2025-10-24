@@ -13,8 +13,6 @@ The `AdContentInfo` structure contains information about a loaded or displayed a
 In React Native, this object is provided to the `onAdImpression` callback for each ad format.
 
 ```ts
-import { AppOpenAd } from 'react-native-cas';
-
 const unsubscribe = AppOpenAd.addAdImpressionEventListener((info) => {
   console.log('AppOpen impression:', info);
 });

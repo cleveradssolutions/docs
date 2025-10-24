@@ -6,18 +6,6 @@ You can now easily tailor the way you serve your ads to fit a specific audience!
 You’ll need to inform our servers of the users’ details so the SDK will know to serve ads according
 to the segment the user belongs to.
 
-### User ID
-The userID is a unique identifier supplied by your application and must be static for each user across sessions.
-
-```ts
-// Not available in React Native API.
-// Store the user ID on your backend or pass network-specific IDs via `mediationExtras` at initialize().
-````
-
-<Warning>  
-Your userID should not contain any personally identifiable information such as  an email address, screen name, Android ID (AID), or Google Advertising ID (GAID).
-</Warning>
-
 ### User Age
 Set user age. Limitation: 1-99. By default 0 is 'unknown'.
 
@@ -31,7 +19,7 @@ Set targeting to user’s gender. Limitation: `unknown, male, female`.
 
 ```ts
 CASMobileAds.setUserGender(Gender.MALE);
-```
+``` 
 
 ### User Location auto collection
 Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place.
