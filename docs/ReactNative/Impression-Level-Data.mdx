@@ -1,104 +1,123 @@
 ---
 title: Impression Level Data
 ---
-CAS.AI SDK provides detailed impression-level data via callbacks, including which demand source served the ad and the exact/estimated revenue. Use this to analyze and optimize monetization and UA strategies.
+
+CAS.AI SDK enables you to access detailed information for each impression through the impression callback APIs.  
+The data includes which demand source served the ad and the exact or estimated revenue associated with it.  
+This allows you to analyze and optimize your monetization and user acquisition strategies.
+
+---
 
 ### AdContentInfo
-`AdContentInfo` contains information about a loaded/displayed ad. In React Native, you receive it from impression events:
+The `AdContentInfo` structure contains information about a loaded or displayed ad.  
+In React Native, this object is provided to the `onAdImpression` callback for each ad format.
 
 ```ts
+import { AppOpenAd } from 'react-native-cas';
+
 const unsubscribe = AppOpenAd.addAdImpressionEventListener((info) => {
-  console.log('AppOpen impression', info);
+  console.log('AppOpen impression:', info);
 });
-```
+````
 
-| Name               | Type      | Description                                                                                                   |
-| ------------------ | --------- | ------------------------------------------------------------------------------------------------------------- |
-| `sourceName`       | `string`  | Display name of the mediated network that purchased the impression.                                           |
-| `sourceUnitId`     | `string`  | Ad Unit ID from the mediated network.                                                                         |
-| `creativeId`       | `string?` | Creative ID, if available (useful for reporting creative issues).                                             |
-| `revenue`          | `number`  | Revenue generated from this impression, in USD (may be estimated or precise depending on `revenuePrecision`). |
-| `revenuePrecision` | `string`  | Precision type of `revenue` (e.g., `estimated`, `precise`).                                                   |
-| `revenueTotal`     | `number`  | Accumulated user ad revenue in USD across all ad formats.                                                     |
-| `impressionDepth`  | `number`  | Total number of impressions for the current user across all sessions.                                         |
+#### AdContentInfo fields
 
-#### AdContentInfo fields (as properties)
 <Property name="format" type="string" required>
-  Ad format (e.g., `Banner`, `MREC`, `Interstitial`, `Rewarded`, `AppOpen`).
+  The ad format (e.g. `Banner`, `MREC`, `Interstitial`, `Rewarded`, `AppOpen`).
 </Property>
 
 ---
 
 <Property name="revenue" type="number" required>
-  Impression revenue in USD.
+  The impression revenue in USD.  
+  This value can be either estimated or precise depending on the network.
 </Property>
 
 ---
 
 <Property name="revenuePrecision" type="string" required>
-  Revenue precision, usually `estimated` or `precise` depending on the network.
+  Indicates whether the revenue is `estimated` or `precise`.
 </Property>
 
 ---
 
 <Property name="sourceName" type="string" required>
-  Ad network name that won the impression.
+  Display name of the ad network that purchased the impression.
 </Property>
 
 ---
 
 <Property name="sourceUnitId" type="string" required>
-  The network’s ad unit id that served this impression.
+  The network’s ad unit ID that served this impression.
 </Property>
 
 ---
 
 <Property name="creativeId" type="string" optional>
-  Creative identifier, if available.
+  Creative identifier, if available.  
+  Useful when reporting problematic or duplicate creatives.
 </Property>
 
 ---
 
 <Property name="revenueTotal" type="number" required>
-  Accumulated user revenue across formats (per SDK tracking).
+  Accumulated ad revenue in USD across all formats for the current user.
 </Property>
 
 ---
 
 <Property name="impressionDepth" type="number" required>
-  Total impressions count for the current user.
+  Total number of impressions shown to this user across all sessions.
 </Property>
 
+---
+
 ### Ad Impression callback
-Each ad format exposes an impression callback:
+
+Each ad format exposes an impression callback with `AdContentInfo` details:
 
 ```ts
-import { AppOpenAd, InterstitialAd, RewardedAd } from 'react-native-cas';
+import {
+  AppOpenAd,
+  InterstitialAd,
+  RewardedAd,
+  type AdContentInfo,
+} from 'react-native-cas';
 
 function setAdImpressionCallbacks() {
   const unAppOpen = AppOpenAd.addAdImpressionEventListener(onAdImpression);
   const unInterstitial = InterstitialAd.addAdImpressionEventListener(onAdImpression);
   const unRewarded = RewardedAd.addAdImpressionEventListener(onAdImpression);
+
+  return () => {
+    unAppOpen();
+    unInterstitial();
+    unRewarded();
+  };
 }
 
-function onAdImpression(impression /* AdContentInfo */) {
+function onAdImpression(impression: AdContentInfo) {
+  // Called when an ad impression occurs.  
   const adPlatform = 'CAS';
   const adFormat = impression.format;
   const adSource = impression.sourceName;
   const adUnitName = impression.sourceUnitId;
   const value = impression.revenue;
+  // All CAS revenue is sent in USD  
   const currency = 'USD';
 }
 ```
 
-For banners, pass a prop on the React component:
+For banners, attach the handler directly to the React component:
 
 ```tsx
 <BannerAdView onAdViewImpression={(info) => onAdImpression(info)} />
 ```
 
+---
+
 ### User ad summary
-The SDK tracks cumulative impressions and revenue; they are included in each impression payload:
+CAS tracks cumulative impression and revenue metrics that are included in each `AdContentInfo` payload:
 
 ```ts
 const totalImpressions = impression.impressionDepth;
@@ -106,27 +125,40 @@ const totalRevenue = impression.revenueTotal;
 ```
 
 <Info>
-Progress is saved between sessions until the user clears your app data.
+These counters persist between app sessions until the user clears your app’s data.
 </Info>
 
-## Automatic collection to analytics
-CAS can automatically collect ad revenue to Google Analytics and Tenjin. Contact your account manager to enable these events.
+---
+
+## Automatic ad revenue collection
+CAS SDK can automatically report ad revenue events to **Google Analytics** and **Tenjin Analytics**.
+Contact your account manager for enabling these integrations.
+
+---
 
 ### Google Analytics
-1. Set up your project & app as in **Get Started with Analytics**.
+To measure ad revenue with Google Analytics:
+
+1. [Get started with Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
 2. Link your Firebase project to a Google Analytics account.
 3. Use CAS SDK **3.5.0+**.
 
-The SDK logs `ad_impression` events whenever an ad is shown. These include platform, source, currency, and value.
+The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
+events whenever an ad is displayed.
+Events include parameters such as ad platform, source, currency, and value.
+Alternatively, CAS may log the event as `CAS_Impression`.
+
+---
 
 ### Tenjin
-1. Set up your project & app as in **Tenjin Android SDK – Basic integration**.
-2. Ensure a Tenjin session is initialized, or pass the key via CAS init so CAS initializes Tenjin automatically:
-```ts
-import { CASMobileAds } from 'react-native-cas';
+1. [Integrate the Tenjin Android SDK](https://docs.tenjin.com/docs/android-sdk#basic-integration).
+2. Ensure a Tenjin session is initialized, **or** pass your key to CAS SDK so it initializes Tenjin automatically:
 
-CASMobileAds.initialize('your_cas_id', {
-  mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
-});
-```
+   ```ts
+   CASMobileAds.initialize('YOUR_CAS_ID', {
+     mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
+   });
+   ```
 3. Use CAS SDK **3.7.2+**.
+
+

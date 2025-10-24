@@ -1,44 +1,77 @@
 ---
 title: Banner Ads
-description: This guide explains how to integrate banner ads into a React Native app.
+description: This guide explains how to integrate banner ads into a ReactNative app.
 ---
 
-Banner ad units display rectangular ads that occupy a portion of an app’s layout. They can refresh automatically on a set interval and are the simplest ad format to implement.
+Banner Ad units display rectangular ads that occupy a portion of an app's layout.
+They can refresh automatically after a set period of time.
+This means users view a new ad at regular intervals, even if they stay on the same screen in your app.
+They're also the simplest ad format to implement.
 
-Banner ads in React Native are handled via the `BannerAdView` component from **react-native-cas**, used directly in JSX.
+Banner Ad management in **React Native** is handled through the `BannerAdView` component from **react-native-cas**,
+which represents an ad view used directly in JSX.
 
-CAS provides an `autoload` option to simplify app logic. Decide whether to enable `autoload` or to manage load cycles manually.
+CAS provides an option to enable `autoload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoload`, or manually manage each ad loading cycle in your code.
+
+When `autoload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
 
 ```ts
 const isAutoReloadEnabled = true as const;
 ```
 
-Manual mode (`autoload = false`) is useful when you show a single ad per screen and screens change frequently. `refreshInterval` works independently of `autoload`.
+Manual load mode (`autoload: false`) is useful when you only need to show a single ad per app screen, and the screens change frequently.
+
+Also, banner ads support automatic `refreshInterval` regardless of the `autoload` setting.
+
+Below is a diagram showing the ad lifecycle and how `autoload` and `refreshInterval` affect it.
 
 <Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
 
-## Get the Ad size
-Use the `BannerAdSize` enum:
 
+````md
+## Get the Ad size
+To load a banner ad, choose one of the sizes below (copy a single line you need):
+
+1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50.
 ```ts
-const size = BannerAdSize.ADAPTIVE;   // Flexible width, base height ~50
-const size2 = BannerAdSize.SMART;     // ~320x50 on phones
-const size3 = BannerAdSize.MREC;      // 300x250
-const size4 = BannerAdSize.LEADERBOARD; // 728x90 (tablet only)
-const size5 = BannerAdSize.BANNER;    // 320x50
+const adSize = BannerAdSize.ADAPTIVE;
+````
+2. **Inline banner** ads have a desired width and a maximum height, useful when you want to limit the banner's height. Inline banners are larger and taller compared to adaptive banners. They have variable height, including Medium Rectangle size, and can be as tall as the device screen.
+```ts
+const adSize = BannerAdSize.INLINE;
+```
+3. **Smart** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+```ts
+const adSize = BannerAdSize.SMART;
+```
+4. **Medium Rectangle** has a fixed size of 300x250.
+```ts
+const adSize = BannerAdSize.MREC;
+```
+5. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+```ts
+const adSize = BannerAdSize.LEADERBOARD;
+```
+6. **Standard Banner** has a fixed size of 320x50 and is the minimum ad size
+```ts
+const adSize = BannerAdSize.BANNER;
 ```
 
 ## Create Ad instance
+The following example creates and loads a banner ad:
+
 ```tsx
 import React from 'react';
 import { View } from 'react-native';
 import { BannerAdView, BannerAdSize } from 'react-native-cas';
 
 export default function BannerAdExample() {
+  const adSize = BannerAdSize.ADAPTIVE;
+
   return (
     <View style={{ alignItems: 'center' }}>
       <BannerAdView
-        size={BannerAdSize.ADAPTIVE}
+        size={adSize}
         autoload={true}
         refreshInterval={30}
         onAdViewLoaded={({ width, height }) =>
@@ -57,9 +90,16 @@ export default function BannerAdExample() {
 }
 ```
 
-Keep the view mounted to avoid delays. With **Adaptive** banners, height adjusts automatically on width changes (e.g., orientation) — no manual reload needed.
+Ad content may take some time to load after creating an ad view.
+To ensure the ad displays instantly when needed, keep the ad view **mounted**.
+When using **Adaptive** banners, the height adjusts automatically with screen width changes (e.g., orientation changes). You don't need to manually reload.
+For **Inline** banners, height is also recalculated automatically within the provided `maxWidth`/`maxHeight` constraints.
 
 ## Ad refresh interval
+The automatic refresh interval determines how often a new ad request is generated.
+Once the interval elapses, a new ad will automatically load and display.
+Set `refreshInterval={0}` to disable. Default interval: **30 seconds**.
+
 ```tsx
 <BannerAdView
   size={BannerAdSize.ADAPTIVE}
@@ -68,6 +108,8 @@ Keep the view mounted to avoid delays. With **Adaptive** banners, height adjusts
 ```
 
 ## Ad content callbacks
+`BannerAdView` supports lifecycle callbacks via props:
+
 ```tsx
 <BannerAdView
   size={BannerAdSize.BANNER}
@@ -79,20 +121,27 @@ Keep the view mounted to avoid delays. With **Adaptive** banners, height adjusts
 ```
 
 <Info>
-Read more about `AdContentInfo` in  
+Read more about `AdContentInfo` structure in  
 [Impression Level Data](ReactNative/Impression-Level-Data).
 </Info>
 
 ## Show Ad View
+`BannerAdView` is a React component and can be used like any other view.
+
 ```tsx
 <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
   <BannerAdView size={BannerAdSize.ADAPTIVE} />
 </View>
 ```
 
-While loading, the view is minimal (1×1). It expands automatically when the ad loads. Ensure the container is large enough; padding reduces available space.
+While the ad is loading, the view has minimal height (1x1).
+When the ad loads, it automatically expands to the selected size.
+
+The container must be at least as large as the ad size; padding reduces available space.
 
 ## Manual reload Ad
+When managing ads manually, you can unmount and remount `BannerAdView` or call `loadAd()` via ref.
+
 ```tsx
 import React, { useRef } from 'react';
 import { Button } from 'react-native';
@@ -100,6 +149,7 @@ import { BannerAdView, BannerAdSize, type BannerAdViewRef } from 'react-native-c
 
 export default function ReloadExample() {
   const ref = useRef<BannerAdViewRef>(null);
+
   return (
     <>
       <BannerAdView ref={ref} size={BannerAdSize.BANNER} />
@@ -109,63 +159,63 @@ export default function ReloadExample() {
 }
 ```
 
-### BannerAdView props
+## BannerAdView props
 <Property name="size" type="BannerAdSize" required>
-  Banner size (`BANNER`, `ADAPTIVE`, `MREC`, `LEADERBOARD`, `SMART`).
+  Select the banner size (`BANNER`, `ADAPTIVE`, `INLINE`, `MREC`, `LEADERBOARD`, `SMART`).
 </Property>
 
 ---
 
 <Property name="autoload" type="boolean" optional>
-  Automatically loads the next creative after a show/failure.
+  Automatically loads the next creative after a show or load failure.
 </Property>
 
 ---
 
 <Property name="refreshInterval" type="number" optional>
-  Auto-refresh interval in seconds. `0` disables refreshing.
+  Auto-refresh interval in seconds. Use `0` to disable refreshing (default: 30).
 </Property>
 
 ---
 
 <Property name="maxWidth" type="number" optional>
-  Max width used for adaptive banners. Defaults to device width.
+  Maximum width for **Adaptive**/**Inline** banners. Defaults to device width.
 </Property>
 
 ---
 
 <Property name="maxHeight" type="number" optional>
-  Max height for inline adaptive banners. Defaults to device height.
+  Maximum height for **Inline** banners. Defaults to device height.
 </Property>
 
 ---
 
 <Property name="casId" type="string" optional>
-  Optional CAS ID override for this specific view.
+  Optional CAS identifier override for this specific view.
 </Property>
 
 ---
 
 <Property name="onAdViewLoaded" type="(info: AdViewInfo) => void" optional>
-  Called when the ad is successfully loaded (contains actual width/height).
+  Fired when an ad is loaded. Provides actual `width` and `height` in dp.
 </Property>
 
 ---
 
 <Property name="onAdViewFailed" type="(error: AdError) => void" optional>
-  Called when loading fails.
+  Fired when ad loading fails with normalized error code & message.
 </Property>
 
 ---
 
 <Property name="onAdViewClicked" type="() => void" optional>
-  Called when the ad is clicked.
+  Fired when the user taps the ad.
 </Property>
 
 ---
 
 <Property name="onAdViewImpression" type="(info: AdContentInfo) => void" optional>
-  Called when an impression is recorded with monetization info.
+  Fired on impression with monetization info (e.g., revenue, network, unit ID).
 </Property>
 
 ## Complete example

@@ -26,8 +26,6 @@ The enabled Debug Mode will display a lot of useful information for debugging ab
 Disabled by default. Disabling Debug Mode may improve application performance.
 
 ```ts
-import { CASMobileAds } from 'react-native-cas';
-
 CASMobileAds.setDebugLoggingEnabled(true);
 ```
 
@@ -36,14 +34,10 @@ If you have discovered the problem in the work of the SDK, please provide us wit
 </Info>  
 
 ## Enable test ad mode
-
 The quickest way to enable testing is to use test ad mode. The test ad mode are not associated with your CAS account, so there's no risk of your account generating invalid traffic when using these test ad mode.
-
 The easiest way to load test ads is to use:
 
 ```ts
-import { CASMobileAds } from 'react-native-cas';
-
 CASMobileAds.initialize(_casId, {
   forceTestAds: __DEV__, // [!code highlight]
 });
@@ -67,8 +61,6 @@ To get test ads on this device, set "12345678901234567890123456789012"
 4. Modify your code to set the test device ID through add `TestDeviceIDs` before CAS manager initialize.
 
 ```ts
-import { CASMobileAds } from 'react-native-cas';
-
 CASMobileAds.initialize(_casId, {
   testDeviceIds: ['12345678901234567890123456789012'],
 });

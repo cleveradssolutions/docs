@@ -10,8 +10,9 @@ to the segment the user belongs to.
 The userID is a unique identifier supplied by your application and must be static for each user across sessions.
 
 ```ts
-CASMobileAds.targetingOptions.setUserID("user-hash-code");
-```
+// Not available in React Native API.
+// Store the user ID on your backend or pass network-specific IDs via `mediationExtras` at initialize().
+````
 
 <Warning>  
 Your userID should not contain any personally identifiable information such as  an email address, screen name, Android ID (AID), or Google Advertising ID (GAID).
@@ -21,21 +22,26 @@ Your userID should not contain any personally identifiable information such as  
 Set user age. Limitation: 1-99. By default 0 is 'unknown'.
 
 ```ts
-CASMobileAds.targetingOptions.setAge(12);
+CASMobileAds.setUserAge(12);
 ```
 
 ### User Gender
+
 Set targeting to user’s gender. Limitation: `unknown, male, female`.
 
 ```ts
-CASMobileAds.targetingOptions.setGender(Gender.male);
+import { CASMobileAds, Gender } from 'react-native-cas';
+
+CASMobileAds.setUserGender(Gender.MALE);
 ```
 
 ### User Location
+
 Set the user's current location. Location data is not used to CAS; however, it may be used by third party ad networks.
 
 ```ts
-CASMobileAds.targetingOptions.setLocation(latitude, longitude);
+// Direct latitude/longitude setter is not available in React Native.
+// Use automatic (coarse) location collection if permitted (see below).
 ```
 
 <Warning>  
@@ -50,7 +56,7 @@ Collect from the device the latitude and longitude coordinated truncated to the 
 - Disabled by default.
 
 ```ts
-CASMobileAds.targetingOptions.setLocationCollectionEnabled(true);
+CASMobileAds.setLocationCollectionEnabled(true);
 ```
 
 ### App Keywords
@@ -58,12 +64,14 @@ Set a list of keywords, interests, or intents related to your application. Words
 the current activity of the user for targeting purposes.
 
 ```ts
-CASMobileAds.targetingOptions.setKeywords(keywords);
+CASMobileAds.setAppKeywords(keywords);
 ```
 
 ### App Content URL
+
 Set the content URL for a website whose content matches the app's primary content. This website content is used for targeting and brand safety purposes. Limitation: max URL length 512.
 
 ```ts
-CASMobileAds.targetingOptions.setContentUrl(contentUrl);
+CASMobileAds.setAppContentUrl(contentUrl);
 ```
+

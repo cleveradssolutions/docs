@@ -47,14 +47,27 @@ CAS can preload multiple rewarded ads in advance for smoother delivery.
 
 ```ts
 useEffect(() => {
-  const unsubscribeLoaded = RewardedAd.addAdLoadedEventListener(() => console.log('Loaded'));
-  const unsubscribeLoadFailed = RewardedAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
-  const unsubscribeShowed = RewardedAd.addAdShowedEventListener(() => console.log('Showed'));
-  const unsubscribeFailedToShow = RewardedAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
-  const unsubscribeClicked = RewardedAd.addAdClickedEventListener(() => console.log('Clicked'));
-  const unsubscribeDismissed = RewardedAd.addAdDismissedEventListener(() => console.log('Dismissed'));
-  const unsubscribeImpression = RewardedAd.addAdImpressionEventListener((imp) => console.log('Impression', imp));
-  const unsubscribeReward = RewardedAd.addAdUserEarnRewardEventListener(() => console.log('User earned reward'));
+  const unsubscribeLoaded = RewardedAd.addAdLoadedEventListener(() => {
+    console.log('Loaded');
+  });
+  const unsubscribeLoadFailed = RewardedAd.addAdLoadFailedEventListener((error) => {
+    console.log('Load failed:', error);
+  });
+  const unsubscribeShowed = RewardedAd.addAdShowedEventListener(() => {
+    console.log('Showed');
+  });
+  const unsubscribeFailedToShow = RewardedAd.addAdFailedToShowEventListener((error) => {
+    console.log('Failed to show:', error);
+  });
+  const unsubscribeImpression = RewardedAd.addAdImpressionEventListener((info) => {
+    console.log('Impression', info);
+  });
+  const unsubscribeClicked = RewardedAd.addAdClickedEventListener(() => {
+    console.log('Clicked');
+  });
+  const unsubscribeDismissed = RewardedAd.addAdDismissedEventListener(() => {
+    console.log('Dismissed');
+  });
 
   return () => {
     unsubscribeLoaded();

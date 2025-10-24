@@ -46,13 +46,27 @@ CAS can preload multiple ad instances in advance to ensure uninterrupted deliver
 
 ```ts
 useEffect(() => {
-  const unsubscribeLoaded = AppOpenAd.addAdLoadedEventListener(() => console.log('AppOpen loaded'));
-  const unsubscribeLoadFailed = AppOpenAd.addAdLoadFailedEventListener((err) => console.log('Load failed:', err));
-  const unsubscribeShowed = AppOpenAd.addAdShowedEventListener(() => console.log('Ad showed'));
-  const unsubscribeFailedToShow = AppOpenAd.addAdFailedToShowEventListener((err) => console.log('Failed to show:', err));
-  const unsubscribeDismissed = AppOpenAd.addAdDismissedEventListener(() => console.log('Ad dismissed'));
-  const unsubscribeClicked = AppOpenAd.addAdClickedEventListener(() => console.log('Ad clicked'));
-  const unsubscribeImpression = AppOpenAd.addAdImpressionEventListener((imp) => console.log('Ad impression', imp));
+  const unsubscribeLoaded = AppOpenAd.addAdLoadedEventListener(() => {
+    console.log('Loaded');
+  });
+  const unsubscribeLoadFailed = AppOpenAd.addAdLoadFailedEventListener((error) => {
+    console.log('Load failed:', error);
+  });
+  const unsubscribeShowed = AppOpenAd.addAdShowedEventListener(() => {
+    console.log('Showed');
+  });
+  const unsubscribeFailedToShow = AppOpenAd.addAdFailedToShowEventListener((error) => {
+    console.log('Failed to show:', error);
+  });
+  const unsubscribeImpression = AppOpenAd.addAdImpressionEventListener((info) => {
+    console.log('Impression', info);
+  });
+  const unsubscribeClicked = AppOpenAd.addAdClickedEventListener(() => {
+    console.log('Clicked');
+  });
+  const unsubscribeDismissed = AppOpenAd.addAdDismissedEventListener(() => {
+    console.log('Dismissed');
+  });
 
   return () => {
     unsubscribeLoaded();
@@ -131,7 +145,6 @@ AppOpenAd.loadAd();
 Mute fullscreen ad sounds if your app has its own audio controls.
 
 ```ts
-import { CASMobileAds } from 'react-native-cas';
 CASMobileAds.setAdSoundsMuted(true);
 ```
 

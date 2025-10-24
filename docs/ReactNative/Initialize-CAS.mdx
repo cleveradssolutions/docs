@@ -102,7 +102,7 @@ Enable test ads during development so you can interact with ads safely.
 ```ts
 import { CASMobileAds } from 'react-native-cas';
 
-CASMobileAds.initialize('demo', {
+CASMobileAds.initialize('YOUR_CAS_ID', {
   forceTestAds: __DEV__, // [!code highlight]
   testDeviceIds: ['YOUR_TEST_DEVICE_ID'], // [!code highlight]
 });
@@ -118,7 +118,7 @@ Mark apps as child-directed or COPPA-applicable in the CAS UI. If you know speci
 ```ts
 import { Audience, CASMobileAds } from 'react-native-cas';
 
-CASMobileAds.initialize('demo', {
+CASMobileAds.initialize('YOUR_CAS_ID', {
   targetAudience: Audience.NOT_CHILDREN, // [!code highlight]
 });
 ```
