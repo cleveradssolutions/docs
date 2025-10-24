@@ -10,7 +10,7 @@ import { Platform } from 'react-native';
 import { CASMobileAds } from 'react-native-cas';
 
 async function initCAS() {
-  const casId = Platform.select({ ios: 'demo', android: 'demo' })!;
+  const casId = Platform.select({ ios: 'YOUR_CAS_ID_IOS', android: 'YOUR_CAS_ID_ANDROID' })!;
   const status = await CASMobileAds.initialize(casId, {});
   if (status.error) {
     console.log(`CAS Mobile Ads SDK initialization failed: ${status.error}`);
@@ -78,7 +78,7 @@ To collect user consent for personal data, use the built-in **Consent Flow**. It
 ```ts
 import { CASMobileAds } from 'react-native-cas';
 
-CASMobileAds.initialize('demo', {
+CASMobileAds.initialize('YOUR_CAS_ID', {
   showConsentFormIfRequired: true, // [!code highlight]
 }).then((status) => {
   if (status.consentFlowStatus === 3 /* OBTAINED */) {

@@ -28,7 +28,6 @@ Below is a diagram showing the ad lifecycle and how `autoload` and `refreshInter
 <Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
 
 
-````md
 ## Get the Ad size
 To load a banner ad, choose one of the sizes below (copy a single line you need):
 
@@ -151,10 +150,10 @@ export default function ReloadExample() {
   const ref = useRef<BannerAdViewRef>(null);
 
   return (
-    <>
+    <View>
       <BannerAdView ref={ref} size={BannerAdSize.BANNER} />
       <Button title="Reload Ad" onPress={() => ref.current?.loadAd()} />
-    </>
+    </View>
   );
 }
 ```

@@ -11,7 +11,6 @@ If you do not want to enable Limited Data Use (LDU) mode, pass an empty string a
 await CASMobileAds.initialize('YOUR_CAS_ID', {
   mediationExtras: { FB_dp: '' }, // [!code highlight]
 });
-
 ```
 To enable LDU for users and specify user geography, set `'LDU'` to `mediationExtras`:
 
@@ -19,5 +18,4 @@ To enable LDU for users and specify user geography, set `'LDU'` to `mediationExt
 await CASMobileAds.initialize('YOUR_CAS_ID', {
   mediationExtras: { FB_dp: 'LDU' }, // [!code highlight]
 });
-
 ```

@@ -32,7 +32,6 @@ The following example creates and loads a rewarded video ad:
 useEffect(() => {
   RewardedAd.setAutoloadEnabled(true);
 }, []);
-
 ```
 
 Ad content may take some time to load after creating an ad instance.
@@ -81,7 +80,6 @@ useEffect(() => {
     RewardedAd.destroy();
   };
 }, []);
-
 ```
 
 <Info>
@@ -155,7 +153,6 @@ RewardedAd.loadAd();
 You can mute ad sounds if your app controls its own audio:
 
 ```ts
-import { CASMobileAds } from 'react-native-cas';
 CASMobileAds.setAdSoundsMuted(true);
 ```
 

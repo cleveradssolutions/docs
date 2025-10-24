@@ -30,23 +30,8 @@ CASMobileAds.setUserAge(12);
 Set targeting to user’s gender. Limitation: `unknown, male, female`.
 
 ```ts
-import { CASMobileAds, Gender } from 'react-native-cas';
-
 CASMobileAds.setUserGender(Gender.MALE);
 ```
-
-### User Location
-
-Set the user's current location. Location data is not used to CAS; however, it may be used by third party ad networks.
-
-```ts
-// Direct latitude/longitude setter is not available in React Native.
-// Use automatic (coarse) location collection if permitted (see below).
-```
-
-<Warning>  
-Do not use Location just for advertising. Your app should have a valid use case for it as well.
-</Warning>
 
 ### User Location auto collection
 Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place.
