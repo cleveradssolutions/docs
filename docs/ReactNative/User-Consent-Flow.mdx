@@ -54,23 +54,23 @@ The `Promise<ConsentFlowStatus>` completes after the form is dismissed.  If cons
 
 
 ```ts
-import { CASMobileAds, ConsentFlowStatus } from 'react-native-cas';
+import CASMobileAds, { ConsentFlowStatus } from 'react-native-cas';
 
 CASMobileAds.showConsentFlow().then((status) => {
   if (status === ConsentFlowStatus.OBTAINED) {
     // User consent obtained.
   }
 });
-
+```
 
 | ConsentFlow constant   | Description                                                        |
 | ---------------------- | ------------------------------------------------------------------ |
-| OBTAINED         | User consent obtained. Personalized vs non-personalized undefined. |
-| NOT_REQUIRED     | User consent not required.                                         |
-| UNAVAILABLE      | User consent unavailable.                                          |
-| INTERNAL_ERROR   | There was an internal error.                                       |
-| NETWORK_ERROR    | There was an error loading data from the network.                  |
-| STILL_PRESENTING | There was an error with another form is still being displayed.     |
+| OBTAINED               | User consent obtained. Personalized vs non-personalized undefined. |
+| NOT_REQUIRED           | User consent not required.                                         |
+| UNAVAILABLE            | User consent unavailable.                                          |
+| INTERNAL_ERROR         | There was an internal error.                                       |
+| NETWORK_ERROR          | There was an error loading data from the network.                  |
+| STILL_PRESENTING       | There was an error with another form is still being displayed.     |
 
 <Warning>  
 The cache consent status on your app or a previously saved consent string, could lead to a [TCF 3.3](https://support.google.com/admanager/answer/9999955) error if consent is expired.
@@ -84,7 +84,7 @@ Some consent forms require the user to modify their consent at any time. Adhere 
 3. When a user interacts with your UI element, call `show()` to show the form so the user can update their privacy options at any time.
 
 ```ts
-import { CASMobileAds, ConsentFlowStatus } from 'react-native-cas';
+import CASMobileAds, { ConsentFlowStatus } from 'react-native-cas';
 
 var isConsentObtained = false;
 

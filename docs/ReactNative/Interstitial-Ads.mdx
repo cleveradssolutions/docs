@@ -45,7 +45,6 @@ Use the `addAdLoadedEventListener` event to be notified when the ad is ready for
 
 
 ## Ad content callbacks
-
 `InterstitialAd` has several optional callbacks for the ad lifecycle. These callbacks can be registered via event listeners.
 
 ```ts
@@ -96,8 +95,6 @@ useEffect(() => {
 - When an error occurs during ad impression, only `AdFailedToShowEvent` is triggered.  
   In this case, `AdDismissedEvent` will not be executed since the impression is not considered successful.
 </Info>
-
----
 
 ## Show Ad
 Interstitial ads should be displayed during natural pauses in the flow of an app. Between app screens is a good example, or after the user completes a task.
@@ -171,7 +168,5 @@ Just as it's important to make sure you display interstitial ads at an appropria
 #### Don't flood the user with ads.
 While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.
 
----
-
 ## Complete example
-- [Interstitial ad example]()
+- [Interstitial ad example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/src/InterstitialExample.tsx)

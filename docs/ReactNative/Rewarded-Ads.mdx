@@ -48,6 +48,7 @@ Use the `addAdLoadedEventListener` event to be notified when the ad is ready for
 ```ts
 useEffect(() => {
   const unsubscribeReward = RewardedAd.addAdUserEarnRewardEventListener(() => {
+    // Called when the user has earned the reward.
     console.log('Reward the user for watching the ad');
   });
   const unsubscribeLoaded = RewardedAd.addAdLoadedEventListener(() => {
@@ -145,6 +146,6 @@ useEffect(() => {
 ```
 
 ## Complete example
-- [Rewarded ad example]()
+- [Rewarded ad example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/src/RewardedExample.tsx)
 
 

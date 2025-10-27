@@ -10,9 +10,8 @@ We strongly suggest that you enable test ads mode when you validate the integrat
 </Error>  
 
 There are two ways to get test ads:
-
-* [Enable test ad mode](#enable-test-ad-mode) for all devices.
-* [Set device ids to test ad](#enable-test-devices).
+- [Enable test ad mode](#enable-test-ad-mode) for all devices.
+- [Set device ids to test ad](#enable-test-devices).
 
 Ads with Test Ads mode are safe to click. Requests, impressions, and clicks on test ads will not show up in your account's reports.
 Test full-screen ads displays details of CAS integration and tips for solving errors. Go to the Mediation Adapters section to make sure that the advertising networks you want are integrated correctly.
@@ -21,10 +20,8 @@ Test full-screen ads displays details of CAS integration and tips for solving er
 <Image height="500" alt="image" src="/assets/Enabling-test-ads-2.jpg" />  
 
 ## Enable Debug log mode
-
 The enabled Debug Mode will display a lot of useful information for debugging about the states of the SDK with log tag `CAS`.
 Disabled by default. Disabling Debug Mode may improve application performance.
-
 ```ts
 CASMobileAds.setDebugLoggingEnabled(true);
 ```
@@ -38,13 +35,12 @@ The quickest way to enable testing is to use test ad mode. The test ad mode are 
 The easiest way to load test ads is to use:
 
 ```ts
-CASMobileAds.initialize(_casId, {
+CASMobileAds.initialize(casId, {
   forceTestAds: __DEV__, // [!code highlight]
 });
 ```
 
 ## Enable test devices
-
 If you want to do more rigorous testing with production-looking ads, you can now configure your device as a test device and use your own manager id. Test devices can either be added programmatically.
 
 Follow the steps below to add your device as a test device.
@@ -60,7 +56,7 @@ To get test ads on this device, set "12345678901234567890123456789012"
 4. Modify your code to set the test device ID through add `TestDeviceIDs` before CAS manager initialize.
 
 ```ts
-CASMobileAds.initialize(_casId, {
+CASMobileAds.initialize(casId, {
   testDeviceIds: ['12345678901234567890123456789012'],
 });
 ```
