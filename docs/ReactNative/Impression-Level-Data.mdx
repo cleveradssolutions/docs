@@ -14,31 +14,45 @@ In React Native, this object is provided to the `AdImpressionEvent` for each ad 
   The format of the ad that is shown. (e.g. `Banner`, `MREC`, `Interstitial`, `Rewarded`, `AppOpen`).
 </Property>
 
+---
+
 <Property name="sourceName" type="string">
   The display name of the mediated network that purchased the impression.
 </Property>
 
+---
+
 <Property name="sourceUnitId" type="string">
   The Ad Unit ID from the mediated network that purchased the impression.
 </Property>
+
+---
 
 <Property name="creativeId" type="string" optional>
   The Creative ID associated with the ad, if available.
   You can use this ID to report creative issues to the Ad review team. 
 </Property>
 
+---
+
 <Property name="revenue" type="number">
   The revenue generated from the impression, in USD. 
   The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. 
 </Property>
 
+---
+
 <Property name="revenuePrecision" type="string">
   The precision type of the revenue field. (e.g. `estimated`, `precise`, `floor`).
 </Property>
 
+---
+
 <Property name="revenueTotal" type="number">
   The accumulated value of user ad revenue in USD from all ad format impressions. 
 </Property>
+
+---
 
 <Property name="impressionDepth" type="number">
   The total number of impressions across all ad formats for the current user, across all sessions. 
@@ -107,10 +121,10 @@ Contact your account manager for details of enabling automatic events.
 To measure ad revenue with Google Analytics:
 
 <Steps>
-<Step title="Get started">
+<Step>
 Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
 </Step>
-<Step title="Link project">
+<Step>
 Link your Firebase project to a Google Analytics account.
 </Step>
 </Steps>
@@ -125,7 +139,7 @@ Alternatively, CAS may log the event as `CAS_Impression`.
 To measure ad revenue with Tenjin Analytics:
 
 <Steps>
-<Step title="Get started">
+<Step>
 Integrate the [Tenjin SDK](https://github.com/tenjin/tenjin-react-native-sdk).
 </Step>
 <Step>
