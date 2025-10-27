@@ -110,8 +110,6 @@ For banners, attach the handler directly to the React component:
 <BannerAdView onAdViewImpression={(info) => onAdImpression(info)} />
 ```
 
----
-
 ### User ad summary
 CAS tracks cumulative impression and revenue metrics that are included in each `AdContentInfo` payload:
 
@@ -124,27 +122,20 @@ const totalRevenue = impression.revenueTotal;
 These counters persist between app sessions until the user clears your app’s data.
 </Info>
 
----
-
 ## Automatic ad revenue collection
 CAS SDK can automatically report ad revenue events to **Google Analytics** and **Tenjin Analytics**.
 Contact your account manager for enabling these integrations.
-
----
 
 ### Google Analytics
 To measure ad revenue with Google Analytics:
 
 1. [Get started with Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
 2. Link your Firebase project to a Google Analytics account.
-3. Use CAS SDK **3.5.0+**.
 
 The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
 events whenever an ad is displayed.
 Events include parameters such as ad platform, source, currency, and value.
 Alternatively, CAS may log the event as `CAS_Impression`.
-
----
 
 ### Tenjin
 1. [Integrate the Tenjin Android SDK](https://docs.tenjin.com/docs/android-sdk#basic-integration).
@@ -155,6 +146,5 @@ Alternatively, CAS may log the event as `CAS_Impression`.
      mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
    });
    ```
-3. Use CAS SDK **3.7.2+**.
 
 
