@@ -7,61 +7,38 @@ The data includes which demand source served the ad and the exact or estimated r
 This allows you to analyze and optimize your monetization and user acquisition strategies.
 
 ### AdContentInfo
-The `AdContentInfo` structure contains information about a loaded or displayed ad.  
-In React Native, this object is provided to the `onAdImpression` callback for each ad format.
-
-```ts
-const unsubscribe = AppOpenAd.addAdImpressionEventListener((info) => {
-  console.log('AppOpen impression:', info);
-});
-```
-
-#### AdContentInfo
-The `AdContentInfo` data structure, which contains information about the displayed ad.
+The `AdContentInfo` structure contains information about a displayed ad.  
+In React Native, this object is provided to the `AdImpressionEvent` for each ad format.
 
 <Property name="format" type="string">
   The format of the ad that is shown. (e.g. `Banner`, `MREC`, `Interstitial`, `Rewarded`, `AppOpen`).
 </Property>
 
----
-
 <Property name="sourceName" type="string">
   The display name of the mediated network that purchased the impression.
 </Property>
 
----
-
 <Property name="sourceUnitId" type="string">
   The Ad Unit ID from the mediated network that purchased the impression.
 </Property>
-
----
 
 <Property name="creativeId" type="string" optional>
   The Creative ID associated with the ad, if available.
   You can use this ID to report creative issues to the Ad review team. 
 </Property>
 
----
-
 <Property name="revenue" type="number">
   The revenue generated from the impression, in USD. 
   The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. 
 </Property>
 
----
-
 <Property name="revenuePrecision" type="string">
   The precision type of the revenue field. (e.g. `estimated`, `precise`, `floor`).
 </Property>
 
----
-
 <Property name="revenueTotal" type="number">
   The accumulated value of user ad revenue in USD from all ad format impressions. 
 </Property>
-
----
 
 <Property name="impressionDepth" type="number">
   The total number of impressions across all ad formats for the current user, across all sessions. 
@@ -123,14 +100,21 @@ These counters persist between app sessions until the user clears your app’s d
 </Info>
 
 ## Automatic ad revenue collection
-CAS SDK can automatically report ad revenue events to **Google Analytics** and **Tenjin Analytics**.
-Contact your account manager for enabling these integrations.
+The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. 
+Contact your account manager for details of enabling automatic events.
 
 ### Google Analytics
 To measure ad revenue with Google Analytics:
 
-1. [Get started with Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
-2. Link your Firebase project to a Google Analytics account.
+<Steps>
+<Step title="Get started">
+Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
+</Step>
+<Step title="Link project">
+Link your Firebase project to a Google Analytics account.
+</Step>
+</Steps>
+
 
 The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
 events whenever an ad is displayed.
@@ -138,13 +122,21 @@ Events include parameters such as ad platform, source, currency, and value.
 Alternatively, CAS may log the event as `CAS_Impression`.
 
 ### Tenjin
-1. [Integrate the Tenjin Android SDK](https://docs.tenjin.com/docs/android-sdk#basic-integration).
-2. Ensure a Tenjin session is initialized, **or** pass your key to CAS SDK so it initializes Tenjin automatically:
+To measure ad revenue with Tenjin Analytics:
 
-   ```ts
-   CASMobileAds.initialize('YOUR_CAS_ID', {
-     mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
-   });
-   ```
+<Steps>
+<Step title="Get started">
+Integrate the [Tenjin SDK](https://github.com/tenjin/tenjin-react-native-sdk).
+</Step>
+<Step>
+Ensure a Tenjin session is initialized, **or** pass your key to CAS SDK so it initializes Tenjin automatically:
+
+```ts
+CASMobileAds.initialize(casId, {
+  mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
+});
+```
+</Step>
+</Steps>
 
 

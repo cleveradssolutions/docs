@@ -63,17 +63,39 @@ Progress is saved between sessions until the user clears your app's data.
 
 ## Automatic collect ad revenue
 The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
-### Google Analytics
-If you haven't already, make sure to complete the following tasks:
-1. Set up your project and app as described in [Get Started with Analytics](https://firebase.google.com/docs/analytics/get-started).
-2. Make sure that you've linked your Firebase project to a Google Analytics account.
-3. Ensure that you've included in your app the CAS SDK 3.5.0+.
 
-To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.
+### Google Analytics
+To measure ad revenue with Google Analytics:
+
+<Steps>
+<Step title="Get started">
+Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
+</Step>
+<Step title="Link project">
+Link your Firebase project to a Google Analytics account.
+</Step>
+</Steps>
+
+
+The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
+events whenever an ad is displayed.
+Events include parameters such as ad platform, source, currency, and value.
+Alternatively, CAS may log the event as `CAS_Impression`.
 
 ### Tenjin
-If you haven't already, make sure to complete the following tasks:
-1. Set up your project and app as described in [Get Started with Analytics](https://docs.tenjin.com/docs/android-sdk#basic-integration).
-2. Make sure that you've [initialize tenjin session](https://docs.tenjin.com/docs/android-sdk#app-initialization). Or provide `TENJIN_SDK_KEY` with CAS SDK initialization to allow CAS initialize Tenjin SDK automatically.
-   `CASMobileAds.initialize(mediationExtras: {'tenjin_key': TENJIN_SDK_KEY});`
-3. Ensure that you've included in your app the CAS SDK 3.7.2+.
+To measure ad revenue with Tenjin Analytics:
+<Steps>
+<Step title="Get started">
+Integrate the [Tenjin SDK](https://pub.dev/packages/tenjin_plugin).
+</Step>
+<Step>
+Ensure a Tenjin session is initialized, **or** pass your key to CAS SDK so it initializes Tenjin automatically:
+
+```dart
+CASMobileAds.initialize(
+  casId: casId, 
+  mediationExtras: { 'tenjin_key': TENJIN_SDK_KEY },
+);
+```
+</Step>
+</Steps>
