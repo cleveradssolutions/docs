@@ -60,7 +60,6 @@ You can skip the manual call for ad initialization, and then the SDK will automa
 
 <CodeGroup synchronize="true">
 ```swift
-
 func initializeCAS() {
   let builder = CAS.buildManager()
   builder.withCompletionHandler { config in
@@ -100,7 +99,6 @@ func initializeCAS() {
         
   [builder createWithCasId:[AppDelegate casId]];
 }
-
 ```
 </CodeGroup>
 
@@ -134,6 +132,7 @@ To get consent for collecting personal data of your users, we suggest you use a 
 The user will see the consent flow when your app initialize CAS SDK. When the user completes the flow, the SDK calls your initialization-completion handler.
 
 CAS consent flow is enabled by default. You can disable the consent flow by add disabled  `CASConsentFlow` to `withConsentFlow()`:
+
 <CodeGroup synchronize="true">
 ```swift
 builder.withConsentFlow(
@@ -180,6 +179,7 @@ For more information about how the CAS.AI SDK's test ads work, see [Enable test 
 Apps can be marked as child-directed or [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy) applicable through the CAS UI.  
 
 If the app determines that a user falls under COPPA regulations, the `taggedAudience` must be called before initializing the CAS SDK.
+
 <CodeGroup synchronize="true">
 ```swift
 CAS.settings.taggedAudience = CASAudience.children
@@ -199,6 +199,7 @@ A neutral age screen is a tool—such as an age gate—that verifies a user’s 
 We are not removing support for managing ads using `CASMediationManager` at this time, but we recommend migrating to the new `CASInterstitial` and `CASRewarded` components whenever possible.
 
 To continue using `MediationManager`, you still need to specify the ad formats you want to work with, just as before.  
+
 <CodeGroup synchronize="true">
 ```swift
 builder.withAdTypes(CASType.interstitial, CASType.rewarded)
@@ -213,6 +214,7 @@ If your app no longer uses `CASMediationManager` for Interstitial and Rewarded f
 
 ## (Optional) Retrieve the Version Number
 To programmatically retrieve the SDK version number at runtime, CAS provides the following method:
+
 <CodeGroup synchronize="true">
 ```swift
 String sdkVersion = CAS.getSDKVersion();

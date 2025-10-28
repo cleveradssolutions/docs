@@ -48,6 +48,7 @@ class MyViewController: UIViewController, CASNativeLoaderDelegate {
     }
 }
 ```
+
 ```objc
 #import <CleverAdsSolutions/CleverAdsSolutions.h>
 
@@ -94,10 +95,12 @@ The `CASNativeLoader` does not have an autoload ad mode like other ad formats, s
 
 ## Load multiple ads (optional)
 The `load(maxNumberOfAds:)` method takes an additional parameter: the number of ads the SDK should attempt to load for the request. It's not guaranteed that the SDK will return the exact number of ads requested.
+
 <CodeGroup synchronize="true">
 ```swift
 adLoader.load(maxNumberOfAds: 3)
 ```
+
 ```objc
 [self.adLoader loadWithMaxNumberOfAds:3];
 ```
@@ -107,6 +110,7 @@ The `nativeAdDidLoadContent(_:)` will be called multiple times, once for each ad
 If the load operation fails, the `nativeAdDidFailToLoad(error:)` will be called once with the error details.
 
 Apps requesting multiple ads should call `CASNativeLoader.isLoading` in their callback implementations to determine whether the loading process has finished.
+
 <CodeGroup synchronize="true">
 ```swift
 func nativeAdDidLoadContent(_ ad: NativeAdContent) {  
@@ -122,6 +126,7 @@ func nativeAdDidLoadContent(_ ad: NativeAdContent) {
     }   
 } 
 ```
+
 ```objc
 - (void)nativeAdDidLoadContent:(CASNativeAdContent *)ad {
     [self receiveNativeAdContentEvents:ad];
@@ -164,6 +169,7 @@ class AppController: UIViewController, CASNativeContentDelegate, CASNativeLoader
     }
 }
 ```
+
 ```objc
 @interface AppController : UIViewController <CASNativeAdContentDelegate, CASNativeLoaderDelegate>
 @end

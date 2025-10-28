@@ -52,6 +52,7 @@ The automatic consent flow is enabled by default and described on the [CAS initi
 ## Manual consent flow
 Call `presentIfRequired()` on the `CASConsentFlow` class. If the consent is required, the SDK loads a form and immediately presents it . 
 The `withCompletionHandler` is called after the form is dismissed. If consent is not required, the `withCompletionHandler` is called immediately.
+
 <CodeGroup synchronize="true">
 ```swift
 CASConsentFlow()
@@ -63,7 +64,17 @@ CASConsentFlow()
     .withViewControllerToPresent(controller)
     .presentIfRequired()
 ```
+
 ```objc
+CASConsentFlow *flow = [[CASConsentFlow alloc] init];
+flow.viewControllerToPresent = self;
+flow.completionHandler = ^(CASConsentFlowStatus status) {
+    if (status == CASConsentFlowStatusObtained) {
+        // User consent obtained.
+    }
+};
+
+[flow presentIfRequired];
 ```
 </CodeGroup>
 
@@ -88,6 +99,7 @@ The cache consent status on your app or a previously saved consent string, could
 Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
 1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
 2. When a user interacts with your UI element, call `present()` to show the form so the user can update their privacy options at any time.
+
 <CodeGroup synchronize="true">
 ```swift
 func showPrivacyOptionsForm() {
@@ -102,19 +114,16 @@ func showPrivacyOptionsForm() {
 }
 ```
 ```objc
-CASConsentFlow *flow = [[CASConsentFlow alloc] init];
-flow.viewControllerToPresent = self;
-flow.completionHandler = ^(CASConsentFlowStatus status) {
-    if (status == CASConsentFlowStatusObtained) {
-        // User consent obtained.
-    } else if (status == CASConsentFlowStatusNotRequired) {
-        // Consent not required.
-    } else {
-        NSLog(@"Consent flow finished with status: %ld", (long)status);
-    }
-};
-
-[flow presentIfRequired];
+- (void)showPrivacyOptionsForm {
+    CASConsentFlow *flow = [[CASConsentFlow alloc] init];
+    flow.viewControllerToPresent = self;
+    flow.completionHandler = ^(CASConsentFlowStatus status) {
+        if (status == CASConsentFlowStatusObtained) {
+            // User consent obtained.
+        }
+    };
+    [flow present];
+}
 ```
 </CodeGroup>
 
@@ -129,6 +138,7 @@ CASConsentFlow()
 #endif
     .presentIfRequired();
 ```
+
 ```objc
 CASConsentFlow *flow = [[CASConsentFlow alloc] init];
 flow.viewControllerToPresent = self;
@@ -142,7 +152,6 @@ flow.debugGeography = CASUserDebugGeographyEEA;
     flow.forceTesting = YES;
 #endif
     [flow presentIfRequired];
-
 ```
 </CodeGroup>
 
@@ -170,6 +179,7 @@ You must set the privacy options before creating the CAS Manager to disable the 
 
 ## Request App Tracking Transparency framework
 To present the authorization request, call `requestTrackingAuthorizationWithCompletionHandler:`. We recommend waiting for the completion callback prior to initialize ads, so that if the user grants the App Tracking Transparency permission, the CAS mediation can use the IDFA in ad requests.
+
 <CodeGroup synchronize="true">
 ```swift
 import AppTrackingTransparency
@@ -181,6 +191,7 @@ func requestIDFA() {
     })
 }
 ```
+
 ```objc
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
 

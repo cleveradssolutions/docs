@@ -27,6 +27,7 @@ func registerNativeAdContent(_ nativeAd: NativeAdContent) {
     adView.setNativeAd(nativeAd)
 }
 ```
+
 ```objc
 - (void)registerNativeAdContent:(CASNativeAdContent *)nativeAd {
     [self.adView setNativeAd:nativeAd];
@@ -57,6 +58,7 @@ func registerNativeAdContent(_ nativeAd: NativeAdContent) {
     adView.setNativeAd(nativeAd)
 }
 ```
+
 ```objc
 - (void)registerNativeAdContent:(CASNativeAdContent *)nativeAd {
     if (nativeAd.isExpired) {
@@ -74,6 +76,7 @@ If you display the ad immediately in `nativeAdDidLoadContent(_:)`, there's no ne
 ## Display native ad Templates
 #### Layout the views
 The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
+
 <CodeGroup synchronize="true">
 ```swift
 @IBOutlet var adView: CASNativeView!
@@ -88,6 +91,7 @@ override func viewDidLoad() {
     customizeAdViewAppearance(adView)
 }
 ```
+
 ```objc
 @interface MyViewController: UIViewController
 @property (weak, nonatomic) IBOutlet CASNativeView *adView;
@@ -114,6 +118,7 @@ The `setAdTemplateSize(AdSize)` method must be called from the main (UI) thread.
 </Info>
 
 **Optional:** Customize the appearance of asset views after calling `setAdTemplateSize` by modifying properties from the `CASNativeView`.
+
 <CodeGroup synchronize="true">
 ```swift
 fun customizeAdViewAppearance(_ adView: CASNativeView) {
@@ -123,6 +128,7 @@ fun customizeAdViewAppearance(_ adView: CASNativeView) {
     adView.headlineView?.textColor = UIColor.darkText
 }
 ```
+
 ```objc
 - (void)customizeAdViewAppearance:(CASNativeView *)adView {
     // Default values are shown below:
@@ -158,6 +164,7 @@ Assign unique tag IDs to the asset views. The example image below sets the ID to
 <Image width="298" alt="Image" src="/assets/ios/Native-ViewTags.png" />
 
 In your ViewController code, assign each created view using unique tag IDs for ad assets to the corresponding properties of `CASNativeView`.
+
 <CodeGroup synchronize="true">
 ```swift
 @IBOutlet var adView: CASNativeView!
@@ -186,6 +193,7 @@ func registerAdAsetViews() {
     adView.registerReviewCountView(tag: 110)
 }
 ```
+
 ```objc
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -207,7 +215,6 @@ func registerAdAsetViews() {
     [self.adView registerStarRatingViewWithTag:109];
     [self.adView registerReviewCountViewWithTag:110];
 }
-
 ```
 </CodeGroup>
 
@@ -217,6 +224,7 @@ Once the views are in place and you've assigned the correct ad view class to the
 <Image width="255" alt="Image" src="/assets/ios/Display-Native-Ad-4.png" />
 
 In your ViewController code, assign each created view for ad assets to the corresponding properties of `CASNativeView`.
+
 <CodeGroup synchronize="true">
 ```swift
 @IBOutlet var adView: CASNativeView!
@@ -258,6 +266,7 @@ func registerAdAsetViews() {
     adView.reviewCountView = reviewCountView
 }
 ```
+
 ```objc
 @interface MyViewController: UIViewController
 @property (weak, nonatomic) IBOutlet CASNativeView *adView;

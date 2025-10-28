@@ -28,6 +28,7 @@ Disabled by default. Disabling Debug Mode may improve application performance.
 ```swift
 CAS.settings.debugMode = true
 ```
+
 ```objc
 CAS.settings.debugMode = YES;
 ```
@@ -41,10 +42,12 @@ If you have discovered the problem in the work of the SDK, please provide us wit
 The quickest way to enable testing is to use test ad mode. The test ad mode are not associated with your CAS account, so there's no risk of your account generating invalid traffic when using these test ad mode.
 
 The easiest way to load test ads is to use:
+
 <CodeGroup synchronize="true">
 ```swift
 buildManager.withTestAdMode(true)
 ```
+
 ```objc
 [buildManager withTestAdMode:YES];
 ```
@@ -70,6 +73,7 @@ To get test ads on this device, set "12345678901234567890123456789012"
 ```swift
 CAS.settings.setTestDevice(ids: ["12345678901234567890123456789012"])
 ```
+
 ```objc
 [CAS.settings setTestDeviceWithIds:@[@"12345678901234567890123456789012"]];
 ```

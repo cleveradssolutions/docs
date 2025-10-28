@@ -43,10 +43,12 @@ Each ad view must display an AdChoices overlay logo. Also, it's important that t
 #### Use AdChoices placements
 An AdChoices overlay can be added by the SDK if `CASNativeView.adChoicesView` not registered. Leave space in your preferred corner of your native ad view for the automatically inserted AdChoices logo.  
 Use `AdChoicesPlacement` constants to set preferred corner. 
+
 <CodeGroup synchronize="true">
 ```swift
 adLoader.adChoicesPlacement = AdChoicesPlacement.topRight
 ```
+
 ```objc
 adLoader.adChoicesPlacement = CASChoicesPlacementTopRight;
 ```
@@ -64,6 +66,7 @@ The following example demonstrates how to set a custom AdChoices view, with the 
 // ...
 adView.adChoicesView = adChoicesView
 ```
+
 ```objc
 @property (nonatomic, weak) IBOutlet CASChoicesView *adChoicesView;
 // ...
@@ -86,6 +89,7 @@ Add `CASStarRatingView` to view hierarchy and CAS SDK populate rating value for 
 // ...
 adView.starRatingView = starRatingView
 ```
+
 ```objc
 @property (nonatomic, weak) IBOutlet CASStarRatingView *starRatingView;
 // ...
@@ -106,6 +110,7 @@ class CustomRatingView : UIView, NativeAdStarRating {
 // ...
 adView.starRatingView = starRatingView
 ```
+
 ```objc
 @interface CustomRatingView : UIView <CASNativeAdStarRating>
 @property (nonatomic, strong) NSNumber *rating;
@@ -125,13 +130,13 @@ You need populate `nativeAd.starRating` value to custom view, for example `Ratin
 
 <CodeGroup synchronize="true">
 ```swift
-
 if let rating = nativeAd.starRating {
     customRatingView.rating = rating
 }
 
 adView.starRatingView = customRatingView
 ```
+
 ```objc
 if (nativeAd.starRating != nil) {
     self.starRatingView.rating = nativeAd.starRating;

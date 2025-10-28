@@ -34,10 +34,12 @@ Meta Audience Network Data Processing Options for US Users Limited Data Use is a
 Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
 
 If you do not want to enable Limited Data Use (LDU) mode, pass an empty string array:
+
 <CodeGroup synchronize="true">
 ```swift
 FBAdSettings.setDataProcessingOptions([])
 ```
+
 ```objc
 [FBAdSettings setDataProcessingOptions:@[]];
 ```
@@ -45,16 +47,19 @@ FBAdSettings.setDataProcessingOptions([])
 
 
 To enable LDU for users and specify user geography, call `setDataProcessingOptions` in a form like this:
+
 <CodeGroup synchronize="true">
 ```swift
 FBAdSettings.setDataProcessingOptions(["LDU"])
 ```
+
 ```objc
 [FBAdSettings setDataProcessingOptions:@[@"LDU"]];
 ```
 </CodeGroup>
 
 You can determine whether the user has consented to Meta or not with Additional Consent from CMP. To do so, use code like the following:
+
 <CodeGroup synchronize="true">
 ```swift
 let metaConsent = CAS.settings.getAdditionalConsent(providerId: 89);
@@ -69,9 +74,6 @@ if (metaConsent == CASConsentStatus.accepted) {
 ```
 
 ```objc
-#import <CleverAdsSolutions/CleverAdsSolutions.h>
-#import <FBAudienceNetwork/FBAdSettings.h>
-
 CASConsentStatus metaConsent = [CAS.settings getAdditionalConsentWithProviderId:89];
 
 if (metaConsent == CASConsentStatusAccepted) {

@@ -8,10 +8,12 @@ to the segment the user belongs to.
 
 ### User ID
 The userID is a unique identifier supplied by your application and must be static for each user across sessions. 
+
 <CodeGroup synchronize="true">
 ```swift
 CAS.getTargetingOptions().setUserID("user-hash-code");
 ```
+
 ```objc
 [[CAS targetingOptions] setUserID:@"user-hash-code"];
 ```
@@ -23,10 +25,12 @@ Your userID should not contain any personally identifiable information such as  
 
 ## User Age
 Set user age. Limitation: 1-99. By default 0 is 'unknown'.
+
 <CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.age = 12
 ```
+
 ```objc
 [CAS targetingOptions].age = 12;
 ```
@@ -34,10 +38,12 @@ CAS.targetingOptions.age = 12
 
 ## User Gender
 Set user gender.
+
 <CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.gender = Gender.male
 ```
+
 ```objc
 [CAS targetingOptions].gender = CASGenderMale;
 ```
@@ -45,10 +51,12 @@ CAS.targetingOptions.gender = Gender.male
 
 ## User Location
 Set the user's current location. Location data is not used to CAS; however, it may be used by third party ad networks.
+
 <CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.setLocation(latitude: userLatitude, longitude: userLongitude)
 ```
+
 ```objc
 [[CAS targetingOptions] setLocationWithLatitude:userLatitude longitude:userLongitude];
 ```
@@ -68,6 +76,7 @@ Collect from the device the latitude and longitude coordinated truncated to the 
 ```swift
 CAS.targetingOptions.locationCollectionEnabled = true
 ```
+
 ```objc
 [CAS targetingOptions].locationCollectionEnabled = YES;
 ```
@@ -81,6 +90,7 @@ the current activity of the user for targeting purposes.
 ```swift
 CAS.targetingOptions.keywords = keywords
 ```
+
 ```objc
 [CAS targetingOptions].keywords = keywords;
 ```
@@ -93,6 +103,7 @@ Set the content URL for a website whose content matches the app's primary conten
 ```swift
 CAS.targetingOptions.contentUrl = contentUrl
 ```
+
 ```objc
 [CAS targetingOptions].contentUrl = contentUrl;
 ```

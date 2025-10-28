@@ -12,6 +12,7 @@ Below is a diagram showing the ad lifecycle.
 
 ## Create Ad instance
 Ad instance can be initialized along with the UIViewController before `viewDidLoad`.
+
 <CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
@@ -21,6 +22,7 @@ class MyViewController: UIViewController, CASScreenContentDelegate {
     let rewardedAd = CASRewarded(casID: MyAppDelegate.casID)
 
 ```
+
 ```objc
 #import <CleverAdsSolutions/CleverAdsSolutions.h>
 
@@ -39,7 +41,6 @@ class MyViewController: UIViewController, CASScreenContentDelegate {
 }
 
 @end
-
 ```
 </CodeGroup>
 
@@ -74,6 +75,7 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
     // Called when the ad content is dismissed.
 }
 ```
+
 ```objc
 - (void)screenAdDidLoadContent:(id<CASScreenContent>)ad {
     // Called when the ad content has been successfully loaded.
@@ -109,6 +111,7 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
 
 ## Load Ad
 The next step is to fill out the `loadAd()` method and handle the ad load callbacks.
+
 <CodeGroup synchronize="true">
 ```swift
 override func viewDidLoad() {
@@ -119,6 +122,7 @@ override func viewDidLoad() {
     rewardedAd.loadAd();
 }
 ```
+
 ```objc
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -144,6 +148,7 @@ override func viewDidLoad() {
     rewardedAd.isAutoloadEnabled = true
 }
 ```
+
 ```objc
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -166,6 +171,7 @@ rewardedAd.present(from: self, userDidEarnRewardHandler: { (info: AdContentInfo)
     // TODO: Reward the user
 })
 ```
+
 ```objc
 [self.rewardedAd presentFromViewController:self userDidEarnRewardHandler:^(CASContentInfo * _Nonnull info) {
     // Called when a user earns a reward from the ad.
@@ -180,12 +186,14 @@ Starting with CAS SDK version 4.3.0, all ads functions can be safely called from
 
 ### Checking Ad Availability
 Use `isAdLoaded` to check whether an ad is currently loaded.
+
 <CodeGroup synchronize="true">
 ```swift
 if rewardedAd.isAdLoaded {
     // ...
 }
 ```
+
 ```objc
 if (rewardedAd.isAdLoaded) {
     // ...
@@ -200,10 +208,12 @@ By relying on these delegate, you ensure that your application can react appropr
 ## Extra fill Interstitial Ad
 Controls whether interstitial ads are shown as a fallback when a rewarded video ad has no available fill. Interstitial ads do not require the user to watch the entire ad to completion. However, the `userDidEarnRewardHandler` will still be triggered as if the user completed the rewarded video.
 This option is enabled by default. You can disable extra fill by following line:
+
 <CodeGroup synchronize="true">
 ```swift
 rewardedAd.isExtraFillInterstitialAdEnabled = false
 ```
+
 ```objc
 rewardedAd.isExtraFillInterstitialAdEnabled = NO;
 ```
@@ -212,10 +222,12 @@ rewardedAd.isExtraFillInterstitialAdEnabled = NO;
 ## Mute Ad sounds
 Indicates if the application’s audio is muted. Affects initial mute state for all ads.  
 Use this method only if your application has its own volume controls.  
+
 <CodeGroup synchronize="true">
 ```swift
 CAS.settings.mutedAdSounds = true
 ```
+
 ```objc
 CAS.settings.mutedAdSounds = YES;
 ```
@@ -223,12 +235,14 @@ CAS.settings.mutedAdSounds = YES;
 
 ## Release ad resource
 It is important to `destroy()` loaded but not displayed ads.
+
 <CodeGroup synchronize="true">
 ```swift
 deinit {  
     rewardedAd.destroy();
 }
 ```
+
 ```objc
 - (void)dealloc {
     [self.rewardedAd destroy];

@@ -13,6 +13,7 @@ Below is a diagram showing the ad lifecycle.
 
 ## Create Ad instance
 Ad instance can be initialized along with the UIViewController before `viewDidLoad`.
+
 <CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
@@ -22,6 +23,7 @@ class MyViewController: UIViewController, CASScreenContentDelegate {
     let interstitialAd = CASInterstitial(casID: MyAppDelegate.casID)
 
 ```
+
 ```objc
 #import <CleverAdsSolutions/CleverAdsSolutions.h>
 
@@ -40,7 +42,6 @@ class MyViewController: UIViewController, CASScreenContentDelegate {
 }
 
 @end
-
 ```
 </CodeGroup>
 
@@ -74,6 +75,7 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
     // Called when the ad content is dismissed.
 }
 ```
+
 ```objc
 - (void)screenAdDidLoadContent:(id<CASScreenContent>)ad {
     // Called when the ad content has been successfully loaded.
@@ -110,6 +112,7 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
 
 ## Load Ad
 The next step is to fill out the `loadAd()` method and handle the ad load callbacks.
+
 <CodeGroup synchronize="true">
 ```swift
 override func viewDidLoad() {
@@ -120,6 +123,7 @@ override func viewDidLoad() {
     interstitialAd.loadAd();
 }
 ```
+
 ```objc
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -147,6 +151,7 @@ override func viewDidLoad() {
     interstitialAd.isAutoloadEnabled = true;
 }
 ```
+
 ```objc
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -166,6 +171,7 @@ Interstitial ads should be displayed during natural pauses in the flow of an app
 ```swift
 interstitialAd.present(from: self);
 ```
+
 ```objc
 [self.interstitialAd presentFromViewController: self];
 ```
@@ -177,6 +183,7 @@ Starting with CAS SDK version 4.3.0, all ads functions can be safely called from
 
 ### Autoshow mode
 Use the `isAutoshowEnabled` property to automatically show a loaded ad when the user returns to the app.
+
 <CodeGroup synchronize="true">
 ```swift
 override func viewDidLoad() {
@@ -185,6 +192,7 @@ override func viewDidLoad() {
     interstitialAd.isAutoshowEnabled = true
 }
 ```
+
 ```objc
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -198,12 +206,14 @@ By default autoshow disabled.
 
 ### Checking Ad Availability
 Use `isAdLoaded` to check whether an ad is currently loaded.
+
 <CodeGroup synchronize="true">
 ```swift
 if interstitialAd.isAdLoaded {
     // ...
 }
 ```
+
 ```objc
 if (interstitialAd.isAdLoaded) {
     // ...
@@ -225,10 +235,12 @@ interstitialAd.minInterval = interval
 ```
 
 If you need to wait for a period of time after the start of the app or after showing a Rewarded Ad until next Interstitial Ad impression then call the following method:
+
 <CodeGroup synchronize="true">
 ```swift
 interstitialAd.restartInterval();
 ```
+
 ```objc
 [self.interstitialAd restartInterval];
 ```
@@ -239,10 +251,12 @@ You can define a different interval for each ad instance. However, the countdown
 ## Mute Ad sounds
 Indicates if the application’s audio is muted. Affects initial mute state for all ads.  
 Use this method only if your application has its own volume controls.  
+
 <CodeGroup synchronize="true">
 ```swift
 CAS.settings.mutedAdSounds = true
 ```
+
 ```objc
 CAS.settings.mutedAdSounds = YES;
 ```
@@ -250,12 +264,14 @@ CAS.settings.mutedAdSounds = YES;
 
 ## Release ad resource
 It is important to `destroy()` loaded but not displayed ads.
+
 <CodeGroup synchronize="true">
 ```swift
 deinit {
     appOpenAd.destroy()
 }
 ```
+
 ```objc
 - (void)dealloc {
     [self.interstitialAd destroy];

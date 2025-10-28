@@ -6,6 +6,7 @@ CAS.AI SDK enables you to access detailed information for each impression throug
 
 ### OnAdImpressionListener
 A delegate for receive ad impression info from each ad format.
+
 <CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
@@ -16,6 +17,7 @@ extension MyViewController: CASImpressionDelegate {
     }
 }
 ```
+
 ```objc
 #import <CleverAdsSolutions/CleverAdsSolutions.h>
 
@@ -33,6 +35,7 @@ extension MyViewController: CASImpressionDelegate {
 </CodeGroup>
 
 Each ad format have a `weak var impressionDelegate` property to receive `AdContentInfo` with impression details.  
+
 <CodeGroup synchronize="true">
 ```swift
 let impressionDelegate: CASImpressionDelegate = self
@@ -49,6 +52,7 @@ rewardedAd.impressionDelegate = impressionDelegate
 let nativeAd: NativeAdContent
 nativeAd.impressionDelegate = impressionDelegate
 ```
+
 ```objc
 id<CASImpressionDelegate> impressionDelegate = self;
 
@@ -70,10 +74,12 @@ nativeAd.impressionDelegate = impressionDelegate;
 The `AdContentInfo` data structure, which contains information about the loaded/displayed ad. 
 
 Additionally to `impressionDelegate`, each ad format has a `contentInfo` property that returns `AdContentInfo`, but the info may be `nil` before the ad is loaded.
+
 <CodeGroup synchronize="true">
 ```swift
 let info: CASContentInfo? = eachAd.contentInfo
 ```
+
 ```objc
 CASContentInfo *info = eachAd.contentInfo;
 ```
@@ -98,6 +104,7 @@ CAS count the number of ad impressions and the total revenue of all formats at t
 let totalImpressions: Int = impression.impressionDepth
 let totalRevenue: Double = impression.revenueTotal
 ```
+
 ```objc
 NSInteger totalImpressions = impression.impressionDepth;
 double totalRevenue = impression.revenueTotal;
@@ -128,6 +135,7 @@ If you haven't already, make sure to complete the following tasks:
 
 ## Custom collect ad revenue
 The following code shows an implementation example for log `ad_impression` event to Google Analytics.
+
 <CodeGroup synchronize="true">
 ```swift
 extension MyViewController: CASImpressionDelegate {
@@ -146,6 +154,7 @@ extension MyViewController: CASImpressionDelegate {
    }
 }
 ```
+
 ```objc
 #import <FirebaseAnalytics/FirebaseAnalytics.h>
 
