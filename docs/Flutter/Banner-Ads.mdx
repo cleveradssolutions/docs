@@ -13,14 +13,13 @@ which extends the shared `AdViewInstance` class used for all ads displayed in a 
 The `AdViewInstance` class, inherits from the base `AdInstance` class, which is common for all CAS ad formats. 
 To display a `AdViewInstance` as a widget, you must instantiate an `CASWidget` for each ad instance. 
 
-CAS provides an option to enable `autoReload` to simplify your app logic. Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code. 
+CAS provides an option to enable `autoReload` to simplify your app logic. 
+Before using the ad, you should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code. 
 
-When `autoReload` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts. 
+When `autoReload` is enabled, loading failures will trigger automatic retry attempts. 
 ```dart
 final bool isAutoReloadEnabled = true;
 ```
-
-Manual load mode (`autoReload: false` ) is useful when you only need to show a single ad per app screen, and the screens change frequently.  
 
 Also, banner ads support automatic `refreshInterval` regardless of the `autoReload` setting.
 
@@ -118,7 +117,13 @@ void initState() {
 ```
 
 ## Ad refresh interval
-The automatic refresh interval determines how often a new ad request is generated. Once the interval elapses, a new ad will automatically load and display.  The interval countdown runs only while the ad is visible on screen. Set a custom refresh interval longer than 10 seconds, or 0 to disable refresh option. Default refresh interval is 30 seconds.
+The automatic refresh interval determines how often a new ad request is generated. 
+Once the interval elapses, a new ad will automatically load and display.
+
+The interval countdown runs only while the ad is visible on screen. 
+
+Set a custom refresh interval longer than 10 seconds, or 0 to disable refresh option. 
+Default refresh interval is 30 seconds.
 
 Override the automatic refresh interval in `createAndLoad()` arguments:
 ```dart
@@ -129,7 +134,7 @@ Override the automatic refresh interval in `createAndLoad()` arguments:
     );
 ```
 
-## Ad  content callbacks
+## Ad content callbacks
 `CASBanner` has several optional callbacks for the ad lifecycle. These callbacks can be set either as arguments in the `createAndLoad()` function or later via the properties of the ad instance.
 
 ```dart

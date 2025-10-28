@@ -5,14 +5,13 @@ title: CAS.AI Android SDK
 Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
 Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
 
-### App prerequisites
+## App prerequisites
 Make sure that your app's build file uses the following values:
 - Minimum SDK version of `23` or higher
 - Compile SDK version of `35` or higher
 
-### Maven repositories
-In your Gradle settings file (`<project>/settings.gradle.kts`), include the
-following `repositories` block so that Gradle can download the artifacts of ad networks:
+## Maven repositories
+Some advertising SDKs are published in their own Maven repositories. To allow Gradle to download the required artifacts, you need to add the advertising Maven `repositories` to your Gradle settings file (`<project>/settings.gradle.kts`).
 
 <AccordionGroup>
 <Accordion defaultOpen title="Manven Ads repositories">
@@ -50,6 +49,11 @@ dependencyResolutionManagement {
             includeGroup("co.ogury.module")  
         }  
     }  
+    maven {
+        name = "SuperAwesomeRepo"
+        url = uri("https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo")
+        content { includeGroup("tv.superawesome.sdk.publisher") }
+    }
   }
 }
 ```
@@ -88,7 +92,7 @@ The CAS SDK provide a Gradle Plugin to simplify and automate certain integration
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
 In your module **(app-level)** Gradle file (usually `<project>/<app-module>/build.gradle`), add the CAS services plugin inside the `plugins` block.
-```groovy
+```kotlin
 plugins {
     id("com.android.application") // before CAS plugin
     id("com.cleveradssolutions.gradle-plugin") version "{{ versions.ios }}"
@@ -115,7 +119,7 @@ In most cases, a `casId` is the same as your application package name.
 <Accordion title="How integrate CAS plugin in library module?">
 
 To integrating the plugin into the module `id("com.android.library")` (**library-level**) you must define the `cas.casId` property. 
-```groovy
+```kotlin
 plugins {
     id("com.android.library") // before CAS plugin
     id("com.cleveradssolutions.gradle-plugin") version $casVersion
@@ -130,7 +134,7 @@ cas {
 <Accordion title="How override CAS ID for Product Flavors in app module?">
 
 For the application module as a CAS Id will be selected the final `applicationId` with all modifications.
-```groovy
+```kotlin
 android {
     flavorDimensions.add("version")
     productFlavors {  
@@ -154,7 +158,7 @@ Note that you must register each final `applicationId` as a separate CAS ID in p
 <Accordion title="How override CAS ID for Product Flavors in library module?">
 
 To integrate a CAS plugin into the `id("com.android.library")` module (**library level**), you must define the `cas.casId` property in the body of each product flavor.
-```groovy
+```kotlin
 cas {
    casId = "com.yourcompany.yourproject"
    addCasIdVariant("second", "com.yourcompany.yourproject.second")
@@ -186,7 +190,7 @@ If you're unsure which solution best fits your application, please contact your 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:  
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yandex Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
 
-```groovy
+```kotlin
 cas {
     includeOptimalAds = true
 }
@@ -196,7 +200,7 @@ cas {
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en). Networks included:
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
 
-```groovy
+```kotlin
 cas {
     includeFamiliesAds = true
 }
@@ -210,7 +214,7 @@ Follow the instructions on the [Mediated Networks](Android/Mediated-Networks) pa
 ### Google Advertising Identifier
 The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.
 
-```groovy
+```kotlin
 cas {
     useAdvertisingId = true
 }

@@ -2,67 +2,49 @@
 title: Targeting options
 ---
 
-You can now easily tailor the way you serve your ads to fit a specific audience!  
+You can now easily tailor the way you serve your ads to fit a specific audience!
 You’ll need to inform our servers of the users’ details so the SDK will know to serve ads according
 to the segment the user belongs to.
-
-### User ID
-The userID is a unique identifier supplied by your application and must be static for each user across sessions. 
-```dart
-CASMobileAds.targetingOptions.setUserID("user-hash-code");
-```
-
-<Warning>  
-Your userID should not contain any personally identifiable information such as  an email address, screen name, Android ID (AID), or Google Advertising ID (GAID).
-</Warning>
 
 ### User Age
 Set user age. Limitation: 1-99. By default 0 is 'unknown'.
 
- ```dart
-CASMobileAds.targetingOptions.setAge(12);
+```ts
+CASMobileAds.setUserAge(12);
 ```
 
 ### User Gender
+
 Set targeting to user’s gender. Limitation: `unknown, male, female`.
 
- ```dart
-CASMobileAds.targetingOptions.setGender(Gender.male);
-```
-
-### User Location
-Set the user's current location. Location data is not used to CAS; however, it may be used by third party ad networks.
-
- ```dart
-CASMobileAds.targetingOptions.setLocation(latitude: latitude, longitude: longitude);
-```
-
-<Warning>  
-Do not use Location just for advertising. Your app should have a valid use case for it as well.
-</Warning>
+```ts
+CASMobileAds.setUserGender(Gender.MALE);
+``` 
 
 ### User Location auto collection
-Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place. 
-- Collect only if your application already has the relevant end-user permissions.  
-* Does not collect if the target audience is children.   
-* Disabled by default.
+Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place.
 
- ```dart
-CASMobileAds.targetingOptions.setLocationCollectionEnabled(true);
+* Collect only if your application already has the relevant end-user permissions.
+- Does not collect if the target audience is children.
+- Disabled by default.
+
+```ts
+CASMobileAds.setLocationCollectionEnabled(true);
 ```
 
 ### App Keywords
 Set a list of keywords, interests, or intents related to your application. Words or phrases describe
 the current activity of the user for targeting purposes.
 
- ```dart
-CASMobileAds.targetingOptions.setKeywords(keywords);
+```ts
+CASMobileAds.setAppKeywords(keywords);
 ```
 
 ### App Content URL
+
 Set the content URL for a website whose content matches the app's primary content. This website content is used for targeting and brand safety purposes. Limitation: max URL length 512.
 
- ```dart
-CASMobileAds.targetingOptions.setContentUrl(contentUrl);
+```ts
+CASMobileAds.setAppContentUrl(contentUrl);
 ```
 

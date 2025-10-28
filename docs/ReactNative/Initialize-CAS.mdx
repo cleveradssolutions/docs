@@ -2,114 +2,115 @@
 title: Initialize CAS SDK
 ---
 
-Before loading ads, have your app initialize CAS Mobile Ads SDK by calling [CASMobileAds.initialize()](https://pub.dev/documentation/clever_ads_solutions/latest/clever_ads_solutions/CASMobileAds/initialize.html) which initializes the SDK and returns a `Future` that finishes once initialization is complete. 
+Before loading ads, initialize the CAS Mobile Ads SDK by calling `CASMobileAds.initialize(casId, options?)`. The call returns a `Promise<InitializationStatus>` that resolves when initialization completes.
 
-The `casId` is a unique identifier for the CAS content registered for your app on each platform.  
-You can use the value `demo` to force test ads mode on all devices if you haven't registered a `casId` yet.
+The `casId` is a unique identifier for CAS content on each platform. You can use `demo` to force test-ads mode if you haven't registered a `casId` yet.
 
-```dart
-import 'package:clever_ads_solutions/clever_ads_solutions.dart';
-  
-void main() {  
+```ts
+import { Platform } from 'react-native';
+import CASMobileAds, { InitializationStatus, Audience, PrivacyGeography, ConsentFlowStatus } from 'react-native-cas';
 
-  String casId = Platform.isAndroid ? 'demo' : 'demo';
-  
-  CASMobileAds.initialize(  
-    casId: casId,  
-  ).then((InitializationStatus status) {  
-    if (status.error != null) {  
-      print('CAS Mobile Ads SDK initialization failed: ${status.error}');  
-    } else {  
-      print('CAS Mobile Ads SDK initialized in ${status.countryCode} country');  
-    }  
-  });  
-  
-  runApp(const MyApp());  
+function initCAS() {
+  const casId = Platform.select({ ios: 'YOUR_CAS_ID_IOS', android: 'YOUR_CAS_ID_ANDROID' });
+  CASMobileAds.initialize(casId, {
+    ...
+  }).then((status: InitializationStatus) => {
+    if (status.error) {
+      console.log(`CAS initialization failed: ${status.error}`);
+    } else {
+      console.log(`CAS initialized`);
+    }
+  });
 }
 ```
 
-If `initialize()` method is not called, the first ad load automatically initializes the CAS Mobile Ads SDK with CAS Id defined in ad load arguments.
+If an error occurs, the SDK attempts automatic re-initialization internally. However, the returned `Promise` is not updated with later status changes; call `initialize()` again for the latest `InitializationStatus`.
 
-If an error occurs, the SDK will attempt automatic reinitialization internally. However, the `Future` will not be updated with subsequent `InitializationStatus`. For the most up-to-date `InitializationStatus`, call `initialize()` method again at a later time.
-
-<Error>  
-Do not initialize mediated advertising SDKs (CAS does that for you).  
-Not following this step will result in noticeable integration issues.
+<Error>
+Do not initialize mediated ad SDKs yourself — CAS does that for you.  
+Ignoring this will cause integration issues.
 </Error>
 
+### Initialization Status
+
+<Property name="error" type="string" optional>
+Initialization error or null if success.
+</Property>
+
+---
+
+<Property name="countryCode" type="string" optional>
+User Country code ISO 2 or null if not allowed.
+</Property>
+
+---
+
+<Property name="isConsentRequired" type="boolean">
+Indicates the privacy options button is required.
+</Property>
+
+---
+
+<Property name="consentFlowStatus" type="ConsentFlowStatus">
+Consent flow status code, check `ConsentFlowStatus` enum values.
+</Property>
+
 ## Automatic user consent flow
-To get consent for collecting personal data of your users, we suggest you use a built-in Consent Flow, comes with a pre-made consent form that you can easily present to your users. That means you no longer need to create your own consent window.
+To collect user consent for personal data, use the built-in **Consent Flow**. It shows a consent form automatically during initialization.
 
-The user will see the consent flow when your app initializes the CAS SDK.  
-Once the user completes the flow, the `initialize` `Future` will complete.
-
-You can choose whether to `showConsentFormIfRequired` in the arguments of the `initialize()` method:
-```dart
-  CASMobileAds.initialize(  
-    casId: casId,  
-    showConsentFormIfRequired: true, // [!code highlight]
-    ...
-  ).then((InitializationStatus status) {  
-    if (status.consentFlowStatus == ConsentFlow.statusObtained) {  
-      print('CAS Mobile Ads SDK obtain user consent');  
-    } 
-  });  
+```ts
+CASMobileAds.initialize(casId, {
+  showConsentFormIfRequired: true, // [!code highlight]
+  debugGeography: PrivacyGeography.EUROPEAN_ECONOMIC_AREA
+}).then((status) => {
+  if (status.consentFlowStatus === ConsentFlowStatus.OBTAINED) {
+    console.log('CAS obtained user consent');
+  }
+});
 ```
 
-You must wait until the user finishes the consent flow before you initialize third-party SDKs (such as MMPs or analytics SDKs). For this reason, initialize such SDKs from within your initialization-completion callback. If you were to initialize these third-party SDKs before the user completes the consent flow, these third-party SDKs would not be able to access relevant identifiers and you would suffer a material impact on measurement, reporting, and ad revenue.
+Wait for the consent flow to complete before initializing third-party SDKs (MMPs, analytics), otherwise they may not have access to required identifiers.
 
 <Info>
-Read more about "Privacy options button" and "Debug geography" on [CAS User Consent Flow page](ReactNative/User-Consent-Flow)
+Read more about **Debug geography** on [CAS User Consent Flow](ReactNative/User-Consent-Flow).
 </Info>
 
 ## Always test with test ads
-When building and testing your apps, make sure you use test ads rather than live, production ads. Failure to do so can lead to suspension of your account.
+Enable test ads during development so you can interact with ads safely.
 
-By default, CAS initializes mediation in live mode. To enable test ad mode, you should manually set `forceTestAds` in the arguments of the `initialize()` method:
-```dart
-  CASMobileAds.initialize(  
-    casId: casId,  
-    forceTestAds: kDebugMode || kProfileMode, // [!code highlight]
-    testDeviceIds: [
-        'Your test device ID' // [!code highlight]
-    ],
-    ...
-  )
+```ts
+CASMobileAds.initialize(casId, {
+  forceTestAds: __DEV__, // [!code highlight]
+  testDeviceIds: ['YOUR_TEST_DEVICE_ID'], // [!code highlight]
+});
 ```
 
-You can also test in release build by registering your device as a test device. Check the logs for your device's ID value.
-
-For more information about how the CAS.AI SDK's test ads work, see [Enable test ads](ReactNative/Enabling-test-ads)
+For more on test ads, see [Enable test ads](ReactNative/Enabling-test-ads).
 
 ## Prohibition on Personal Information from Children
-Apps can be marked as child-directed or [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy) applicable through the CAS UI.  
+Mark apps as child-directed or COPPA-applicable in the CAS UI. If you know specific users are COPPA-applicable, set the audience:
 
-If the app has knowledge of specific individuals as being COPPA-applicable, it should make use of the `targetAudience`parameter in the `initialize()` function.
-```dart
-  CASMobileAds.initialize(  
-    casId: casId,  
-    audience: Audience.notChildren, // [!code highlight]
-    ...
-  )
+```ts
+CASMobileAds.initialize(casId, {
+  targetAudience: Audience.NOT_CHILDREN, // [!code highlight]
+});
 ```
 
-If your app targets both children and older users, all ads that may be shown to children must comply with COPPA.  
-To ensure compliance, a **neutral age screen** must be implemented so that ads unsuitable for children are only shown to appropriate audiences.  
-A neutral age screen is a tool—such as an age gate—that verifies a user’s age without encouraging them to misrepresent it, and prevents children from accessing content not intended for them.
+If your app targets both children and older users, implement a **neutral age screen** to ensure COPPA compliance.
 
 ## (Optional) Retrieve the Version Number
 To programmatically retrieve the SDK version number at runtime, CAS provides the following method:
-```dart
-String sdkVersion = await CAS.getSDKVersion();
+```ts
+const sdkVersion = await CASMobileAds.getSDKVersion();
 ```
 
 ## (Optional) Trial ad-free interval
 Defines the time interval, in seconds, starting from the moment of the initial app installation, during which users can use the application without ads being displayed while still retaining access to the Rewarded Ads format. Within this interval, users enjoy privileged access to the application's features without intrusive advertisements.  
 
-```dart
-int secondsIn7Days = 604800;
+```ts
+const secondsIn7Days = 604800;
 CASMobileAds.setTrialAdFreeInterval(secondsIn7Days);
 ```
 
 ## Complete example
-- [Initialize CASMobileAds example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/lib/main.dart)
+- [Initialize CASMobileAds example](https://github.com/cleveradssolutions/CAS-ReactNative/blob/main/example/src/SetupScreen.tsx#L38)

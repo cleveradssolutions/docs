@@ -5,6 +5,15 @@ title: CAS.AI plugin for Flutter
 Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
 Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
 
+## Prerequisites
+Make sure that your app's build file uses the following values:
+- Use Flutter `3.0.0` or higher
+- For Android:
+  - Minimum API level `23` or higher
+- For iOS:
+  - Use Xcode `16.4` or higher
+  - Minimum Target iOS version `13` or higher
+
 ## Import CAS.AI Mobile Ads package
 Include the [CAS.AI plugin for Flutter](https://pub.dev/packages/clever_ads_solutions/install) in your Flutter project.
 
@@ -31,7 +40,7 @@ The CAS Android SDK provide a Gradle Plugin to simplify and automate certain int
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
 In your Android app Gradle file (usually `<project>/android/app/build.gradle`), add the `com.cleveradssolutions.gradle-plugin` inside the `plugins` block.
-```groovy
+```kotlin
 plugins {
   id("com.android.application") // before CAS plugin
   id("com.cleveradssolutions.gradle-plugin") version "{{ versions.android }}"
@@ -43,7 +52,7 @@ cas {
 ```
 
 <Info>
-Make sure to update the CAS Gradle plugin version whenever you update the CAS Flutter package. The CASGradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](https://github.com/cleveradssolutions/CAS-Android/wiki#integration-options).
+Make sure to update the CAS Gradle plugin version whenever you update the CAS Flutter package. The CASGradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](Android#integration-options).
 </Info>
 </TabItem>
 
@@ -78,6 +87,7 @@ Repeat the script before every update of the app to make sure you are using up-t
 The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project. 
 All CAS frameworks are hosted and distributed through their own source repository. Please add CAS source repository url to the beginning of the Podfile:
 ```ruby
+source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/cleveradssolutions/CAS-Specs.git'
 ```
 
@@ -107,7 +117,7 @@ Recommended for **most applications** targeting a **general or mixed audience**.
 
 <Tabs groupId="platform">
 <TabItem label="Android" value="android">
-```groovy
+```kotlin
 cas {
     includeOptimalAds = true
 }
@@ -126,7 +136,7 @@ Required for applications **directed exclusively at children**, in accordance wi
 
 <Tabs groupId="platform">
 <TabItem label="Android" value="android">
-```groovy
+```kotlin
 cas {
     includeFamiliesAds = true
 }
@@ -141,7 +151,7 @@ pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 </Tabs>
 
 ### Choice networks
-Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android wiki page](Android/Mediated-Networks) and the [iOS wiki page](iOS/Mediated-Networks).
+Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks) and the [iOS page](iOS/Mediated-Networks).
 
 ## Advertising Identifier
 CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
@@ -151,7 +161,7 @@ To enable the use of the Advertising ID in your app, you need to complete the fo
 <TabItem label="Android" value="android">
 CAS Mediation allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
 
-```groovy
+```kotlin
 cas {
     useAdvertisingId = true
 }
@@ -188,8 +198,8 @@ To use the App Tracking Transparency authorization request for accessing the IDF
 To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.  
 The table below gives you a variety of localizations that you can use at your discretion.
 
-| Locale          | Description                                                                                                                                   |
-|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Locale          | Description                            |
+|-----------------|----------------------------------------------------------------------------|
 | English (en)    | Your data will remain confidential and will only be used to provide you a better and personalised ad experience                               |
 | German (de)     | Ihre Daten bleiben vertraulich und werden nur dazu verwendet, Ihnen ein besseres und personalisiertes Werbeerlebnis zu bieten                 |
 | French (fr)     | Vos données resteront confidentielles et seront utilisées uniquement pour vous offrir une expérience publicitaire meilleure et personnalisée  |
