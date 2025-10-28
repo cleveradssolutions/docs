@@ -14,16 +14,17 @@ import FBAudienceNetwork
 
 func requestATT() {
     FBAdSettings.setAdvertiserTrackingEnabled(enabled)
-    // CAS.create(...)
+    CAS.create(...)
 }
 ```
+
 ```objc
 #import <CleverAdsSolutions/CleverAdsSolutions.h>
 #import <FBAudienceNetwork/FBAdSettings.h>
 
 - (void)requestATT {
     [FBAdSettings setAdvertiserTrackingEnabled:enabled];
-    // [CAS create :...];
+    [CAS create :...];
 }
 ```
 </CodeGroup>
@@ -66,6 +67,7 @@ if (metaConsent == CASConsentStatus.accepted) {
     // Please check for consent status after the user completes the CMP flow.
 }
 ```
+
 ```objc
 #import <CleverAdsSolutions/CleverAdsSolutions.h>
 #import <FBAudienceNetwork/FBAdSettings.h>
