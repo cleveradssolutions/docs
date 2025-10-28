@@ -8,6 +8,7 @@
             "unity": "4.3.0",
             "flutter": "4.3.0",
             "unreal": "4.3.0",
+            "reactnative": "4.3.0",
             "cordova": "1.0.3",
             "solar": "18",
             "construct": "0.0.3.0"
@@ -824,6 +825,12 @@
             "icon": "file-pen",
             "tab": "unreal",
             "href": "https://github.com/cleveradssolutions/CAS-Unreal/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "reactnative",
+            "href": "https://github.com/cleveradssolutions/CAS-ReactNative/releases"
         }
     ],
     "search": {

@@ -5,6 +5,14 @@ title: CAS.AI plugin for ReactNative
 Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
 Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
 
+## Prerequisites
+Make sure that your app's build file uses the following values:
+- For Android:
+  - Minimum API level `23` or higher
+- For iOS:
+  - Use Xcode `16.4` or higher
+  - Minimum Target iOS version `13` or higher
+
 ## Import CAS.AI Mobile Ads package
 Include the [CAS.AI plugin for ReactNative](https://www.npmjs.com/package/react-native-cas) in your ReactNative project.
 
@@ -31,7 +39,7 @@ The CAS Android SDK provide a Gradle Plugin to simplify and automate certain int
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
 In your Android app Gradle file (usually `<project>/android/app/build.gradle`), add the `com.cleveradssolutions.gradle-plugin` inside the `plugins` block.
-```groovy
+```kotlin
 plugins {
   id("com.android.application") // before CAS plugin
   id("com.cleveradssolutions.gradle-plugin") version "{{ versions.android }}"
@@ -43,8 +51,77 @@ cas {
 ```
 
 <Info>
-Make sure to update the CAS Gradle plugin version whenever you update the CAS ReactNative package. The CASGradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](https://github.com/cleveradssolutions/CAS-Android/wiki#integration-options).
+Make sure to update the CAS Gradle plugin version whenever you update the CAS ReactNative package. The CASGradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](Android).
 </Info>
+
+Some advertising SDKs are published in their own Maven repositories. To allow Gradle to download the required artifacts, you need to add the advertising Maven `repositories` to your Gradle file.
+
+<AccordionGroup>
+<Accordion title="Manven Ads repositories">
+
+```kotlin
+repositories {
+  google()  
+  mavenCentral()  
+  maven {  
+      name = "MintegralAdsRepo"  
+      url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")  
+      content { includeGroup("com.mbridge.msdk.oversea") }  
+  }  
+  maven {  
+      name = "PangleAdsRepo"  
+      url = uri("https://artifact.bytedance.com/repository/pangle")  
+      content { includeGroup("com.pangle.global") }  
+  }
+  maven {  
+      name = "ChartboostAdsRepo"  
+      url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/")  
+      content { includeGroup("com.chartboost") }  
+  }
+  maven {  
+      name = "YSONetworkRepo"  
+      url = uri("https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android")  
+      content { includeGroup("com.ysocorp") }  
+  }
+  maven {  
+      name = "OguryAdsRepo"  
+      url = uri("https://maven.ogury.co")  
+      content {  
+          includeGroup("co.ogury")  
+          includeGroup("co.ogury.module")  
+      }  
+  }  
+  maven {
+      name = "SuperAwesomeRepo"
+      url = uri("https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo")
+      content { includeGroup("tv.superawesome.sdk.publisher") }
+  }
+}
+```
+
+</Accordion>
+<Accordion title="Maven Ads repositories for Closed beta">
+
+Read more about Closed beta ads partners on [Android Mediation Networks](Android/Mediated-Networks) page.  
+```kotlin
+  maven {  
+      name = "MadexAdsRepo"  
+      url = uri("https://sdkpkg.sspnet.tech")  
+      content {  
+          includeGroup("sspnet.tech")  
+          includeGroup("sspnet.tech.adapters")  
+      }  
+  }
+  maven {  
+      name = "SmaatoAdsRepo"  
+      url = uri("https://s3.amazonaws.com/smaato-sdk-releases/")  
+      content { includeGroup("com.smaato.android.sdk") }  
+  }  
+```
+
+</Accordion>
+</AccordionGroup>
+
 </TabItem>
 
 <TabItem label="iOS" value="ios">
@@ -60,6 +137,10 @@ cd ios
 ruby casconfig.rb <CAS ID>
 ```
 
+<Info>
+Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
+</Info>
+
 <Accordion title="What is CAS ID in iOS?">
 
 In most cases, a CASID is the same as your app store ID.  
@@ -71,13 +152,10 @@ If you just want to experiment or test the SDK, you can skip the configuration y
 </Accordion>
 
 
-<Info>
-Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
-</Info>
-
 The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project. 
 All CAS frameworks are hosted and distributed through their own source repository. Please add CAS source repository url to the beginning of the Podfile:
 ```ruby
+source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/cleveradssolutions/CAS-Specs.git'
 ```
 
@@ -107,7 +185,7 @@ Recommended for **most applications** targeting a **general or mixed audience**.
 
 <Tabs groupId="platform">
 <TabItem label="Android" value="android">
-```groovy
+```kotlin
 cas {
     includeOptimalAds = true
 }
@@ -126,7 +204,7 @@ Required for applications **directed exclusively at children**, in accordance wi
 
 <Tabs groupId="platform">
 <TabItem label="Android" value="android">
-```groovy
+```kotlin
 cas {
     includeFamiliesAds = true
 }
@@ -141,7 +219,7 @@ pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 </Tabs>
 
 ### Choice networks
-Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android wiki page](Android/Mediated-Networks) and the [iOS wiki page](iOS/Mediated-Networks).
+Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks) and the [iOS page](iOS/Mediated-Networks).
 
 ## Advertising Identifier
 CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
@@ -151,7 +229,7 @@ To enable the use of the Advertising ID in your app, you need to complete the fo
 <TabItem label="Android" value="android">
 CAS Mediation allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
 
-```groovy
+```kotlin
 cas {
     useAdvertisingId = true
 }
@@ -188,8 +266,8 @@ To use the App Tracking Transparency authorization request for accessing the IDF
 To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.  
 The table below gives you a variety of localizations that you can use at your discretion.
 
-| Locale          | Description                                                                                                                                   |
-|-----------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Locale | Description |
+|-----------------|--------------------------------------------------------------------|
 | English (en)    | Your data will remain confidential and will only be used to provide you a better and personalised ad experience                               |
 | German (de)     | Ihre Daten bleiben vertraulich und werden nur dazu verwendet, Ihnen ein besseres und personalisiertes Werbeerlebnis zu bieten                 |
 | French (fr)     | Vos données resteront confidentielles et seront utilisées uniquement pour vous offrir une expérience publicitaire meilleure et personnalisée  |

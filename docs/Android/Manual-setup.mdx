@@ -9,7 +9,7 @@ Follow the step-by-step guide below. Optional steps can be completed at your dis
 Find the repositories on the [Home page](Android).
 
 ### 2. Add the dependencies for the CAS SDK to your module-level build file:
-```groovy
+```kotlin
 dependencies {
     implementation("com.cleveradssolutions:cas-sdk:{{ versions.android }}")
     ...
@@ -26,7 +26,7 @@ Subscribe to receive notifications about CAS updates.
 
 ### 3. Add mediated networks that are fully compatible with Google Play Families policies:
 
-```groovy
+```kotlin
 implementation("com.cleveradssolutions:ironsource:+")   // IronSource
 implementation("com.cleveradssolutions:google:+")       // Google Ads | Admob
 implementation("com.cleveradssolutions:unity:+")        // Unity Ads
@@ -46,7 +46,7 @@ implementation("com.cleveradssolutions:kidoz:+")        // Kidoz
 ### 4. Add mediated networks that are always recommended for app monetization.
 For applications not targeting children (adult or mixed audiences), it is recommended to include the following dependencies **in addition to those listed above**.
 
-```groovy
+```kotlin
 implementation("com.cleveradssolutions:cas-exchange:+") // CASExchange
 implementation("com.cleveradssolutions:mintegral:+")    // Mintegral
 implementation("com.cleveradssolutions:applovin:+")     // AppLovin
@@ -58,7 +58,7 @@ implementation("com.cleveradssolutions:bigo:+")         // Bigo
 
 ### 5. (Optional) Add other mediated networks.
 
-```groovy
+```kotlin
 implementation("com.cleveradssolutions:ysonetwork:+")   // YSO Network
 implementation("com.cleveradssolutions:ogury:+")        // Ogury
 implementation("com.cleveradssolutions:hyprmx:+")       // HyprMX
@@ -68,13 +68,13 @@ implementation("com.cleveradssolutions:startio:+")      // StartIO
 ### 6. (Optional) Add Cross Promo adapter.  
    Contact our account manager if you are interested in cross-promotion.
 
-```groovy
+```kotlin
 implementation("com.cleveradssolutions:cas-promo:+")
 ```
 
 ### 7. (Optional) Add **Closed beta** mediated networks.
    
-```groovy
+```kotlin
 implementation("com.cleveradssolutions:maticoo:+")      // Maticoo
 implementation("com.cleveradssolutions:prado:+")        // Prado
 implementation("com.cleveradssolutions:madex:+")        // Madex
@@ -90,7 +90,7 @@ If you would like to monetize by one of these ad sources, please contact your ac
 The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.
 
 Add the Play Services Ads identifier into the `dependencies` block to allow GAID information to be retrieved.
-```groovy
+```kotlin
 implementation("com.google.android.gms:play-services-ads-identifier:18.1.0")
 ```
 
