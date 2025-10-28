@@ -52,6 +52,7 @@ The automatic consent flow is enabled by default and described on the [CAS initi
 ## Manual consent flow
 Call `presentIfRequired()` on the `CASConsentFlow` class. If the consent is required, the SDK loads a form and immediately presents it . 
 The `withCompletionHandler` is called after the form is dismissed. If consent is not required, the `withCompletionHandler` is called immediately.
+<CodeGroup synchronize="true">
 ```swift
 CASConsentFlow()
     .withCompletionHandler { status in
@@ -62,6 +63,9 @@ CASConsentFlow()
     .withViewControllerToPresent(controller)
     .presentIfRequired()
 ```
+```objc
+```
+</CodeGroup>
 
 <Warning>  
 The `present()` and `presentIfRequired()` methods must be called from the main (UI) thread.
@@ -84,7 +88,8 @@ The cache consent status on your app or a previously saved consent string, could
 Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
 1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
 2. When a user interacts with your UI element, call `present()` to show the form so the user can update their privacy options at any time.
-```csharp
+<CodeGroup synchronize="true">
+```swift
 func showPrivacyOptionsForm() {
     CASConsentFlow()
         .withCompletionHandler { status in
@@ -96,9 +101,26 @@ func showPrivacyOptionsForm() {
         .present()
 }
 ```
+```objc
+CASConsentFlow *flow = [[CASConsentFlow alloc] init];
+flow.viewControllerToPresent = self;
+flow.completionHandler = ^(CASConsentFlowStatus status) {
+    if (status == CASConsentFlowStatusObtained) {
+        // User consent obtained.
+    } else if (status == CASConsentFlowStatusNotRequired) {
+        // Consent not required.
+    } else {
+        NSLog(@"Consent flow finished with status: %ld", (long)status);
+    }
+};
+
+[flow presentIfRequired];
+```
+</CodeGroup>
 
 ## Debug geography
 The SDK provides a way to test your app's behavior as though the device was located in the EEA or UK using the `WithDebugGeography` option. 
+<CodeGroup synchronize="true">
 ```swift
 CASConsentFlow()
     .withDebugGeography(ConsentFlow.DebugGeography.EEA)
@@ -107,6 +129,22 @@ CASConsentFlow()
 #endif
     .presentIfRequired();
 ```
+```objc
+CASConsentFlow *flow = [[CASConsentFlow alloc] init];
+flow.viewControllerToPresent = self;
+flow.completionHandler = ^(CASConsentFlowStatus status) {
+    NSLog(@"Consent Flow finished: %ld", (long)status);
+};
+    
+flow.debugGeography = CASUserDebugGeographyEEA;
+
+#ifdef DEBUG
+    flow.forceTesting = YES;
+#endif
+    [flow presentIfRequired];
+
+```
+</CodeGroup>
 
 <Info>
 Note that debug geography only work if:
@@ -132,16 +170,29 @@ You must set the privacy options before creating the CAS Manager to disable the 
 
 ## Request App Tracking Transparency framework
 To present the authorization request, call `requestTrackingAuthorizationWithCompletionHandler:`. We recommend waiting for the completion callback prior to initialize ads, so that if the user grants the App Tracking Transparency permission, the CAS mediation can use the IDFA in ad requests.
+<CodeGroup synchronize="true">
 ```swift
 import AppTrackingTransparency
-...
+
 func requestIDFA() {
-  ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
-    // Tracking authorization completed. 
-    // Start initialize CAS here.
-  })
+    ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
+        // Tracking authorization completed. 
+        // Start initialize CAS SDK here.
+    })
 }
 ```
+```objc
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
+
+- (void)requestIDFA {
+    [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+        // Tracking authorization completed.
+        // Initialize CAS SDK here.
+    }];
+}
+
+```
+</CodeGroup>
 
 For a better user experience, we recommend adding a **Pre permission pop-up** preceding the call to `ATTrackingManager.requestTrackingAuthorization` to clarify the permission and data usage to users.  
 

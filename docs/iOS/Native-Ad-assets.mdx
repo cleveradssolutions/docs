@@ -43,20 +43,33 @@ Each ad view must display an AdChoices overlay logo. Also, it's important that t
 #### Use AdChoices placements
 An AdChoices overlay can be added by the SDK if `CASNativeView.adChoicesView` not registered. Leave space in your preferred corner of your native ad view for the automatically inserted AdChoices logo.  
 Use `AdChoicesPlacement` constants to set preferred corner. 
+<CodeGroup synchronize="true">
 ```swift
 adLoader.adChoicesPlacement = AdChoicesPlacement.topRight
 ```
+```objc
+adLoader.adChoicesPlacement = CASChoicesPlacementTopRight;
+```
+</CodeGroup>
+
 By default the AdChoices icon position is set to the top right.
 
 #### Use custom AdChoices view
 The AdChoices custom view feature lets you position the AdChoices icon in a custom location. This is different from AdChoices position controls, which only allows specification of one of the four corners.  
 The following example demonstrates how to set a custom AdChoices view, with the AdChoices icon rendered inside the `CASChoicesView`.
 
+<CodeGroup synchronize="true">
 ```swift
 @IBOutlet weak var adChoicesView: CASChoicesView!
-
+// ...
 adView.adChoicesView = adChoicesView
 ```
+```objc
+@property (nonatomic, weak) IBOutlet CASChoicesView *adChoicesView;
+// ...
+adView.adChoicesView = self.adChoicesView;
+```
+</CodeGroup>
 
 <Info>
 Google Ads does not support `adView.adChoicesView`. Instead, specify the desired `AdChoicesPlacement` for the logo. Other ad sources will display their logo in your custom view.
@@ -66,26 +79,51 @@ Google Ads does not support `adView.adChoicesView`. Instead, specify the desired
 The rating from 0.0-5.0 that represents the average rating of the app in a store.
 #### Use template view with auto populate rating value
 Add `CASStarRatingView` to view hierarchy and CAS SDK populate rating value for you.
+
+<CodeGroup synchronize="true">
 ```swift
 @IBOutlet weak var starRatingView: CASStarRatingView!
-
+// ...
 adView.starRatingView = starRatingView
 ```
+```objc
+@property (nonatomic, weak) IBOutlet CASStarRatingView *starRatingView;
+// ...
+adView.starRatingView = self.starRatingView;
+```
+</CodeGroup>
 
 #### Use custom view with auto populate rating value 
 Implement `NativeAdStarRating` interface in your custom view.
+
+<CodeGroup synchronize="true">
 ```swift
 class CustomRatingView : UIView, NativeAdStarRating {
     var rating: NSNumber?
 }
 
 @IBOutlet weak var starRatingView: CustomRatingView!
-
+// ...
 adView.starRatingView = starRatingView
 ```
+```objc
+@interface CustomRatingView : UIView <CASNativeAdStarRating>
+@property (nonatomic, strong) NSNumber *rating;
+@end
+
+@implementation CustomRatingView
+@end
+
+@property (nonatomic, weak) IBOutlet CustomRatingView *starRatingView;
+// ...
+adView.starRatingView = self.starRatingView;
+```
+</CodeGroup>
 
 #### Use custom view with manual populate rating value
 You need populate `nativeAd.starRating` value to custom view, for example `RatingBar` view:
+
+<CodeGroup synchronize="true">
 ```swift
 
 if let rating = nativeAd.starRating {
@@ -94,3 +132,11 @@ if let rating = nativeAd.starRating {
 
 adView.starRatingView = customRatingView
 ```
+```objc
+if (nativeAd.starRating != nil) {
+    self.starRatingView.rating = nativeAd.starRating;
+}
+
+adView.starRatingView = self.starRatingView;
+```
+</CodeGroup>

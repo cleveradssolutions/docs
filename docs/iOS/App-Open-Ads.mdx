@@ -12,6 +12,7 @@ Below is a diagram showing the ad lifecycle.
 
 
 ## Create Ad instance
+<CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
 
@@ -21,12 +22,35 @@ class MyAppDelegate: UIResponder, UIApplicationDelegate, CASScreenContentDelegat
     let appOpenAd = CASAppOpen(casID: MyAppDelegate.casID)
 
 ```
+```objc
+#import <CleverAdsSolutions/CleverAdsSolutions.h>
+
+@interface MyAppDelegate : UIResponder <UIApplicationDelegate, CASScreenContentDelegate>
+@property (nonatomic, strong) CASAppOpen *appOpenAd;
+@end
+
+@implementation MyAppDelegate
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _appOpenAd = [[CASAppOpen alloc] initWithCasID:MyAppDelegate.casID];
+    }
+    return self;
+}
+
+// ...
+@end
+
+```
+</CodeGroup>
 
 The SDK provides the capability to create and precache multiple ad instances, enabling uninterrupted sequential ad display. CAS SDK will load mediation ads in order for each created instance.
 
 ## Receive Ad events
 The `CASScreenContentDelegate` handles events related to displaying your `CASAppOpen`. Callbacks are called on the main thread. Before showing ad, make sure to set `delegate`.
 
+<CodeGroup synchronize="true">
 ```swift
 func screenAdDidLoadContent(_ ad: any CASScreenContent) {
     // Called when the ad content has been successfully loaded.
@@ -52,6 +76,32 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
     // Called when the ad content is dismissed.
 }
 ```
+```objc
+- (void)screenAdDidLoadContent:(id<CASScreenContent>)ad {
+    // Called when the ad content has been successfully loaded.
+}
+
+- (void)screenAd:(id<CASScreenContent>)ad didFailToLoadWithError:(CASError * _Nonnull)error {
+    // Called when the ad content fails to load.
+}
+
+- (void)screenAd:(id<CASScreenContent>)ad didFailToPresentWithError:(CASError *)error {
+    // Called when the ad content fails to present.
+}
+
+- (void)screenAdWillPresentContent:(id<CASScreenContent>)ad {
+    // Called when the ad content is successfully shown.
+}
+
+- (void)screenAdDidClickContent:(id<CASScreenContent>)ad {
+    // Called when the ad content is clicked by the user.
+}
+
+- (void)screenAdDidDismissContent:(id<CASScreenContent>)ad {
+    // Called when the ad content is dismissed.
+}
+```
+</CodeGroup>
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](iOS/Impression-Level-Data).
@@ -61,6 +111,7 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
 
 ## Load Ad
 The next step is to fill out the `loadAd()` method and handle the ad load callbacks.
+<CodeGroup synchronize="true">
 ```swift
 func loadAppOpenAd() {
     let screenContentDelegate: CASScreenContentDelegate = self
@@ -68,11 +119,19 @@ func loadAppOpenAd() {
     appOpenAd.loadAd()
 }
 ```
+```objc
+- (void)loadAppOpenAd {
+    id<CASScreenContentDelegate> screenContentDelegate = self;
+    self.appOpenAd.delegate = screenContentDelegate;
+    [self.appOpenAd loadAd];
+}
+```
+</CodeGroup>
 
 
 ### Autoload mode
 If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
-
+<CodeGroup synchronize="true">
 ```swift
 func loadAppOpenAd() {
     let screenContentDelegate: CASScreenContentDelegate = self
@@ -80,11 +139,21 @@ func loadAppOpenAd() {
     appOpenAd.isAutoloadEnabled = true
 }
 ```
+```objc
+- (void)loadAppOpenAd {
+    id<CASScreenContentDelegate> screenContentDelegate = self;
+    self.appOpenAd.delegate = screenContentDelegate;
+    self.appOpenAd.isAutoloadEnabled = YES;
+}
+```
+</CodeGroup>
+
 By default autoload disabled.
 
 ## Show Ad
 The most common app open implementation is to attempt to present an app open ad near app launch, start app content if the ad isn't ready, and preload another ad for the next app open opportunity.
 
+<CodeGroup synchronize="true">
 ```swift
 func applicationDidBecomeActive(_ application: UIApplication) { 
     if appOpenAd.isLoaded {  
@@ -94,6 +163,16 @@ func applicationDidBecomeActive(_ application: UIApplication) {
     } 
 }
 ```
+```objc
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+    if (self.appOpenAd.isAdLoaded) {
+        [self.appOpenAd presentFromViewController: nil];
+    } else {
+        [self loadAppOpenAd];
+    }
+}
+```
+</CodeGroup>
 
 Starting with CAS SDK version 4.3.0, all ads functions can be safely called from any thread.
 
@@ -110,17 +189,32 @@ If a user returns to your app after having left it by clicking on an app open ad
 
 ### Autoshow mode
 Use the `isAutoshowEnabled` property to automatically show a loaded ad when the user returns to the app.
+<CodeGroup synchronize="true">
 ```swift
 appOpenAd.isAutoshowEnabled = true
 ```
+```objc
+appOpenAd.isAutoshowEnabled = YES;
+```
+</CodeGroup>
+
 By default autoshow disabled.
 
 ### Checking Ad Availability
 Use `isAdLoaded` to check whether an ad is currently loaded.
+<CodeGroup synchronize="true">
 ```swift
 if appOpenAd.isAdLoaded {
+    // ...
 }
 ```
+```objc
+if (appOpenAd.isAdLoaded) {
+    // ...
+}
+```
+</CodeGroup>
+
 Even if `isAdLoaded` returns `true`, it does not guarantee that the ad will be shown successfully — various issues may still prevent it from being displayed. We strongly recommend handling potential display failures via `screenAd(_:didFailToPresentWithError:)` delegate to ensure a smoother user experience.
 
 By relying on these delegate, you ensure that your application can react appropriately to real-time conditions, rather than making assumptions based on ad load state at a single point in time.

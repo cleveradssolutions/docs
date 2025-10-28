@@ -21,11 +21,18 @@ Don't implement any custom click handlers on any views over or within the native
 <Step title="Register the native ad content">
 This final step registers the native ad object with the view that's responsible for displaying it. Note that you can also reuse an existing `CASNativeView` if one is already present in your fragment or activity, or you can create an instance dynamically without using a layout file. Simply call `setNativeAd` for each new `NativeAdContent`.
 
+<CodeGroup synchronize="true">
 ```swift
 func registerNativeAdContent(_ nativeAd: NativeAdContent) {
     adView.setNativeAd(nativeAd)
 }
 ```
+```objc
+- (void)registerNativeAdContent:(CASNativeAdContent *)nativeAd {
+    [self.adView setNativeAd:nativeAd];
+}
+```
+</CodeGroup>
 
 <Warning>  
 The `setNativeAd(NativeAdContent)` method must be called from the main (UI) thread.
@@ -39,6 +46,7 @@ Native ads can be preloaded and cached to reduce latency when displaying ads to 
 
 Use the `NativeAdContent.isExpired` property to check if the ad has expired. If you attempt to display an expired ad, it will trigger an `nativeAd(_:didFailToPresentWithError)` callback.
 
+<CodeGroup synchronize="true">
 ```swift
 func registerNativeAdContent(_ nativeAd: NativeAdContent) {
     if nativeAd.isExpired {
@@ -49,12 +57,24 @@ func registerNativeAdContent(_ nativeAd: NativeAdContent) {
     adView.setNativeAd(nativeAd)
 }
 ```
+```objc
+- (void)registerNativeAdContent:(CASNativeAdContent *)nativeAd {
+    if (nativeAd.isExpired) {
+        [self loadNativeAds];
+        return;
+    }
+
+    [self.adView setNativeAd:nativeAd];
+}
+```
+</CodeGroup>
 
 If you display the ad immediately in `nativeAdDidLoadContent(_:)`, there's no need to check its validity, as it is guaranteed to be fresh at that moment. 
 
 ## Display native ad Templates
 #### Layout the views
 The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
+<CodeGroup synchronize="true">
 ```swift
 @IBOutlet var adView: CASNativeView!
     
@@ -68,6 +88,25 @@ override func viewDidLoad() {
     customizeAdViewAppearance(adView)
 }
 ```
+```objc
+@interface MyViewController: UIViewController
+@property (weak, nonatomic) IBOutlet CASNativeView *adView;
+@end
+
+@implementation MyViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self loadNativeAds];
+
+    CASSize *size = CASSize.mediumRectangle;
+    [self.adView setAdTemplateSize:size];
+
+    [self customizeAdViewAppearance: self.adView];
+}
+@end
+```
+</CodeGroup>
 
 <Info>
 Creating the layout may cause UI rendering to freeze briefly, so it is recommended to set the template size only once when initializing the view.  
@@ -75,7 +114,8 @@ The `setAdTemplateSize(AdSize)` method must be called from the main (UI) thread.
 </Info>
 
 **Optional:** Customize the appearance of asset views after calling `setAdTemplateSize` by modifying properties from the `CASNativeView`.
-```kotlin
+<CodeGroup synchronize="true">
+```swift
 fun customizeAdViewAppearance(_ adView: CASNativeView) {
     // Default values are shown below:
     adView.backgroundColor = UIColor.white
@@ -83,6 +123,15 @@ fun customizeAdViewAppearance(_ adView: CASNativeView) {
     adView.headlineView?.textColor = UIColor.darkText
 }
 ```
+```objc
+- (void)customizeAdViewAppearance:(CASNativeView *)adView {
+    // Default values are shown below:
+    adView.backgroundColor = UIColor.whiteColor;
+    adView.callToActionView.configuration.baseBackgroundColor = UIColor.tintColor;
+    adView.headlineView.textColor = UIColor.darkTextColor;
+}
+```
+</CodeGroup>
 
 #### Register the asset views
 When you set the ad template size using `setAdTemplateSize(_:)`, the `CASNativeView` automatically registers all ad asset views with the corresponding template assets for the selected size. 
@@ -109,6 +158,7 @@ Assign unique tag IDs to the asset views. The example image below sets the ID to
 <Image width="298" alt="Image" src="/assets/ios/Native-ViewTags.png" />
 
 In your ViewController code, assign each created view using unique tag IDs for ad assets to the corresponding properties of `CASNativeView`.
+<CodeGroup synchronize="true">
 ```swift
 @IBOutlet var adView: CASNativeView!
     
@@ -136,6 +186,30 @@ func registerAdAsetViews() {
     adView.registerReviewCountView(tag: 110)
 }
 ```
+```objc
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self loadNativeAds];
+    [self registerAdAssetViews];
+}
+
+- (void)registerAdAssetViews {
+    [self.adView registerAdChoicesViewWithTag:99];
+    [self.adView registerMediaViewWithTag:100];
+    [self.adView registerIconViewWithTag:101];
+    [self.adView registerHeadlineViewWithTag:102];
+    [self.adView registerAdLabelViewWithTag:103];
+    [self.adView registerBodyViewWithTag:104];
+    [self.adView registerCallToActionViewWithTag:105];
+    [self.adView registerAdvertiserViewWithTag:106];
+    [self.adView registerStoreViewWithTag:107];
+    [self.adView registerPriceViewWithTag:108];
+    [self.adView registerStarRatingViewWithTag:109];
+    [self.adView registerReviewCountViewWithTag:110];
+}
+
+```
+</CodeGroup>
 
 #### Register the asset views using outlets
 Once the views are in place and you've assigned the correct ad view class to the layout, link the ad view's asset outlets to your ViewController. Here's how you might link the ad view's asset outlets to the `UIViews` created for an ad:
@@ -143,6 +217,7 @@ Once the views are in place and you've assigned the correct ad view class to the
 <Image width="255" alt="Image" src="/assets/ios/Display-Native-Ad-4.png" />
 
 In your ViewController code, assign each created view for ad assets to the corresponding properties of `CASNativeView`.
+<CodeGroup synchronize="true">
 ```swift
 @IBOutlet var adView: CASNativeView!
 
@@ -183,6 +258,48 @@ func registerAdAsetViews() {
     adView.reviewCountView = reviewCountView
 }
 ```
+```objc
+@interface MyViewController: UIViewController
+@property (weak, nonatomic) IBOutlet CASNativeView *adView;
+@property (weak, nonatomic) IBOutlet CASMediaView *mediaView;
+@property (weak, nonatomic) IBOutlet CASChoicesView *adChoicesView;
+@property (weak, nonatomic) IBOutlet UILabel *adLabelView;
+@property (weak, nonatomic) IBOutlet UILabel *headlineView;
+@property (weak, nonatomic) IBOutlet UIButton *callToActionView;
+@property (weak, nonatomic) IBOutlet UIImageView *iconView;
+@property (weak, nonatomic) IBOutlet UILabel *bodyView;
+@property (weak, nonatomic) IBOutlet UILabel *priceView;
+@property (weak, nonatomic) IBOutlet UILabel *advertiserView;
+@property (weak, nonatomic) IBOutlet UILabel *storeView;
+@property (weak, nonatomic) IBOutlet UIView *starRatingView;
+@property (weak, nonatomic) IBOutlet UILabel *reviewCountView;
+@end
+
+@implementation MyViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self loadNativeAds];
+    [self registerAdAssetViews];
+}
+
+- (void)registerAdAssetViews {
+    self.adView.adChoicesView = self.adChoicesView;
+    self.adView.mediaView = self.mediaView;
+    self.adView.adLabelView = self.adLabelView;
+    self.adView.headlineView = self.headlineView;
+    self.adView.callToActionView = self.callToActionView;
+    self.adView.iconView = self.iconView;
+    self.adView.bodyView = self.bodyView;
+    self.adView.priceView = self.priceView;
+    self.adView.advertiserView = self.advertiserView;
+    self.adView.storeView = self.storeView;
+    self.adView.starRatingView = self.starRatingView;
+    self.adView.reviewCountView = self.reviewCountView;
+}
+@end
+```
+</CodeGroup>
 
 ## Samples
 - SwiftUI:

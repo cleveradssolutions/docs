@@ -8,9 +8,14 @@ to the segment the user belongs to.
 
 ### User ID
 The userID is a unique identifier supplied by your application and must be static for each user across sessions. 
-```java
+<CodeGroup synchronize="true">
+```swift
 CAS.getTargetingOptions().setUserID("user-hash-code");
 ```
+```objc
+[[CAS targetingOptions] setUserID:@"user-hash-code"];
+```
+</CodeGroup>
 
 <Warning>  
 Your userID should not contain any personally identifiable information such as  an email address, screen name, IDFV (identifier for vendor) or IDFA (Apple’s Advertising Identifier).
@@ -18,21 +23,36 @@ Your userID should not contain any personally identifiable information such as  
 
 ## User Age
 Set user age. Limitation: 1-99. By default 0 is 'unknown'.
+<CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.age = 12
 ```
+```objc
+[CAS targetingOptions].age = 12;
+```
+</CodeGroup>
 
 ## User Gender
 Set user gender.
+<CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.gender = Gender.male
 ```
+```objc
+[CAS targetingOptions].gender = CASGenderMale;
+```
+</CodeGroup>
 
 ## User Location
 Set the user's current location. Location data is not used to CAS; however, it may be used by third party ad networks.
+<CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.setLocation(latitude: userLatitude, longitude: userLongitude)
 ```
+```objc
+[[CAS targetingOptions] setLocationWithLatitude:userLatitude longitude:userLongitude];
+```
+</CodeGroup>
 
 <Warning>  
 Do not use Location just for advertising. Your app should have a valid use case for it as well.
@@ -44,21 +64,36 @@ Collect from the device the latitude and longitude coordinated truncated to the 
 * Does not collect if the target audience is children.   
 * Disabled by default.
 
+<CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.locationCollectionEnabled = true
 ```
+```objc
+[CAS targetingOptions].locationCollectionEnabled = YES;
+```
+</CodeGroup>
 
 ## App Keywords
 Set a list of keywords, interests, or intents related to your application. Words or phrases describe
 the current activity of the user for targeting purposes.
 
+<CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.keywords = keywords
 ```
+```objc
+[CAS targetingOptions].keywords = keywords;
+```
+</CodeGroup>
 
 ## App Content URL
 Set the content URL for a website whose content matches the app's primary content. This website content is used for targeting and brand safety purposes. Limitation: max URL length 512.
 
+<CodeGroup synchronize="true">
 ```swift
 CAS.targetingOptions.contentUrl = contentUrl
 ```
+```objc
+[CAS targetingOptions].contentUrl = contentUrl;
+```
+</CodeGroup>

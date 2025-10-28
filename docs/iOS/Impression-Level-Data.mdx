@@ -6,17 +6,34 @@ CAS.AI SDK enables you to access detailed information for each impression throug
 
 ### OnAdImpressionListener
 A delegate for receive ad impression info from each ad format.
+<CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
 
 extension MyViewController: CASImpressionDelegate {
-    func adDidRecordImpression(info: AdContentInfo) {
+    func adDidRecordImpression(info: CASContentInfo) {
         // Called when an ad impression occurs. 
     }
 }
 ```
+```objc
+#import <CleverAdsSolutions/CleverAdsSolutions.h>
+
+@interface MyViewController: UIViewController <CASImpressionDelegate>
+@end
+
+@implementation MyViewController
+
+- (void)adDidRecordImpression:(CASContentInfo *)info {
+    // Called when an ad impression occurs.
+}
+
+@end
+```
+</CodeGroup>
 
 Each ad format have a `weak var impressionDelegate` property to receive `AdContentInfo` with impression details.  
+<CodeGroup synchronize="true">
 ```swift
 let impressionDelegate: CASImpressionDelegate = self
 
@@ -32,14 +49,35 @@ rewardedAd.impressionDelegate = impressionDelegate
 let nativeAd: NativeAdContent
 nativeAd.impressionDelegate = impressionDelegate
 ```
+```objc
+id<CASImpressionDelegate> impressionDelegate = self;
+
+CASAppOpen *appOpenAd;
+appOpenAd.impressionDelegate = impressionDelegate;
+
+CASInterstitial *interstitialAd;
+interstitialAd.impressionDelegate = impressionDelegate;
+
+CASRewarded *rewardedAd;
+rewardedAd.impressionDelegate = impressionDelegate;
+
+CASNativeAdContent *nativeAd;
+nativeAd.impressionDelegate = impressionDelegate;
+```
+</CodeGroup>
 
 ### AdContentInfo
 The `AdContentInfo` data structure, which contains information about the loaded/displayed ad. 
 
 Additionally to `impressionDelegate`, each ad format has a `contentInfo` property that returns `AdContentInfo`, but the info may be `nil` before the ad is loaded.
+<CodeGroup synchronize="true">
 ```swift
-let info: AdContentInfo? = eachAd.contentInfo
+let info: CASContentInfo? = eachAd.contentInfo
 ```
+```objc
+CASContentInfo *info = eachAd.contentInfo;
+```
+</CodeGroup>
 
 | Name               | Type       | Description                                                                                                                                                             |
 | ------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -55,10 +93,16 @@ let info: AdContentInfo? = eachAd.contentInfo
 
 ### User ad summary 
 CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression. 
+<CodeGroup synchronize="true">
 ```swift
 let totalImpressions: Int = impression.impressionDepth
 let totalRevenue: Double = impression.revenueTotal
 ```
+```objc
+NSInteger totalImpressions = impression.impressionDepth;
+double totalRevenue = impression.revenueTotal;
+```
+</CodeGroup>
 
 <Info>
 Progress is saved between sessions until the user clears your app's data.
@@ -84,6 +128,7 @@ If you haven't already, make sure to complete the following tasks:
 
 ## Custom collect ad revenue
 The following code shows an implementation example for log `ad_impression` event to Google Analytics.
+<CodeGroup synchronize="true">
 ```swift
 extension MyViewController: CASImpressionDelegate {
     func adDidRecordImpression(info: AdContentInfo) {
@@ -101,3 +146,27 @@ extension MyViewController: CASImpressionDelegate {
    }
 }
 ```
+```objc
+#import <FirebaseAnalytics/FirebaseAnalytics.h>
+
+@interface MyViewController: UIViewController <CASImpressionDelegate>
+@end
+
+@implementation MyViewController
+
+- (void)adDidRecordImpression:(CASContentInfo *)info {
+    [FIRAnalytics logEventWithName:kFIREventAdImpression
+                        parameters:@{
+        kFIRParameterAdPlatform: @"CAS",
+        kFIRParameterAdSource: info.sourceName ?: @"",
+        kFIRParameterAdUnitName: info.sourceUnitID ?: @"",
+        kFIRParameterAdFormat: info.format.description ?: @"",
+        kFIRParameterValue: @(info.revenue),
+        // All CAS revenue is sent in USD
+        kFIRParameterCurrency: @"USD"
+    }];
+}
+
+@end
+```
+</CodeGroup>

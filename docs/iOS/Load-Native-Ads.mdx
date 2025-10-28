@@ -15,6 +15,7 @@ Below is a diagram showing the ad lifecycle.
 Native ads are loaded with the `CASNativeLoader` class. A `CASNativeLoaderDelegate` for handling events related to native ad content.  
 In most cases, a `casID` is the same as your application package name.
 
+<CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
 
@@ -47,6 +48,44 @@ class MyViewController: UIViewController, CASNativeLoaderDelegate {
     }
 }
 ```
+```objc
+#import <CleverAdsSolutions/CleverAdsSolutions.h>
+
+@interface MyViewController : UIViewController <CASNativeLoaderDelegate>
+@property (nonatomic, strong) CASNativeLoader *adLoader;
+@end
+
+@implementation MyViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self loadNativeAds];
+}
+
+- (void)loadNativeAds {
+    self.adLoader = [[CASNativeLoader alloc] initWithCasID: @"MyAppDelegate.casID"];
+    self.adLoader.delegate = self;
+    self.adLoader.adChoicesPlacement = CASChoicesPlacementTopRight; // by default
+    self.adLoader.isStartVideoMuted = YES; // by default
+    [self.adLoader loadAd];
+}
+
+#pragma mark - CASNativeLoaderDelegate
+
+- (void)nativeAdDidLoadContent:(CASNativeAdContent *)ad {
+    [self receiveNativeAdContentEvents:ad];
+    [self registerNativeAdContent:ad];
+}
+
+- (void)nativeAdDidFailToLoadWithError:(CASError *)error {
+    // (Optional) Handle Ad load errors
+}
+
+// ...
+
+@end
+```
+</CodeGroup>
 
 After a call to `loadAd()`, a single callback is made to the previously defined `CASNativeLoaderDelegate` to deliver the native ad object or report an error.
 
@@ -55,14 +94,20 @@ The `CASNativeLoader` does not have an autoload ad mode like other ad formats, s
 
 ## Load multiple ads (optional)
 The `load(maxNumberOfAds:)` method takes an additional parameter: the number of ads the SDK should attempt to load for the request. It's not guaranteed that the SDK will return the exact number of ads requested.
-```kotlin
+<CodeGroup synchronize="true">
+```swift
 adLoader.load(maxNumberOfAds: 3)
 ```
+```objc
+[self.adLoader loadWithMaxNumberOfAds:3];
+```
+</CodeGroup>
 
 The `nativeAdDidLoadContent(_:)` will be called multiple times, once for each ad that is successfully loaded, up to the specified maximum number of ads.  
 If the load operation fails, the `nativeAdDidFailToLoad(error:)` will be called once with the error details.
 
 Apps requesting multiple ads should call `CASNativeLoader.isLoading` in their callback implementations to determine whether the loading process has finished.
+<CodeGroup synchronize="true">
 ```swift
 func nativeAdDidLoadContent(_ ad: NativeAdContent) {  
     receiveNativeAdContentEvents(ad)
@@ -77,10 +122,26 @@ func nativeAdDidLoadContent(_ ad: NativeAdContent) {
     }   
 } 
 ```
+```objc
+- (void)nativeAdDidLoadContent:(CASNativeAdContent *)ad {
+    [self receiveNativeAdContentEvents:ad];
+    [self registerNativeAdContent:ad];
+    
+    if (self.adLoader.isAdLoading) {
+        // The AdLoader is still loading ads.
+        // Expect more nativeAdDidLoadContent:
+        // or nativeAdDidFailToLoadWithError: callbacks.
+    } else {
+        // The AdLoader has finished loading ads.
+    }
+}
+```
+</CodeGroup>
 
 ## Receive Ad events
 To be notified of events related to the native ad interactions, set the delegate property of the native ad and then implement `CASNativeContentDelegate` to receive the following delegate calls:
 
+<CodeGroup synchronize="true">
 ```swift
 class AppController: UIViewController, CASNativeContentDelegate, CASNativeLoaderDelegate { 
 
@@ -103,5 +164,30 @@ class AppController: UIViewController, CASNativeContentDelegate, CASNativeLoader
     }
 }
 ```
+```objc
+@interface AppController : UIViewController <CASNativeAdContentDelegate, CASNativeLoaderDelegate>
+@end
+
+@implementation AppController
+
+- (void)receiveNativeAdContentEvents:(CASNativeAdContent *)nativeAd {
+    CASContentInfo *adInfo = nativeAd.contentInfo;
+    nativeAd.delegate = self;
+}
+
+#pragma mark - CASNativeContentDelegate
+
+- (void)nativeAd:(CASNativeAdContent *)ad didFailToPresentWithError:(CASError *)error {
+    // (Optional) Handle Ad render errors.
+    // Called from [CASNativeView setNativeAd:nativeAd]
+}
+
+- (void)nativeAdDidClickContent:(CASNativeAdContent *)ad {
+    // (Optional) Called when the native ad is clicked by the user.
+}
+
+@end
+```
+</CodeGroup>
 
 Don't implement any custom click handlers on any views over or within the native ad view. To observe click events yourself, use the ad delegate `nativeAdDidClickContent(_:)`. Clicks on the ad view assets are handled by the SDK as long as you correctly populate and register the asset views, as discussed in the previous section.

@@ -6,6 +6,8 @@ title: Additional Meta AudienceNetwork steps
 ## iOS Advertising Tracking Enabled for Audience Network
 Implement the [setAdvertiserTrackingEnabled](https://developers.facebook.com/docs/audience-network/setting-up/platform-setup/ios/advertising-tracking-enabled) flag, irrespective of the use of mediation, to inform Facebook whether to use the data to deliver personalized ads.  
 Set flag to inform Audience Network to use the data to deliver personalized ads in line with your own legal obligations, platform terms, and commitments you’ve made to your users.
+
+<CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
 import FBAudienceNetwork
@@ -15,20 +17,45 @@ func requestATT(){
     CAS.create(...)
 }
 ```
+```objc
+#import <CleverAdsSolutions/CleverAdsSolutions.h>
+#import <FBAudienceNetwork/FBAdSettings.h>
+
+- (void)requestATT {
+    [FBAdSettings setAdvertiserTrackingEnabled:enabled];
+    [CAS create :...];
+}
+```
+</CodeGroup>
+
 ## Data Processing Options for US Users
 Meta Audience Network Data Processing Options for US Users Limited Data Use is a data processing option that gives you more control over how your data is used in Meta’s systems and better supports your compliance efforts with various US state privacy regulations. To utilize this feature, you must proactively enable Limited Data Use.  
 Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
 
 If you do not want to enable Limited Data Use (LDU) mode, pass an empty string array:
+
+<CodeGroup synchronize="true">
 ```swift
-FBAdSettings.setDataProcessingOptions([])  
+FBAdSettings.setDataProcessingOptions([])
 ```
+```objc
+[FBAdSettings setDataProcessingOptions:@[]];
+```
+</CodeGroup>
+
+
 To enable LDU for users and specify user geography, call `setDataProcessingOptions` in a form like this:
+<CodeGroup synchronize="true">
 ```swift
 FBAdSettings.setDataProcessingOptions(["LDU"])
 ```
+```objc
+[FBAdSettings setDataProcessingOptions:@[@"LDU"]];
+```
+</CodeGroup>
 
 You can determine whether the user has consented to Meta or not with Additional Consent from CMP. To do so, use code like the following:
+<CodeGroup synchronize="true">
 ```swift
 let metaConsent = CAS.settings.getAdditionalConsent(providerId: 89);
 if (metaConsent == CASConsentStatus.accepted) {
@@ -40,3 +67,19 @@ if (metaConsent == CASConsentStatus.accepted) {
     // Please check for consent status after the user completes the CMP flow.
 }
 ```
+```objc
+#import <CleverAdsSolutions/CleverAdsSolutions.h>
+#import <FBAudienceNetwork/FBAdSettings.h>
+
+CASConsentStatus metaConsent = [CAS.settings getAdditionalConsentWithProviderId:89];
+
+if (metaConsent == CASConsentStatusAccepted) {
+    [FBAdSettings setDataProcessingOptions:@[]];
+} else if (metaConsent == CASConsentStatusDenied) {
+    [FBAdSettings setDataProcessingOptions:@[@"LDU"]];
+} else {
+    // AC String is not available on disk.
+    // Please check for consent status after the user completes the CMP flow.
+}
+```
+</CodeGroup>

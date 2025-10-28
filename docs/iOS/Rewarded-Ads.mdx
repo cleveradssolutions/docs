@@ -12,6 +12,7 @@ Below is a diagram showing the ad lifecycle.
 
 ## Create Ad instance
 Ad instance can be initialized along with the UIViewController before `viewDidLoad`.
+<CodeGroup synchronize="true">
 ```swift
 import CleverAdsSolutions
 
@@ -20,12 +21,34 @@ class MyViewController: UIViewController, CASScreenContentDelegate {
     let rewardedAd = CASRewarded(casID: MyAppDelegate.casID)
 
 ```
+```objc
+#import <CleverAdsSolutions/CleverAdsSolutions.h>
+
+@interface MyViewController : UIViewController <CASScreenContentDelegate>
+@property (nonatomic, strong) CASRewarded *rewardedAd;
+@end
+
+@implementation MyViewController
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _rewardedAd = [[CASRewarded alloc] initWithCasID:MyAppDelegate.casID];
+    }
+    return self;
+}
+
+@end
+
+```
+</CodeGroup>
 
 The SDK provides the capability to create and precache multiple ad instances, enabling uninterrupted sequential ad display. CAS SDK will load mediation ads in order for each created instance.
 
 ## Receive Ad events
 The `CASScreenContentDelegate` handles events related to displaying your `CASInterstitial`. Callbacks are called on the main thread. Before showing ad, make sure to set `delegate`.
 
+<CodeGroup synchronize="true">
 ```swift
 func screenAdDidLoadContent(_ ad: any CASScreenContent) {
     // Called when the ad content has been successfully loaded.
@@ -51,6 +74,32 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
     // Called when the ad content is dismissed.
 }
 ```
+```objc
+- (void)screenAdDidLoadContent:(id<CASScreenContent>)ad {
+    // Called when the ad content has been successfully loaded.
+}
+
+- (void)screenAd:(id<CASScreenContent>)ad didFailToLoadWithError:(CASError *)error {
+    // Called when the ad content fails to load.
+}
+
+- (void)screenAd:(id<CASScreenContent>)ad didFailToPresentWithError:(CASError *)error {
+    // Called when the ad content fails to present.
+}
+
+- (void)screenAdWillPresentContent:(id<CASScreenContent>)ad {
+    // Called when the ad content is successfully shown.
+}
+
+- (void)screenAdDidClickContent:(id<CASScreenContent>)ad {
+    // Called when the ad content is clicked by the user.
+}
+
+- (void)screenAdDidDismissContent:(id<CASScreenContent>)ad {
+    // Called when the ad content is dismissed.
+}
+```
+</CodeGroup>
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](iOS/Impression-Level-Data).
@@ -60,6 +109,7 @@ func screenAdDidDismissContent(_ ad: any CASScreenContent) {
 
 ## Load Ad
 The next step is to fill out the `loadAd()` method and handle the ad load callbacks.
+<CodeGroup synchronize="true">
 ```swift
 override func viewDidLoad() {
     super.viewDidLoad()
@@ -69,12 +119,22 @@ override func viewDidLoad() {
     rewardedAd.loadAd();
 }
 ```
+```objc
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.rewardedAd.delegate = self;
+    [self.rewardedAd loadAd];
+}
+```
+</CodeGroup>
 
 You can use ad load calls to build up a cache of preloaded ads before you intend to show them, so that ads can be shown with zero latency when needed. Since ads expire after an hour, you should clear this cache and reload with new ads every hour.
 
 ### Autoload mode
 If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
 
+<CodeGroup synchronize="true">
 ```swift
 override func viewDidLoad() {
     super.viewDidLoad()
@@ -84,17 +144,35 @@ override func viewDidLoad() {
     rewardedAd.isAutoloadEnabled = true
 }
 ```
+```objc
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.rewardedAd.delegate = self;
+    self.rewardedAd.isAutoloadEnabled = YES;
+}
+```
+</CodeGroup>
+
 By default autoload disabled.
 
 ## Show Ad
 When you present a rewarded ad, you will use an `userDidEarnRewardHandler` to handle reward  for the user.
 
+<CodeGroup synchronize="true">
 ```swift
 rewardedAd.present(from: self, userDidEarnRewardHandler: { (info: AdContentInfo) in
     // Called when a user earns a reward from the ad.
     // TODO: Reward the user
 })
 ```
+```objc
+[self.rewardedAd presentFromViewController:self userDidEarnRewardHandler:^(CASContentInfo * _Nonnull info) {
+    // Called when a user earns a reward from the ad.
+    // TODO: Reward the user
+}];
+```
+</CodeGroup>
 
 The `UIViewController` parameter is an optional. The SDK uses the app’s main window to look up view controllers automatically when one is not provided.
 
@@ -102,10 +180,19 @@ Starting with CAS SDK version 4.3.0, all ads functions can be safely called from
 
 ### Checking Ad Availability
 Use `isAdLoaded` to check whether an ad is currently loaded.
+<CodeGroup synchronize="true">
 ```swift
 if rewardedAd.isAdLoaded {
+    // ...
 }
 ```
+```objc
+if (rewardedAd.isAdLoaded) {
+    // ...
+}
+```
+</CodeGroup>
+
 Even if `isAdLoaded` returns `true`, it does not guarantee that the ad will be shown successfully — various issues may still prevent it from being displayed. We strongly recommend handling potential display failures via `screenAd(_:didFailToPresentWithError:)` delegate to ensure a smoother user experience.
 
 By relying on these delegate, you ensure that your application can react appropriately to real-time conditions, rather than making assumptions based on ad load state at a single point in time.
@@ -113,27 +200,43 @@ By relying on these delegate, you ensure that your application can react appropr
 ## Extra fill Interstitial Ad
 Controls whether interstitial ads are shown as a fallback when a rewarded video ad has no available fill. Interstitial ads do not require the user to watch the entire ad to completion. However, the `userDidEarnRewardHandler` will still be triggered as if the user completed the rewarded video.
 This option is enabled by default. You can disable extra fill by following line:
-```java
+<CodeGroup synchronize="true">
+```swift
 rewardedAd.isExtraFillInterstitialAdEnabled = false
 ```
+```objc
+rewardedAd.isExtraFillInterstitialAdEnabled = NO;
+```
+</CodeGroup>
 
 ## Mute Ad sounds
 Indicates if the application’s audio is muted. Affects initial mute state for all ads.  
 Use this method only if your application has its own volume controls.  
+<CodeGroup synchronize="true">
 ```swift
 CAS.settings.mutedAdSounds = true
 ```
+```objc
+CAS.settings.mutedAdSounds = YES;
+```
+</CodeGroup>
 
 ## Release ad resource
 It is important to `destroy()` loaded but not displayed ads.
+<CodeGroup synchronize="true">
 ```swift
 deinit {  
     rewardedAd.destroy();
 }
 ```
+```objc
+- (void)dealloc {
+    [self.rewardedAd destroy];
+}
+```
+</CodeGroup>
 
 ## Samples
 - [SwiftUI Rewarded Ad ViewModel](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20SwiftUI/CASSwiftUIDemoApp/RewardedAd/RewardedAdModel.swift)
 - [Swift Rewarded Ad UIViewController](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Swift/CASSample/RewardedAd/RewardedVC.swift)
 - [Objective-C Rewarded Ad UIViewController](https://github.com/cleveradssolutions/CAS-iOS/blob/master/DemoApp%20Objective-C/CASSample/RewardedAd/RewardedVC.m)
-

@@ -24,9 +24,14 @@ Test full-screen ads displays details of CAS integration and tips for solving er
 The enabled Debug Mode will display a lot of useful information for debugging about the states of the sdk with tag CAS.   
 Disabled by default. Disabling Debug Mode may improve application performance.  
 
+<CodeGroup synchronize="true">
 ```swift
 CAS.settings.debugMode = true
 ```
+```objc
+CAS.settings.debugMode = YES;
+```
+</CodeGroup>
 
 <Info>
 If you have discovered the problem in the work of the SDK, please provide us with a description of the problem along with the full log of your device.
@@ -36,9 +41,14 @@ If you have discovered the problem in the work of the SDK, please provide us wit
 The quickest way to enable testing is to use test ad mode. The test ad mode are not associated with your CAS account, so there's no risk of your account generating invalid traffic when using these test ad mode.
 
 The easiest way to load test ads is to use:
+<CodeGroup synchronize="true">
 ```swift
 buildManager.withTestAdMode(true)
 ```
+```objc
+[buildManager withTestAdMode:YES];
+```
+</CodeGroup>
 
 <Warning>  
 Make sure you disable test ad mode and replace test manager ID with your own ad manager ID before publishing your app!
@@ -56,10 +66,14 @@ To get test ads on this device, set "12345678901234567890123456789012"
 3. Copy your alphanumeric test device ID to your clipboard.
 4. Modify your code to set the test device ID through add `TestDeviceIDs` before CAS manager initialize.
 
+<CodeGroup synchronize="true">
 ```swift
 CAS.settings.setTestDevice(ids: ["12345678901234567890123456789012"])
 ```
-
+```objc
+[CAS.settings setTestDeviceWithIds:@[@"12345678901234567890123456789012"]];
+```
+</CodeGroup>
 
 <Info>
 Be sure to remove the code that sets these test devices before you release your app.  

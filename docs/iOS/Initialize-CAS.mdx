@@ -13,22 +13,20 @@ import CleverAdsSolutions
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate { 
-    static let casID: String = "123456789"
+  static let casID: String = "123456789"
     
-    var window: UIWindow? // required for some mediated ads frameworks
+  var window: UIWindow? // required for some mediated ads frameworks
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    
-        initializeCAS()
-        return true
-    }
-    ...
+  func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {    
+    initializeCAS()
+    return true
+  }
+  // ...
 }
-
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
-  ...
+  // ...
 }
 ```
 
@@ -62,44 +60,47 @@ You can skip the manual call for ad initialization, and then the SDK will automa
 
 <CodeGroup synchronize="true">
 ```swift
+
 func initializeCAS() {
-    let builder = CAS.buildManager()
-    builder.withCompletionHandler { config in
-        // The CAS SDK initializes if the error is `nil`
-        let error: String? = config.error
-        let userCountryISO2: String? = config.countryCode
+  let builder = CAS.buildManager()
+  builder.withCompletionHandler { config in
+    // The CAS SDK initializes if the error is `nil`
+    let error: String? = config.error
+    let userCountryISO2: String? = config.countryCode
         
-        // True if the user is protected by GDPR or other regulations
-        let protectionApplied: Bool = config.isConsentRequired
+    // True if the user is protected by GDPR or other regulations
+    let protectionApplied: Bool = config.isConsentRequired
         
-        // The user completes the consent flow
-        let consentStatus = config.consentFlowStatus
-        let trackingAuthorized: Bool = config.isATTrackingAuthorized
-    }
+    // The user completes the consent flow
+    let consentStatus = config.consentFlowStatus
+    let trackingAuthorized: Bool = config.isATTrackingAuthorized
+  }
         
-    builder.create(withCasId: AppDelegate.casID)
+  builder.create(withCasId: AppDelegate.casID)
 }
 ```
 
 ```objc
+
 - (void)initializeCAS {
-    CASManagerBuilder *builder = [CAS buildManager];
+  CASManagerBuilder *builder = [CAS buildManager];
     
-    [builder withCompletionHandler:^(CASInitialConfig *config) {
-        // The CAS SDK initializes if the error is `nil`
-        NSString *error = config.error;
-        NSString *userCountryISO2 = config.countryCode;
+  [builder withCompletionHandler:^(CASInitialConfig *config) {
+    // The CAS SDK initializes if the error is `nil`
+    NSString *error = config.error;
+    NSString *userCountryISO2 = config.countryCode;
 
-        // YES if the user is protected by GDPR or other regulations
-        BOOL protectionApplied = config.isConsentRequired;
+    // YES if the user is protected by GDPR or other regulations
+    BOOL protectionApplied = config.isConsentRequired;
 
-        // The user completes the consent flow
-        CASConsentFlowStatus consentStatus = config.consentFlowStatus;
-        BOOL trackingAuthorized = config.isATTrackingAuthorized;
-    }];
+    // The user completes the consent flow
+    CASConsentFlowStatus consentStatus = config.consentFlowStatus;
+    BOOL trackingAuthorized = config.isATTrackingAuthorized;
+  }];
         
-    [builder createWithCasId:[AppDelegate casId]];
+  [builder createWithCasId:[AppDelegate casId]];
 }
+
 ```
 </CodeGroup>
 
@@ -162,13 +163,13 @@ By default, CAS initializes mediation in live mode. To enable test ad mode, you 
 <CodeGroup synchronize="true">
 ```swift
 #if DEBUG
-builder.withTestAdMode(true)
+  builder.withTestAdMode(true)
 #endif
 ```
 
 ```objc
 #ifdef DEBUG
-[builder withTestAdMode:YES];
+  [builder withTestAdMode:YES];
 #endif
 ```
 </CodeGroup>
