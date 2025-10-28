@@ -12,9 +12,9 @@ Set flag to inform Audience Network to use the data to deliver personalized ads 
 import CleverAdsSolutions
 import FBAudienceNetwork
 
-func requestATT(){
+func requestATT() {
     FBAdSettings.setAdvertiserTrackingEnabled(enabled)
-    CAS.create(...)
+    // CAS.create(...)
 }
 ```
 ```objc
@@ -23,7 +23,7 @@ func requestATT(){
 
 - (void)requestATT {
     [FBAdSettings setAdvertiserTrackingEnabled:enabled];
-    [CAS create :...];
+    // [CAS create :...];
 }
 ```
 </CodeGroup>
@@ -33,7 +33,6 @@ Meta Audience Network Data Processing Options for US Users Limited Data Use is a
 Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
 
 If you do not want to enable Limited Data Use (LDU) mode, pass an empty string array:
-
 <CodeGroup synchronize="true">
 ```swift
 FBAdSettings.setDataProcessingOptions([])
