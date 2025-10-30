@@ -5,58 +5,108 @@ title: CAS.AI Android SDK
 Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
 Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
 
-## App prerequisites
+### App prerequisites
 Make sure that your app's build file uses the following values:
 - Minimum SDK version of `23` or higher
 - Compile SDK version of `35` or higher
 
-## Maven repositories
-Some advertising SDKs are published in their own Maven repositories. To allow Gradle to download the required artifacts, you need to add the advertising Maven `repositories` to your Gradle settings file (`<project>/settings.gradle.kts`).
+### Maven repositories
+In your Gradle settings file (`<project>/settings.gradle.kts`), include the
+following `repositories` block so that Gradle can download the artifacts of ad networks:
 
 <AccordionGroup>
 <Accordion defaultOpen title="Manven Ads repositories">
+<CodeTabs synchronize={true}>
+<Tab>
 ```kotlin
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
-    google()  
-    mavenCentral()  
-    maven {  
-        name = "MintegralAdsRepo"  
-        url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")  
-        content { includeGroup("com.mbridge.msdk.oversea") }  
-    }  
-    maven {  
-        name = "PangleAdsRepo"  
-        url = uri("https://artifact.bytedance.com/repository/pangle")  
-        content { includeGroup("com.pangle.global") }  
-    }
-    maven {  
-        name = "ChartboostAdsRepo"  
-        url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/")  
-        content { includeGroup("com.chartboost") }  
-    }
-    maven {  
-        name = "YSONetworkRepo"  
-        url = uri("https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android")  
-        content { includeGroup("com.ysocorp") }  
-    }
-    maven {  
-        name = "OguryAdsRepo"  
-        url = uri("https://maven.ogury.co")  
-        content {  
-            includeGroup("co.ogury")  
-            includeGroup("co.ogury.module")  
-        }  
-    }  
+    google()
+    mavenCentral()
     maven {
-        name = "SuperAwesomeRepo"
-        url = uri("https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo")
-        content { includeGroup("tv.superawesome.sdk.publisher") }
+      name = "MintegralAdsRepo"
+      url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")
+      content { includeGroup("com.mbridge.msdk.oversea") }
+    }
+    maven {
+      name = "PangleAdsRepo"
+      url = uri("https://artifact.bytedance.com/repository/pangle")
+      content { includeGroup("com.pangle.global") }
+    }
+    maven {
+      name = "ChartboostAdsRepo"
+      url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/")
+      content { includeGroup("com.chartboost") }
+    }
+    maven {
+      name = "YSONetworkRepo"
+      url = uri("https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android")
+      content { includeGroup("com.ysocorp") }
+    }
+    maven {
+      name = "OguryAdsRepo"
+      url = uri("https://maven.ogury.co")
+      content {
+        includeGroup("co.ogury")
+        includeGroup("co.ogury.module")
+      }
+    }
+    maven {
+      name = "SuperAwesomeRepo"
+      url = uri("https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo")
+      content { includeGroup("tv.superawesome.sdk.publisher") }
     }
   }
 }
 ```
+</Tab> 
+<Tab>
+```groovy
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+  repositories {
+    google()
+    mavenCentral()
+
+    maven {
+      name = 'MintegralAdsRepo'
+      url 'https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea'
+      content { includeGroup 'com.mbridge.msdk.oversea' }
+    }
+    maven {
+      name = 'PangleAdsRepo'
+      url 'https://artifact.bytedance.com/repository/pangle'
+      content { includeGroup 'com.pangle.global' }
+    }
+    maven {
+      name = 'ChartboostAdsRepo'
+      url 'https://cboost.jfrog.io/artifactory/chartboost-ads/'
+      content { includeGroup 'com.chartboost' }
+    }
+    maven {
+      name = 'YSONetworkRepo'
+      url 'https://ysonetwork.s3.eu-west-3.amazonaws.com/sdk/android'
+      content { includeGroup 'com.ysocorp' }
+    }
+    maven {
+      name = 'OguryAdsRepo'
+      url 'https://maven.ogury.co'
+      content {
+        includeGroup 'co.ogury'
+        includeGroup 'co.ogury.module'
+      }
+    }
+    maven {
+      name = 'SuperAwesomeRepo'
+      url 'https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo'
+      content { includeGroup 'tv.superawesome.sdk.publisher' }
+    }
+  }
+}
+```
+</Tab></CodeTabs>
 </Accordion>
 <Accordion title="Maven Ads repositories for Closed beta">
 
@@ -92,7 +142,7 @@ The CAS SDK provide a Gradle Plugin to simplify and automate certain integration
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
 In your module **(app-level)** Gradle file (usually `<project>/<app-module>/build.gradle`), add the CAS services plugin inside the `plugins` block.
-```kotlin
+```groovy
 plugins {
     id("com.android.application") // before CAS plugin
     id("com.cleveradssolutions.gradle-plugin") version "{{ versions.ios }}"
@@ -119,7 +169,7 @@ In most cases, a `casId` is the same as your application package name.
 <Accordion title="How integrate CAS plugin in library module?">
 
 To integrating the plugin into the module `id("com.android.library")` (**library-level**) you must define the `cas.casId` property. 
-```kotlin
+```groovy
 plugins {
     id("com.android.library") // before CAS plugin
     id("com.cleveradssolutions.gradle-plugin") version $casVersion
@@ -134,7 +184,7 @@ cas {
 <Accordion title="How override CAS ID for Product Flavors in app module?">
 
 For the application module as a CAS Id will be selected the final `applicationId` with all modifications.
-```kotlin
+```groovy
 android {
     flavorDimensions.add("version")
     productFlavors {  
@@ -158,7 +208,7 @@ Note that you must register each final `applicationId` as a separate CAS ID in p
 <Accordion title="How override CAS ID for Product Flavors in library module?">
 
 To integrate a CAS plugin into the `id("com.android.library")` module (**library level**), you must define the `cas.casId` property in the body of each product flavor.
-```kotlin
+```groovy
 cas {
    casId = "com.yourcompany.yourproject"
    addCasIdVariant("second", "com.yourcompany.yourproject.second")
@@ -190,7 +240,7 @@ If you're unsure which solution best fits your application, please contact your 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:  
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yandex Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
 
-```kotlin
+```groovy
 cas {
     includeOptimalAds = true
 }
@@ -200,7 +250,7 @@ cas {
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en). Networks included:
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
 
-```kotlin
+```groovy
 cas {
     includeFamiliesAds = true
 }
@@ -214,7 +264,7 @@ Follow the instructions on the [Mediated Networks](Android/Mediated-Networks) pa
 ### Google Advertising Identifier
 The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.
 
-```kotlin
+```groovy
 cas {
     useAdvertisingId = true
 }
