@@ -16,8 +16,7 @@ following `repositories` block so that Gradle can download the artifacts of ad n
 
 <AccordionGroup>
 <Accordion defaultOpen title="Manven Ads repositories">
-<CodeTabs synchronize={true}>
-<Tab>
+<CodeGroup synchronize={true}>
 ```kotlin
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -60,8 +59,6 @@ dependencyResolutionManagement {
   }
 }
 ```
-</Tab> 
-<Tab>
 ```groovy
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -106,8 +103,10 @@ dependencyResolutionManagement {
   }
 }
 ```
-</Tab></CodeTabs>
+</CodeGroup>
 </Accordion>
+
+
 <Accordion title="Maven Ads repositories for Closed beta">
 
 Read more about Closed beta ads partners on [Mediation Networks](Android/Mediated-Networks) page.  
