@@ -5,10 +5,10 @@
         "versions": {
             "android": "4.4.1",
             "ios": "4.4.1",
-            "unity": "4.3.0",
-            "flutter": "4.3.0",
-            "unreal": "4.3.0",
-            "reactnative": "4.3.1",
+            "unity": "4.4.1",
+            "flutter": "4.4.1",
+            "unreal": "4.4.1",
+            "reactnative": "4.4.1",
             "cordova": "1.0.3",
             "solar": "18",
             "construct": "0.0.3.0"
