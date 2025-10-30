@@ -3,8 +3,8 @@
     "description": "Increase your mobile app monetization efficiency with CAS.AI.",
     "variables": {
         "versions": {
-            "android": "4.3.0",
-            "ios": "4.3.0",
+            "android": "4.4.1",
+            "ios": "4.4.1",
             "unity": "4.3.0",
             "flutter": "4.3.0",
             "unreal": "4.3.0",
@@ -160,10 +160,6 @@
                         {
                             "title": "Meta Audience Network",
                             "href": "/Android/Additional-Meta-AudienceNetwork-steps"
-                        },
-                        {
-                            "title": "Yandex Mobile Ads",
-                            "href": "/Android/Additional-Yandex-Mobile-Ads-steps"
                         }
                     ]
                 }
