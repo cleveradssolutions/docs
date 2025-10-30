@@ -9,13 +9,20 @@ Follow the step-by-step guide below. Optional steps can be completed at your dis
 Find the repositories on the [Home page](Android).
 
 ### 2. Add the dependencies for the CAS SDK to your module-level build file:
+<CodeGroup synchronize={true}>
 ```kotlin
 dependencies {
     implementation("com.cleveradssolutions:cas-sdk:{{ versions.android }}")
     ...
 }
 ```
-
+```groovy
+ependencies {
+    implementation 'com.cleveradssolutions:cas-sdk:{{ versions.android }')
+    ...
+}
+```
+</CodeGroup>
 All adapters for supported networks are found in the `com.cleveradssolutions` dependency group, and do not require additional SDK dependencies to be added.  
 
 <Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Android/subscription">
