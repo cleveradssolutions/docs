@@ -7,6 +7,23 @@ This should be done only once, ideally during the app launch.
 
 To begin, create a string constant with your `CAS_ID`. This constant will be needed when creating each ad format instance.
 
+<CodeGroup synchronize={true}>
+```kotlin
+import com.cleversolutions.ads.android.CAS
+
+class MyApplication : Application() {
+
+    companion object {
+        const val CAS_ID: String = BuildConfig.APPLICATION_ID
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        initializeCAS()
+    }
+}
+```
+
 ```java
 import com.cleversolutions.ads.android.CAS;
 
@@ -22,6 +39,7 @@ class MyApplication extends Application {
     }
 }
 ```
+</CodeGroup>
 
 <Accordion title="What is CAS ID?">
 
