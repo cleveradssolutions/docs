@@ -110,24 +110,23 @@ Create an `CASBannerView` using the ad size to add to your app's layout:
 import com.cleversolutions.ads.android.CASBannerView
 
 class MyActivity : Activity() {
-private lateinit var bannerView: CASBannerView
+    private lateinit var bannerView: CASBannerView
 
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-    bannerView = CASBannerView(this, MyApplication.CAS_ID)
-    bannerView.size = AdSize.BANNER // or any AdSize from above
-    bannerView.isAutoloadEnabled = true
+        bannerView = CASBannerView(this, MyApplication.CAS_ID)
+        bannerView.size = AdSize.BANNER // or any AdSize from above
+        bannerView.isAutoloadEnabled = true
 
-    // Replace ad container with new ad view.
-    adContainerView.removeAllViews()
-    adContainerView.addView(
-        bannerView,
-        LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-    )
-}
-
+        // Replace ad container with new ad view.
+        adContainerView.removeAllViews()
+        adContainerView.addView(
+            bannerView,
+            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        )
+    }
 }
 ```
 

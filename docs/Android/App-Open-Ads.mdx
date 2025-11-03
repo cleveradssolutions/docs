@@ -44,6 +44,7 @@ class MyActivity extends Activity {
         setContentView(R.layout.activity_main);
         ...
     }
+}
 ```
 </CodeGroup>
 
@@ -189,12 +190,11 @@ The most common app open implementation is to attempt to show an app open ad nea
 override fun onResume() {
     super.onResume()
 
-if (appOpenAd.isLoaded) {      
+    if (appOpenAd.isLoaded) {      
         appOpenAd.show(this)       
     } else if (appOpenAd.isAutoloadEnabled == false) {
         appOpenAd.load(this)
     }
-
 }
 ```
 
