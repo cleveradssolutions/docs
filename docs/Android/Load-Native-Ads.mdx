@@ -21,19 +21,13 @@ val nativeAdCallback = object : NativeAdContentCallback() {
         keepNativeAdInMemory(nativeAd)
         registerNativeAdContent(nativeAd)
     }
-
     override fun onNativeAdFailedToLoad(error: AdError) {
         // (Optional) Handle Ad load errors
     }
-
-    override fun onNativeAdFailedToShow(
-        nativeAd: NativeAdContent,
-        error: AdError
-    ) {
+    override fun onNativeAdFailedToShow(nativeAd: NativeAdContent,error: AdError) {
         // (Optional) Handle Ad render errors.
         // Called from CASNativeView.setNativeAd(nativeAd)
     }
-
     override fun onNativeAdClicked(nativeAd: NativeAdContent,ad: AdContentInfo) {
         // (Optional) Called when the native ad is clicked by the user.
     }
