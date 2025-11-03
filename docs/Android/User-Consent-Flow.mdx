@@ -2,7 +2,6 @@
 title: User Consent Flow
 ---
 
-
 <Info>
 It is optional to use the CMP flow included with the CAS SDK. If you integrate your own CMP flow, make sure that flow completes before you initialize the CAS SDK.
 </Info>
@@ -33,6 +32,19 @@ The automatic consent flow is enabled by default and described on the [CAS initi
 ## Manual consent flow
 Call `showIfRequired()` on the `ConsentFlow` class. If the consent is required, the SDK loads a form and immediately presents it . 
 The `OnDismissListener` is called after the form is dismissed. If consent is not required, the `OnDismissListener` is called immediately.
+<CodeGroup synchronize={true}>
+```kotlin
+ConsentFlow()
+    .withDismissListener(object : ConsentFlow.OnDismissListener {
+        override fun onConsentFlowDismissed(status: Int) {
+            if (status == ConsentFlow.Status.OBTAINED) {
+                // User consent obtained
+            }
+        }
+    })
+    .showIfRequired()
+```
+
 ```java
 new ConsentFlow()
     .withDismissListener(new ConsentFlow.OnDismissListener() {  
@@ -45,6 +57,8 @@ new ConsentFlow()
     })
     .showIfRequired();
 ```
+
+</CodeGroup>
 
 <Warning>  
 The `show()` and `showIfRequired()` methods must be called from the main (UI) thread.
@@ -65,11 +79,60 @@ The cache consent status on your app or a previously saved consent string, could
 </Warning>
 
 ## Privacy options button
+
 Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
 
 1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
 2. Once `showIfRequired()` completes, check `isConsentObtained` to determine whether to display the UI element that can present the privacy options form.
 3. When a user interacts with your UI element, call `show()` to show the form so the user can update their privacy options at any time.
+
+<CodeGroup synchronize={true}>
+```kotlin
+class MyActivity : Activity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // ...
+
+        initializeCAS()
+        generateOptionsMenu(ConsentFlow.Status.OBTAINED)
+    }
+
+    private fun initializeCAS() {
+        val builder = CAS.buildManager()
+            .withCasId(MyApplication.CAS_ID)
+            .withTestAdMode(BuildConfig.DEBUG)
+            .withCompletionListener(object : InitializationListener {
+                override fun onCASInitialized(config: InitialConfiguration) {
+                    // The user completes the consent flow
+                    generateOptionsMenu(config.consentFlowStatus)
+                }
+            })
+
+        builder.build(this)
+    }
+
+    private fun generateOptionsMenu(status: Int) {
+        if (status == ConsentFlow.Status.OBTAINED) {
+            // Generate the options menu to include the privacy button.
+        } else {
+            // Regenerate the options menu to remove the privacy button.
+        }
+    }
+
+    fun showPrivacyOptionsForm() {
+        ConsentFlow()
+            .withDismissListener(object : ConsentFlow.OnDismissListener {
+                override fun onConsentFlowDismissed(status: Int) {
+                    generateOptionsMenu(status)
+                }
+            })
+            .withUIContext(this)
+            .show()
+    }
+}
+```
+
 ```java
 class MyActivity extends Activity {
 
@@ -118,15 +181,27 @@ class MyActivity extends Activity {
     }
 }
 ```
+</CodeGroup>
 
 ## Debug geography
+
 The SDK provides a way to test your app's behavior as though the device was located in the EEA or UK using the `WithDebugGeography` option. 
+
+<CodeGroup synchronize={true}>
+```kotlin
+ConsentFlow()
+    .withDebugGeography(ConsentFlow.DebugGeography.EEA)
+    .withForceTesting(BuildConfig.DEBUG)
+    .showIfRequired()
+```
+
 ```java
 new ConsentFlow()
     .WithDebugGeography(ConsentFlow.DebugGeography.EEA)
     .withForceTesting(BuildConfig.DEBUG)
     .ShowIfRequired();
 ```
+</CodeGroup>
 
 <Info>
 Note that debug geography only work if:
@@ -135,12 +210,14 @@ Note that debug geography only work if:
 </Info>
 
 ## Meta Audience Network Data Processing Options for Users in California
-The CAS does not support your handling of CCPA opt-out values for Meta Audience Network, you must work directly with the network to  purposes of your obligations for CCPA compliance.  
+
+The CAS does not support your handling of CCPA opt-out values for Meta Audience Network, you must work directly with the network to  purposes of your obligations for CCPA compliance.
 
 To learn how to implement Meta Audience Network’s “Limited Data Use” flag, read the [Additional Meta AudienceNetwork steps](Android/Additional-Meta-AudienceNetwork-steps).
 
 ## Custom Consent Logic
-The following instructions apply if you are using your own or a third-party party consent mechanism. 
+
+The following instructions apply if you are using your own or a third-party party consent mechanism.
 
 <Error>  
 If you access Google demand through CAS, it’s critical that you review the [Google CMP requirements](https://support.google.com/adsense/answer/13554116) before you start the integration process.
@@ -151,27 +228,62 @@ You must set the privacy options before initialize the CAS to disable the automa
 </Warning>
 
 ### Consent in GDPR and Other regions
-CAS shares these set consent values via adapters to supported mediation partners.  
 
-If the user consents to interest-based advertising, set the user consent `ACCEPTED` flag:
-```java
-CAS.settings.setUserConsent(ConsentStatus.ACCEPTED);
+CAS shares these set consent values via adapters to supported mediation partners.
+
+If the user consents to interest-based advertising, set the user consent `ACCEPTED` flag: 
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.settings.setUserConsent(ConsentStatus.ACCEPTED)
 ```
+
+```java
+CAS.getSettings().setUserConsent(ConsentStatus.ACCEPTED);
+```
+</CodeGroup>
+
 If the user does NOT consent to interest-based advertising, set the user consent `DENIED` flag:
-```java
-CAS.settings.setUserConsent(ConsentStatus.DENIED);
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.settings.setUserConsent(ConsentStatus.DENIED)
 ```
+
+```java
+CAS.getSettings().setUserConsent(ConsentStatus.DENIED);
+```
+</CodeGroup>
+
 Once you set the consent value, CAS will continue to respect that value for the lifetime of your application or until the user consents to interest-based advertising.
 
 ### Multi-State Consumer privacy laws
+
 California and Virginia laws may require you to display a “Do Not Sell or Share My Personal Information” link or provide other options to users located in those states to opt out of interest-based advertising. You must set a flag that indicates whether users in those states opt out of interest-based advertising or the sale or share of personal information for interest-based advertising.
 
 If a user does NOT opt out of interest-based advertising, set the `OPT_IN_SALE` flag: 
-```java
-CAS.settings.setCcpaStatus(CCPAStatus.OPT_IN_SALE);
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.settings.setCcpaStatus(CCPAStatus.OPT_IN_SALE)
 ```
+
+```java
+CAS.getSettings().setCcpaStatus(CCPAStatus.OPT_IN_SALE);
+```
+</CodeGroup>
+
 If a user does opt out of interest-based advertising, set the `OPT_OUT_SALE` flag:
-```java
-CAS.settings.setCcpaStatus(CCPAStatus.OPT_OUT_SALE);
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.settings.setCcpaStatus(CCPAStatus.OPT_OUT_SALE)
 ```
+
+```java
+CAS.getSettings().setCcpaStatus(CCPAStatus.OPT_OUT_SALE);
+```
+</CodeGroup>
+
 You do not need to set this flag for users who are outside California. If you do set this flag for such users, this will not impact how ads are served to them.
+

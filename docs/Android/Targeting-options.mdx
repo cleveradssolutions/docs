@@ -7,61 +7,113 @@ You’ll need to inform our servers of the users’ details so the SDK will know
 to the segment the user belongs to.
 
 ### User ID
-The userID is a unique identifier supplied by your application and must be static for each user across sessions. 
+The userID is a unique identifier supplied by your application and must be static for each user across sessions.
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.targetingOptions.userID = "user-hash-code"
+```
+
 ```java
 CAS.getTargetingOptions().setUserID("user-hash-code");
 ```
+</CodeGroup>
 
 <Warning>  
 Your userID should not contain any personally identifiable information such as  an email address, screen name, Android ID (AID), or Google Advertising ID (GAID).
 </Warning>
 
 ### User Age
+
 Set user age. Limitation: 1-99. By default 0 is 'unknown'.
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.targetingOptions.age = 12
+```
 
 ```java
 CAS.getTargetingOptions().setAge(12);
 ```
+</CodeGroup>
 
 ### User Gender
+
 Set targeting to user’s gender. Limitation: `GENDER_UNKNOWN, GENDER_MALE, GENDER_FEMALE`.
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.targetingOptions.gender = TargetingOptions.GENDER_MALE
+```
 
 ```java
 CAS.getTargetingOptions().setGender(TargetingOptions.GENDER_MALE);
 ```
+</CodeGroup>
 
 ### User Location
+
 Set the user's current location. Location data is not used to CAS; however, it may be used by third party ad networks.
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.targetingOptions.location = userLocation
+```
 
 ```java
 CAS.getTargetingOptions().setLocation(userLocation);
 ```
+</CodeGroup>
 
 <Warning>  
 Do not use Location just for advertising. Your app should have a valid use case for it as well.
 </Warning>
 
 ### User Location auto collection
-Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place. 
-- Collect only if your application already has the relevant end-user permissions.  
-* Does not collect if the target audience is children.   
-* Disabled by default.
+
+Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place.
+
+* Collect only if your application already has the relevant end-user permissions.
+- Does not collect if the target audience is children.
+- Disabled by default.
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.targetingOptions.locationCollectionEnabled = true
+```
 
 ```java
 CAS.getTargetingOptions().setLocationCollectionEnabled(true);
 ```
+</CodeGroup>
 
 ### App Keywords
+
 Set a list of keywords, interests, or intents related to your application. Words or phrases describe
 the current activity of the user for targeting purposes.
 
-```java
-CAS.getTargetingOptions().setKeywords(keywords);
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.targetingOptions.keywords = setOf("sports", "football", "fitness")
 ```
 
+```java
+CAS.getTargetingOptions().setKeywords(
+    new java.util.HashSet<>(java.util.Arrays.asList("sports", "football", "fitness"))
+);
+```
+</CodeGroup>
+
 ### App Content URL
+
 Set the content URL for a website whose content matches the app's primary content. This website content is used for targeting and brand safety purposes. Limitation: max URL length 512.
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.targetingOptions.contentUrl = contentUrl
+```
 
 ```java
 CAS.getTargetingOptions().setContentUrl(contentUrl);
 ```
+</CodeGroup>
