@@ -1,0 +1,148 @@
+---
+title: Rewarded Ads
+description: This guide explains how to integrate rewarded ads into a Cordova app.
+---
+
+Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
+Rewarded ads boost engagement because users receive a tangible benefit for their time.
+
+Rewarded Ad management in React code is handled through the `RewardedAd` class which extends the shared fullscreen ad logic.
+The rewarded ad is displayed as an overlay on top of all app content and cannot be added to the Cordova component tree.
+
+
+Below is a diagram showing the ad lifecycle and how autoload affects it.
+
+<Image zoom src="/assets/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
+
+## Load Ad
+CAS provides an option to enable autoload to simplify your app logic. 
+Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
+
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+```js
+useEffect(() => {
+  RewardedAd.setAutoloadEnabled(true);
+}, []);
+```
+
+Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
+
+When you want to manually control ad loading, use the `loadAd()` function.
+```js
+useEffect(() => {
+  RewardedAd.loadAd();
+}, []);
+```
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+Use the `addAdLoadedEventListener` event to be notified when the ad is ready for display.
+
+## Ad content callbacks
+`RewardedAd` provides several lifecycle event listeners to handle ad behavior:
+
+```js
+useEffect(() => {
+  const unsubscribeReward = RewardedAd.addAdUserEarnRewardEventListener(() => {
+    // Called when the user has earned the reward.
+    console.log('Reward the user for watching the ad');
+  });
+  const unsubscribeLoaded = RewardedAd.addAdLoadedEventListener(() => {
+    // Called when an ad is successfully loaded. 
+    console.log('Loaded');
+  });
+  const unsubscribeFailedToLoad = RewardedAd.addAdFailedToLoadEventListener((error) => {
+    // Called when an ad load failed. 
+    console.log('Load failed:', error);
+  });
+  const unsubscribeFailedToShow = RewardedAd.addAdFailedToShowEventListener((error) => {
+    // Called when the ad failed to show full screen content. 
+    console.log('Failed to show:', error);
+  });
+  const unsubscribeShowed = RewardedAd.addAdShowedEventListener(() => {
+    // Called when the ad showed the full screen content.
+    console.log('Showed');
+  });
+  const unsubscribeClicked = RewardedAd.addAdClickedEventListener(() => {
+    // Called when a click is recorded for an ad.
+    console.log('Clicked');
+  });
+  const unsubscribeImpression = RewardedAd.addAdImpressionEventListener((info: AdContentInfo) => {
+    // Called when an impression occurs on the ad. 
+    console.log('Impression', info);
+  });
+  const unsubscribeDismissed = RewardedAd.addAdDismissedEventListener(() => {
+    // Called when the ad dismissed full screen content. 
+    console.log('Dismissed');
+  });
+
+  return () => {
+    unsubscribeReward();
+    unsubscribeLoaded();
+    unsubscribeFailedToLoad();
+    unsubscribeFailedToShow();
+    unsubscribeShowed();
+    unsubscribeClicked();
+    unsubscribeImpression();
+    unsubscribeDismissed();
+  };
+}, []);
+```
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
+- When an error occurs during ad impression, only `AdFailedToShowEvent` is triggered.  
+  In this case, `AdDismissedEvent` will not be executed since the impression is not considered successful.
+</Info>
+
+## Show Ad
+Be sure to `addAdUserEarnRewardEventListener` and reward the user for watching an ad.  
+
+You can choose when to show the ad by calling `show()`:
+```js
+RewardedAd.showAd();
+```
+
+The `AdUserEarnRewardEvent` differs from `AdDismissedEvent` — the user might not complete the ad and thus not earn a reward.
+
+If the ad is not ready at that moment, the `AdFailedToShowEvent` will be triggered with a reason provided in the `AdError`.
+
+You have the option to check `isAdLoaded()` if it's required by your app's logic.
+```js
+const isAdLoaded = await RewardedAd.isAdLoaded();
+```
+
+## Extra fill by Interstitial Ad
+CAS provides the option to load the interstitial ads as a fallback when a rewarded video ad has no available fill. 
+Interstitial ads do not require the user to watch the entire ad to completion. 
+However, the `AdUserEarnRewardEvent` will still be triggered as if the user completed the rewarded video.
+
+```js
+RewardedAd.setExtraFillByInterstitialAd(true); // [!code highlight]
+```
+
+## Mute Ad sounds
+Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
+
+```js
+casai.setAdSoundsMuted(true);
+```
+
+Not muted by default.
+
+## Release ad resource
+Be sure to release ad resources when no longer needed:
+
+```js
+useEffect(() => {
+  return () => {
+    RewardedAd.destroy();
+  };
+}, []);
+```
+
+## Complete example
+- [Rewarded ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/RewardedExample.tsx)
+
+

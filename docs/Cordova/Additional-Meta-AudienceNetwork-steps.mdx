@@ -1,0 +1,21 @@
+---
+title: Additional Meta AudienceNetwork steps
+---
+
+## Data Processing Options for US Users
+Meta Audience Network Data Processing Options for US Users Limited Data Use is a data processing option that gives you more control over how your data is used in Meta’s systems and better supports your compliance efforts with various US state privacy regulations. To utilize this feature, you must proactively enable Limited Data Use.
+Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
+
+If you do not want to enable Limited Data Use (LDU) mode, pass an empty string as a value of mediation extras with key `FB_dp` in initialize method:
+```js
+await casai.initialize({
+  mediationExtras: { FB_dp: '' }, // [!code highlight]
+});
+```
+To enable LDU for users and specify user geography, set `'LDU'` to `mediationExtras`:
+
+```js
+await casai.initialize({
+  mediationExtras: { FB_dp: 'LDU' }, // [!code highlight]
+});
+```

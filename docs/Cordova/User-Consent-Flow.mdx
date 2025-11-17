@@ -1,0 +1,128 @@
+---
+title: User Consent Flow
+---
+
+<Info>
+It is optional to use the CMP flow included with the CAS SDK. If you integrate your own CMP flow, make sure that flow completes before you initialize the CAS SDK.
+</Info>
+
+<Info>
+If you implement a CMP that is compliant with IAB TCF v2 ([Transparency & Consent Framework](https://iabeurope.eu/tcf-2-0/)) for your user consent flow, the CAS SDK supports sending the TCF v2 consent to networks. In this case, the CAS Consent Flow will not be shown to the user.
+</Info>
+
+In order for CAS and our ad providers to deliver ads that are more relevant to your users, as a mobile app publisher, you need to collect explicit user consent for use of personal data in the regions covered by GDPR, CCPA, LGPD, PIPEDA.
+
+### 1. Opt-in consent for the collection and use of personal data in the regions covered by GDPR, CCPA, LGPD, PIPEDA.
+Any businesses established are required to comply with GDPR in Europe, CCPA in California, LGPD in Brazil, PIPEDA in Canada or risk facing heavy fines.
+
+Keep in mind that it’s best to contact qualified legal professionals, if you haven’t done so already, to get more information and be well-prepared for compliance.
+
+Read more about:
+
+* GDPR - [General Data Protection Regulation](https://gdpr-info.eu)
+* CCPA - [The California Consumer Privacy Act](https://theccpa.org)
+* LGPD - [General Personal Data Protection Act](https://lgpd-brazil.info)
+* PIPEDA - [The Personal Information Protection and Electronic Documents Act](https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/)
+
+<Image height="400" alt="image" src="/assets/User-Consent-Flow-1.png" />
+
+#### Users will not see the Consent dialog if at least one of following is true
+* Users located in regions that are not covered by information protection
+* Users who are subject to COPPA restrictions.
+
+### 2. Asking user permission to track them or access their device’s advertising identifier
+With iOS 14.5 and later, you need to receive the user’s permission through the `AppTrackingTransparency` framework in order to track them or access their device’s advertising identifier.  Read more about Asking Permission to Track and AppTrackingTransparency Framework on [Apple developer page](https://developer.apple.com/app-store/user-privacy-and-data-use/)
+
+<Warning>  
+If an app does not present this request, the IDFA will automatically be zeroed out, which may lead to a significant loss in ad revenue.
+</Warning>
+
+#### Users will not see the ATT request if at least one of the following is true
+* Users using iOS versions below 14.5
+* Users who have indicated that they do not allow apps to ask to track them, by setting *Settings > Privacy, Allow Apps to Request to Track*
+* Users with child accounts, or who are under age 18, who are signed in via their Apple ID
+* Users who have already answered so far
+* The app does not have a usage tracking description in **Info.plist** under `NSUserTrackingUsageDescription` key
+
+## Automatic consent flow
+The automatic consent flow is enabled by default and described on the [CAS initialization page](Cordova/Initialize-CAS).
+
+## Manual consent flow
+Call `casai.showConsentFlow()` to show the built-in consent form manually. If the consent is required, the SDK loads the form and immediately presents it.  
+
+The `Promise<ConsentFlowStatus>` completes after the form is dismissed. If consent is not required, the `Promise` resolves instantly.
+
+```js
+casai.showConsentFlow({
+  ifRequired: true,
+  debugGeography: 'eea'
+}).then((status) => {
+  if (status == 'Obtained') {
+    // User consent obtained.
+  }
+});
+```
+
+| ConsentFlow constant   | Description                                                        |
+| ---------------------- | ------------------------------------------------------------------ |
+| `Obtained`               | User consent obtained. Personalized vs non-personalized undefined. |
+| `Not required`           | User consent not required.                                         |
+| `Unavailable`            | User consent unavailable.                                          |
+| `Internal error`         | There was an internal error.                                       |
+| `Network error`          | There was an error loading data from the network.                  |
+| `Invalid context`        | There was an invalid context to display form.                      |
+| `Still presenting`       | There was an error with another form is still being displayed.     |
+
+<Warning>  
+The cache consent status on your app or a previously saved consent string, could lead to a [TCF 3.3](https://support.google.com/admanager/answer/9999955) error if consent is expired.
+</Warning>
+
+## Privacy options button
+Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
+
+1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
+2. Once `initialize()` completes, check `isConsentObtained` to determine whether to display the UI element that can present the privacy options form.
+3. When a user interacts with your UI element, call `show()` to show the form so the user can update their privacy options at any time.
+
+```js
+var isConsentObtained = false;
+
+function initialize() {
+  casai.initialize({
+    showConsentFormIfRequired: true,
+  }).then((status) => {
+    isConsentObtained = status.consentFlowStatus == `Obtained`; // [!code highlight]
+  });
+}
+
+function showPrivacyOptionsForm() {
+  casai.showConsentFlow({
+    ifRequired: false
+  }).then((status) => {
+    isConsentObtained = status == `Obtained`;
+  });
+}
+```
+
+## Debug geography
+The SDK provides a way to test your app's behavior as though the device was located in the EEA or UK using the `PrivacyGeography` enum.
+Specify it in the SDK initialization arguments, and the setting will be applied only for test sessions.
+
+```js
+casai.initialize(casId, {
+  forceTestAds: true,
+  debugGeography: 'eea', // [!code highlight]
+});
+```
+
+| PrivacyGeography         | Description                                   |
+|---------------|----------------------------------------------------------|
+| `unknown`     | Geography is unknown.                                    |
+| `eea`         | Geography appears as in the European Economic Area.      |
+| `us`          | Geography appears as in a regulated US State.            |
+| `unregulated` | Geography appears as in a region with no regulation.     |
+
+## Meta Audience Network Data Processing Options for Users in California
+The CAS does not support your handling of CCPA opt-out values for Meta Audience Network, you must work directly with the network to purposes of your obligations for CCPA compliance.
+
+To learn how to implement Meta Audience Network’s “Limited Data Use” flag, read the [Additional Meta AudienceNetwork steps](Cordova/Additional-Meta-AudienceNetwork-steps).

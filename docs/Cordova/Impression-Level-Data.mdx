@@ -1,0 +1,132 @@
+---
+title: Impression Level Data
+---
+
+CAS.AI SDK enables you to access detailed information for each impression through the impression callback APIs.  
+The data includes which demand source served the ad and the exact or estimated revenue associated with it.  
+This allows you to analyze and optimize your monetization and user acquisition strategies.
+
+### AdContentInfo
+The `AdContentInfo` structure contains information about a displayed ad.  
+
+<Property name="format" type="string">
+  The format of the ad that is shown. (e.g. `Banner`, `MREC`, `Interstitial`, `Rewarded`, `AppOpen`).
+</Property>
+
+---
+
+<Property name="sourceName" type="string">
+  The display name of the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="sourceUnitId" type="string">
+  The Ad Unit ID from the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="creativeId" type="string" optional>
+  The Creative ID associated with the ad, if available.
+  You can use this ID to report creative issues to the Ad review team. 
+</Property>
+
+---
+
+<Property name="revenue" type="number">
+  The revenue generated from the impression, in USD. 
+  The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. 
+</Property>
+
+---
+
+<Property name="revenuePrecision" type="string">
+  The precision type of the revenue field. (e.g. `estimated`, `precise`, `floor`).
+</Property>
+
+---
+
+<Property name="revenueTotal" type="number">
+  The accumulated value of user ad revenue in USD from all ad format impressions. 
+</Property>
+
+---
+
+<Property name="impressionDepth" type="number">
+  The total number of impressions across all ad formats for the current user, across all sessions. 
+</Property>
+
+
+### Ad Impression event
+Each ad impression triggers a `casai_ad_impressions` event with `AdContentInfo` details:
+
+```js
+document.removeEventListener('casai_ad_impressions', onAdImpression, false);
+document.addEventListener('casai_ad_impressions', onAdImpression, false);
+
+function onAdImpression(impression) {
+  // Called when an ad impression occurs.  
+  const adPlatform = 'CAS';
+  const adFormat = impression.format;
+  const adSource = impression.sourceName;
+  const adUnitName = impression.sourceUnitId;
+  const value = impression.revenue;
+  // All CAS revenue is sent in USD  
+  const currency = 'USD';
+}
+```
+
+### User ad summary
+CAS tracks cumulative impression and revenue metrics that are included in each `AdContentInfo` payload:
+
+```js
+const totalImpressions = impression.impressionDepth;
+const totalRevenue = impression.revenueTotal;
+```
+
+<Info>
+These counters persist between app sessions until the user clears your app’s data.
+</Info>
+
+## Automatic ad revenue collection
+The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. 
+Contact your account manager for details of enabling automatic events.
+
+### Google Analytics
+To measure ad revenue with Google Analytics:
+
+<Steps>
+<Step>
+Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
+</Step>
+<Step>
+Link your Firebase project to a Google Analytics account.
+</Step>
+</Steps>
+
+
+The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
+events whenever an ad is displayed.
+Events include parameters such as ad platform, source, currency, and value.
+Alternatively, CAS may log the event as `CAS_Impression`.
+
+### Tenjin
+To measure ad revenue with Tenjin Analytics:
+
+<Steps>
+<Step>
+Integrate the [Tenjin SDK](https://github.com/tenjin/tenjin-react-native-sdk).
+</Step>
+<Step>
+Ensure a Tenjin session is initialized, **or** pass your key to CAS SDK so it initializes Tenjin automatically:
+
+```js
+casai.initialize({
+  mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
+});
+```
+</Step>
+</Steps>
+
+
