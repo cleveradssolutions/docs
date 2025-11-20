@@ -19,22 +19,25 @@ Some advertising SDKs are published in their own Maven repositories. To allow Gr
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
-    google()  
-    mavenCentral()  
-    maven {  
+    google()
+    mavenCentral()
+    maven {
         name = "MintegralAdsRepo"  
         url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")  
         content { includeGroup("com.mbridge.msdk.oversea") }  
     }  
-    maven {  
+    maven {
         name = "PangleAdsRepo"  
         url = uri("https://artifact.bytedance.com/repository/pangle")  
         content { includeGroup("com.pangle.global") }  
     }
-    maven {  
+    maven {
         name = "ChartboostAdsRepo"  
         url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/")  
-        content { includeGroup("com.chartboost") }  
+        content {
+          includeGroup("com.chartboost")
+          includeGroup("com.iab.omid.library")
+      }
     }
     maven {  
         name = "YSONetworkRepo"  
@@ -75,6 +78,14 @@ Read more about Closed beta ads partners on [Mediation Networks](Android/Mediate
         url = uri("https://s3.amazonaws.com/smaato-sdk-releases/")  
         content { includeGroup("com.smaato.android.sdk") }  
     }  
+    maven {
+        name = "VerveAdsRepo"
+        url = uri("https://verve.jfrog.io/artifactory/verve-gradle-release")
+        content {
+            includeGroup("net.pubnative")
+            includeGroup("com.verve")
+        }
+    }
 ```
 
 </Accordion>
