@@ -134,19 +134,13 @@ function unsubscribeInterstitialLoadEvents() {
 - Ignored by all other banner types.
 
 ```js
-// Using .then() / .catch()
-try {
-  await casai.bannerAd.load({
-    adSize: adSize,
-    maxWidth: 320,
-    maxHeight: 250,
-    autoReload: true,
-    refreshInterval: 30
-  });
-  console.log('Banner loaded');
-} catch (error) {
-  console.error('Banner failed to load:', error);
-}
+casai.bannerAd.load({
+  adSize: adSize,
+  maxWidth: 320,
+  maxHeight: 250,
+  autoReload: true,
+  refreshInterval: 30
+})
 ```
 
 ## Ad refresh interval
