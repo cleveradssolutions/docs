@@ -7,53 +7,51 @@ Interstitial ads are full-screen ads that cover the interface of their host app.
 They're typically displayed at natural transition points in the flow of an app, such as between screens.
 When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.
 
-Interstitial Ad management in React code is handled through the `InterstitialAd` class which extends the shared fullscreen ad logic.
-The interstitial ad is displayed as an overlay on top of all app content and cannot be added to the Cordova component tree.
-
+Interstitial ad management in Cordova code is handled through the `casai.interstitialAd` object.
+The interstitial ad is displayed as an overlay on top of all app content and cannot be added to the Cordova WebView DOM.
 
 Below is a diagram showing the ad lifecycle and how autoload affects it.
 
 <Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
 
 ## Load Ad
-CAS provides an option to enable autoload to simplify your app logic. 
+
+CAS provides an option to enable autoload to simplify your app logic.  
 Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
 
 When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
 
-<Tabs groupId="cordova-interstitial-load-autoload">
+<Tabs groupId="style">
   <TabItem value="promise" label="Promise">
 
 ```js
 casai.interstitialAd
   .load({
     autoReload: true,
-    autoShow: false,
-    minInterval: 0,
   })
   .then(function () {
-    // Interstitial loaded with autoload enabled
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
   })
   .catch(function (error) {
-    // Handle load error
+    // Called when an ad load failed.
+    console.log('Load failed:', error);
   });
 ````
 
   </TabItem>
-  <TabItem value="async" label="Async/Await">
+  <TabItem value="async" label="Async">
 
 ```js
-async function loadInterstitialAutoload() {
-  try {
-    await casai.interstitialAd.load({
-      autoReload: true,
-      autoShow: false,
-      minInterval: 0,
-    });
-    // Interstitial loaded with autoload enabled
-  } catch (error) {
-    // Handle load error
-  }
+try {
+  await casai.interstitialAd.load({
+    autoReload: true,
+  });
+  // Called when an ad is successfully loaded.
+  console.log('Loaded');
+} catch (error) {
+  // Called when an ad load failed.
+  console.log('Load failed:', error);
 }
 ```
 
@@ -61,11 +59,32 @@ async function loadInterstitialAutoload() {
   <TabItem value="events" label="Events">
 
 ```js
+function onAdLoaded(e) {
+  if (e.detail.format === casai.Format.INTERSTITIAL) {
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
+  }
+}
+
+function onAdLoadFailed(e) {
+  if (e.detail.format === casai.Format.INTERSTITIAL) {
+    // Called when an ad load failed.
+    console.log('Load failed:', e.detail);
+  }
+}
+
+document.addEventListener('casai_ad_loaded', onAdLoaded);
+document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
+
+// Start loading, completion will be reported via document events
 casai.interstitialAd.load({
   autoReload: true,
-  autoShow: false,
-  minInterval: 0,
 });
+
+function unsubscribeInterstitialLoadEvents() {
+  document.removeEventListener('casai_ad_loaded', onAdLoaded);
+  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
+}
 ```
 
   </TabItem>
@@ -73,41 +92,40 @@ casai.interstitialAd.load({
 
 Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
 
-When you want to manually control ad loading, use the `loadAd()` function.
+When you want to manually control ad loading, use the `load()` function.
+All parameters are optional — you can omit them and use the defaults if that fits your use case.
 
-<Tabs groupId="cordova-interstitial-load-manual">
+<Tabs groupId="style">
   <TabItem value="promise" label="Promise">
 
 ```js
 casai.interstitialAd
   .load({
     autoReload: false,
-    autoShow: false,
-    minInterval: 0,
   })
   .then(function () {
-    // Interstitial loaded
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
   })
   .catch(function (error) {
-    // Handle load error
+    // Called when an ad load failed.
+    console.log('Load failed:', error);
   });
 ```
 
   </TabItem>
-  <TabItem value="async" label="Async/Await">
+  <TabItem value="async" label="Async">
 
 ```js
-async function loadInterstitialManually() {
-  try {
-    await casai.interstitialAd.load({
-      autoReload: false,
-      autoShow: false,
-      minInterval: 0,
-    });
-    // Interstitial loaded
-  } catch (error) {
-    // Handle load error
-  }
+try {
+  await casai.interstitialAd.load({
+    autoReload: false,
+  });
+  // Called when an ad is successfully loaded.
+  console.log('Loaded');
+} catch (error) {
+  // Called when an ad load failed.
+  console.log('Load failed:', error);
 }
 ```
 
@@ -117,8 +135,6 @@ async function loadInterstitialManually() {
 ```js
 casai.interstitialAd.load({
   autoReload: false,
-  autoShow: false,
-  minInterval: 0,
 });
 ```
 
@@ -128,70 +144,7 @@ casai.interstitialAd.load({
 Ad content may take some time to load after creating an ad instance.
 To ensure the ad displays instantly when needed, load the ad instance in advance.
 
-Use the `addAdLoadedEventListener` event to be notified when the ad is ready for display.
-
-## Ad content callbacks
-
-`InterstitialAd` has several optional callbacks for the ad lifecycle. These callbacks can be registered via event listeners.
-
-```js
-function isInterstitial(detail) {
-  return detail && detail.format === 'Interstitial';
-}
-
-function onAdLoaded(e) {
-  if (!isInterstitial(e.detail)) return;
-  console.log('Loaded');
-}
-
-function onAdLoadFailed(e) {
-  if (!isInterstitial(e.detail)) return;
-  console.log('Load failed:', e.detail);
-}
-
-function onAdFailedToShow(e) {
-  if (!isInterstitial(e.detail)) return;
-  console.log('Failed to show:', e.detail);
-}
-
-function onAdShowed(e) {
-  if (!isInterstitial(e.detail)) return;
-  console.log('Showed');
-}
-
-function onAdClicked(e) {
-  if (!isInterstitial(e.detail)) return;
-  console.log('Clicked');
-}
-
-function onAdImpression(e) {
-  if (!isInterstitial(e.detail)) return;
-  console.log('Impression', e.detail);
-}
-
-function onAdDismissed(e) {
-  if (!isInterstitial(e.detail)) return;
-  console.log('Dismissed');
-}
-
-document.addEventListener('casai_ad_loaded', onAdLoaded);
-document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
-document.addEventListener('casai_ad_show_failed', onAdFailedToShow);
-document.addEventListener('casai_ad_showed', onAdShowed);
-document.addEventListener('casai_ad_clicked', onAdClicked);
-document.addEventListener('casai_ad_impressions', onAdImpression);
-document.addEventListener('casai_ad_dismissed', onAdDismissed);
-
-function unsubscribeInterstitialEvents() {
-  document.removeEventListener('casai_ad_loaded', onAdLoaded);
-  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
-  document.removeEventListener('casai_ad_show_failed', onAdFailedToShow);
-  document.removeEventListener('casai_ad_showed', onAdShowed);
-  document.removeEventListener('casai_ad_clicked', onAdClicked);
-  document.removeEventListener('casai_ad_impressions', onAdImpression);
-  document.removeEventListener('casai_ad_dismissed', onAdDismissed);
-}
-```
+You can use the `casai_ad_loaded` document event to be notified when the ad is ready for display.
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
@@ -205,31 +158,33 @@ Interstitial ads should be displayed during natural pauses in the flow of an app
 
 You can choose when to show the ad by calling:
 
-<Tabs groupId="cordova-interstitial-show">
+<Tabs groupId="style">
   <TabItem value="promise" label="Promise">
 
 ```js
 casai.interstitialAd
   .show()
   .then(function () {
-    // Interstitial closed
+    // Called when the ad dismissed full screen content.
+    console.log('Dismissed');
   })
   .catch(function (error) {
-    // Handle show error
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', error);
   });
 ```
 
   </TabItem>
-  <TabItem value="async" label="Async/Await">
+  <TabItem value="async" label="Async">
 
 ```js
-async function showInterstitial() {
-  try {
-    await casai.interstitialAd.show();
-    // Interstitial closed
-  } catch (error) {
-    // Handle show error
-  }
+try {
+  await casai.interstitialAd.show();
+  // Called when the ad dismissed full screen content.
+  console.log('Dismissed');
+} catch (error) {
+  // Called when the ad failed to show full screen content.
+  console.log('Failed to show:', error);
 }
 ```
 
@@ -237,7 +192,48 @@ async function showInterstitial() {
   <TabItem value="events" label="Events">
 
 ```js
+function onAdFailedToShow(e) {
+  if (e.detail.format === casai.Format.INTERSTITIAL) {
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', e.detail);
+  }
+}
+
+function onAdShowed(e) {
+  if (e.detail.format === casai.Format.INTERSTITIAL) {
+    // Called when the ad showed the full screen content.
+    console.log('Showed');
+  }
+}
+
+function onAdClicked(e) {
+  if (e.detail.format === casai.Format.INTERSTITIAL) {
+    // Called when a click is recorded for an ad.
+    console.log('Clicked');
+  }
+}
+
+function onAdDismissed(e) {
+  if (e.detail.format === casai.Format.INTERSTITIAL) {
+    // Called when the ad dismissed full screen content.
+    console.log('Dismissed');
+  }
+}
+
+document.addEventListener('casai_ad_show_failed', onAdFailedToShow);
+document.addEventListener('casai_ad_showed', onAdShowed);
+document.addEventListener('casai_ad_clicked', onAdClicked);
+document.addEventListener('casai_ad_dismissed', onAdDismissed);
+
+// Show without Promises – all results are handled via document events
 casai.interstitialAd.show();
+
+function unsubscribeInterstitialShowEvents() {
+  document.removeEventListener('casai_ad_show_failed', onAdFailedToShow);
+  document.removeEventListener('casai_ad_showed', onAdShowed);
+  document.removeEventListener('casai_ad_clicked', onAdClicked);
+  document.removeEventListener('casai_ad_dismissed', onAdDismissed);
+}
 ```
 
   </TabItem>
@@ -247,59 +243,11 @@ If the ad is not ready at that moment, the `AdFailedToShowEvent` will be trigger
 
 You have the option to check `isLoaded()` if it's required by your app's logic.
 
-<Tabs groupId="cordova-interstitial-isloaded">
-  <TabItem value="promise" label="Promise">
-
 ```js
-casai.interstitialAd
-  .isLoaded()
-  .then(function (isLoaded) {
-    // Use isLoaded boolean here
-  })
-  .catch(function (error) {
-    // Handle error (if your wrapper rejects)
-  });
-```
-
-  </TabItem>
-  <TabItem value="async" label="Async/Await">
-
-```js
-async function checkInterstitialLoaded() {
-  try {
-    const isAdLoaded = await casai.interstitialAd.isLoaded();
-    // Use isAdLoaded boolean here
-  } catch (error) {
-    // Handle error (if your wrapper rejects)
-  }
+if (await casai.interstitialAd.isLoaded()) {
+  await casai.interstitialAd.show();
 }
 ```
-
-  </TabItem>
-  <TabItem value="events" label="Events">
-
-```js
-var interstitialIsLoaded = false;
-
-document.addEventListener('casai_ad_loaded', function (e) {
-  if (e.detail && e.detail.format === 'Interstitial') {
-    interstitialIsLoaded = true;
-  }
-});
-
-document.addEventListener('casai_ad_dismissed', function (e) {
-  if (e.detail && e.detail.format === 'Interstitial') {
-    interstitialIsLoaded = false;
-  }
-});
-
-if (interstitialIsLoaded) {
-  casai.interstitialAd.show();
-}
-```
-
-  </TabItem>
-</Tabs>
 
 ### Auto Show Ad mode
 
@@ -307,110 +255,22 @@ CAS provides the option to automatically show a loaded ad when the user returns 
 
 To enable this behavior, set autoshow enabled:
 
-<Tabs groupId="cordova-interstitial-autoshow">
-  <TabItem value="promise" label="Promise">
-
-```js
-casai.interstitialAd
-  .load({
-    autoReload: true,
-    autoShow: true,
-    minInterval: 0,
-  })
-  .then(function () {
-    // Autoload + autoshow configured
-  })
-  .catch(function (error) {
-    // Handle load error
-  });
-```
-
-  </TabItem>
-  <TabItem value="async" label="Async/Await">
-
-```js
-async function enableInterstitialAutoShow() {
-  try {
-    await casai.interstitialAd.load({
-      autoReload: true,
-      autoShow: true,
-      minInterval: 0,
-    });
-    // Autoload + autoshow configured
-  } catch (error) {
-    // Handle load error
-  }
-}
-```
-
-  </TabItem>
-  <TabItem value="events" label="Events">
-
 ```js
 casai.interstitialAd.load({
-  autoReload: true,
   autoShow: true,
-  minInterval: 0,
 });
 ```
-
-  </TabItem>
-</Tabs>
 
 ## Minimum interval between impressions
 
 The minimum interval between showing interstitial ads, in seconds.
 Attempting to show a new interstitial ad before the interval has passed after the previous one was dismissed will trigger `AdFailedToShowEvent` with `AdErrorCode.NOT_PASSED_INTERVAL`.
 
-<Tabs groupId="cordova-interstitial-interval">
-  <TabItem value="promise" label="Promise">
-
-```js
-casai.interstitialAd
-  .load({
-    autoReload: false,
-    autoShow: false,
-    minInterval: 30, // [!code highlight]
-  })
-  .then(function () {
-    // Interval configured
-  })
-  .catch(function (error) {
-    // Handle load error
-  });
-```
-
-  </TabItem>
-  <TabItem value="async" label="Async/Await">
-
-```js
-async function loadInterstitialWithInterval() {
-  try {
-    await casai.interstitialAd.load({
-      autoReload: false,
-      autoShow: false,
-      minInterval: 30, // [!code highlight]
-    });
-    // Interval configured
-  } catch (error) {
-    // Handle load error
-  }
-}
-```
-
-  </TabItem>
-  <TabItem value="events" label="Events">
-
 ```js
 casai.interstitialAd.load({
-  autoReload: false,
-  autoShow: false,
-  minInterval: 30, // [!code highlight]
+  minInterval: 30, // seconds
 });
 ```
-
-  </TabItem>
-</Tabs>
 
 Note that the timer for the minimum interval is shared across all interstitial ad instances, but the minimum interval value may differ for each ad instance.
 
@@ -454,4 +314,3 @@ While increasing the frequency of interstitial ads in your app might seem like a
 
 ## Complete example
 - [Interstitial ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/InterstitialExample.tsx)
-```
