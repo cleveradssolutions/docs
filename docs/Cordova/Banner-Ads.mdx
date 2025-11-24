@@ -56,7 +56,7 @@ const adSize = casai.Size.BANNER;
 ## Load an Ad
 Call manual load before each show if Autoload Banner Ads is not enabled in settings.
 <Tabs groupId="style">
-  <TabItem value="promise" title="Promise"> 
+  <TabItem value="promise" label="Promise"> 
 ```js
 // Using .then() / .catch() 
 casai.loadBannerAd({ 
@@ -72,7 +72,7 @@ casai.loadBannerAd({
   }); 
 ``` 
   </TabItem> 
-  <TabItem value="async" title="Async"> 
+  <TabItem value="async" label="Async"> 
 ```js
 // Using async/await 
 async function loadBanner() {
@@ -90,7 +90,7 @@ async function loadBanner() {
 } 
 ``` 
   </TabItem> 
-  <TabItem value="events" title="Events"> 
+  <TabItem value="events" label="Events"> 
 ```js
 // Events-driven approach (call load without awaiting, handle events separately) 
 function onBannerEvent(e) { 
