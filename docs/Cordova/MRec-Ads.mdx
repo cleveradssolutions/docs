@@ -22,7 +22,7 @@ Call manual load before each show if Autoload Ads is not enabled in settings.
   <TabItem value="promise" label="Promise">
 ```js
 // Using .then() / .catch()
-casai.loadMRecAd({
+casai.mrecAd.load({
   autoReload: true,
   refreshInterval: 30
 })
@@ -37,83 +37,130 @@ casai.loadMRecAd({
   <TabItem value="async" label="Async"> 
 ```js 
 // Using async/await 
-async function loadMREC() { 
-  try { 
-    await casai.loadMRecAd({ 
-      autoReload: true, 
-      refreshInterval: 30 
-    }); 
-    console.log('MREC loaded'); 
-  } 
-  catch (error) { 
-    console.error('MREC failed to load:', error); 
-  } 
+try { 
+  await casai.mrecAd.load({ 
+    autoReload: true, 
+    refreshInterval: 30 
+  }); 
+  console.log('MREC loaded'); 
 } 
+catch (error) { 
+  console.error('MREC failed to load:', error); 
+}
 ``` 
   </TabItem> 
   <TabItem value="events" label="Events"> 
 ```js
 // Events-driven approach (call load without awaiting, handle events separately) 
-function onMrecEvent(e) { 
-  const detail = e?.detail || {}; 
-  switch (detail.type) { 
-    case 'casai_ad_loaded': 
-      console.log('MREC loaded (event)'); 
-      break; 
-    case 'casai_ad_load_failed': 
-      console.error('MREC laod failed (event):', detail.error); 
-      break; 
-    case 'casai_ad_clicked': 
-      console.log('MREC clicked (event)'); 
-      break; 
-    default: 
-      console.log('MREC event:', detail); 
-    } 
+function onAdLoaded(e) {
+  if (e.detail.format === casai.Format.MREC) {
+    // Called when an ad is successfully loaded.
+    // The banner will not be visible until show() is called.
+    console.log('Loaded');
+  }
 }
 
-// Subscribe to banner events
-document.addEventListener('casai_ad_loaded', onMrecEvent);
-document.addEventListener('casai_ad_load_failed', onMrecEvent);
-document.addEventListener('casai_ad_showed', onMrecEvent);
-document.addEventListener('casai_ad_clicked', onMrecEvent);
+function onAdLoadFailed(e) {
+  if (e.detail.format === casai.Format.MREC) {
+    // Called when an ad load failed.
+    console.log('Load failed:', e.detail);
+  }
+}
+
+document.addEventListener('casai_ad_loaded', onAdLoaded);
+document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
 
 // Trigger load (fire-and-forget; result handled via events)
-casai.loadMRecAd({  
+casai.mrecAd.load({  
   autoReload: true,
   refreshInterval: 30
 });
 
-// To stop listening:
-document.removeEventListener('casai_ad_loaded', onMrecEvent);
+function unsubscribeInterstitialLoadEvents() {
+  document.removeEventListener('casai_ad_loaded', onAdLoaded);
+  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
+}
+
 ```
   </TabItem>
 </Tabs>
 
+## Ad refresh interval
+The automatic refresh interval determines how often a new ad request is generated. 
+Once the interval elapses, a new ad will automatically load and display.
+
+The interval countdown runs only while the ad is visible on screen. 
+
+Set a custom refresh interval longer than 10 seconds, or 0 to disable refresh option. 
+Default refresh interval is 30 seconds.
+
+Override the automatic refresh interval in `refreshInterval` property:
+```js
+casai.mrecAd.load({ 
+  adSize: adSize, 
+  autoReload: true, 
+  refreshInterval: 30
+}) 
+```
+Set `refreshInterval={0}` to disable. Default interval **30 seconds**.
+
 ## Display the MREC Ad
-The position where the MREC ad should be placed. By default, it is centered in the screen.  
-Changing the position **does not destroy** the current MREC ad or load a new one.
+The `Position` enum lists the valid ad position values. By default, the banner ad is centered at the screen.  
+Changing the position of a banner ad **does not destroy** the current banner or load a new one.  
+
+The table for all positions on the screen. Some position values do not support offset on the X or Y axis, this can be seen in the table as (X, Y). 
+
+|        | Left     | Center |    Right |
+| ------ | -------- | :----: | -------: |
+| Top    | TL(X, Y) | TC(Y)  | TR(X, Y) |
+| Middle | ML(X)    | MC(-)  |    MR(X) |
+| Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
+
+Use the `casai.mrecAd.show(Position, 0, 0)` to place AdView at the X and Y offset, where the origin is the selected corner `Position` of the screen.
+
+The coordinates on the screen are determined in Density-independent Pixels(DP):
+```js
+casai.mrecAd.show({ 
+  position: casai.Position.BOTTOM_CENTER,
+  offsetX: xOffsetInDP,
+  offsetY: yOffsetInDP
+});
+```
+The coordinates on the screen are determined in pixels:
+ ```js
+casai.mrecAd.show({ 
+  position: casai.Position.TOP_LEFT,
+  offsetX: xOffsetInDP,
+  offsetY: yOffsetInDP
+});
+```
+To specify a position on the screen without offset, use the position property. 
+```js
+casai.mrecAd.show({ 
+  position: casai.Position.TOP_CENTER,
+});
+```
+This line is the same as calling `casai.mrecAd.show(TOP_CENTER, 0, 0);`
+
+<Info> You can change the banner's activity even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it. </Info>
 
 ```js
 // Show MREC (position is optional; default is CENTER)
-casai.showMRecAd({
+casai.mrecAd.show({
   position: casai.Position.CENTER
 });
 
 // Hide MREC
-casai.hideMRecAd();
+casai.mrecAd.hide();
 ```
-
-<Info> You can change the MREC's activity even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it. </Info>
 
 ## Release MREC ad resource
 Destroys the ad content and releases any associated resources when the ad is no longer needed to prevent memory leaks.
 ```js
-casai.destroyMRecAd();
+casai.mrecAd.destroy();
 ```
 
-Call `loadMRecAd` again to create and load a new ad instance and restore autoload behavior if needed.
+Call `load` again to create and load a new ad instance and restore autoload behavior if needed.
 
 ## Complete example
-- [Adaptive banner ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/AdaptiveBannerExample.tsx)
-- [Standard banner ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/BannerExample.tsx)
-- [Multi banners ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/ScrolledAdViewExample.tsx)
+- [Standard MREC ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/www/js/MRecExample.js)
