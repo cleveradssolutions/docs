@@ -24,12 +24,13 @@ Make sure that your app's `config.xml` file uses the following minimum values:
 ## CAS Plugin variables
 Some required configuration steps for your project will be performed automatically using the CAS Gradle plugin for Android and the CAS Ruby script for iOS. You need to register your app on the https://cas.ai platform using the bundle package name for Android and the iTunes ID for iOS.
 - For Android the bundle package name will be detected automatically.
-- For iOS you must specify the registered iTunes ID in the `IOS_CAS_ID` plugin variable. If you do not provide your iTunes ID, the ads in your app will be replaced with test ads.
+- **For iOS you must specify the registered iTunes ID** in the `IOS_CAS_ID` plugin variable. If you do not provide your iTunes ID, the ads in your app will be replaced with test ads.
 
 All plugin variables must be defined within the `<plugin>` tag, for example `IOS_CAS_ID`.
 ```xml
 <plugin name="cordova-plugin-casai" spec="*">
     <variable name="IOS_CAS_ID" value="123456789" />
+    <!-- All plugin variables here -->
 </plugin>
 ```
 
@@ -71,7 +72,7 @@ Add the adapter names you want to CAS_ADAPTERS variables from the linked list fo
 <TabItem label="Android" value="android">
 For Android, the name must match the variable names in the `adapters {}` block from the [Android page](Android/Mediated-Networks). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
 ```xml
-<variable name="IOS_CAS_ADAPTERS" value="googleAds casExchange dtExchange" />
+<variable name="ANDROID_CAS_ADAPTERS" value="googleAds casExchange dtExchange" />
 ```
 
 </TabItem>
@@ -102,7 +103,7 @@ An application must not use an advertising identifier if **at least one** of the
 
 </TabItem>
 <TabItem label="iOS" value="ios">
-To use the App Tracking Transparency authorization request for accessing the IDFA, update your `<project>/ios/Runner/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
+To use the [App Tracking Transparency authorization request](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) for accessing the IDFA, add plugin variable `IOS_USER_TRACKING_USAGE` to the `config.xml` with a custom message describing your usage. Below is an example description text:
 
 ```xml
 <variable name="IOS_USER_TRACKING_USAGE" value="Your data will remain confidential and will only be used to provide you a better and personalised ad experience" />
@@ -131,9 +132,17 @@ cordova plugin add cordova-plugin-casai
 
 You can also specify all variables directly in the `plugin add` command by adding `--variable name=value` for each variable.
 
+```shell
+cordova plugin add cordova-plugin-casai --variable IOS_CAS_ID=demo
+```
+
 <Info>
 To apply changes to the plugin variables, you need to remove and then re-add the plugin.
 </Info>
+
+```shell
+cordova plugin rm cordova-plugin-casai --nosave && cordova plugin add cordova-plugin-casai
+```
 
 <Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Cordova/subscription">
 Subscribe to receive notifications about CAS updates.

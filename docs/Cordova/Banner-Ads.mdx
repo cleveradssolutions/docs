@@ -8,8 +8,7 @@ They can refresh automatically after a set period of time.
 This means users view a new ad at regular intervals, even if they stay on the same screen in your app.
 They're also the simplest ad format to implement.
 
-Banner Ad management in **Cordova** is handled through the `BannerAdView` component from **react-native-cas**,
-which represents an ad view used directly in JSX.
+Banner ad management in Cordova code is handled through the `casai.bannerAd` object.
 
 CAS provides an option to enable `autoReload` to simplify your app logic. The `autoReload` is enabled by default, loading failures will trigger automatic retry attempts.
 You should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code.
@@ -17,102 +16,135 @@ You should decide whether to enable `autoReload`, or manually manage each ad loa
 Also, banner ads support automatic `refreshInterval` regardless of the `autoReload` setting.
 
 Below is a diagram showing the ad lifecycle and how `autoReload` and `refreshInterval` affect it.
-
 <Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
 
-
-## Choose the Ad size
-To add a banner ad, you need to specify the ad size. To do this, choose one of the `AdSize` from the list below:
+## Get the Ad size
+To load a banner ad, you need to specify the ad size. To do this, choose one of the `casai.Size` equivalents provided by the Cordova plugin:
 
 1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. 
 The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50. 
 By default, the full screen width will be used. You can limit width by specifying a `maxWidth` in the parameters.
 ```js
-const adSize = BannerAdSize.ADAPTIVE;
+const adSize = casai.Size.ADAPTIVE;
 ```
 
 2. **Inline banner** ads have a desired width and a maximum height, useful when you want to limit the banner's height. 
 Inline banners are larger and taller compared to adaptive banners. They have variable height, including Medium Rectangle size, 
 and can be as tall as the device screen. Specify the `maxWidth` and `maxHeight` dimensions to limit the ad size.
 ```js
-const adSize = BannerAdSize.INLINE;
+const adSize = casai.Size.INLINE;
 ```
 
 3. **Smart** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
 ```js
-const adSize = BannerAdSize.SMART;
+const adSize = casai.Size.SMART;
 ```
 
-4. **Medium Rectangle** has a fixed size of 300x250.
+4. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
 ```js
-const adSize = BannerAdSize.MREC;
+const adSize = casai.Size.LEADERBOARD;
 ```
 
-5. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+5. **Standard Banner** has a fixed size of 320x50 and is the minimum ad size
 ```js
-const adSize = BannerAdSize.LEADERBOARD;
+const adSize = casai.Size.BANNER;
 ```
 
-6. **Standard Banner** has a fixed size of 320x50 and is the minimum ad size
+## Load the Ad
+The following example creates and loads an banner ad:
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise"> 
 ```js
-const adSize = BannerAdSize.BANNER;
+casai.bannerAd.load({ 
+  adSize: adSize, 
+  autoReload: true,
+  }) 
+  .then(() => { 
+    // Called when an ad is successfully loaded.
+    console.log('Banner Ad loaded'); 
+  }) 
+  .catch((error) => { 
+    // Called when an ad load failed.
+    console.error('Banner Ad failed to load:', error); 
+  }); 
+``` 
+  </TabItem> 
+  <TabItem value="async" label="Async"> 
+```js
+try { 
+  await casai.bannerAd.load({ 
+    adSize: adSize, 
+    autoReload: true,
+  }); 
+  // Called when an ad is successfully loaded.
+  console.log('Banner Ad loaded'); 
+} 
+catch (error) {
+  // Called when an ad load failed.
+  console.error('Banner Ad failed to load:', error); 
+} 
+``` 
+  </TabItem> 
+  <TabItem value="events" label="Events"> 
+```js
+function onAdLoaded(e) {
+  if (e.detail.format === casai.Format.BANNER) {
+    // Called when an ad is successfully loaded.
+    console.log('Banner Ad loaded');
+  }
+}
+
+function onAdLoadFailed(e) {
+  if (e.detail.format === casai.Format.BANNER) {
+    // Called when an ad load failed.
+    console.log('Banner Ad failed to load:', e.detail);
+  }
+}
+
+document.addEventListener('casai_ad_loaded', onAdLoaded);
+document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
+
+casai.bannerAd.load({
+  adSize: adSize,
+  autoReload: true,
+});
+
+function unsubscribeInterstitialLoadEvents() {
+  document.removeEventListener('casai_ad_loaded', onAdLoaded);
+  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
+}
+```
+  </TabItem>
+</Tabs>
+
+Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, load the ad instance in advance. Use the `casai_ad_loaded` event or `Promise` to be notified when the ad is ready for display.
+
+## Limit the ad size
+When using an AdSize based on screen width or height, you can restrict the ad size by specifying the `maxWidth` and `maxHeight` properties.
+
+```js
+casai.bannerAd.load({
+  adSize: adSize,
+  maxWidth: 400, // [!code highlight]
+  maxHeight: 350, // [!code highlight]
+})
 ```
 
-## Show Ad View
-`BannerAdView` is a React component and can be used like any other view.
+<Property name="maxWidth" type="number">
+Maximum width for `ADAPTIVE` and `INLINE` banners in Density-independent Pixels(DP).  
+By default, adaptive and inline banners use the full device width.  
+Automatically clamped to the screen bounds and updated on orientation changes.
+</Property>
 
-```jsx
-<BannerAdView 
-  size={adSize}
-  maxWidth={undefined}
-  maxHeight={undefined}
-  autoReload={true} 
-/>
-```
+---
 
-The ad content will be loaded automatically as soon as the view is mounted. 
-Keep in mind that loading the ad takes some time, so avoid frequently unmounting and remounting the view.
+<Property name="maxHeight" type="number">
+Maximum height for `INLINE` banners in Density-independent Pixels(DP).
+By default, inline adaptive banners use the device height.
+Automatically clamped to the screen bounds and updated on orientation changes.
+</Property>
 
-While the ad is loading, the widget will have a size of (1x1). When the ad loads, the widget will automatically adopt the selected size.
-
-The size of the container in which you place your ad must be at least as large as the AdSize. Any padding effectively decreases the size of your container.
-
-## Ad content callbacks
-`BannerAdView` supports lifecycle callbacks via props:
-
-```jsx
-const onAdLoadedCallback = useCallback((data: AdViewInfo) => {
-  // Called when an ad is successfully loaded. 
-  console.log('Banner Ad loaded', data);
-}, []);
-
-const onAdFailedCallback = useCallback((err: AdError) => {
-  // Called when an ad load failed. 
-  console.log('Banner Ad load failed', err);
-}, []);
-
-const onAdClickedCallback = useCallback(() => {
-  // Called when a click is recorded for an ad.
-  console.log('Banner Ad clicked');
-}, []);
-
-const onAdImpressionCallback = useCallback((info: AdContentInfo) => {
-  // Called when an impression occurs on the ad.  
-  console.log('Banner Ad impression', info);
-}, []);
-
-return <BannerAdView
-  size={adSize}
-  onAdViewLoaded={onAdLoadedCallback}
-  onAdViewFailed={onAdFailedCallback}
-  onAdViewImpression={onAdClickedCallback}
-  onAdViewClicked={onAdImpressionCallback}
-/>
-```
-
-<Info>
-Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).
-</Info>
 
 ## Ad refresh interval
 The automatic refresh interval determines how often a new ad request is generated. 
@@ -124,113 +156,75 @@ Set a custom refresh interval longer than 10 seconds, or 0 to disable refresh op
 Default refresh interval is 30 seconds.
 
 Override the automatic refresh interval in `refreshInterval` property:
-```jsx
-<BannerAdView
-  size={adSize}
-  refreshInterval={30} // [!code highlight]
-/>
+```js
+casai.bannerAd.load({ 
+  adSize: adSize, 
+  refreshInterval: 30, // [!code highlight]
+}) 
 ```
-Set `refreshInterval={0}` to disable. Default interval **30 seconds**.
 
-## Manual reload Ad
-When you want to manually control ad loading, use the `loadAd()` function on the `BannerAdViewRef` to retry loading with the same configuration.
+## Display the Ad
+The banner will not be visible until `show()` is called. The show function has a position parameter that specifies where the banner ad should be placed. The `casai.Position` lists the valid ad position values. By default, the banner ad is centered at the bottom. 
+```js
+casai.bannerAd.show({ 
+  position: casai.Position.BOTTOM_CENTER,
+});
+```
+To change the banner’s position on the screen, simply call the show function again with the new parameters.
 
-```jsx
-const bannerAdRef = useRef<BannerAdViewRef>(null); // [!code highlight]
-const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+## The Ad coordinates on the screen
+The offsetX and offsetY properties allow you to adjust the banner’s position relative to the specified anchor position, in DP.
 
-useEffect(() => {
-  return () => {
-    if (retryTimer.current) clearTimeout(retryTimer.current);
-    retryTimer.current = null;
-  };
-}, []);
+Some anchor positions do not support offset on the X or Y axis, this can be seen in the table as (X, Y).
 
-const onAdLoadedCallback = useCallback((data: AdViewInfo) => {
-  if (retryTimer.current) {
-    clearTimeout(retryTimer.current);
-    retryTimer.current = null;
+|        | Left     | Center |    Right |
+| ------ | -------- | :----: | -------: |
+| Top    | TL(X, Y) | TC(Y)  | TR(X, Y) |
+| Middle | ML(X)    | MC(-)  |    MR(X) |
+| Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
+
+The coordinates on the screen are determined in Density-independent Pixels(DP).
+```js
+casai.bannerAd.show({ 
+  position: casai.Position.TOP_LEFT,
+  offsetX: xOffsetInDP,
+  offsetY: yOffsetInDP
+});
+```
+
+<Info> You can change the banner's activity even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it. </Info>
+
+Change the banner position on screen using the following method:
+
+## Hide the Ad
+When you need to hide the banner ad from the user, call:
+```js
+casai.bannerAd.hide();
+```
+
+## Listening for the Ad Clicked
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.detail.format` to determine the ad format.
+
+```js
+function onAdClicked(e) {
+  if (e.detail.format === casai.Format.BANNER) {
+    // Called when a click is recorded for an banner ad.
   }
-}, []);
+}
 
-const onAdFailedCallback = useCallback((err: AdError) => {
-  if (retryTimer.current) clearTimeout(retryTimer.current);
-    retryTimer.current = setTimeout(() => {
-      retryTimer.current = null;
-      bannerAdRef.current?.loadAd(); // [!code highlight]
-    }, 10000);
-}, []);
-
-return <BannerAdView 
-  ref={bannerAdRef} 
-  size={adSize} 
-  autoReload={false}
-  onAdViewLoaded={onAdLoadedCallback}
-  onAdViewFailed={onAdFailedCallback}
-/>
+document.addEventListener('casai_ad_clicked', onAdClicked);
 ```
 
-## BannerAdView props
-<Property name="size" type="BannerAdSize" required>
-  Represents the size of a banner ad.
-</Property>
+## Release Ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
 
----
+```js
+casai.bannerAd.destroy();
+```
 
-<Property name="maxWidth" type="number" optional>
-  Maximum width for banner ad. Defaults to screen width.
-</Property>
+Call `load()` again to create and load a new ad instance and restore autoload behavior if needed.
 
----
-
-<Property name="maxHeight" type="number" optional>
-  Maximum height for banner ad. Defaults to screen height.
-</Property>
----
-
-<Property name="autoReload" type="boolean" optional>
-  If enabled, the ad will automatically retry loading the ad if an error occurs during the loading process. By default enabled.
-</Property>
-
----
-
-<Property name="refreshInterval" type="number" optional>
-  Sets the refresh interval in seconds for displaying ads. Set `0` to disable automatic refreshing. 
-  This automatic refresh worksregardless of the `autoReload` setting. By default 30 seconds.
-</Property>
-
----
-
-
-<Property name="casId" type="string" optional>
-  The unique identifier of the CAS content for each platform. Leave undefined to use the initialization identifier.
-</Property>
-
----
-
-<Property name="onAdViewLoaded" type="(info: AdViewInfo) => void" optional>
-  Callback to be invoked when the ad content has been successfully loaded.
-</Property>
-
----
-
-<Property name="onAdViewFailed" type="(error: AdError) => void" optional>
-  Callback to be invoked when the ad content fails to load.
-</Property>
-
----
-
-<Property name="onAdViewClicked" type="() => void" optional>
-  Callback to be invoked when the ad content is clicked by the user.
-</Property>
-
----
-
-<Property name="onAdViewImpression" type="(info: AdContentInfo) => void" optional>
-  Callback to be invoked when an ad is estimated to have earned money.
-</Property>
 
 ## Complete example
-- [Adaptive banner ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/AdaptiveBannerExample.tsx)
-- [Standard banner ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/BannerExample.tsx)
-- [Multi banners ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/ScrolledAdViewExample.tsx)
+- [Adaptive banner ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/www/js/AdaptiveBannerExample.js)
+- [Standard banner ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/www/js/BannerExample.js)

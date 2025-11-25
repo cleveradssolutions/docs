@@ -9,7 +9,7 @@
             "flutter": "4.4.2",
             "unreal": "4.4.2",
             "reactnative": "4.4.2",
-            "cordova": "1.0.3",
+            "cordova": "4.4.2",
             "solar": "18",
             "construct": "0.0.3.0"
         }
