@@ -69,7 +69,7 @@ function onAdLoaded(e) {
 function onAdLoadFailed(e) {
   if (e.detail.format === casai.Format.INTERSTITIAL) {
     // Called when an ad load failed.
-    console.log('Load failed:', e.detail);
+    console.log('Load failed:', e.detail.message);
   }
 }
 
@@ -92,54 +92,8 @@ function unsubscribeInterstitialLoadEvents() {
 
 Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
 
-When you want to manually control ad loading, use the `load()` function.
+When you want to manually control ad loading, use the `load({ autoReload: false })` function.
 All parameters are optional — you can omit them and use the defaults if that fits your use case.
-
-<Tabs groupId="style">
-  <TabItem value="promise" label="Promise">
-
-```js
-casai.interstitialAd
-  .load({
-    autoReload: false,
-  })
-  .then(function () {
-    // Called when an ad is successfully loaded.
-    console.log('Loaded');
-  })
-  .catch(function (error) {
-    // Called when an ad load failed.
-    console.log('Load failed:', error);
-  });
-```
-
-  </TabItem>
-  <TabItem value="async" label="Async">
-
-```js
-try {
-  await casai.interstitialAd.load({
-    autoReload: false,
-  });
-  // Called when an ad is successfully loaded.
-  console.log('Loaded');
-} catch (error) {
-  // Called when an ad load failed.
-  console.log('Load failed:', error);
-}
-```
-
-  </TabItem>
-  <TabItem value="events" label="Events">
-
-```js
-casai.interstitialAd.load({
-  autoReload: false,
-});
-```
-
-  </TabItem>
-</Tabs>
 
 Ad content may take some time to load after creating an ad instance.
 To ensure the ad displays instantly when needed, load the ad instance in advance.
@@ -148,8 +102,9 @@ You can use the `casai_ad_loaded` document event to be notified when the ad is r
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
-- When an error occurs during ad impression, only `AdFailedToShowEvent` is triggered.  
-  In this case, `AdDismissedEvent` will not be executed since the impression is not considered successful.
+- Read more about `AdError` structure and codes in [Errors](Cordova/Ad-errors).  
+- When an error occurs during ad impression, only the `casai_ad_show_failed` document event is triggered.  
+  In this case, the `casai_ad_dismissed` event will not be fired since the impression is not considered successful.
 </Info>
 
 ## Show Ad
@@ -195,7 +150,7 @@ try {
 function onAdFailedToShow(e) {
   if (e.detail.format === casai.Format.INTERSTITIAL) {
     // Called when the ad failed to show full screen content.
-    console.log('Failed to show:', e.detail);
+    console.log('Failed to show:', e.detail.message);
   }
 }
 
@@ -225,7 +180,7 @@ document.addEventListener('casai_ad_showed', onAdShowed);
 document.addEventListener('casai_ad_clicked', onAdClicked);
 document.addEventListener('casai_ad_dismissed', onAdDismissed);
 
-// Show without Promises – all results are handled via document events
+// Show without Promises - all results are handled via document events
 casai.interstitialAd.show();
 
 function unsubscribeInterstitialShowEvents() {
@@ -239,13 +194,13 @@ function unsubscribeInterstitialShowEvents() {
   </TabItem>
 </Tabs>
 
-If the ad is not ready at that moment, the `AdFailedToShowEvent` will be triggered with a reason.
+If the ad is not ready at that moment, the `casai_ad_show_failed` document event will be triggered with a reason.
 
 You have the option to check `isLoaded()` if it's required by your app's logic.
 
 ```js
 if (await casai.interstitialAd.isLoaded()) {
-  await casai.interstitialAd.show();
+  // The ad is loaded here
 }
 ```
 
@@ -264,7 +219,7 @@ casai.interstitialAd.load({
 ## Minimum interval between impressions
 
 The minimum interval between showing interstitial ads, in seconds.
-Attempting to show a new interstitial ad before the interval has passed after the previous one was dismissed will trigger `AdFailedToShowEvent` with `AdErrorCode.NOT_PASSED_INTERVAL`.
+Attempting to show a new interstitial ad before the interval has passed after the previous one was dismissed will trigger the `casai_ad_show_failed` document event with `AdErrorCode.NOT_PASSED_INTERVAL`.
 
 ```js
 casai.interstitialAd.load({
@@ -273,8 +228,6 @@ casai.interstitialAd.load({
 ```
 
 Note that the timer for the minimum interval is shared across all interstitial ad instances, but the minimum interval value may differ for each ad instance.
-
-If you need to reset the minimum interval timer after showing a Rewarded Ad or an AppOpen Ad, you can call the `InterstitialAd.restartInterval()` method in the dismissal flow of those ad formats.
 
 ## Mute Ad sounds
 
@@ -306,7 +259,7 @@ There are a number of different types of interstitial ads: text, image, video, a
 
 #### Allow for adequate loading time.
 
-Just as it's important to make sure you display interstitial ads at an appropriate time, it's also important to make sure the user doesn't have to wait for them to load. Loading the ad in advance by calling `loadAd()` before you intend to call `showAd()` can ensure that your app has a fully loaded interstitial ad at the ready when the time comes to display one.
+Just as it's important to make sure you display interstitial ads at an appropriate time, it's also important to make sure the user doesn't have to wait for them to load. Loading the ad in advance by calling `load()` before you intend to call `show()` can ensure that your app has a fully loaded interstitial ad at the ready when the time comes to display one.
 
 #### Don't flood the user with ads.
 

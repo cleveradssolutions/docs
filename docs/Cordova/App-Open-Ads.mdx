@@ -69,7 +69,7 @@ function onAdLoaded(e) {
 function onAdLoadFailed(e) {
   if (e.detail.format === casai.Format.APP_OPEN) {
     // Called when an ad load failed.
-    console.log('Load failed:', e.detail);
+    console.log('Load failed:', e.detail.message);
   }
 }
 
@@ -92,54 +92,8 @@ function unsubscribeAppOpenLoadEvents() {
 
 Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
 
-When you want to manually control ad loading, use the `load()` function.
+When you want to manually control ad loading, use the `load({ autoReload: false })` function.
 All parameters are optional — you can omit them and use the defaults if that fits your use case.
-
-<Tabs groupId="style">
-  <TabItem value="promise" label="Promise">
-
-```js
-casai.appOpenAd
-  .load({
-    autoReload: false,
-  })
-  .then(function () {
-    // Called when an ad is successfully loaded.
-    console.log('Loaded');
-  })
-  .catch(function (error) {
-    // Called when an ad load failed.
-    console.log('Load failed:', error);
-  });
-```
-
-  </TabItem>
-  <TabItem value="async" label="Async">
-
-```js
-try {
-  await casai.appOpenAd.load({
-    autoReload: false,
-  });
-  // Called when an ad is successfully loaded.
-  console.log('Loaded');
-} catch (error) {
-  // Called when an ad load failed.
-  console.log('Load failed:', error);
-}
-```
-
-  </TabItem>
-  <TabItem value="events" label="Events">
-
-```js
-casai.appOpenAd.load({
-  autoReload: false,
-});
-```
-
-  </TabItem>
-</Tabs>
 
 Ad content may take some time to load after creating an ad instance.
 To ensure the ad displays instantly when needed, load the ad instance in advance.
@@ -147,7 +101,8 @@ To ensure the ad displays instantly when needed, load the ad instance in advance
 You can use the `casai_ad_loaded` document event to be notified when the ad is ready for display.
 
 <Info>
-- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).
+- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
+- Read more about `AdError` structure and codes in [Errors](Cordova/Ad-errors).  
 - When an error occurs during ad impression, only the `casai_ad_show_failed` document event is triggered.  
   In this case, the `casai_ad_dismissed` event will not be fired since the impression is not considered successful.
 </Info>
@@ -199,7 +154,7 @@ try {
 function onAdFailedToShow(e) {
   if (e.detail.format === casai.Format.APP_OPEN) {
     // Called when the ad failed to show full screen content.
-    console.log('Failed to show:', e.detail);
+    console.log('Failed to show:', e.detail.message);
   }
 }
 
@@ -229,7 +184,7 @@ document.addEventListener('casai_ad_showed', onAdShowed);
 document.addEventListener('casai_ad_clicked', onAdClicked);
 document.addEventListener('casai_ad_dismissed', onAdDismissed);
 
-// Show without Promises – all results are handled via document events
+// Show without Promises - all results are handled via document events
 casai.appOpenAd.show();
 
 function unsubscribeAppOpenShowEvents() {
@@ -249,7 +204,7 @@ You have the option to check `isLoaded()` if it's required by your app's logic.
 
 ```js
 if (await casai.appOpenAd.isLoaded()) {
-  await casai.appOpenAd.show();
+  // The ad is loaded here
 }
 ```
 
