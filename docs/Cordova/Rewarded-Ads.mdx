@@ -68,7 +68,7 @@ function onAdLoaded(e) {
 function onAdLoadFailed(e) {
   if (e.detail.format === casai.Format.REWARDED) {
     // Called when an ad load failed.
-    console.log('Load failed:', e.detail);
+    console.log('Load failed:', e.detail.message);
   }
 }
 
@@ -85,61 +85,13 @@ function unsubscribeRewardedLoadEvents() {
   document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
 }
 ```
-
   </TabItem>
 </Tabs>
 
 Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
 
-When you want to manually control ad loading, use the `load()` function.
+When you want to manually control ad loading, use the `load({ autoReload: false })` function.
 All parameters are optional — you can omit them and use the defaults if that fits your use case.
-
-<Tabs groupId="style">
-  <TabItem value="promise" label="Promise">
-
-```js
-casai.rewardedAd
-  .load({
-    autoReload: false,
-  })
-  .then(function () {
-    // Called when an ad is successfully loaded.
-    console.log('Loaded');
-  })
-  .catch(function (error) {
-    // Called when an ad load failed.
-    console.log('Load failed:', error);
-  });
-```
-
-  </TabItem>
-  <TabItem value="async" label="Async">
-
-```js
-try {
-  await casai.rewardedAd.load({
-    autoReload: false,
-  });
-  // Called when an ad is successfully loaded.
-  console.log('Loaded');
-} catch (error) {
-  // Called when an ad load failed.
-  console.log('Load failed:', error);
-}
-```
-
-  </TabItem>
-  <TabItem value="events" label="Events">
-
-```js
-// Using the same onAdLoaded / onAdLoadFailed handlers as above.
-casai.rewardedAd.load({
-  autoReload: false,
-});
-```
-
-  </TabItem>
-</Tabs>
 
 Ad content may take some time to load after creating an ad instance.
 To ensure the ad displays instantly when needed, load the ad instance in advance.
@@ -148,8 +100,7 @@ You can use the `casai_ad_loaded` document event to be notified when the ad is r
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
-- When an error occurs during ad impression, only the `casai_ad_show_failed` document event is triggered.  
-  In this case, the `casai_ad_dismissed` event will not be fired since the impression is not considered successful.
+- Read more about [AdError](Cordova/Ad-errors) structure.
 </Info>
 
 ## Show Ad
@@ -165,7 +116,7 @@ You can choose when to show the ad by calling `show()`:
 casai.rewardedAd
   .show()
   .then(function (info) {
-    if (info && info.isUserEarnReward) {
+    if (info.isUserEarnReward) {
       // Called when the user has earned the reward.
       console.log('Reward the user for watching the ad');
     } else {
@@ -186,7 +137,7 @@ casai.rewardedAd
 try {
   const info = await casai.rewardedAd.show();
 
-  if (info && info.isUserEarnReward) {
+  if (info.isUserEarnReward) {
     // Called when the user has earned the reward.
     console.log('Reward the user for watching the ad');
   } else {
@@ -213,7 +164,7 @@ function onAdReward(e) {
 function onAdFailedToShow(e) {
   if (e.detail.format === casai.Format.REWARDED) {
     // Called when the ad failed to show full screen content.
-    console.log('Failed to show:', e.detail);
+    console.log('Failed to show:', e.detail.message);
   }
 }
 
@@ -221,13 +172,6 @@ function onAdShowed(e) {
   if (e.detail.format === casai.Format.REWARDED) {
     // Called when the ad showed the full screen content.
     console.log('Showed');
-  }
-}
-
-function onAdClicked(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
-    // Called when a click is recorded for an ad.
-    console.log('Clicked');
   }
 }
 
@@ -241,20 +185,23 @@ function onAdDismissed(e) {
 document.addEventListener('casai_ad_reward', onAdReward);
 document.addEventListener('casai_ad_show_failed', onAdFailedToShow);
 document.addEventListener('casai_ad_showed', onAdShowed);
-document.addEventListener('casai_ad_clicked', onAdClicked);
 document.addEventListener('casai_ad_dismissed', onAdDismissed);
 
-// Show without Promises – all results are handled via document events
+// Show without Promises - all results are handled via document events
 casai.rewardedAd.show();
 
 function unsubscribeRewardedShowEvents() {
   document.removeEventListener('casai_ad_reward', onAdReward);
   document.removeEventListener('casai_ad_show_failed', onAdFailedToShow);
   document.removeEventListener('casai_ad_showed', onAdShowed);
-  document.removeEventListener('casai_ad_clicked', onAdClicked);
   document.removeEventListener('casai_ad_dismissed', onAdDismissed);
 }
 ```
+
+<Info>
+When an error occurs during ad impression, only the `casai_ad_show_failed` document event is triggered.  
+In this case, the `casai_ad_dismissed` event will not be fired since the impression is not considered successful.
+</Info>
 
   </TabItem>
 </Tabs>
@@ -267,22 +214,20 @@ You have the option to check `isLoaded()` if it's required by your app's logic.
 
 ```js
 if (await casai.rewardedAd.isLoaded()) {
-  const info = await casai.rewardedAd.show();
-  if (info && info.isUserEarnReward) {
-    // Reward the user here.
-    console.log('Reward the user for watching the ad');
-  }
+  // The ad is loaded here
 }
 ```
 
-## Extra fill by Interstitial Ad
-
-CAS provides the option to load interstitial ads as a fallback when a rewarded video ad has no available fill.
-Interstitial ads do not require the user to watch the entire ad to completion.
-However, the reward will still be granted as if the user completed the rewarded video.
-
+## Listening for the Ad Clicked
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.detail.format` to determine the ad format.
 ```js
-casai.rewardedAd.setExtraFillByInterstitialAd(true); // [!code highlight]
+function onAdClicked(e) {
+  if (e.detail.format === casai.Format.REWARDED) {
+    // Called when a click is recorded for an Rewarded ad.
+  }
+}
+
+document.addEventListener('casai_ad_clicked', onAdClicked);
 ```
 
 ## Mute Ad sounds

@@ -32,7 +32,7 @@ casai.mrecAd.load({
 })
 .catch((error) => {
   // Called when an ad load failed.
-  console.error('MREC Ad failed to load:', error);
+  console.error('MREC Ad failed to load:', error.message);
 });
 ```
   </TabItem>
@@ -47,7 +47,7 @@ try {
 } 
 catch (error) { 
   // Called when an ad load failed.
-  console.error('MREC Ad failed to load:', error); 
+  console.error('MREC Ad failed to load:', error.message); 
 }
 ``` 
   </TabItem> 
@@ -63,7 +63,7 @@ function onAdLoaded(e) {
 function onAdLoadFailed(e) {
   if (e.detail.format === casai.Format.MREC) {
     // Called when an ad load failed.
-    console.log('MREC Ad failed to load:', e.detail);
+    console.log('MREC Ad failed to load:', e.detail.message);
   }
 }
 
@@ -83,6 +83,11 @@ function unsubscribeInterstitialLoadEvents() {
 </Tabs>
 
 Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, load the ad instance in advance. Use the `casai_ad_loaded` event or `Promise` to be notified when the ad is ready for display.
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
+- Read more about [AdError](Cordova/Ad-errors) structure.  
+</Info>
 
 ## Ad refresh interval
 The automatic refresh interval determines how often a new ad request is generated. 

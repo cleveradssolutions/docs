@@ -66,7 +66,7 @@ casai.bannerAd.load({
   }) 
   .catch((error) => { 
     // Called when an ad load failed.
-    console.error('Banner Ad failed to load:', error); 
+    console.error('Banner Ad failed to load:', error.message); 
   }); 
 ``` 
   </TabItem> 
@@ -82,7 +82,7 @@ try {
 } 
 catch (error) {
   // Called when an ad load failed.
-  console.error('Banner Ad failed to load:', error); 
+  console.error('Banner Ad failed to load:', error.message); 
 } 
 ``` 
   </TabItem> 
@@ -98,7 +98,7 @@ function onAdLoaded(e) {
 function onAdLoadFailed(e) {
   if (e.detail.format === casai.Format.BANNER) {
     // Called when an ad load failed.
-    console.log('Banner Ad failed to load:', e.detail);
+    console.log('Banner Ad failed to load:', e.detail.message);
   }
 }
 
@@ -119,6 +119,11 @@ function unsubscribeInterstitialLoadEvents() {
 </Tabs>
 
 Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, load the ad instance in advance. Use the `casai_ad_loaded` event or `Promise` to be notified when the ad is ready for display.
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
+- Read more about [AdError](Cordova/Ad-errors) structure.  
+</Info>
 
 ## Limit the ad size
 When using an AdSize based on screen width or height, you can restrict the ad size by specifying the `maxWidth` and `maxHeight` properties.
