@@ -8,6 +8,8 @@ They can refresh automatically after a set period of time.
 This means users view a new ad at regular intervals, even if they stay on the same screen in your app.
 They're also the simplest ad format to implement.
 
+Banner ad management in Cordova code is handled through the `casai.bannerAd` object.
+
 CAS provides an option to enable `autoReload` to simplify your app logic. The `autoReload` is enabled by default, loading failures will trigger automatic retry attempts.
 You should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code.
 
@@ -17,7 +19,7 @@ Below is a diagram showing the ad lifecycle and how `autoReload` and `refreshInt
 <Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
 
 ## Get the Ad size
-To load a banner ad, you need to specify the ad size. To do this, choose one of the window.casai.Size equivalents provided by the Cordova plugin:
+To load a banner ad, you need to specify the ad size. To do this, choose one of the `casai.Size` equivalents provided by the Cordova plugin:
 
 1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. 
 The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50. 
@@ -48,67 +50,64 @@ const adSize = casai.Size.LEADERBOARD;
 const adSize = casai.Size.BANNER;
 ```
 
-## Load an Ad
-Call manual load before each show if Autoload Banner Ads is not enabled in settings.
+## Load the Ad
+The following example creates and loads an banner ad:
+
 <Tabs groupId="style">
   <TabItem value="promise" label="Promise"> 
 ```js
-// Using .then() / .catch() 
 casai.bannerAd.load({ 
   adSize: adSize, 
-  autoReload: true, 
-  refreshInterval: 30 
+  autoReload: true,
   }) 
   .then(() => { 
-    console.log('Banner loaded'); 
+    // Called when an ad is successfully loaded.
+    console.log('Banner Ad loaded'); 
   }) 
   .catch((error) => { 
-    console.error('Banner failed to load:', error); 
+    // Called when an ad load failed.
+    console.error('Banner Ad failed to load:', error); 
   }); 
 ``` 
   </TabItem> 
   <TabItem value="async" label="Async"> 
 ```js
-// Using async/await 
 try { 
   await casai.bannerAd.load({ 
     adSize: adSize, 
-    autoReload: true, 
-    refreshInterval: 30
+    autoReload: true,
   }); 
-  console.log('Banner loaded'); 
+  // Called when an ad is successfully loaded.
+  console.log('Banner Ad loaded'); 
 } 
 catch (error) {
-  console.error('Banner failed to load:', error); 
+  // Called when an ad load failed.
+  console.error('Banner Ad failed to load:', error); 
 } 
 ``` 
   </TabItem> 
   <TabItem value="events" label="Events"> 
 ```js
-// Events-driven approach (call load without awaiting, handle events separately) 
 function onAdLoaded(e) {
   if (e.detail.format === casai.Format.BANNER) {
     // Called when an ad is successfully loaded.
-    // The banner will not be visible until show() is called.
-    console.log('Loaded');
+    console.log('Banner Ad loaded');
   }
 }
 
 function onAdLoadFailed(e) {
   if (e.detail.format === casai.Format.BANNER) {
     // Called when an ad load failed.
-    console.log('Load failed:', e.detail);
+    console.log('Banner Ad failed to load:', e.detail);
   }
 }
 
 document.addEventListener('casai_ad_loaded', onAdLoaded);
 document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
 
-// Trigger load (fire-and-forget; result handled via events)
 casai.bannerAd.load({
   adSize: adSize,
   autoReload: true,
-  refreshInterval: 30
 });
 
 function unsubscribeInterstitialLoadEvents() {
@@ -119,29 +118,33 @@ function unsubscribeInterstitialLoadEvents() {
   </TabItem>
 </Tabs>
 
-## Banner size parameters
+Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, load the ad instance in advance. Use the `casai_ad_loaded` event or `Promise` to be notified when the ad is ready for display.
 
-`maxWidth` Defines the **maximum banner width** for `ADAPTIVE` and `INLINE` banners.
-
-- If omitted, the width defaults to full device width.  
-- Automatically clamped to screen bounds.  
-- Automatically recalculated on orientation change.  
-- Applies only to `ADAPTIVE` and `INLINE` formats.
-
-`maxHeight` Defines the maximum banner height for `INLINE` banners.
-- If omitted, the height defaults to full device height.
-- Automatically clamped and updated on orientation change.
-- Ignored by all other banner types.
+## Limit the ad size
+When using an AdSize based on screen width or height, you can restrict the ad size by specifying the `maxWidth` and `maxHeight` properties.
 
 ```js
 casai.bannerAd.load({
   adSize: adSize,
-  maxWidth: 320,
-  maxHeight: 250,
-  autoReload: true,
-  refreshInterval: 30
+  maxWidth: 400, // [!code highlight]
+  maxHeight: 350, // [!code highlight]
 })
 ```
+
+<Property name="maxWidth" type="number">
+Maximum width for `ADAPTIVE` and `INLINE` banners in Density-independent Pixels(DP).  
+By default, adaptive and inline banners use the full device width.  
+Automatically clamped to the screen bounds and updated on orientation changes.
+</Property>
+
+---
+
+<Property name="maxHeight" type="number">
+Maximum height for `INLINE` banners in Density-independent Pixels(DP).
+By default, inline adaptive banners use the device height.
+Automatically clamped to the screen bounds and updated on orientation changes.
+</Property>
+
 
 ## Ad refresh interval
 The automatic refresh interval determines how often a new ad request is generated. 
@@ -156,18 +159,23 @@ Override the automatic refresh interval in `refreshInterval` property:
 ```js
 casai.bannerAd.load({ 
   adSize: adSize, 
-  autoReload: true, 
-  refreshInterval: 30
+  refreshInterval: 30, // [!code highlight]
 }) 
 ```
-Set `refreshInterval={0}` to disable. Default interval **30 seconds**.
 
 ## Display the Ad
-The position where the banner ad should be placed. The `Position` enum lists the valid ad position values.  
-By default, the banner ad is centered at the bottom.  
-Changing the position of a banner ad **does not destroy** the current banner or load a new one.  
+The banner will not be visible until `show()` is called. The show function has a position parameter that specifies where the banner ad should be placed. The `casai.Position` lists the valid ad position values. By default, the banner ad is centered at the bottom. 
+```js
+casai.bannerAd.show({ 
+  position: casai.Position.BOTTOM_CENTER,
+});
+```
+To change the banner’s position on the screen, simply call the show function again with the new parameters.
 
-The table for all positions on the screen. Some position values do not support offset on the X or Y axis, this can be seen in the table as (X, Y). 
+## The Ad coordinates on the screen
+The offsetX and offsetY properties allow you to adjust the banner’s position relative to the specified anchor position, in DP.
+
+Some anchor positions do not support offset on the X or Y axis, this can be seen in the table as (X, Y).
 
 |        | Left     | Center |    Right |
 | ------ | -------- | :----: | -------: |
@@ -175,19 +183,8 @@ The table for all positions on the screen. Some position values do not support o
 | Middle | ML(X)    | MC(-)  |    MR(X) |
 | Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
 
-Use the `casai.bannerAd.show(Position, 0, 0)` to place AdView at the X and Y offset, where the origin is the selected corner `Position` of the screen. 
-
-The coordinates on the screen are determined in Density-independent Pixels(DP):
+The coordinates on the screen are determined in Density-independent Pixels(DP).
 ```js
-casai.bannerAd.show({ 
-  position: casai.Position.BOTTOM_CENTER,
-  offsetX: xOffsetInDP,
-  offsetY: yOffsetInDP
-});
-```
-
-The coordinates on the screen are determined in pixels:
- ```js
 casai.bannerAd.show({ 
   position: casai.Position.TOP_LEFT,
   offsetX: xOffsetInDP,
@@ -195,36 +192,37 @@ casai.bannerAd.show({
 });
 ```
 
-To specify a position on the screen without offset, use the position property. 
-```js
-casai.bannerAd.show({ 
-  position: casai.Position.TOP_CENTER,
-});
-```
-This line is the same as calling `casai.bannerAd.show(TOP_CENTER, 0, 0);`
-
 <Info> You can change the banner's activity even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it. </Info>
 
 Change the banner position on screen using the following method:
 
+## Hide the Ad
+When you need to hide the banner ad from the user, call:
 ```js
-// Show banner (position is optional; default is BOTTOM_CENTER)
-casai.bannerAd.show({ 
-  position: casai.Position.BOTTOM_CENTER 
-});
-
-// When you need to hide the banner from the user, call:
 casai.bannerAd.hide();
 ```
 
-## Release ad resource
+## Listening for the Ad Clicked
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.detail.format` to determine the ad format.
+
+```js
+function onAdClicked(e) {
+  if (e.detail.format === casai.Format.BANNER) {
+    // Called when a click is recorded for an banner ad.
+  }
+}
+
+document.addEventListener('casai_ad_clicked', onAdClicked);
+```
+
+## Release Ad resource
 Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
 
 ```js
 casai.bannerAd.destroy();
 ```
 
-Call `load` again to create and load a new ad instance and restore autoload behavior if needed.
+Call `load()` again to create and load a new ad instance and restore autoload behavior if needed.
 
 
 ## Complete example

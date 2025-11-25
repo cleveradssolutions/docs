@@ -2,14 +2,29 @@
 title: Ad errors
 ---
 
-In cases where an ad fails to load/show, a callback is called which provides a `AdError` object.
+In cases where an ad fails to load/show, a `Promise` is rejected which provides a `AdError` object.
 
-AdError is commonly used in ad-related callbacks such as `AdFailedToLoadEvent` or `AdFailedToShowEvent`.
+AdError is commonly used in ad-related events such as `'casai_ad_load_failed'` or `'casai_ad_show_failed'`.
 
-Use `AdError.code` to retrieve the error code.   
-Use `AdError.message` to get a human-readable error description.   
+## AdError
 
-See `code` constants for all available error codes.
+<Property name="code" type="number">
+  Numeric error code returned by the SDK.
+</Property>
+
+---
+
+<Property name="message" type="string">
+  Human-readable error message.
+</Property>
+
+---
+
+<Property name="format" type="AdFormat">
+  The format of the ad that is shown. 
+</Property>
+
+## Ad error codes
 
 | Code | Name        | Description                                                                                                                                                                                            |
 | ---- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
