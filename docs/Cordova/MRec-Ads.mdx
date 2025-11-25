@@ -1,0 +1,164 @@
+---
+title: Medium Rectangle Banner Ads
+description: This guide explains how to integrate medium rectangle banner ads into a Cordova app.
+---
+
+Medium Rectangle (MREC) are rectangular image or text ads that occupy a spot with size in dp (300x250) on screen. 
+They stay on screen while users are interacting with the app, and can refresh automatically after a certain period of time. 
+
+Medium Rectangle ad management in Cordova code is handled through the `casai.mrecAd` object.
+
+CAS provides an option to enable `autoReload` to simplify your app logic. The `autoReload` is enabled by default, loading failures will trigger automatic retry attempts.
+You should decide whether to enable `autoReload`, or manually manage each ad loading cycle in your code.
+
+Also, banner ads support automatic `refreshInterval` regardless of the `autoReload` setting.
+
+Below is a diagram showing the ad lifecycle and how `autoReload` and `refreshInterval` affect it.
+
+<Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
+
+## Load the Ad
+The following example creates and loads an Medium Rectangle (MREC) ad:
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise">
+```js
+casai.mrecAd.load({
+  autoReload: true,
+})
+.then(() => {
+  // Called when an ad is successfully loaded.
+  console.log('MREC Ad loaded');
+})
+.catch((error) => {
+  // Called when an ad load failed.
+  console.error('MREC Ad failed to load:', error);
+});
+```
+  </TabItem>
+  <TabItem value="async" label="Async"> 
+```js 
+try { 
+  await casai.mrecAd.load({ 
+    autoReload: true,
+  }); 
+  // Called when an ad is successfully loaded.
+  console.log('MREC Ad loaded'); 
+} 
+catch (error) { 
+  // Called when an ad load failed.
+  console.error('MREC Ad failed to load:', error); 
+}
+``` 
+  </TabItem> 
+  <TabItem value="events" label="Events"> 
+```js
+function onAdLoaded(e) {
+  if (e.detail.format === casai.Format.MREC) {
+    // Called when an ad is successfully loaded.
+    console.log('MREC Ad loaded');
+  }
+}
+
+function onAdLoadFailed(e) {
+  if (e.detail.format === casai.Format.MREC) {
+    // Called when an ad load failed.
+    console.log('MREC Ad failed to load:', e.detail);
+  }
+}
+
+document.addEventListener('casai_ad_loaded', onAdLoaded);
+document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
+
+casai.mrecAd.load({  
+  autoReload: true,
+});
+
+function unsubscribeInterstitialLoadEvents() {
+  document.removeEventListener('casai_ad_loaded', onAdLoaded);
+  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
+}
+```
+  </TabItem>
+</Tabs>
+
+Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, load the ad instance in advance. Use the `casai_ad_loaded` event or `Promise` to be notified when the ad is ready for display.
+
+## Ad refresh interval
+The automatic refresh interval determines how often a new ad request is generated. 
+Once the interval elapses, a new ad will automatically load and display.
+
+The interval countdown runs only while the ad is visible on screen. 
+
+Set a custom refresh interval longer than 10 seconds, or 0 to disable refresh option. 
+Default refresh interval is 30 seconds.
+
+Override the automatic refresh interval in `refreshInterval` property:
+```js
+casai.mrecAd.load({ 
+  adSize: adSize, 
+  refreshInterval: 30, // [!code highlight]
+}) 
+```
+
+## Display the Ad
+The banner will not be visible until `show()` is called. The show function has a position parameter that specifies where the banner ad should be placed. The `casai.Position` lists the valid ad position values. By default, the banner ad is centered at the bottom. 
+```js
+casai.mrecAd.show({ 
+  position: casai.Position.BOTTOM_CENTER,
+});
+```
+To change the banner’s position on the screen, simply call the show function again with the new parameters.
+
+## The Ad coordinates on the screen
+The offsetX and offsetY properties allow you to adjust the banner’s position relative to the specified anchor position, in DP.
+
+Some anchor positions do not support offset on the X or Y axis, this can be seen in the table as (X, Y).
+
+|        | Left     | Center |    Right |
+| ------ | -------- | :----: | -------: |
+| Top    | TL(X, Y) | TC(Y)  | TR(X, Y) |
+| Middle | ML(X)    | MC(-)  |    MR(X) |
+| Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
+
+The coordinates on the screen are determined in Density-independent Pixels(DP).
+```js
+casai.mrecAd.show({ 
+  position: casai.Position.TOP_LEFT,
+  offsetX: xOffsetInDP,
+  offsetY: yOffsetInDP
+});
+```
+
+<Info> You can change the banner's activity even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it. </Info>
+
+Change the banner position on screen using the following method:
+
+## Hide the Ad
+When you need to hide the banner ad from the user, call:
+```js
+casai.mrecAd.hide();
+```
+
+## Listening for the Ad Clicked
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.detail.format` to determine the ad format.
+```js
+function onAdClicked(e) {
+  if (e.detail.format === casai.Format.MREC) {
+    // Called when a click is recorded for an MREC ad.
+  }
+}
+
+document.addEventListener('casai_ad_clicked', onAdClicked);
+```
+
+## Release Ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to prevent memory leaks.
+```js
+casai.mrecAd.destroy();
+```
+
+Call `load()` again to create and load a new ad instance and restore autoload behavior if needed.
+
+## Complete example
+- [Standard MREC ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/www/js/MRecExample.js)

@@ -9,7 +9,7 @@
             "flutter": "4.5.0",
             "unreal": "4.5.0",
             "reactnative": "4.5.0",
-            "cordova": "1.0.3",
+            "cordova": "4.4.2",
             "solar": "18",
             "construct": "0.0.3.0"
         }
@@ -81,6 +81,11 @@
             "id": "reactnative",
             "title": "ReactNative",
             "href": "/ReactNative"
+        },
+        {
+            "id": "cordova",
+            "title": "Cordova",
+            "href": "/Cordova"
         }
     ],
     "sidebar": [
@@ -789,6 +794,99 @@
                     "href": "/general/ReportingAPI"
                 }
             ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "cordova",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/Cordova"
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/Cordova/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/Cordova/User-Consent-Flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/Cordova/Enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/Cordova/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "cordova",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/Cordova/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/Cordova/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/Cordova/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/Cordova/Banner-Ads"
+                },
+                {
+                    "title": "MRec Ad",
+                    "href": "/Cordova/MRec-Ads"
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "cordova",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/Cordova/Targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/Cordova/Ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/Cordova/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
         }
     ],
     "anchors": [
@@ -827,6 +925,12 @@
             "icon": "file-pen",
             "tab": "reactnative",
             "href": "https://github.com/cleveradssolutions/CAS-ReactNative/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "cordova",
+            "href": "https://github.com/cleveradssolutions/CAS-Cordova/releases"
         }
     ],
     "search": {

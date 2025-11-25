@@ -1,0 +1,149 @@
+---
+title: CAS.AI plugin for Cordova
+---
+
+Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
+Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
+
+## Prerequisites
+Before adding the plugin, you need to modify the `config.xml` of project. 
+
+Make sure that your app's `config.xml` file uses the following minimum values:
+```xml
+<platform name="ios">
+    <preference name="SwiftVersion" value="5.0" />
+    <preference name="deployment-target" value="13.0" />
+</platform>
+<platform name="android">
+    <preference name="android-targetSdkVersion" value="35" />
+    <preference name="GradlePluginKotlinEnabled" value="true" />
+    <preference name="GradlePluginKotlinVersion" value="2.0.21" />
+</platform>
+```
+
+## CAS Plugin variables
+Some required configuration steps for your project will be performed automatically using the CAS Gradle plugin for Android and the CAS Ruby script for iOS. You need to register your app on the https://cas.ai platform using the bundle package name for Android and the iTunes ID for iOS.
+- For Android the bundle package name will be detected automatically.
+- **For iOS you must specify the registered iTunes ID** in the `IOS_CAS_ID` plugin variable. If you do not provide your iTunes ID, the ads in your app will be replaced with test ads.
+
+All plugin variables must be defined within the `<plugin>` tag, for example `IOS_CAS_ID`.
+```xml
+<plugin name="cordova-plugin-casai" spec="*">
+    <variable name="IOS_CAS_ID" value="123456789" />
+    <!-- All plugin variables here -->
+</plugin>
+```
+
+<Accordion title="What is CAS ID in iOS?">
+
+In most cases, a CASID is the same as your app store ID.  
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
+ 
+</Accordion>
+
+
+## Mediated Networks
+CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
+If you're unsure which solution best fits your application, please contact your account manager.
+
+Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Adapters#casai-mediation-adapters) tables.
+
+### Optimal Ads Solution
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+```xml
+<variable name="IOS_CAS_SOLUTIONS" value="optimal" />
+<variable name="ANDROID_CAS_SOLUTIONS" value="optimal" />
+```
+
+### Families Ads Solution
+Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
+
+```xml
+<variable name="IOS_CAS_SOLUTIONS" value="families" />
+<variable name="ANDROID_CAS_SOLUTIONS" value="families" />
+```
+
+### Choice networks
+Advanced publishers familiar with ad network integrations can configure their own set of adapters. 
+Add the adapter names you want to CAS_ADAPTERS variables from the linked list for each platform, separating them with `,`, `;`, or a space (` `).
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+For Android, the name must match the variable names in the `adapters {}` block from the [Android page](Android/Mediated-Networks). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
+```xml
+<variable name="ANDROID_CAS_ADAPTERS" value="googleAds casExchange dtExchange" />
+```
+
+</TabItem>
+<TabItem label="iOS" value="ios">
+For iOS, the adapter name is used without the CASMediation prefix from the [iOS page](iOS/Mediated-Networks). For example, instead of pod name `CASMediationGoogleAds`, enter only `GoogleAds`.
+```xml
+<variable name="IOS_CAS_ADAPTERS" value="GoogleAds CASExchange DTExchange" />
+```
+
+</TabItem>
+</Tabs>
+
+## Advertising Identifier
+CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
+To enable the use of the Advertising ID in your app, you need to complete the following setup steps.
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+CAS Mediation allows you to easily enable or disable (`true` or `false`) the use of the Advertising ID, depending on your app’s privacy requirements.
+
+```xml
+<variable name="ANDROID_USE_AD_ID" value="true" />
+```
+
+An application must not use an advertising identifier if **at least one** of the following conditions is true:
+- The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
+- The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
+
+</TabItem>
+<TabItem label="iOS" value="ios">
+To use the [App Tracking Transparency authorization request](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) for accessing the IDFA, add plugin variable `IOS_USER_TRACKING_USAGE` to the `config.xml` with a custom message describing your usage. Below is an example description text:
+
+```xml
+<variable name="IOS_USER_TRACKING_USAGE" value="Your data will remain confidential and will only be used to provide you a better and personalised ad experience" />
+```
+
+<Accordion title="Usage description examples">
+
+- Your data will remain confidential and will only be used to provide you a better and personalised ad experience
+- Your data will be used to provide you a better and personalised ad experience
+- Your data will be used to create a customized experience tailored to your interests
+- Allowing tracking will enable more personalized ads for you
+- We try to show ads for apps and products that will be most interesting to you based on the apps you use
+- This identifier will be used to deliver personalized ads to you
+- This only uses device info for more interesting and relevant ads
+
+</Accordion>
+
+</TabItem>
+</Tabs>
+
+## Add CAS.AI Cordova plugin
+Include the CAS.AI plugin for Cordova in your project with cordova command:
+```shell
+cordova plugin add cordova-plugin-casai
+```
+
+You can also specify all variables directly in the `plugin add` command by adding `--variable name=value` for each variable.
+
+```shell
+cordova plugin add cordova-plugin-casai --variable IOS_CAS_ID=demo
+```
+
+<Info>
+To apply changes to the plugin variables, you need to remove and then re-add the plugin.
+</Info>
+
+```shell
+cordova plugin rm cordova-plugin-casai --nosave && cordova plugin add cordova-plugin-casai
+```
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Cordova/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
