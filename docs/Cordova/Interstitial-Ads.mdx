@@ -35,9 +35,9 @@ casai.interstitialAd
   })
   .catch(function (error) {
     // Called when an ad load failed.
-    console.log('Load failed:', error);
+    console.log('Load failed:', error.message);
   });
-````
+```
 
   </TabItem>
   <TabItem value="async" label="Async">
@@ -51,7 +51,7 @@ try {
   console.log('Loaded');
 } catch (error) {
   // Called when an ad load failed.
-  console.log('Load failed:', error);
+  console.log('Load failed:', error.message);
 }
 ```
 
@@ -59,17 +59,17 @@ try {
   <TabItem value="events" label="Events">
 
 ```js
-function onAdLoaded(e) {
-  if (e.detail.format === casai.Format.INTERSTITIAL) {
+function onAdLoaded(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
     // Called when an ad is successfully loaded.
     console.log('Loaded');
   }
 }
 
-function onAdLoadFailed(e) {
-  if (e.detail.format === casai.Format.INTERSTITIAL) {
+function onAdLoadFailed(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
     // Called when an ad load failed.
-    console.log('Load failed:', e.detail.message);
+    console.log('Load failed:', event.message);
   }
 }
 
@@ -122,7 +122,7 @@ casai.interstitialAd
   })
   .catch(function (error) {
     // Called when the ad failed to show full screen content.
-    console.log('Failed to show:', error);
+    console.log('Failed to show:', error.message);
   });
 ```
 
@@ -136,7 +136,7 @@ try {
   console.log('Dismissed');
 } catch (error) {
   // Called when the ad failed to show full screen content.
-  console.log('Failed to show:', error);
+  console.log('Failed to show:', error.message);
 }
 ```
 
@@ -144,22 +144,22 @@ try {
   <TabItem value="events" label="Events">
 
 ```js
-function onAdFailedToShow(e) {
-  if (e.detail.format === casai.Format.INTERSTITIAL) {
+function onAdFailedToShow(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
     // Called when the ad failed to show full screen content.
-    console.log('Failed to show:', e.detail.message);
+    console.log('Failed to show:', event.message);
   }
 }
 
-function onAdShowed(e) {
-  if (e.detail.format === casai.Format.INTERSTITIAL) {
+function onAdShowed(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
     // Called when the ad showed the full screen content.
     console.log('Showed');
   }
 }
 
-function onAdDismissed(e) {
-  if (e.detail.format === casai.Format.INTERSTITIAL) {
+function onAdDismissed(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
     // Called when the ad dismissed full screen content.
     console.log('Dismissed');
   }
@@ -210,10 +210,10 @@ casai.interstitialAd.load({
 ```
 
 ## Listening for the Ad Clicked
-The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.detail.format` to determine the ad format.
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.format` to determine the ad format.
 ```js
-function onAdClicked(e) {
-  if (e.detail.format === casai.Format.INTERSTITIAL) {
+function onAdClicked(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
     // Called when a click is recorded for an interstitial ad.
   }
 }

@@ -88,17 +88,17 @@ catch (error) {
   </TabItem> 
   <TabItem value="events" label="Events"> 
 ```js
-function onAdLoaded(e) {
-  if (e.detail.format === casai.Format.BANNER) {
+function onAdLoaded(event){
+  if (event.format === casai.Format.BANNER) {
     // Called when an ad is successfully loaded.
     console.log('Banner Ad loaded');
   }
 }
 
-function onAdLoadFailed(e) {
-  if (e.detail.format === casai.Format.BANNER) {
+function onAdLoadFailed(event){
+  if (event.format === casai.Format.BANNER) {
     // Called when an ad load failed.
-    console.log('Banner Ad failed to load:', e.detail.message);
+    console.log('Banner Ad failed to load:', event.message);
   }
 }
 
@@ -177,8 +177,10 @@ casai.bannerAd.show({
 ```
 To change the banner’s position on the screen, simply call the show function again with the new parameters.
 
+The banner's activity can be changed even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it.
+
 ## The Ad coordinates on the screen
-The offsetX and offsetY properties allow you to adjust the banner’s position relative to the specified anchor position, in DP.
+The offsetX and offsetY properties allow you to adjust the banner’s position relative to the specified anchor position, in DP. Our SDK will not allow an ad to be placed outside the screen or overlap with screen cutouts.
 
 Some anchor positions do not support offset on the X or Y axis, this can be seen in the table as (X, Y).
 
@@ -197,10 +199,6 @@ casai.bannerAd.show({
 });
 ```
 
-<Info> You can change the banner's activity even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it. </Info>
-
-Change the banner position on screen using the following method:
-
 ## Hide the Ad
 When you need to hide the banner ad from the user, call:
 ```js
@@ -208,11 +206,11 @@ casai.bannerAd.hide();
 ```
 
 ## Listening for the Ad Clicked
-The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.detail.format` to determine the ad format.
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.format` to determine the ad format.
 
 ```js
-function onAdClicked(e) {
-  if (e.detail.format === casai.Format.BANNER) {
+function onAdClicked(event){
+  if (event.format === casai.Format.BANNER) {
     // Called when a click is recorded for an banner ad.
   }
 }

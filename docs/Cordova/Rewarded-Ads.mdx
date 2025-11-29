@@ -34,9 +34,9 @@ casai.rewardedAd
   })
   .catch(function (error) {
     // Called when an ad load failed.
-    console.log('Load failed:', error);
+    console.log('Load failed:', error.message);
   });
-````
+```
 
   </TabItem>
   <TabItem value="async" label="Async">
@@ -50,7 +50,7 @@ try {
   console.log('Loaded');
 } catch (error) {
   // Called when an ad load failed.
-  console.log('Load failed:', error);
+  console.log('Load failed:', error.message);
 }
 ```
 
@@ -58,17 +58,17 @@ try {
   <TabItem value="events" label="Events">
 
 ```js
-function onAdLoaded(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
+function onAdLoaded(event){
+  if (event.format === casai.Format.REWARDED) {
     // Called when an ad is successfully loaded.
     console.log('Loaded');
   }
 }
 
-function onAdLoadFailed(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
+function onAdLoadFailed(event){
+  if (event.format === casai.Format.REWARDED) {
     // Called when an ad load failed.
-    console.log('Load failed:', e.detail.message);
+    console.log('Load failed:', event.message);
   }
 }
 
@@ -126,7 +126,7 @@ casai.rewardedAd
   })
   .catch(function (error) {
     // Called when the ad failed to show full screen content.
-    console.log('Failed to show:', error);
+    console.log('Failed to show:', error.message);
   });
 ```
 
@@ -146,7 +146,7 @@ try {
   }
 } catch (error) {
   // Called when the ad failed to show full screen content.
-  console.log('Failed to show:', error);
+  console.log('Failed to show:', error.message);
 }
 ```
 
@@ -154,29 +154,29 @@ try {
   <TabItem value="events" label="Events">
 
 ```js
-function onAdReward(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
+function onAdReward(event){
+  if (event.format === casai.Format.REWARDED) {
     // Called when the user has earned the reward.
-    console.log('Reward the user for watching the ad', e.detail);
+    console.log('Reward the user for watching the ad');
   }
 }
 
-function onAdFailedToShow(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
+function onAdFailedToShow(event){
+  if (event.format === casai.Format.REWARDED) {
     // Called when the ad failed to show full screen content.
-    console.log('Failed to show:', e.detail.message);
+    console.log('Failed to show:', event.message);
   }
 }
 
-function onAdShowed(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
+function onAdShowed(event){
+  if (event.format === casai.Format.REWARDED) {
     // Called when the ad showed the full screen content.
     console.log('Showed');
   }
 }
 
-function onAdDismissed(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
+function onAdDismissed(event){
+  if (event.format === casai.Format.REWARDED) {
     // Called when the ad dismissed full screen content.
     console.log('Dismissed');
   }
@@ -219,10 +219,10 @@ if (await casai.rewardedAd.isLoaded()) {
 ```
 
 ## Listening for the Ad Clicked
-The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.detail.format` to determine the ad format.
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.format` to determine the ad format.
 ```js
-function onAdClicked(e) {
-  if (e.detail.format === casai.Format.REWARDED) {
+function onAdClicked(event){
+  if (event.format === casai.Format.REWARDED) {
     // Called when a click is recorded for an Rewarded ad.
   }
 }
