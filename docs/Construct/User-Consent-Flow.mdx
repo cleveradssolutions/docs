@@ -2,52 +2,6 @@
 title: User Consent Flow
 ---
 
-# Update soon...
-
-```json
-{
-"on-consent-form-dismissed": {
-  "list-name": "On Consent Form Dismissed",
-  "display-text": "On consent form dismissed",
-  "description": "Triggered when the consent form is dismissed after CAS initialization or manual consent form show."
-},
-"on-consent-required": {
-  "list-name": "On Consent Required",
-  "display-text": "On consent required",
-  "description": "Triggered when user consent is required  after CAS initialization or manual consent form show."
-},
-"on-consent-not-required": {
-  "list-name": "On Consent Not Required",
-  "display-text": "On consent not required",
-  "description": "Triggered when user consent is not required after CAS initialization or manual consent flow show.."
-},
-"is-consent-required": {
-  "list-name": "Is Consent Required",
-  "display-text": "Is consent required",
-  "description": "Checks if user consent is required."
-},
-"show-consent-form": {
-  "list-name": "Show Consent Form",
-  "display-text": "Show consent form if required [i]{0}[/i]",
-  "description": "Displays the consent form to the user",
-  "params": {
-    "if-required-only": {
-      "name": "If required only",
-      "desc": "Shows the consent form only if it is required and the user has not responded previously."
-    }
-  }
-},
-"user-country-code": {
-  "description": "Gets the user's country ISO 2 code based on their IP address. For example: 'US' or '--' if unknown.",
-  "translated-name": "User Country Code"
-},
-"consent-status": {
-  "description": "Gets the current status of the consent form: 'Unknown', 'Obtained' 'Not required', 'Unavailable', 'Internal error', 'Network error', 'Invalid context', 'Still presenting'",
-  "translated-name": "Consent Status"
-}
-}
-```
-
 <Info>
 It is optional to use the CMP flow included with the CAS SDK. If you integrate your own CMP flow, make sure that flow completes before you initialize the CAS SDK.
 </Info>
@@ -91,25 +45,25 @@ If an app does not present this request, the IDFA will automatically be zeroed o
 * The app does not have a usage tracking description in `IOS_USER_TRACKING_USAGE` variable.
 
 ## Automatic consent flow
-The automatic consent flow is enabled by default and described on the [CAS initialization page](Cordova/Initialize-CAS).
+The automatic consent flow is enabled by default and described on the [Automation options page](Construct/Automation-Options).
+
+## Conditions
+- On Consent Form Dismissed: Triggered when the consent form is dismissed after CAS initialization or manual consent form show.
+- On Consent Required: Triggered when user consent is required  after CAS initialization or manual consent form show.
+- On Consent Not Required: Triggered when user consent is not required after CAS initialization or manual consent flow show.
+- Is Consent Required: Checks if user consent is required.
 
 ## Manual consent flow
-Call `casai.showConsentFlow()` to show the built-in consent form manually. If the consent is required, the SDK loads the form and immediately presents it.  
+Perform `Show Consent Form` action to show the built-in consent form manually. If the consent is required, the SDK loads the form and immediately presents it.
 
-The `Promise<ConsentFlowStatus>` completes after the form is dismissed. If consent is not required, the `Promise` resolves instantly.
+<Property name="If required only" type="boolean">
+Shows the consent form only if it is required and the user has not responded previously.
+</Property>
 
-```js
-casai.showConsentFlow({
-  ifRequired: true,
-  debugGeography: 'eea'
-}).then((status) => {
-  if (status == 'Obtained') {
-    // User consent obtained.
-  }
-});
-```
+## Consent Status
+Gets the current status of the consent form.
 
-| ConsentFlow constant   | Description                                                        |
+| Consent Flow status  | Description                                                        |
 | ---------------------- | ------------------------------------------------------------------ |
 | `Obtained`               | User consent obtained. Personalized vs non-personalized undefined. |
 | `Not required`           | User consent not required.                                         |
@@ -123,29 +77,20 @@ casai.showConsentFlow({
 The cache consent status on your app or a previously saved consent string, could lead to a [TCF 3.3](https://support.google.com/admanager/answer/9999955) error if consent is expired.
 </Warning>
 
+## User Country Code
+Gets the user's country ISO 2 code based on their IP address. For example: `'US'` or `'--'` if unknown.
+
 ## Privacy options button
 Some consent forms require the user to modify their consent at any time. Adhere to the following steps to implement a privacy options button if required.
 
-1. Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
-2. Once `initialize()` completes, check `isConsentObtained` to determine whether to display the UI element that can present the privacy options form.
-3. When a user interacts with your UI element, call `show()` to show the form so the user can update their privacy options at any time.
-
-```js
-var isConsentObtained = false;
-
-function initialize() {
-  casai.initialize({
-    showConsentFormIfRequired: true,
-  }).then((status) => {
-    isConsentObtained = status.consentFlowStatus == `Obtained`; // [!code highlight]
-  });
-}
-
-function showPrivacyOptionsForm() {
-  casai.showConsentFlow({
-    ifRequired: false
-  }).then((status) => {
-    isConsentObtained = status == `Obtained`;
-  });
-}
-```
+<Steps>
+<Step>
+Implement a UI element, such as a button in your app's settings page, that can trigger a privacy options form.
+</Step>
+<Step>
+Check `Is Consent Required` condition to determine whether to display the UI element that can present the privacy options form.
+</Step>
+<Step>
+When a user interacts with your UI element, call `Show Consent Form` action with false for `If required only` property to show the form so the user can update their privacy options at any time.
+</Step>
+</Steps>
