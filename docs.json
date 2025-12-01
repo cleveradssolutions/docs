@@ -12,6 +12,12 @@
             "cordova": "4.5.0",
             "solar": "18",
             "construct": "0.0.3.0"
+        },
+        "min": {
+            "xcode": "16.4",
+            "ios": "13",
+            "api": "23",
+            "targetapi": "35"
         }
     },
     "favicon": "https://cas.ai/wp-content/uploads/2025/08/favicon-80x80.png",
@@ -86,6 +92,11 @@
             "id": "cordova",
             "title": "Cordova",
             "href": "/Cordova"
+        },
+        {
+            "id": "construct",
+            "title": "Construct",
+            "href": "/Construct"
         }
     ],
     "sidebar": [
@@ -887,6 +898,66 @@
                     "href": "/general/ReportingAPI"
                 }
             ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "construct",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/Construct"
+                },
+                {
+                    "title": "Automation Options",
+                    "href": "/Construct/Automation-Options"
+                },
+                {
+                    "title": "Development Options",
+                    "href": "/Construct/Development-Options"
+                },
+                {
+                    "title": "User Consent Flow",
+                    "href": "/Construct/User-Consent-Flow"
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "construct",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/Construct/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/Construct/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/Construct/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/Construct/Banner-Ads"
+                },
+                {
+                    "title": "MRec Ad",
+                    "href": "/Construct/MRec-Ads"
+                }
+            ]
         }
     ],
     "anchors": [
@@ -931,6 +1002,12 @@
             "icon": "file-pen",
             "tab": "cordova",
             "href": "https://github.com/cleveradssolutions/CAS-Cordova/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "construct",
+            "href": "https://github.com/cleveradssolutions/CAS-Construct/releases"
         }
     ],
     "search": {

@@ -1,0 +1,71 @@
+---
+title: Medium Rectangle Banner Ads
+description: This guide explains how to integrate medium rectangle banner ads into a Construct app.
+---
+
+# Update soon...
+
+```json
+{
+  "on-mrec-ad-loaded": {
+    "list-name": "On Ad Loaded",
+    "display-text": "On MREC ad loaded",
+    "description": "Triggered when a medium rectangle (MREC) ad is successfully loaded."
+  },
+  "on-mrec-ad-failed-to-load": {
+    "list-name": "On Ad Failed to Load",
+    "display-text": "On MREC ad failed to load",
+    "description": "Triggered when a medium rectangle (MREC) ad fails to load."
+  },
+  "on-mrec-ad-clicked": {
+    "list-name": "On Ad Clicked",
+    "display-text": "On MREC ad clicked",
+    "description": "Triggered when a medium rectangle (MREC) ad is clicked."
+  },
+  "is-mrec-ad-loaded": {
+    "list-name": "Is Ad Loaded",
+    "display-text": "Is MREC ad loaded",
+    "description": "Checks if a medium rectangle (MREC) ad is loaded."
+  },
+  "load-mrec-ad": {
+    "list-name": "Load MREC Ad",
+    "display-text": "Load MREC ad",
+    "description": "Loads a medium rectangle (MREC) ad. [b]The ad will not be displayed on the screen until the show action is performed.[/b] This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been loaded or failed to load."
+  },
+  "show-mrec-ad": {
+    "list-name": "Show MREC Ad",
+    "display-text": "Show MREC ad at at [i]{0}[/i] with offset ([i]{1}[/i], [i]{2}[/i])",
+    "description": "Displays the MREC ad at the specified position with optional offsets. The ad position can be changed at any time by performing this action with new parameters.",
+    "params": {
+      "position": {
+        "name": "Position",
+        "desc": "The position on the screen to display the MREC ad. The CAS will not allow an ad to be placed outside the screen or overlap with screen cutouts. Some anchor positions do not support offset on the X or Y axis, this can be seen as (X, Y).",
+        "items": {
+          "top-center": "Top Center (Y)",
+          "top-left": "Top Left (X, Y)",
+          "top-right": "Top Right (X, Y)",
+          "bottom-center": "Bottom Center (-)",
+          "bottom-left": "Bottom Left (X)",
+          "bottom-right": "Bottom Right (X)",
+          "middle-center": "Middle Center (Y)",
+          "middle-left": "Middle Left (X, Y)",
+          "middle-right": "Middle Right (X, Y)"
+        }
+      },
+      "x-offset": {
+        "name": "X Offset",
+        "desc": "The horizontal offset from the specified position in DP. Leave 0 to not use offset."
+      },
+      "y-offset": {
+        "name": "Y Offset",
+        "desc": "The vertical offset from the specified position in DP. Leave 0 to not use offset."
+      }
+    }
+  },
+  "hide-mrec-ad": {
+    "list-name": "Hide MREC Ad",
+    "display-text": "Hide MREC ad",
+    "description": "Hides the currently displayed MREC ad."
+  },
+}
+```

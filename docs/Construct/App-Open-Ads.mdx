@@ -1,0 +1,61 @@
+---
+title: App Open Ads
+description: This guide explains how to integrate app open ads into a Construct app.
+---
+
+# Update soon...
+
+```json
+{
+  "on-app-open-ad-loaded": {
+    "list-name": "On Ad Loaded",
+    "display-text": "On app open ad loaded",
+    "description": "Triggered when an app open ad is successfully loaded."
+  },
+  "on-app-open-ad-failed-to-load": {
+    "list-name": "On Ad Failed to Load",
+    "display-text": "On app open ad failed to load",
+    "description": "Triggered when an app open ad fails to load."
+  },
+  "on-app-open-ad-failed-to-show": {
+    "list-name": "On Ad Failed to Show",
+    "display-text": "On app open ad failed to show",
+    "description": "Triggered when an app open ad fails to show."
+  },
+  "on-app-open-ad-showed": {
+    "list-name": "On Ad Showed",
+    "display-text": "On app open ad showed",
+    "description": "Triggered when an app open ad is shown."
+  },
+  "on-app-open-ad-clicked": {
+    "list-name": "On Ad Clicked",
+    "display-text": "On app open ad clicked",
+    "description": "Triggered when an app open ad is clicked."
+  },
+  "on-app-open-ad-dismissed": {
+    "list-name": "On Ad Dismissed",
+    "display-text": "On app open ad dismissed",
+    "description": "Triggered when an app open ad is dismissed."
+  },
+  "is-app-open-ad-loaded": {
+    "list-name": "Is Ad Loaded",
+    "display-text": "Is app open ad loaded",
+    "description": "Checks if an app open ad is loaded."
+  },
+  "load-app-open-ad": {
+    "list-name": "Load AppOpen Ad",
+    "display-text": "Load AppOpen ad",
+    "description": "Loads an AppOpen ad. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been loaded or failed to load."
+  },
+  "show-app-open-ad": {
+    "list-name": "Show AppOpen Ad",
+    "display-text": "Show AppOpen ad",
+    "description": "Displays the AppOpen ad. There is no need to check whether the ad is loaded before showing it. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been dismissed or failed to show."
+  },
+  "destroy-app-open-ad": {
+    "list-name": "Destroy AppOpen Ad",
+    "display-text": "Destroy AppOpen ad",
+    "description": "Destroys the app open ad instance and frees up resources. To resume working with ads, use the load ad action."
+  },
+}
+```

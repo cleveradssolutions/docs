@@ -1,0 +1,63 @@
+---
+title: Development Options
+description: This guide explains how to enable test ads in your ads integration.
+---
+
+It's important to enable test ads during development so that you can click on them without charging CAS advertisers.
+
+<Error>  
+We strongly suggest that you enable test ads mode when you validate the integration. If you click on too many ads without being in test mode, you risk your account being flagged for invalid activity.  
+</Error>  
+
+There are two ways to get test ads:
+- [Enable test ad mode](#force-test-ads) for all devices.
+- [Set device ids to test ad](#test-device-ids).
+
+Ads with Test Ads mode are safe to click. Requests, impressions, and clicks on test ads will not show up in your account's reports.
+Test full-screen ads displays details of CAS integration and tips for solving errors. Go to the Mediation Adapters section to make sure that the advertising networks you want are integrated correctly.
+
+<Image height="500" alt="image" src="/assets/Enabling-test-ads-1.jpg" />  
+<Image height="500" alt="image" src="/assets/Enabling-test-ads-2.jpg" />  
+
+## Force Test ads
+The quickest way to enable testing is to use test ad mode. The test ad mode are not associated with your CAS account, so there's no risk of your account generating invalid traffic when using these test ad mode.
+The easiest way to load test ads is to use:
+
+## Test device IDs
+If you want to do more rigorous testing with production-looking ads, you can now configure your device as a test device and use your own manager id. Test devices can either be added programmatically.
+
+Follow the steps below to add your device as a test device.
+
+1. Run an app configured with the CAS on device.
+2. Check the logcat output for a message that looks like this:
+
+```
+To get test ads on this device, set "12345678901234567890123456789012"
+```
+
+3. Copy your alphanumeric test device ID to your clipboard.
+4. Add device ID to CAS object properties, separated `,`.
+
+| Development Options | Value |
+|---|---|
+| Test Device IDs | `12345678901234567890123456789012,12345678901234567890123456789012` |
+
+
+5. Re-run your app.
+6. Well done, ads on this device are safe to click. Requests, impressions, and clicks on ads in test mode will not show up in your account's reports.
+
+## Debug Logging
+The enabled Debug Mode will display a lot of useful information for debugging about the states of the SDK with log tag `CAS.AI`. Disabling Debug Mode may improve application performance.
+
+<Info>  
+If you have discovered the problem in the work of the SDK, please provide us with a description of the problem along with the full log of your device.  
+</Info>  
+
+## Debug Geography
+The CAS provides a way to test your app's behavior as though the device was located in the EEA or UK using the Debug Geography.
+Select debug geography, and the setting will be applied only for test sessions.
+
+- `Unknown` - Geography is unknown.
+- `European Economic Area` - Geography appears as in the European Economic Area.
+- `US State` - Geography appears as in a regulated US State.
+- `Unregulated` - Geography appears as in a region with no regulation.

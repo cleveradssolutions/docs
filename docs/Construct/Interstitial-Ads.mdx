@@ -1,0 +1,61 @@
+---
+title: Interstitial Ads
+description: This guide explains how to integrate interstitial ads into a Construct app.
+---
+
+# Update soon...
+
+```json
+{
+  "on-interstitial-ad-loaded": {
+    "list-name": "On Ad Loaded",
+    "display-text": "On interstitial ad loaded",
+    "description": "Triggered when an interstitial ad is successfully loaded."
+  },
+  "on-interstitial-ad-failed-to-load": {
+    "list-name": "On Ad Failed to Load",
+    "display-text": "On interstitial ad failed to load",
+    "description": "Triggered when an interstitial ad fails to load."
+  },
+  "on-interstitial-ad-failed-to-show": {
+    "list-name": "On Ad Failed to Show",
+    "display-text": "On interstitial ad failed to show",
+    "description": "Triggered when an interstitial ad fails to show."
+  },
+  "on-interstitial-ad-showed": {
+    "list-name": "On Ad Showed",
+    "display-text": "On interstitial ad showed",
+    "description": "Triggered when an interstitial ad is shown."
+  },
+  "on-interstitial-ad-clicked": {
+    "list-name": "On Ad Clicked",
+    "display-text": "On interstitial ad clicked",
+    "description": "Triggered when an interstitial ad is clicked."
+  },
+  "on-interstitial-ad-dismissed": {
+    "list-name": "On Ad Dismissed",
+    "display-text": "On interstitial ad dismissed",
+    "description": "Triggered when an interstitial ad is dismissed."
+  },
+  "is-interstitial-ad-loaded": {
+    "list-name": "Is Ad Loaded",
+    "display-text": "Is interstitial ad loaded",
+    "description": "Checks if an interstitial ad is loaded."
+  },
+  "load-interstitial-ad": {
+    "list-name": "Load Interstitial Ad",
+    "display-text": "Load interstitial ad",
+    "description": "Loads an Interstitial ad. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been loaded or failed to load."
+  },
+  "show-interstitial-ad": {
+    "list-name": "Show Interstitial Ad",
+    "display-text": "Show interstitial ad",
+    "description": "Displays the interstitial ad. There is no need to check whether the ad is loaded before showing it. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been dismissed or failed to show."
+  },
+  "destroy-interstitial-ad": {
+    "list-name": "Destroy Interstitial Ad",
+    "display-text": "Destroy interstitial ad",
+    "description": "Destroys the Interstitial ad instance and frees up resources. To resume working with ads, use the load ad action."
+  },
+}
+```

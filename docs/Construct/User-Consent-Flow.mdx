@@ -1,0 +1,49 @@
+---
+title: User Consent Flow
+---
+
+# Update soon...
+
+```json
+{
+"on-consent-form-dismissed": {
+  "list-name": "On Consent Form Dismissed",
+  "display-text": "On consent form dismissed",
+  "description": "Triggered when the consent form is dismissed after CAS initialization or manual consent form show."
+},
+"on-consent-required": {
+  "list-name": "On Consent Required",
+  "display-text": "On consent required",
+  "description": "Triggered when user consent is required  after CAS initialization or manual consent form show."
+},
+"on-consent-not-required": {
+  "list-name": "On Consent Not Required",
+  "display-text": "On consent not required",
+  "description": "Triggered when user consent is not required after CAS initialization or manual consent flow show.."
+},
+"is-consent-required": {
+  "list-name": "Is Consent Required",
+  "display-text": "Is consent required",
+  "description": "Checks if user consent is required."
+},
+"show-consent-form": {
+  "list-name": "Show Consent Form",
+  "display-text": "Show consent form if required [i]{0}[/i]",
+  "description": "Displays the consent form to the user",
+  "params": {
+    "if-required-only": {
+      "name": "If required only",
+      "desc": "Shows the consent form only if it is required and the user has not responded previously."
+    }
+  }
+},
+"user-country-code": {
+  "description": "Gets the user's country ISO 2 code based on their IP address. For example: 'US' or '--' if unknown.",
+  "translated-name": "User Country Code"
+},
+"consent-status": {
+  "description": "Gets the current status of the consent form: 'Unknown', 'Obtained' 'Not required', 'Unavailable', 'Internal error', 'Network error', 'Invalid context', 'Still presenting'",
+  "translated-name": "Consent Status"
+}
+}
+```

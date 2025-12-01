@@ -1,0 +1,77 @@
+---
+title: Banner Ads
+description: This guide explains how to integrate banner ads into a Construct app.
+---
+
+# Update soon...
+
+```json
+{
+  "load-banner-ad": {
+    "list-name": "Load Banner Ad",
+    "display-text": "Load [i]{0}[/i] banner ad with limits ([i]{1}[/i], [i]{2}[/i])",
+    "description": "Loads a banner ad with specified size. [b]The ad will not be displayed on the screen until the show action is performed.[/b] This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been loaded or failed to load.",
+    "params": {
+      "ad-size": {
+        "name": "Ad Size",
+        "desc": "The size of the banner ad. The banner can only have one ad size at a time. Calling the load action with a different size will destroy the loaded ad and load a new one with the requested size.",
+        "items": {
+          "adaptive": "Adaptive",
+          "inline": "Inline",
+          "smart": "Smart",
+          "leaderboard": "Leaderboard",
+          "standard": "Standard"
+        }
+      },
+      "max-width": {
+        "name": "Max Width",
+        "desc": "The maximum width of the banner ad in DP. Leave 0 to not limit. Used to limit Adaptive and Inline banners only."
+      },
+      "max-height": {
+        "name": "Max Height",
+        "desc": "The maximum height of the banner ad in DP. Leave 0 to not limit. Used to limit Inline banners only."
+      }
+    }
+  },
+  "show-banner-ad": {
+    "list-name": "Show Banner Ad",
+    "display-text": "Show banner ad at [i]{0}[/i] with offset ([i]{1}[/i], [i]{2}[/i])",
+    "description": "Displays the banner ad at the specified position with optional offsets. The banner’s position can be changed at any time by performing this action with new parameters.",
+    "params": {
+      "position": {
+        "name": "Position",
+        "desc": "The position on the screen to display the banner ad. The CAS will not allow an ad to be placed outside the screen or overlap with screen cutouts. Some anchor positions do not support offset on the X or Y axis, this can be seen as (X, Y).",
+        "items": {
+          "top-center": "Top Center (Y)",
+          "top-left": "Top Left (X, Y)",
+          "top-right": "Top Right (X, Y)",
+          "bottom-center": "Bottom Center (-)",
+          "bottom-left": "Bottom Left (X)",
+          "bottom-right": "Bottom Right (X)",
+          "middle-center": "Middle Center (Y)",
+          "middle-left": "Middle Left (X, Y)",
+          "middle-right": "Middle Right (X, Y)"
+        }
+      },
+      "x-offset": {
+        "name": "X Offset",
+        "desc": "The horizontal offset from the specified position in DP. Leave 0 to not use offset."
+      },
+      "y-offset": {
+        "name": "Y Offset",
+        "desc": "The vertical offset from the specified position in DP. Leave 0 to not use offset."
+      }
+    }
+  },
+  "hide-banner-ad": {
+    "list-name": "Hide Banner Ad",
+    "display-text": "Hide banner ad",
+    "description": "Hides the currently displayed banner ad."
+  },
+  "destroy-banner-ad": {
+    "list-name": "Destroy Banner Ad",
+    "display-text": "Destroy banner ad",
+    "description": "Destroys the banner ad instance and frees up resources. To resume working with ads, use the load ad action."
+  },
+}
+```
