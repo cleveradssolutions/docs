@@ -9,9 +9,8 @@
             "flutter": "4.5.0",
             "unreal": "4.5.0",
             "reactnative": "4.5.0",
-            "cordova": "4.5.0",
-            "solar": "18",
-            "construct": "0.0.3.0"
+            "cordova": "4.5.1",
+            "construct": "4.5.1.0"
         },
         "min": {
             "xcode": "16.4",
