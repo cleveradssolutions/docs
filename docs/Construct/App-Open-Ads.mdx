@@ -3,59 +3,60 @@ title: App Open Ads
 description: This guide explains how to integrate app open ads into a Construct app.
 ---
 
-# Update soon...
+App open ads are a special ad format intended for publishers wishing to monetize their app load screens.
+App open ads can be closed at any time, and are designed to be shown when your users bring your app to the foreground.
+App open ads automatically show a small branding area so users know they're in your app.
 
-```json
-{
-  "on-app-open-ad-loaded": {
-    "list-name": "On Ad Loaded",
-    "display-text": "On app open ad loaded",
-    "description": "Triggered when an app open ad is successfully loaded."
-  },
-  "on-app-open-ad-failed-to-load": {
-    "list-name": "On Ad Failed to Load",
-    "display-text": "On app open ad failed to load",
-    "description": "Triggered when an app open ad fails to load."
-  },
-  "on-app-open-ad-failed-to-show": {
-    "list-name": "On Ad Failed to Show",
-    "display-text": "On app open ad failed to show",
-    "description": "Triggered when an app open ad fails to show."
-  },
-  "on-app-open-ad-showed": {
-    "list-name": "On Ad Showed",
-    "display-text": "On app open ad showed",
-    "description": "Triggered when an app open ad is shown."
-  },
-  "on-app-open-ad-clicked": {
-    "list-name": "On Ad Clicked",
-    "display-text": "On app open ad clicked",
-    "description": "Triggered when an app open ad is clicked."
-  },
-  "on-app-open-ad-dismissed": {
-    "list-name": "On Ad Dismissed",
-    "display-text": "On app open ad dismissed",
-    "description": "Triggered when an app open ad is dismissed."
-  },
-  "is-app-open-ad-loaded": {
-    "list-name": "Is Ad Loaded",
-    "display-text": "Is app open ad loaded",
-    "description": "Checks if an app open ad is loaded."
-  },
-  "load-app-open-ad": {
-    "list-name": "Load AppOpen Ad",
-    "display-text": "Load AppOpen ad",
-    "description": "Loads an AppOpen ad. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been loaded or failed to load."
-  },
-  "show-app-open-ad": {
-    "list-name": "Show AppOpen Ad",
-    "display-text": "Show AppOpen ad",
-    "description": "Displays the AppOpen ad. There is no need to check whether the ad is loaded before showing it. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been dismissed or failed to show."
-  },
-  "destroy-app-open-ad": {
-    "list-name": "Destroy AppOpen Ad",
-    "display-text": "Destroy AppOpen ad",
-    "description": "Destroys the app open ad instance and frees up resources. To resume working with ads, use the load ad action."
-  },
-}
-```
+## Load AppOpen ad
+Loads an AppOpen ad. This action works asynchronously, and you can use the `Wait for previous actions to complete` action to wait until the ad has been loaded or failed to load.
+
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+### Conditions
+- On AppOpen Ad Loaded: Triggered when an app open ad is successfully loaded.
+- On AppOpen Ad Failed to Load: Triggered when an app open ad fails to load.
+- Is AppOpen Ad Loaded: Checks if an app open ad is loaded.
+
+
+## Show AppOpen ad
+App open ads help you monetize your app's loading screen, when the app first launches and during app switches, but it's important to keep best practices in mind so that your users enjoy using your app. It's best to:
+* Show your first app open ad after your users have used your app a few times.
+* Show app open ads during times when your users would otherwise be waiting for your app to load.
+* If a user returns to your app after having left it by clicking on an app open ad, make sure they're not presented with another app open ad immediately.
+
+This action works asynchronously, and you can use the `Wait for previous actions to complete` action to wait until the ad has been dismissed or failed to show.
+
+### Conditions
+- On AppOpen Ad Failed to Show: Triggered when an app open ad fails to show.
+- On AppOpen Ad Showed: Triggered when an app open ad is shown.
+- On AppOpen Ad Clicked: Triggered when an app open ad is clicked.
+- On AppOpen Ad Dismissed: Triggered when an app open ad is dismissed.
+
+There is no need to check whether the ad is loaded before showing it. If the ad is not ready at that moment, the `On ad failed to show` condition will be triggered.
+
+<Info>
+When an error occurs during ad impression, only the `On ad failed to show` condition is triggered.  
+In this case, the `On ad dismissed` condition will not be fired since the impression is not considered successful.
+</Info>
+
+## Destroy AppOpen ad
+Destroys the app open ad instance and frees up resources. To resume working with ads, use the load ad action.
+
+## Cold starts and Loading screens
+
+There is a delay between when you request an ad and when you receive an ad to show.
+If you do not design your app well, the user may briefly see your app and then be surprised by an out-of-context ad.
+Prevent this bad user experience. You can handle cold starts by showing a loading screen before any app content, and then showing the ad after the loading screen.
+If your app shows any app content after the loading screen, do not show the ad.
+
+## Best Practices
+
+* When an app open ad is not yet loaded (i.e. on cold start), load it first. Load any other ad formats later so that you avoid loading them in parallel with the app open ad. Loading multiple ad formats in parallel is not good for the device’s resources or for ad demand SDKs.
+* If you have a loading screen under the app open ad, and your loading screen completes loading before the ad is dismissed, you may want to dismiss your loading screen in the `On ad dismissed` and `On ad failed to show` document event listeners.
+* Wait a variable number of days after initial install to show on cold start.
+* Only show an ad if the user backgrounds the app for a certain amount of time (i.e. 30 seconds).
+* If you show a cold start ad, do not show soft launch app open ads or interstitials for a certain amount of time.
+* Include a call-out to the user that tells them they will see an ad in the Splash/Loading screen. For example: “Watch an ad from our sponsor while the app loads.”

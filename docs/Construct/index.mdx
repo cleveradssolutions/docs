@@ -5,15 +5,23 @@ title: CAS.AI plugin for Construct
 Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
 Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
 
-
 ## Prerequisites
 Make sure that your app's build file uses the following values:
 - Use Construct 3 `r401` or higher
-- For Android:
-  - Minimum API level `{{ min.api }}` or higher
-- For iOS:
-  - Use Xcode `{{ min.xcode }}` or higher
-  - Minimum Target iOS version `{{ min.ios }}` or higher
+### Android Cordova:
+- Minimum API level `{{ min.api }}` or higher
+- Kotlin build suport by Cordova preference:
+```xml
+<preference name="GradlePluginKotlinEnabled" value="true" />
+<preference name="GradlePluginKotlinVersion" value="2.0.21" />
+```
+### iOS Cordova:
+- Use Xcode `{{ min.xcode }}` or higher
+- Minimum Target iOS version `{{ min.ios }}` or higher
+- Swift build support by Cordova preference:
+```xml
+<preference name="SwiftVersion" value="5.0" />
+```
 
 ## Install CAS.AI addon
 
@@ -28,7 +36,7 @@ Navigate to `Menu > View > Addon Manager` window.
 Install new addon...
 </Step>
 <Step>
-Select the `.c3addon`.
+Select the `CASMobileAds.c3addon`.
 </Step>
 </Steps>
 
@@ -64,25 +72,18 @@ Check the details of the ad network adapters supported by CAS.AI Mediation in th
 ### Optimal Ads Solution
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-| iOS Integration | Value |
-|---|---|
-| Solutions | `Optimal` |
-
-| Android Integration | Value |
-|---|---|
-| Solutions | `Optimal` |
-
+- iOS Integration  
+  Solutions: `Optimal`
+- Android Integration  
+  Solutions: `Optimal`
 
 ### Families Ads Solution
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
 
-| iOS Integration | Value |
-|---|---|
-| Solutions | `Families` |
-
-| Android Integration | Value |
-|---|---|
-| Solutions | `Families` |
+- iOS Integration  
+  Solutions: `Families`
+- Android Integration  
+  Solutions: `Families`
 
 ### Choice networks
 Advanced publishers familiar with ad network integrations can configure their own set of adapters. 
@@ -92,17 +93,17 @@ Add the adapter names you want to CAS_ADAPTERS variables from the linked list fo
 <TabItem label="Android" value="android">
 For Android, the name must match the Adapter names from the [Android Adapters table](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
 
-| Android Integration | Value |
-|---|---|
-| Adapters | `googleAds casExchange dtExchange` |
+- Android Integration  
+  Adapters: `googleAds casExchange dtExchange`
+
 
 </TabItem>
 <TabItem label="iOS" value="ios">
 For iOS, the name must match the Adapter names from the [iOS Adapters table](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
 
-| iOS Integration | Value |
-|---|---|
-| Adapters | `GoogleAds CASExchange DTExchange` |
+- iOS Integration  
+  Adapters: `GoogleAds CASExchange DTExchange`
+
 
 </TabItem>
 </Tabs>
@@ -115,9 +116,8 @@ To enable the use of the Advertising ID in your app, you need to complete the fo
 <TabItem label="Android" value="android">
 CAS Mediation allows you to easily enable or disable (`true` or `false`) the use of the Advertising ID, depending on your app’s privacy requirements.
 
-| Android Integration | Value |
-|---|---|
-| Use Ad ID | `true` |
+- Android Integration  
+  Use Ad ID: `true`
 
 
 An application must not use an advertising identifier if **at least one** of the following conditions is true:
@@ -128,9 +128,9 @@ An application must not use an advertising identifier if **at least one** of the
 <TabItem label="iOS" value="ios">
 To use the [App Tracking Transparency authorization request](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) for accessing the IDFA, add plugin variable `IOS_USER_TRACKING_USAGE` to the `config.xml` with a custom message describing your usage. Below is an example description text:
 
-| iOS Integration | Value |
-|---|---|
-| Tracking Usage Description | `Your data will remain confidential and will only be used to provide you a better and personalised ad experience` |
+- iOS Integration  
+  Tracking Usage Description: `Your data will remain confidential and will only be used to provide you a better and personalised ad experience`
+
 
 <Accordion title="Usage description examples">
 
@@ -170,11 +170,13 @@ Meta Audience Network Data Processing Options for US Users Limited Data Use is a
 Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
 
 If you do not want to enable Limited Data Use (LDU) mode, pass an empty string as a value of mediation extras with key `FB_dp`:
-| App Information | Value |
-|---|---|
-| Mediation Extras | `{"FB_dp":""}` |
+
+- App Information  
+  Mediation Extras: `{"FB_dp":""}`
+  
 
 To enable LDU for users and specify user geography, set `LDU`:
-| App Information | Value |
-|---|---|
-| Mediation Extras | `{"FB_dp":"LDU"}` |
+
+- App Information  
+  Mediation Extras: `{"FB_dp":"LDU"}`
+

@@ -3,69 +3,46 @@ title: Rewarded Ads
 description: This guide explains how to integrate rewarded ads into a Cordova app.
 ---
 
-# Update soon...
+Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
+Rewarded ads boost engagement because users receive a tangible benefit for their time.
 
-```json
-{
-  "on-rewarded-ad-loaded": {
-    "list-name": "On Ad Loaded",
-    "display-text": "On rewarded ad loaded",
-    "description": "Triggered when a rewarded ad is successfully loaded."
-  },
-  "on-rewarded-ad-failed-to-load": {
-    "list-name": "On Ad Failed to Load",
-    "display-text": "On rewarded ad failed to load",
-    "description": "Triggered when a rewarded ad fails to load."
-  },
-  "on-rewarded-ad-failed-to-show": {
-    "list-name": "On Ad Failed to Show",
-    "display-text": "On rewarded ad failed to show",
-    "description": "Triggered when a rewarded ad fails to show."
-  },
-  "on-rewarded-ad-showed": {
-    "list-name": "On Ad Showed",
-    "display-text": "On rewarded ad showed",
-    "description": "Triggered when a rewarded ad is shown."
-  },
-  "on-rewarded-ad-clicked": {
-    "list-name": "On Ad Clicked",
-    "display-text": "On rewarded ad clicked",
-    "description": "Triggered when a rewarded ad is clicked."
-  },
-  "on-rewarded-ad-dismissed": {
-    "list-name": "On Ad Dismissed",
-    "display-text": "On rewarded ad dismissed",
-    "description": "Triggered when a rewarded ad is dismissed."
-  },
-  "on-rewarded-ad-user-earned-reward": {
-    "list-name": "On Ad User Earned Reward",
-    "display-text": "On rewarded ad user earned reward",
-    "description": "Triggered when the user earns a reward from a rewarded ad."
-  },
-  "on-rewarded-ad-canceled-by-user": {
-    "list-name": "On Ad Canceled by User",
-    "display-text": "On rewarded ad canceled by user",
-    "description": "Triggered when the user cancel a rewarded ad and must not earn reward."
-  },
-  "is-rewarded-ad-loaded": {
-    "list-name": "Is Ad Loaded",
-    "display-text": "Is rewarded ad loaded",
-    "description": "Checks if a rewarded ad is loaded."
-  },
-  "load-rewarded-ad": {
-    "list-name": "Load Rewarded Ad",
-    "display-text": "Load rewarded ad",
-    "description": "Loads a rewarded ad. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been loaded or failed to load."
-  },
-  "show-rewarded-ad": {
-    "list-name": "Show Rewarded Ad",
-    "display-text": "Show rewarded ad",
-    "description": "Displays the rewarded ad. Use the 'On Ad User Earned Reward' trigger to reward the user. There is no need to check whether the ad is loaded before showing it. This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been dismissed or failed to show."
-  },
-  "destroy-rewarded-ad": {
-    "list-name": "Destroy Rewarded Ad",
-    "display-text": "Destroy rewarded ad",
-    "description": "Destroys the rewarded ad instance and frees up resources. To resume working with ads, call the load ad action."
-  }
-}
-```
+## Load Rewarded ad
+Loads an Rewarded ad. This action works asynchronously, and you can use the `Wait for previous actions to complete` action to wait until the ad has been loaded or failed to load.
+
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+### Conditions
+- On Rewarded Ad Loaded: Triggered when an Rewarded ad is successfully loaded.
+- On Rewarded Ad Failed to Load: Triggered when an Rewarded ad fails to load.
+- Is Rewarded Ad Loaded: Checks if an Rewarded ad is loaded.
+
+
+## Show Rewarded ad
+When you show a rewarded ad, you will use an `On ad user earned reward` condition to handle reward for the user.
+
+This action works asynchronously, and you can use the `Wait for previous actions to complete` action to wait until the ad has been dismissed or failed to show.
+
+### Conditions
+- **On Rewarded ad user earned reward**: Triggered when the user earns a reward from a rewarded ad.
+- On Rewarded ad canceled by user: Triggered when the user cancel a rewarded ad and must not earn reward.
+
+- On Rewarded Ad Failed to Show: Triggered when an Rewarded ad fails to show.
+- On Rewarded Ad Showed: Triggered when an Rewarded ad is shown.
+- On Rewarded Ad Clicked: Triggered when an Rewarded ad is clicked.
+- On Rewarded Ad Dismissed: Triggered when an Rewarded ad is dismissed.
+
+The `On ad user earned reward` condition differs from the `On Ad Dismissed` condition, the user might not complete the ad and thus not earn a reward, in this case triggered the `On ad canceled by user` condition.
+
+There is no need to check whether the ad is loaded before showing it. If the ad is not ready at that moment, the `On ad failed to show` condition will be triggered.
+
+<Info>
+When an error occurs during ad impression, only the `On ad failed to show` condition is triggered.  
+In this case, the `On ad dismissed` condition will not be fired since the impression is not considered successful.
+</Info>
+
+## Destroy Rewarded ad
+Destroys the Rewarded ad instance and frees up resources. To resume working with ads, use the load ad action.
+
