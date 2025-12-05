@@ -5,10 +5,10 @@ title: Native Ad assets
 
 | Name             | Type                          | Required    | Included                   | Description                                                                                                                                 |
 | ---------------- | ----------------------------- | ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| adChoicesView    | CASChoicesView                | Yes         | Always                     | Read below about [AdChoices overlay](#adchoices-overlay).                                                                                   |
-| mediaView        | CASMediaView                  | Yes         | Always                     | Read below about [Media Content](#media-content).                                                                                           |
+| adChoicesView    | CASChoicesView                | Yes         | Always                     | Read below about [AdChoices overlay](Android/Native-Ad-assets#adchoices-overlay).                                                                                   |
+| mediaView        | CASMediaView                  | Yes         | Always                     | Read below about [Media Content](Android/Native-Ad-assets#media-content).                                                                                           |
 | headlineView     | TextView                      | Yes         | Always                     | The headline text of the native ad.                                                                                                         |
-| adLabelView      | TextView                      | If provided | Not always                 | Read below about [Ad attribution](#ad-attribution).                                                                                         |
+| adLabelView      | TextView                      | If provided | Not always                 | Read below about [Ad attribution](Android/Native-Ad-assets#ad-attribution).                                                                                         |
 | callToActionView | Button                        | If provided | Not always                 | Button that encourages users to take action (for example, "Visit site" or "Install"). This text may truncate after 15 characters.           |
 | iconView         | TextView                      | If provided | Always for app install ads | The small app icon or advertiser logo with square aspect ratio (1:1).                                                                       |
 | bodyView         | TextView                      | No          | Always                     | The body text of the native ad. This text may truncate after 90 characters.                                                                 |
@@ -16,7 +16,7 @@ title: Native Ad assets
 | storeView        | TextView                      | No          | Not always                 | The name of the store where the product or service is available.                                                                            |
 | priceView        | TextView                      | No          | Not always                 | The price of the product or service advertised.                                                                                             |
 | reviewCountView  | TextView                      | No          | Not always                 | The number of reviews the app has received.                                                                                                 |
-| starRatingView   | CASStarRatingView or any View | No          | Not always                 | Read below about [Star Rating](#star-rating-view).                                                                                          |
+| starRatingView   | CASStarRatingView or any View | No          | Not always                 | Read below about [Star Rating](Android/Native-Ad-assets#star-rating-view).                                                                                          |
 
 ## Advertising requirements
 - Native ads smaller than 32x32dp won't serve. Ads this small can be difficult to see or interact with and may adversely affect the display quality of advertiser assets.

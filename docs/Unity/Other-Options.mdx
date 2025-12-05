@@ -31,14 +31,14 @@ This means two things:
 
 However, you can choose to disable auto-request when you set `Manual` loading mode.
 
-|        Mode        |  Load<sup>[*1](#load-f-1)</sup>  | Impact on App performance | Memory usage |        Actual ads<sup>[*2](#actual-f-2)</sup>       |
+|        Mode        |  Load<sup>[*1](Unity/Other-Options#load-f-1)</sup>  | Impact on App performance | Memory usage |        Actual ads<sup>[*2](Unity/Other-Options#actual-f-2)</sup>       |
 |:------------------:|:------:|:-------------------------:|:------------:|:------------------------:|
 |   FastestRequests  |  Auto  |         Very high         |     High     |       Most relevant      |
 |    FastRequests    |  Auto  |            High           |    Balance   |      High relevance      |
 |  Optimal *(Default)*  |  Auto  |          Balance          |    Balance   |          Balance         |
 |   HighPerformance  |  Auto  |            Low            |      Low     |       Possible loss      |
 | HighestPerformance |  Auto  |          Very low         |      Low     |       Possible loss      |
-|       Manual      | Manual<sup>[*3](#manual-f-3)</sup> |          Very low         |      Low     | Depends on the frequency |
+|       Manual      | Manual<sup>[*3](Unity/Other-Options#manual-f-3)</sup> |          Very low         |      Low     | Depends on the frequency |
 
 Change the Waterfall loading mode using the following method:
 ```c#
