@@ -8,7 +8,17 @@ In addition, it contains granular details to allow you to analyze and, ultimatel
 
 ### OnAdImpressionListener
 A functional interface for listening to ad impression events.
-```java  
+
+<CodeGroup synchronize={true}>
+```kotlin
+import com.cleveradssolutions.sdk.OnAdImpressionListener
+
+val impressionListener = OnAdImpressionListener { ad ->
+    // Called when an ad impression occurs.
+}
+```
+
+```java
 import com.cleveradssolutions.sdk.OnAdImpressionListener;
 
 final OnAdImpressionListener impressionListener = new OnAdImpressionListener(){  
@@ -18,7 +28,25 @@ final OnAdImpressionListener impressionListener = new OnAdImpressionListener(){
     }  
 };
 ```
-Each ad format provides a `setOnImpressionListener` method on the ad object for registering a listener to receive `AdContentInfo` with impression details.  
+</CodeGroup>
+
+Each ad format provides a setter on the ad object for registering a listener to receive `AdContentInfo` with impression details.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val appOpenAd: CASAppOpen 
+appOpenAd.onImpressionListener = impressionListener
+
+val interstitialAd: CASInterstitial 
+interstitialAd.onImpressionListener = impressionListener
+
+val rewardedAd: CASRewarded 
+rewardedAd.onImpressionListener = impressionListener
+
+val nativeAd: NativeAdContent
+nativeAd.onImpressionListener = impressionListener
+```
+
 ```java
 CASAppOpen appOpenAd;
 appOpenAd.setOnImpressionListener(impressionListener);
@@ -32,15 +60,23 @@ rewardedAd.setOnImpressionListener(impressionListener);
 NativeAdContent nativeAd;
 nativeAd.setOnImpressionListener(impressionListener);
 ```
+</CodeGroup>
 
 ### AdContentInfo
-The `com.cleveradssolutions.sdk.AdContentInfo` data structure, which contains information about the loaded/displayed ad. 
 
-Additionally to `OnAdImpressionListener`, each ad format has a `getContentInfo()` method that returns `AdContentInfo`, but the info may be `null` before the ad is loaded.
+The `com.cleveradssolutions.sdk.AdContentInfo` data structure, which contains information about the loaded/displayed ad.
+
+Additionally to `OnAdImpressionListener`, each ad format has a `getContentInfo()`/`contentInfo` accessor that returns `AdContentInfo`, but the info may be `null` before the ad is loaded.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val info = eachAd.contentInfo
+```
+
 ```java
 AdContentInfo info = eachAd.getContentInfo();
 ```
-
+</CodeGroup>
 
 | Name               | Type       | Description                                                                                                                                                             |
 | ------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -53,35 +89,71 @@ AdContentInfo info = eachAd.getContentInfo();
 | `revenuePrecision` | `Int`      | Gets the precision type of the revenue field. See new `AdRevenuePrecision` constants.                                                                                   |
 | `impressionDepth`  | `Int`      | Gets the total number of impressions across all ad formats for the current user, across all sessions.                                                                   |
 | `revenueTotal`     | `Double`   | Gets the accumulated value of user ad revenue in USD from all ad format impressions.                                                                                    |
-### User ad summary 
-CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression. 
+
+### User ad summary
+
+CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val totalImpressions: Int = impression.impressionDepth
+val totalRevenue: Double = impression.revenueTotal
+```
+
 ```java
 int totalImpressions = impression.getImpressionDepth();
 Double totalRevenue = impression.getRevenueTotal();
 ```
+</CodeGroup>
+
 <Info>
 Progress is saved between sessions until the user clears your app's data.
 </Info>
 
 ## Automatic collect ad revenue
+
 The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
+
 #### Google Analytics
+
 If you haven't already, make sure to complete the following tasks:
+
 1. Set up your project and app as described in [Get Started with Analytics](https://firebase.google.com/docs/analytics/get-started).
 2. Make sure that you've linked your Firebase project to a Google Analytics account.
 3. Ensure that you've included in your app the CAS SDK 3.5.0+.
 
-To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.  
+To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.
 
 #### Tenjin
+
 If you haven't already, make sure to complete the following tasks:
+
 1. Set up your project and app as described in [Get Started with Analytics](https://docs.tenjin.com/docs/android-sdk#basic-integration).
-2. Make sure that you've [initialize tenjin session](https://docs.tenjin.com/docs/android-sdk#app-initialization). Or provide `TENJIN_SDK_KEY` with CAS SDK initialization to allow CAS initialize Tenjin SDK automatically. 
+2. Make sure that you've [initialize tenjin session](https://docs.tenjin.com/docs/android-sdk#app-initialization). Or provide `TENJIN_SDK_KEY` with CAS SDK initialization to allow CAS initialize Tenjin SDK automatically.
    `builder.withMediationExtras("tenjin_key", TENJIN_SDK_KEY)`
 3. Ensure that you've included in your app the CAS SDK 3.7.2+.
 
 ## Custom collect ad revenue
-The following code shows an implementation example for log `AD_IMPRESSION` event to Google Analytics.
+
+The following code shows an implementation example for logging `AD_IMPRESSION` event to Google Analytics.
+
+<CodeGroup synchronize={true}>
+```kotlin
+override fun onAdImpression(ad: AdContentInfo) {
+    val params = Bundle().apply {
+        putString(FirebaseAnalytics.Param.AD_PLATFORM, "CAS")
+        putString(FirebaseAnalytics.Param.AD_FORMAT, ad.format.toString())
+        putString(FirebaseAnalytics.Param.AD_SOURCE, ad.sourceName)
+        putString(FirebaseAnalytics.Param.AD_UNIT_NAME, ad.sourceUnitId)
+        putDouble(FirebaseAnalytics.Param.VALUE, ad.revenue)
+        // All CAS revenue is sent in USD
+        putString(FirebaseAnalytics.Param.CURRENCY, "USD")
+    }
+    FirebaseAnalytics.getInstance(this)
+        .logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, params)
+}
+```
+
 ```java
 @Override  
 public void onAdImpression(@NonNull AdContentInfo ad) {  
@@ -93,8 +165,10 @@ public void onAdImpression(@NonNull AdContentInfo ad) {
     params.putDouble(FirebaseAnalytics.Param.VALUE, ad.getRevenue());  
     // All CAS revenue is sent in USD  
     params.putString(FirebaseAnalytics.Param.CURRENCY, "USD");  
-  
+
     FirebaseAnalytics.getInstance(this)  
-            .logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, params);  
+        .logEvent(FirebaseAnalytics.Event.AD_IMPRESSION, params);  
 }
 ```
+</CodeGroup>
+

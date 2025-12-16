@@ -24,6 +24,24 @@ This final step registers the native ad object with the view that's responsible 
 </Step>
 </Steps>
 
+<CodeGroup synchronize={true}>
+```kotlin
+lateinit var adView: CASNativeView
+
+override fun onCreate(@Nullable savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+
+    val container = findViewById<ViewGroup>(R.id.native_ad_container)
+    inflateNativeAdView(container)
+    registerAdAssetViews(adView)
+}
+
+fun registerNativeAdContent(nativeAd: NativeAdContent) {
+    adView.setNativeAd(nativeAd)
+}
+```
+
 ```java
 CASNativeView adView;
 
@@ -38,9 +56,10 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 }
 
 void registerNativeAdContent(NativeAdContent nativeAd) {
-    adView.setNativeAd(nativeAd)
+    adView.setNativeAd(nativeAd);
 }
 ```
+</CodeGroup>
 
 <Warning>  
 The `setNativeAd(NativeAdContent)` method must be called from the main (UI) thread.
@@ -52,16 +71,27 @@ Native ads can be preloaded and cached to reduce latency when displaying ads to 
 
 Use the `NativeAdContent.isExpired` method to check if the ad has expired. If you attempt to display an expired ad, it will trigger an `onNativeAdFailedToShow` callback.
 
-```java
-void registerNativeAdContent(NativeAdContent nativeAd) {
-    if (nativeAd.isExpired()) {
+<CodeGroup synchronize={true}>
+```kotlin
+fun registerNativeAdContent(nativeAd: NativeAdContent) {
+    if (nativeAd.isExpired) {
         loadNativeAds()
         return
     }
-    
     adView.setNativeAd(nativeAd)
 }
 ```
+
+```java
+void registerNativeAdContent(NativeAdContent nativeAd) {
+    if (nativeAd.isExpired()) {
+        loadNativeAds();
+        return;
+    }
+    adView.setNativeAd(nativeAd);
+}
+```
+</CodeGroup>
 
 If you display the ad immediately in `onNativeAdLoaded`, there's no need to check its validity, as it is guaranteed to be fresh at that moment.
 
@@ -70,7 +100,6 @@ If you display the ad immediately in `onNativeAdLoaded`, there's no need to chec
 #### Inflate the layout
 
 The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
-
 ```java
 void inflateNativeAdView(ViewGroup container) {
     adView = new CASNativeView(this);
@@ -82,14 +111,12 @@ void inflateNativeAdView(ViewGroup container) {
     container.addView(adView);
 }
 ```
-
 <Info>
 Creating the layout may cause UI rendering to freeze briefly, so it is recommended to set the template size only once when initializing the view.  
 The `setAdTemplateSize(AdSize)` method must be called from the main (UI) thread.
 </Info>
 
 **Optional:** Customize the appearance of asset views after calling `setAdTemplateSize` by modifying properties from the `CASNativeView`.
-
 ```java
 void customizeAdViewAppearance(CASNativeView adView) {
     // Default values are shown below:
@@ -99,11 +126,10 @@ void customizeAdViewAppearance(CASNativeView adView) {
     adView.getHeadlineView().setTextColor(Color.parseColor("#80000000"));
 }
 ```
+</CodeGroup>
 
 #### Register the asset views
-
-When you set the ad template size using `setAdTemplateSize`, the `CASNativeView` automatically registers all native asset views with the corresponding template assets for the selected size.
-
+When you set the ad template size using `setAdTemplateSize`, the `CASNativeView` automatically registers all native asset views with the corresponding template assets for the selected size. 
 ```java
 void registerAdAssetViews(CASNativeView adView) {
     // No manual registration is required.
@@ -177,6 +203,7 @@ fun NativeTemplateAd(modifier: Modifier = Modifier) {
     )
 }
 ```
+</CodeGroup>
 
 ## Manual display native ad
 
@@ -207,23 +234,19 @@ The view hierarchy for a native ad that uses a `LinearLayout` to display its ass
 Note that all assets for a given native ad should be rendered inside the `CASNativeView` layout.
 
 Here is an example that inflate a `CASNativeView` and populates it with a `NativeAdContent`:
-
 ```java
 void inflateNativeAdView(ViewGroup container) {
     boolean attachToContainer = false; // to return AdView
     CASNativeView adView = (CASNativeView) LayoutInflater.from(container.getContext())
-    .inflate(R.layout.native_ad_layout, container, attachToContainer); 
+        .inflate(R.layout.native_ad_layout, container, attachToContainer); 
     
     container.addView(adView);
 }
 ```
-
 Assumes that your ad layout is in a file called `native_ad_layout.xml` in the `res/layout` folder.
 
 #### Register the asset views
-
-To register the ad view with content, you need to register all the asset views that may be used.
-
+To register the ad view with content, you need to register all the asset views that may be used. 
 ```java
 void registerAdAssetViews(CASNativeView adView) {
     // You can also omit adChoicesView and it will be created automatically.
@@ -242,6 +265,7 @@ void registerAdAssetViews(CASNativeView adView) {
     adView.setStarRatingView(adView.findViewById(R.id.ad_star_rating));
 }
 ```
+</CodeGroup>
 
 ## Samples
 
@@ -249,5 +273,3 @@ void registerAdAssetViews(CASNativeView adView) {
 - [Kotlin Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.kt)
 - [Java Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.java)
 - [Java Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.java)
-- [Compose Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeScreen.kt)
-- [Compose Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeTemplateScreen.kt)

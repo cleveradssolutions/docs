@@ -13,6 +13,23 @@ Below is a diagram showing the ad lifecycle.
 
 ## Create Ad instance
 Ad instance can be initialized along with the activity before `onCreate`.
+
+<CodeGroup synchronize="true">
+```kotlin
+import com.cleveradssolutions.sdk.screen.CASInterstitial
+
+class MyActivity : Activity() {
+
+    private val interstitialAd = CASInterstitial(MyApplication.CAS_ID)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        ...
+    }
+}
+```
+
 ```java
 import com.cleveradssolutions.sdk.screen.CASInterstitial;
 
@@ -26,12 +43,44 @@ class MyActivity extends Activity {
         setContentView(R.layout.activity_main);
         ...
     }
+}
 ```
+</CodeGroup>
 
 The SDK provides the capability to create and precache multiple ad instances, enabling uninterrupted sequential ad display. CAS SDK will load mediation ads in order for each created instance.
 
 ## Create Ad Content callback
-The `com.cleveradssolutions.sdk.screen.ScreenAdContentCallback` handles events related to displaying your `CASInterstitial`. Callbacks are called on the main thread. Before showing ad, make sure to `setContentCallback()`.
+
+The `com.cleveradssolutions.sdk.screen.ScreenAdContentCallback` handles events related to displaying your `CASInterstitial`. Callbacks are called on the main thread. Before showing ad, make sure to set `contentCallback`.
+
+<CodeGroup synchronize="true">
+```kotlin
+val adContentCallback = object : ScreenAdContentCallback {
+    override fun onAdLoaded(ad: AdContentInfo) {
+        // (Optional) Called when the ad content has been successfully loaded.
+    }
+
+    override fun onAdFailedToLoad(format: AdFormat, error: AdError) {
+        // (Optional) Called when the ad content fails to load.
+    }
+
+    override fun onAdFailedToShow(format: AdFormat, error: AdError) {
+        // (Optional) Called when the ad content fails to show.
+    }
+
+    override fun onAdShowed(ad: AdContentInfo) {
+        // (Optional) Called when the ad content is successfully shown.
+    }
+
+    override fun onAdClicked(ad: AdContentInfo) {
+        // (Optional) Called when the ad content is clicked by the user.
+    }
+
+    override fun onAdDismissed(ad: AdContentInfo) {
+        // (Optional) Called when the ad content is dismissed.
+    }
+}
+```
 
 ```java
 final ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() {  
@@ -66,15 +115,29 @@ final ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() 
     }  
 };
 ```
+</CodeGroup>
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](Android/Impression-Level-Data).
 - Attempting to load a new ad from the `onAdFailedToLoad()` method is strongly discouraged. Limit ad load retries to avoid continuous failed ad requests in situations such as limited network connectivity.
-- When an error occurs during ad impression, executed the `onAdFailedToShow` only.  In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
+- When an error occurs during ad impression, executed the `onAdFailedToShow` only. In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
 </Info>
 
 ## Load Ad
-The next step is to fill out the `load()` method and handle the ad load callbacks.
+
+The next step is to fill out the `load()` method and handle the ad load callbacks. 
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+
+    interstitialAd.contentCallback = adContentCallback
+    interstitialAd.load(this)
+}
+```
+
 ```java
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -85,11 +148,24 @@ protected void onCreate(Bundle savedInstanceState) {
     interstitialAd.load(this);
 }
 ```
+</CodeGroup>
 
 You can use ad load calls to build up a cache of preloaded ads before you intend to show them, so that ads can be shown with zero latency when needed. Since ads expire after an hour, you should clear this cache and reload with new ads every hour.
 
 ### Autoload mode
-If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+
+    interstitialAd.contentCallback = adContentCallback
+    interstitialAd.isAutoloadEnabled = true
+}
+```
 
 ```java
 @Override
@@ -101,19 +177,41 @@ protected void onCreate(Bundle savedInstanceState) {
     interstitialAd.setAutoloadEnabled(true);
 }
 ```
+</CodeGroup>
+
 By default autoload disabled.
 
 ## Show Ad
+
 Interstitial ads should be displayed during natural pauses in the flow of an app. Between levels of a game is a good example, or after the user completes a task. To show an interstitial, use the `show(Activity?)` method.
+
+<CodeGroup synchronize="true">
+```kotlin
+interstitialAd.show(this)
+```
 
 ```java
 interstitialAd.show(MyActivity.this);
 ```
+</CodeGroup>
 
 Starting with CAS SDK version 4.3.0, all ads functions can be safely called from any thread.
 
 ### Autoshow mode
-Use the `isAutoshowEnabled` property to automatically show a loaded ad when the user returns to the app.
+
+Use the `isAutoshowEnabled` property to automatically show a loaded ad when the user returns to the app. 
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+
+    ...
+    interstitialAd.isAutoshowEnabled = true
+}
+```
+
 ```java
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -124,43 +222,87 @@ protected void onCreate(Bundle savedInstanceState) {
     interstitialAd.setAutoshowEnabled(true);
 }
 ```
+</CodeGroup>
+
 By default autoshow disabled.
 
 ### Checking Ad Availability
-Use `isLoaded()` to check whether an ad is currently loaded.
+
+Use `isLoaded()` to check whether an ad is currently loaded. 
+
+<CodeGroup synchronize="true">
+```kotlin
+if (interstitialAd.isLoaded) {
+}
+```
+
 ```java
 if (interstitialAd.isLoaded()) {
 }
 ```
+</CodeGroup>
+
 Even if `isLoaded()` returns `true`, it does not guarantee that the ad will be shown successfully — various issues may still prevent it from being displayed. We strongly recommend handling potential display failures via `onAdFailedToShow(error)` callback to ensure a smoother user experience.
 
 By relying on these callbacks, you ensure that your application can react appropriately to real-time conditions, rather than making assumptions based on ad load state at a single point in time.
 
 ## Minimum interval between impressions
-You can limit the posting of an interstitial ad to a period of time in seconds after the ad is closed, during which display attempts will fail. Unlimited by default 0 seconds.  
+
+You can limit the posting of an interstitial ad to a period of time in seconds after the ad is closed, during which display attempts will fail. Unlimited by default 0 seconds.
 That the interval starts only after the Interstitial `onAdDismissed()`.
-During interval after ad closed, display attempts will fire event `onAdFailedToShow()` with `AdErrorCode.NOT_PASSED_INTERVAL`.  
+During interval after ad closed, display attempts will fire event `onAdFailedToShow()` with `AdErrorCode.NOT_PASSED_INTERVAL`.
+
+<CodeGroup synchronize="true">
+```kotlin
+interstitialAd.minInterval = interval
+```
 
 ```java
 interstitialAd.setMinInterval(interval);
 ```
+</CodeGroup>
 
-If you need to wait for a period of time after the start of the app or after showing a Rewarded Ad until next Interstitial Ad impression then call the following method:
+If you need to wait for a period of time after the start of the app or after showing a Rewarded Ad until next Interstitial Ad impression then call the following method: 
+
+<CodeGroup synchronize="true">
+```kotlin
+interstitialAd.restartInterval()
+```
+
 ```java
 interstitialAd.restartInterval();
-``` 
+```
+</CodeGroup>
 
 You can define a different interval for each ad instance. However, the countdown will always start from the moment any ad instance is closed within the session.
 
 ## Mute Ad sounds
-Indicates if the application’s audio is muted. Affects initial mute state for all ads.  
-Use this method only if your application has its own volume controls.  
+
+Indicates if the application’s audio is muted. Affects initial mute state for all ads.
+Use this method only if your application has its own volume controls. 
+
+<CodeGroup synchronize="true">
+```kotlin
+CAS.settings.mutedAdSounds = true
+```
+
 ```java
 CAS.getSettings().setMutedAdSounds(true);
 ```
+</CodeGroup>
 
 ## Release ad resource
-It is important to `destroy()` loaded but not displayed ads.
+
+It is important to `destroy()` loaded but not displayed ads. 
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onDestroy() {
+    interstitialAd.destroy()
+    super.onDestroy()
+}
+```
+
 ```java
 @Override  
 protected void onDestroy() {  
@@ -168,18 +310,28 @@ protected void onDestroy() {
     super.onDestroy();  
 }
 ```
+</CodeGroup>
 
 ## Samples
+
 - [Kotlin Interstitial Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/interstitial/InterstitialAdActivity.kt)
 - [Java Interstitial Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/interstitial/InterstitialAdActivity.java)
 
 ## Some best practices
-#### Consider whether interstitial ads are the right type of ad for your app. 
+
+#### Consider whether interstitial ads are the right type of ad for your app.
+
 Interstitial ads work best in apps with natural transition points. The conclusion of a task within an app, like sharing an image or completing a game level, creates such a point. Because the user is expecting a break in the action, it's easy to present an interstitial ad without disrupting their experience. Make sure you consider at which points in your app's workflow you'll display interstitial ads and how the user is likely to respond.
-#### Remember to pause the action when displaying an interstitial ad.  
+
+#### Remember to pause the action when displaying an interstitial ad.
+
 There are a number of different types of interstitial ads: text, image, video, and more. It's important to make sure that when your app displays an interstitial ad, it also suspends its use of some resources to allow the ad to take advantage of them. For example, when you make the call to display an interstitial ad, be sure to pause any audio output being produced by your app.
 
-#### Allow for adequate loading time.  
+#### Allow for adequate loading time.
+
 Just as it's important to make sure you display interstitial ads at an appropriate time, it's also important to make sure the user doesn't have to wait for them to load. Loading the ad in advance by calling `load()` before you intend to call `show()` can ensure that your app has a fully loaded interstitial ad at the ready when the time comes to display one.
-#### Don't flood the user with ads.  
+
+#### Don't flood the user with ads.
+
 While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.
+
