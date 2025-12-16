@@ -1,0 +1,50 @@
+---
+title: Targeting options
+---
+
+You can now easily tailor the way you serve your ads to fit a specific audience!
+You’ll need to inform our servers of the users’ details so the SDK will know to serve ads according
+to the segment the user belongs to.
+
+### User Age
+Set user age. Limitation: 1-99. By default 0 is 'unknown'.
+
+```js
+casai.setUserAge(12);
+```
+
+### User Gender
+
+Set targeting to user’s gender. Limitation: `'male'`, `'female'`, `undefined`.
+
+```js
+casai.setUserGender('male');
+``` 
+
+### User Location auto collection
+Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place.
+
+* Collect only if your application already has the relevant end-user permissions.
+- Does not collect if the target audience is children.
+- Disabled by default.
+
+```js
+casai.setLocationCollectionEnabled(true);
+```
+
+### App Keywords
+Set a list of keywords, interests, or intents related to your application. Words or phrases describe
+the current activity of the user for targeting purposes.
+
+```js
+casai.setAppKeywords(keywords);
+```
+
+### App Content URL
+
+Set the content URL for a website whose content matches the app's primary content. This website content is used for targeting and brand safety purposes. Limitation: max URL length 512.
+
+```js
+casai.setAppContentUrl(contentUrl);
+```
+

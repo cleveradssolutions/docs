@@ -1,0 +1,173 @@
+---
+title: Banner Ads
+description: This guide explains how to integrate banner ads into a Construct app.
+---
+
+Banner Ad units display rectangular ads that occupy a portion of an app's layout.
+They can refresh automatically after a set period of time.
+This means users view a new ad at regular intervals, even if they stay on the same screen in your app.
+They're also the simplest ad format to implement.
+
+# Update soon...
+
+```json
+{
+  "load-banner-ad": {
+    "list-name": "Load Banner Ad",
+    "display-text": "Load [i]{0}[/i] banner ad with limits ([i]{1}[/i], [i]{2}[/i])",
+    "description": "Loads a banner ad with specified size. [b]The ad will not be displayed on the screen until the show action is performed.[/b] This action works asynchronously, and you can use the 'Wait for previous actions to complete' action to wait until the ad has been loaded or failed to load.",
+    "params": {
+      "ad-size": {
+        "name": "Ad Size",
+        "desc": "The size of the banner ad. The banner can only have one ad size at a time. Calling the load action with a different size will destroy the loaded ad and load a new one with the requested size.",
+        "items": {
+          "adaptive": "Adaptive",
+          "inline": "Inline",
+          "smart": "Smart",
+          "leaderboard": "Leaderboard",
+          "standard": "Standard"
+        }
+      },
+      "max-width": {
+        "name": "Max Width",
+        "desc": "The maximum width of the banner ad in DP. Leave 0 to not limit. Used to limit Adaptive and Inline banners only."
+      },
+      "max-height": {
+        "name": "Max Height",
+        "desc": "The maximum height of the banner ad in DP. Leave 0 to not limit. Used to limit Inline banners only."
+      }
+    }
+  },
+  "show-banner-ad": {
+    "list-name": "Show Banner Ad",
+    "display-text": "Show banner ad at [i]{0}[/i] with offset ([i]{1}[/i], [i]{2}[/i])",
+    "description": "Displays the banner ad at the specified position with optional offsets. The banner’s position can be changed at any time by performing this action with new parameters.",
+    "params": {
+      "position": {
+        "name": "Position",
+        "desc": "The position on the screen to display the banner ad. The CAS will not allow an ad to be placed outside the screen or overlap with screen cutouts. Some anchor positions do not support offset on the X or Y axis, this can be seen as (X, Y).",
+        "items": {
+          "top-center": "Top Center (Y)",
+          "top-left": "Top Left (X, Y)",
+          "top-right": "Top Right (X, Y)",
+          "bottom-center": "Bottom Center (-)",
+          "bottom-left": "Bottom Left (X)",
+          "bottom-right": "Bottom Right (X)",
+          "middle-center": "Middle Center (Y)",
+          "middle-left": "Middle Left (X, Y)",
+          "middle-right": "Middle Right (X, Y)"
+        }
+      },
+      "x-offset": {
+        "name": "X Offset",
+        "desc": "The horizontal offset from the specified position in DP. Leave 0 to not use offset."
+      },
+      "y-offset": {
+        "name": "Y Offset",
+        "desc": "The vertical offset from the specified position in DP. Leave 0 to not use offset."
+      }
+    }
+  },
+  "hide-banner-ad": {
+    "list-name": "Hide Banner Ad",
+    "display-text": "Hide banner ad",
+    "description": "Hides the currently displayed banner ad."
+  },
+  "destroy-banner-ad": {
+    "list-name": "Destroy Banner Ad",
+    "display-text": "Destroy banner ad",
+    "description": "Destroys the banner ad instance and frees up resources. To resume working with ads, use the load ad action."
+  },
+}
+```
+
+## Load Banner ad
+Loads an Banner ad. This action works asynchronously, and you can use the `Wait for previous actions to complete` action to wait until the ad has been loaded or failed to load.
+
+
+When autoload is enabled, a loading failures will trigger automatic retry attempts.
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+### Ad size
+To load a banner ad, you need to specify the ad size. The banner can only have one ad size at a time. Calling the load action with a different size will destroy the loaded ad and load a new one with the requested size.
+
+<Property name="Adaptive" type="AdSize">
+Adaptive banner ads have a fixed aspect ratio for the maximum width. 
+The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50. By default, the full screen width will be used. You can limit width by specifying a `Max width` in the parameters.
+</Property>
+
+---
+
+<Property name="Inline" type="AdSize">
+Inline banner ads have a desired width and a maximum height, useful when you want to limit the banner's height. Inline banners are larger and taller compared to adaptive banners. They have variable height, including Medium Rectangle size, and can be as tall as the device screen. Specify the `Max width` and `Max height` dimensions to limit the ad size.
+</Property>
+
+---
+
+<Property name="Smart" type="AdSize">
+Smart selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+</Property>
+
+---
+
+<Property name="Leaderboard" type="AdSize">
+Leaderboard has a fixed size of 728x90 and is allowed on tablets only.
+</Property>
+
+---
+
+<Property name="Standard" type="AdSize">
+Standard banner has a fixed size of 320x50 and is the minimum ad size
+</Property>
+
+---
+
+<Property name="Max Width" type="number">
+Maximum width for `Adaptive` and `Inline` banners in Density-independent Pixels(DP).  
+By default, adaptive and inline banners use the full device width.  
+Automatically clamped to the screen bounds and updated on orientation changes.
+Leave 0 to not limit.
+</Property>
+
+---
+
+<Property name="Max Height" type="number">
+Maximum height for `Inline` banners in Density-independent Pixels(DP).
+By default, inline adaptive banners use the device height.
+Automatically clamped to the screen bounds and updated on orientation changes.
+Leave 0 to not limit.
+</Property>
+
+## Conditions
+- On Banner Ad Loaded: Triggered when an Banner ad is successfully loaded.
+- On Banner Ad Failed to Load: Triggered when an Banner ad fails to load.
+- On Banner Ad Clicked: Triggered when an Banner ad is clicked.
+- Is Banner Ad Loaded: Checks if an Banner ad is loaded.
+
+## Show Banner ad
+The banner will not be visible until **show** action is performed. The show function has a position parameter that specifies where the banner ad should be placed.
+
+To change the banner’s position on the screen, simply perform the show action again with the new parameters.
+
+The banner's activity can be changed even if it is not ready to be shown yet. When the ad becomes ready, it will be shown automatically if autoload/show logic requires it.
+
+### Ad Position
+The `X offset` and `Y offset` properties allow you to adjust the banner’s position relative to the specified anchor position, in DP. CAS will not allow an ad to be placed outside the screen or overlap with screen cutouts. Leave 0 to not use offset.
+
+Some anchor positions do not support offset on the X or Y axis, this can be seen in the table as (X, Y).
+
+|        | Left     | Center |    Right |
+| ------ | -------- | :----: | -------: |
+| Top    | TL(X, Y) | TC(Y)  | TR(X, Y) |
+| Middle | ML(X)    | MC(-)  |    MR(X) |
+| Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
+
+The coordinates on the screen are determined in Density-independent Pixels(DP).
+
+## Hide Banner Ad
+Hides the currently displayed Banner ad.
+
+## Destroy Banner ad
+Destroys the Banner ad instance and frees up resources. To resume working with ads, use the load ad action.

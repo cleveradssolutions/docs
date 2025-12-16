@@ -1,0 +1,274 @@
+---
+title: Interstitial Ads
+description: This guide explains how to integrate interstitial ads into a Cordova app.
+---
+
+Interstitial ads are full-screen ads that cover the interface of their host app.
+They're typically displayed at natural transition points in the flow of an app, such as between screens.
+When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.
+
+Interstitial ad management in Cordova code is handled through the `casai.interstitialAd` object.
+The interstitial ad is displayed as an overlay on top of all app content and cannot be added to the Cordova WebView DOM.
+
+Below is a diagram showing the ad lifecycle and how autoload affects it.
+
+<Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
+
+## Load Ad
+
+CAS provides an option to enable autoload to simplify your app logic.  
+Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
+
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise">
+
+```js
+casai.interstitialAd
+  .load({
+    autoReload: true,
+  })
+  .then(function () {
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
+  })
+  .catch(function (error) {
+    // Called when an ad load failed.
+    console.log('Load failed:', error.message);
+  });
+```
+
+  </TabItem>
+  <TabItem value="async" label="Async">
+
+```js
+try {
+  await casai.interstitialAd.load({
+    autoReload: true,
+  });
+  // Called when an ad is successfully loaded.
+  console.log('Loaded');
+} catch (error) {
+  // Called when an ad load failed.
+  console.log('Load failed:', error.message);
+}
+```
+
+  </TabItem>
+  <TabItem value="events" label="Events">
+
+```js
+function onAdLoaded(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
+  }
+}
+
+function onAdLoadFailed(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
+    // Called when an ad load failed.
+    console.log('Load failed:', event.message);
+  }
+}
+
+document.addEventListener('casai_ad_loaded', onAdLoaded);
+document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
+
+// Start loading, completion will be reported via document events
+casai.interstitialAd.load({
+  autoReload: true,
+});
+
+function unsubscribeInterstitialLoadEvents() {
+  document.removeEventListener('casai_ad_loaded', onAdLoaded);
+  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
+}
+```
+  </TabItem>
+</Tabs>
+
+Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
+
+When you want to manually control ad loading, use the `load({ autoReload: false })` function.
+All parameters are optional — you can omit them and use the defaults if that fits your use case.
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+You can use the `casai_ad_loaded` document event to be notified when the ad is ready for display.
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
+- Read more about [AdError](Cordova/Ad-errors) structure. 
+</Info>
+
+## Show Ad
+
+Interstitial ads should be displayed during natural pauses in the flow of an app. Between app screens is a good example, or after the user completes a task.
+
+You can choose when to show the ad by calling:
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise">
+
+```js
+casai.interstitialAd
+  .show()
+  .then(function () {
+    // Called when the ad dismissed full screen content.
+    console.log('Dismissed');
+  })
+  .catch(function (error) {
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', error.message);
+  });
+```
+
+  </TabItem>
+  <TabItem value="async" label="Async">
+
+```js
+try {
+  await casai.interstitialAd.show();
+  // Called when the ad dismissed full screen content.
+  console.log('Dismissed');
+} catch (error) {
+  // Called when the ad failed to show full screen content.
+  console.log('Failed to show:', error.message);
+}
+```
+
+  </TabItem>
+  <TabItem value="events" label="Events">
+
+```js
+function onAdFailedToShow(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', event.message);
+  }
+}
+
+function onAdShowed(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
+    // Called when the ad showed the full screen content.
+    console.log('Showed');
+  }
+}
+
+function onAdDismissed(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
+    // Called when the ad dismissed full screen content.
+    console.log('Dismissed');
+  }
+}
+
+document.addEventListener('casai_ad_show_failed', onAdFailedToShow);
+document.addEventListener('casai_ad_showed', onAdShowed);
+document.addEventListener('casai_ad_dismissed', onAdDismissed);
+
+// Show without Promises - all results are handled via document events
+casai.interstitialAd.show();
+
+function unsubscribeInterstitialShowEvents() {
+  document.removeEventListener('casai_ad_show_failed', onAdFailedToShow);
+  document.removeEventListener('casai_ad_showed', onAdShowed);
+  document.removeEventListener('casai_ad_dismissed', onAdDismissed);
+}
+```
+
+<Info>
+When an error occurs during ad impression, only the `casai_ad_show_failed` document event is triggered.  
+In this case, the `casai_ad_dismissed` event will not be fired since the impression is not considered successful.
+</Info>
+
+  </TabItem>
+</Tabs>
+
+If the ad is not ready at that moment, the `casai_ad_show_failed` document event will be triggered with a reason.
+
+You have the option to check `isLoaded()` if it's required by your app's logic.
+
+```js
+if (await casai.interstitialAd.isLoaded()) {
+  // The ad is loaded here
+}
+```
+
+### Auto Show Ad mode
+
+CAS provides the option to automatically show a loaded ad when the user returns to the app.
+
+To enable this behavior, set autoshow enabled:
+
+```js
+casai.interstitialAd.load({
+  autoShow: true,
+});
+```
+
+## Listening for the Ad Clicked
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.format` to determine the ad format.
+```js
+function onAdClicked(event){
+  if (event.format === casai.Format.INTERSTITIAL) {
+    // Called when a click is recorded for an interstitial ad.
+  }
+}
+
+document.addEventListener('casai_ad_clicked', onAdClicked);
+```
+
+## Minimum interval between impressions
+
+The minimum interval between showing interstitial ads, in seconds.
+Attempting to show a new interstitial ad before the interval has passed after the previous one was dismissed will trigger the `casai_ad_show_failed` document event with `AdErrorCode.NOT_PASSED_INTERVAL`.
+
+```js
+casai.interstitialAd.load({
+  minInterval: 30, // seconds
+});
+```
+
+Note that the timer for the minimum interval is shared across all interstitial ad instances, but the minimum interval value may differ for each ad instance.
+
+## Mute Ad sounds
+
+Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
+
+```js
+casai.setAdSoundsMuted(true);
+```
+
+Not muted by default.
+
+## Release ad resource
+
+Be sure to release ad resources when no longer needed:
+
+```js
+casai.interstitialAd.destroy();
+```
+
+## Some best practices
+
+#### Consider whether interstitial ads are the right type of ad for your app.
+
+Interstitial ads work best in apps with natural transition points. The conclusion of a task within an app, like sharing an image or completing a game level, creates such a point. Because the user is expecting a break in the action, it's easy to present an interstitial ad without disrupting their experience. Make sure you consider at which points in your app's workflow you'll display interstitial ads and how the user is likely to respond.
+
+#### Remember to pause the action when displaying an interstitial ad.
+
+There are a number of different types of interstitial ads: text, image, video, and more. It's important to make sure that when your app displays an interstitial ad, it also suspends its use of some resources to allow the ad to take advantage of them. For example, when you make the call to display an interstitial ad, be sure to pause any audio output being produced by your app.
+
+#### Allow for adequate loading time.
+
+Just as it's important to make sure you display interstitial ads at an appropriate time, it's also important to make sure the user doesn't have to wait for them to load. Loading the ad in advance by calling `load()` before you intend to call `show()` can ensure that your app has a fully loaded interstitial ad at the ready when the time comes to display one.
+
+#### Don't flood the user with ads.
+
+While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.
+
+## Complete example
+- [Interstitial ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/InterstitialExample.tsx)

@@ -1,0 +1,252 @@
+---
+title: Rewarded Ads
+description: This guide explains how to integrate rewarded ads into a Cordova app.
+---
+
+Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
+Rewarded ads boost engagement because users receive a tangible benefit for their time.
+
+Rewarded ad management in Cordova code is handled through the `casai.rewardedAd` object.
+The rewarded ad is displayed as an overlay on top of all app content and cannot be added to the Cordova WebView DOM.
+
+Below is a diagram showing the ad lifecycle and how autoload affects it.
+
+<Image zoom src="/assets/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
+
+## Load Ad
+
+CAS provides an option to enable autoload to simplify your app logic.  
+Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
+
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise">
+
+```js
+casai.rewardedAd
+  .load({
+    autoReload: true,
+  })
+  .then(function () {
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
+  })
+  .catch(function (error) {
+    // Called when an ad load failed.
+    console.log('Load failed:', error.message);
+  });
+```
+
+  </TabItem>
+  <TabItem value="async" label="Async">
+
+```js
+try {
+  await casai.rewardedAd.load({
+    autoReload: true,
+  });
+  // Called when an ad is successfully loaded.
+  console.log('Loaded');
+} catch (error) {
+  // Called when an ad load failed.
+  console.log('Load failed:', error.message);
+}
+```
+
+  </TabItem>
+  <TabItem value="events" label="Events">
+
+```js
+function onAdLoaded(event){
+  if (event.format === casai.Format.REWARDED) {
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
+  }
+}
+
+function onAdLoadFailed(event){
+  if (event.format === casai.Format.REWARDED) {
+    // Called when an ad load failed.
+    console.log('Load failed:', event.message);
+  }
+}
+
+document.addEventListener('casai_ad_loaded', onAdLoaded);
+document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
+
+// Start loading, completion will be reported via document events
+casai.rewardedAd.load({
+  autoReload: true,
+});
+
+function unsubscribeRewardedLoadEvents() {
+  document.removeEventListener('casai_ad_loaded', onAdLoaded);
+  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
+}
+```
+  </TabItem>
+</Tabs>
+
+Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
+
+When you want to manually control ad loading, use the `load({ autoReload: false })` function.
+All parameters are optional — you can omit them and use the defaults if that fits your use case.
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+You can use the `casai_ad_loaded` document event to be notified when the ad is ready for display.
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
+- Read more about [AdError](Cordova/Ad-errors) structure.
+</Info>
+
+## Show Ad
+
+Be sure to listen to the `casai_ad_reward` event or handle the resolved result from `show()` and reward the user for watching an ad.
+
+You can choose when to show the ad by calling `show()`:
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise">
+
+```js
+casai.rewardedAd
+  .show()
+  .then(function (info) {
+    if (info.isUserEarnReward) {
+      // Called when the user has earned the reward.
+      console.log('Reward the user for watching the ad');
+    } else {
+      // Called when the ad dismissed full screen content without a reward.
+      console.log('Dismissed without reward');
+    }
+  })
+  .catch(function (error) {
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', error.message);
+  });
+```
+
+  </TabItem>
+  <TabItem value="async" label="Async">
+
+```js
+try {
+  const info = await casai.rewardedAd.show();
+
+  if (info.isUserEarnReward) {
+    // Called when the user has earned the reward.
+    console.log('Reward the user for watching the ad');
+  } else {
+    // Called when the ad dismissed full screen content without a reward.
+    console.log('Dismissed without reward');
+  }
+} catch (error) {
+  // Called when the ad failed to show full screen content.
+  console.log('Failed to show:', error.message);
+}
+```
+
+  </TabItem>
+  <TabItem value="events" label="Events">
+
+```js
+function onAdReward(event){
+  if (event.format === casai.Format.REWARDED) {
+    // Called when the user has earned the reward.
+    console.log('Reward the user for watching the ad');
+  }
+}
+
+function onAdFailedToShow(event){
+  if (event.format === casai.Format.REWARDED) {
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', event.message);
+  }
+}
+
+function onAdShowed(event){
+  if (event.format === casai.Format.REWARDED) {
+    // Called when the ad showed the full screen content.
+    console.log('Showed');
+  }
+}
+
+function onAdDismissed(event){
+  if (event.format === casai.Format.REWARDED) {
+    // Called when the ad dismissed full screen content.
+    console.log('Dismissed');
+  }
+}
+
+document.addEventListener('casai_ad_reward', onAdReward);
+document.addEventListener('casai_ad_show_failed', onAdFailedToShow);
+document.addEventListener('casai_ad_showed', onAdShowed);
+document.addEventListener('casai_ad_dismissed', onAdDismissed);
+
+// Show without Promises - all results are handled via document events
+casai.rewardedAd.show();
+
+function unsubscribeRewardedShowEvents() {
+  document.removeEventListener('casai_ad_reward', onAdReward);
+  document.removeEventListener('casai_ad_show_failed', onAdFailedToShow);
+  document.removeEventListener('casai_ad_showed', onAdShowed);
+  document.removeEventListener('casai_ad_dismissed', onAdDismissed);
+}
+```
+
+<Info>
+When an error occurs during ad impression, only the `casai_ad_show_failed` document event is triggered.  
+In this case, the `casai_ad_dismissed` event will not be fired since the impression is not considered successful.
+</Info>
+
+  </TabItem>
+</Tabs>
+
+The reward event (`casai_ad_reward`) differs from the dismissal event (`casai_ad_dismissed`) — the user might not complete the ad and thus not earn a reward.
+
+If the ad is not ready at that moment, the `casai_ad_show_failed` document event will be triggered with a reason provided in the `AdError`.
+
+You have the option to check `isLoaded()` if it's required by your app's logic.
+
+```js
+if (await casai.rewardedAd.isLoaded()) {
+  // The ad is loaded here
+}
+```
+
+## Listening for the Ad Clicked
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.format` to determine the ad format.
+```js
+function onAdClicked(event){
+  if (event.format === casai.Format.REWARDED) {
+    // Called when a click is recorded for an Rewarded ad.
+  }
+}
+
+document.addEventListener('casai_ad_clicked', onAdClicked);
+```
+
+## Mute Ad sounds
+
+Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
+
+```js
+casai.setAdSoundsMuted(true);
+```
+
+Not muted by default.
+
+## Release ad resource
+
+Be sure to release ad resources when no longer needed:
+
+```js
+casai.rewardedAd.destroy();
+```
+
+## Complete example
+- [Rewarded ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/RewardedExample.tsx)

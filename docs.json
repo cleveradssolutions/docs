@@ -3,15 +3,20 @@
     "description": "Increase your mobile app monetization efficiency with CAS.AI.",
     "variables": {
         "versions": {
-            "android": "4.3.0",
-            "ios": "4.3.0",
-            "unity": "4.3.0",
-            "flutter": "4.3.0",
-            "unreal": "4.3.0",
-            "reactnative": "4.3.1",
-            "cordova": "1.0.3",
-            "solar": "18",
-            "construct": "0.0.3.0"
+            "android": "4.5.0.1",
+            "ios": "4.5.0",
+            "unity": "4.5.0",
+            "flutter": "4.5.0",
+            "unreal": "4.5.0",
+            "reactnative": "4.5.0",
+            "cordova": "4.5.1",
+            "construct": "4.5.1.0"
+        },
+        "min": {
+            "xcode": "16.4",
+            "ios": "13",
+            "api": "23",
+            "targetapi": "35"
         }
     },
     "favicon": "https://cas.ai/wp-content/uploads/2025/08/favicon-80x80.png",
@@ -81,6 +86,16 @@
             "id": "reactnative",
             "title": "ReactNative",
             "href": "/ReactNative"
+        },
+        {
+            "id": "cordova",
+            "title": "Cordova",
+            "href": "/Cordova"
+        },
+        {
+            "id": "construct",
+            "title": "Construct",
+            "href": "/Construct"
         }
     ],
     "sidebar": [
@@ -160,10 +175,6 @@
                         {
                             "title": "Meta Audience Network",
                             "href": "/Android/Additional-Meta-AudienceNetwork-steps"
-                        },
-                        {
-                            "title": "Yandex Mobile Ads",
-                            "href": "/Android/Additional-Yandex-Mobile-Ads-steps"
                         }
                     ]
                 }
@@ -793,6 +804,159 @@
                     "href": "/general/ReportingAPI"
                 }
             ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "cordova",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/Cordova"
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/Cordova/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/Cordova/User-Consent-Flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/Cordova/Enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/Cordova/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "cordova",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/Cordova/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/Cordova/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/Cordova/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/Cordova/Banner-Ads"
+                },
+                {
+                    "title": "MRec Ad",
+                    "href": "/Cordova/MRec-Ads"
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "cordova",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/Cordova/Targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/Cordova/Ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/Cordova/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
+            "tab": "construct",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/Construct"
+                },
+                {
+                    "title": "Automation Options",
+                    "href": "/Construct/Automation-Options"
+                },
+                {
+                    "title": "Development Options",
+                    "href": "/Construct/Development-Options"
+                },
+                {
+                    "title": "User Consent Flow",
+                    "href": "/Construct/User-Consent-Flow"
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "construct",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/Construct/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/Construct/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/Construct/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/Construct/Banner-Ads"
+                },
+                {
+                    "title": "MRec Ad",
+                    "href": "/Construct/MRec-Ads"
+                }
+            ]
         }
     ],
     "anchors": [
@@ -831,6 +995,18 @@
             "icon": "file-pen",
             "tab": "reactnative",
             "href": "https://github.com/cleveradssolutions/CAS-ReactNative/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "cordova",
+            "href": "https://github.com/cleveradssolutions/CAS-Cordova/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "file-pen",
+            "tab": "construct",
+            "href": "https://github.com/cleveradssolutions/CAS-Construct/releases"
         }
     ],
     "search": {

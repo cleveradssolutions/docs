@@ -1,0 +1,48 @@
+---
+title: Rewarded Ads
+description: This guide explains how to integrate rewarded ads into a Cordova app.
+---
+
+Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
+Rewarded ads boost engagement because users receive a tangible benefit for their time.
+
+## Load Rewarded ad
+Loads an Rewarded ad. This action works asynchronously, and you can use the `Wait for previous actions to complete` action to wait until the ad has been loaded or failed to load.
+
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+### Conditions
+- On Rewarded Ad Loaded: Triggered when an Rewarded ad is successfully loaded.
+- On Rewarded Ad Failed to Load: Triggered when an Rewarded ad fails to load.
+- Is Rewarded Ad Loaded: Checks if an Rewarded ad is loaded.
+
+
+## Show Rewarded ad
+When you show a rewarded ad, you will use an `On ad user earned reward` condition to handle reward for the user.
+
+This action works asynchronously, and you can use the `Wait for previous actions to complete` action to wait until the ad has been dismissed or failed to show.
+
+### Conditions
+- **On Rewarded ad user earned reward**: Triggered when the user earns a reward from a rewarded ad.
+- On Rewarded ad canceled by user: Triggered when the user cancel a rewarded ad and must not earn reward.
+
+- On Rewarded Ad Failed to Show: Triggered when an Rewarded ad fails to show.
+- On Rewarded Ad Showed: Triggered when an Rewarded ad is shown.
+- On Rewarded Ad Clicked: Triggered when an Rewarded ad is clicked.
+- On Rewarded Ad Dismissed: Triggered when an Rewarded ad is dismissed.
+
+The `On ad user earned reward` condition differs from the `On Ad Dismissed` condition, the user might not complete the ad and thus not earn a reward, in this case triggered the `On ad canceled by user` condition.
+
+There is no need to check whether the ad is loaded before showing it. If the ad is not ready at that moment, the `On ad failed to show` condition will be triggered.
+
+<Info>
+When an error occurs during ad impression, only the `On ad failed to show` condition is triggered.  
+In this case, the `On ad dismissed` condition will not be fired since the impression is not considered successful.
+</Info>
+
+## Destroy Rewarded ad
+Destroys the Rewarded ad instance and frees up resources. To resume working with ads, use the load ad action.
+

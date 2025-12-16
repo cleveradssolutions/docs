@@ -5,10 +5,10 @@ title: Native Ad assets
 
 | Name             | Type                        | Required    | Included                   | Description                                                                                                                                 |
 | ---------------- | --------------------------- | ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| adChoicesView    | CASChoicesView              | Yes         | Always                     | Read below about [AdChoices overlay](#adchoices-overlay).                                                                                   |
-| mediaView        | CASMediaView                | Yes         | Always                     | Read below about [Media Content](#media-content).                                                                                           |
+| adChoicesView    | CASChoicesView              | Yes         | Always                     | Read below about [AdChoices overlay](iOS/Native-Ad-assets#adchoices-overlay).                                                                                   |
+| mediaView        | CASMediaView                | Yes         | Always                     | Read below about [Media Content](iOS/Native-Ad-assets#media-content).                                                                                           |
 | headlineView     | UILabel                     | Yes         | Always                     | The headline text of the native ad.                                                                                                         |
-| adLabelView      | UILabel                     | If provided | Not always                 | Read below about [Ad attribution](#ad-attribution).                                                                                         |
+| adLabelView      | UILabel                     | If provided | Not always                 | Read below about [Ad attribution](iOS/Native-Ad-assets#ad-attribution).                                                                                         |
 | callToActionView | UIButton                    | If provided | Not always                 | Button that encourages users to take action (for example, "Visit site" or "Install"). This text may truncate after 15 characters.           |
 | iconView         | UILabel                     | If provided | Always for app install ads | The small app icon or advertiser logo with square aspect ratio (1:1).                                                                       |
 | bodyView         | UILabel                     | No          | Always                     | The body text of the native ad. This text may truncate after 90 characters.                                                                 |
@@ -16,11 +16,11 @@ title: Native Ad assets
 | storeView        | UILabel                     | No          | Not always                 | The name of the store where the product or service is available.                                                                            |
 | priceView        | UILabel                     | No          | Not always                 | The price of the product or service advertised.                                                                                             |
 | reviewCountView  | UILabel                     | No          | Not always                 | The number of reviews the app has received.                                                                                                 |
-| starRatingView   | UIView or CASStarRatingView | No          | Not always                 | Read below about [Star Rating](#star-rating-view).                                                                                          |
+| starRatingView   | UIView or CASStarRatingView | No          | Not always                 | Read below about [Star Rating](iOS/Native-Ad-assets#star-rating-view).                                                                                          |
 
 ## Advertising requirements
 - Native ads smaller than 32x32 points won't serve. Ads this small can be difficult to see or interact with and may adversely affect the display quality of advertiser assets.
-- For native video ads, the main asset `mediaView` must be at least 120x120 points. Video ads won't serve to implementations with main asset `CASMediaViews`smaller than 120 points in any dimension.
+- For native video ads, the main asset `mediaView` must be at least 120x120 points. Video ads won't serve to implementations with main asset `CASMediaView` smaller than 120 points in any dimension.
 - The Ad View must be visible and non-transparent.
 - At a single point in time, a loaded ad can only be served in one View. Simultaneous display of a single ad in multiple Views may result in the loss of impression.
 - The app must be active (not running in the background).

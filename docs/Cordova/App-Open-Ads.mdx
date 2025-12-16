@@ -1,0 +1,264 @@
+---
+title: App Open Ads
+description: This guide explains how to integrate app open ads into a Cordova app.
+---
+
+App open ads are a special ad format intended for publishers wishing to monetize their app load screens.
+App open ads can be closed at any time, and are designed to be shown when your users bring your app to the foreground.
+App open ads automatically show a small branding area so users know they're in your app.
+
+App open ad management in Cordova code is handled through the `casai.appOpenAd` object.
+The app open ad is displayed as an overlay on top of all app content and cannot be added to the Cordova WebView DOM.
+
+Below is a diagram showing the ad lifecycle and how autoload affects it.
+
+<Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
+
+## Load Ad
+
+CAS provides an option to enable autoload to simplify your app logic.  
+Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
+
+When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise">
+
+```js
+casai.appOpenAd
+  .load({
+    autoReload: true,
+  })
+  .then(function () {
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
+  })
+  .catch(function (error) {
+    // Called when an ad load failed.
+    console.log('Load failed:', error.message);
+  });
+```
+
+  </TabItem>
+  <TabItem value="async" label="Async">
+
+```js
+try {
+  await casai.appOpenAd.load({
+    autoReload: true,
+  });
+  // Called when an ad is successfully loaded.
+  console.log('Loaded');
+} catch (error) {
+  // Called when an ad load failed.
+  console.log('Load failed:', error.message);
+}
+```
+
+  </TabItem>
+  <TabItem value="events" label="Events">
+
+```js
+function onAdLoaded(event){
+  if (event.format === casai.Format.APP_OPEN) {
+    // Called when an ad is successfully loaded.
+    console.log('Loaded');
+  }
+}
+
+function onAdLoadFailed(event){
+  if (event.format === casai.Format.APP_OPEN) {
+    // Called when an ad load failed.
+    console.log('Load failed:', event.message);
+  }
+}
+
+document.addEventListener('casai_ad_loaded', onAdLoaded);
+document.addEventListener('casai_ad_load_failed', onAdLoadFailed);
+
+// Start loading, completion will be reported via document events
+casai.appOpenAd.load({
+  autoReload: true,
+});
+
+function unsubscribeAppOpenLoadEvents() {
+  document.removeEventListener('casai_ad_loaded', onAdLoaded);
+  document.removeEventListener('casai_ad_load_failed', onAdLoadFailed);
+}
+```
+
+  </TabItem>
+</Tabs>
+
+Manual load mode is useful when you only need to show a single ad per app screen, and the screens change frequently.
+
+When you want to manually control ad loading, use the `load({ autoReload: false })` function.
+All parameters are optional — you can omit them and use the defaults if that fits your use case.
+
+Ad content may take some time to load after creating an ad instance.
+To ensure the ad displays instantly when needed, load the ad instance in advance.
+
+You can use the `casai_ad_loaded` document event to be notified when the ad is ready for display.
+
+<Info>
+- Read more about `AdContentInfo` structure in [Impression Level Data](Cordova/Impression-Level-Data).  
+- Read more about [AdError](Cordova/Ad-errors) structure.
+</Info>
+
+## Show Ad
+
+App open ads help you monetize your app's loading screen, when the app first launches and during app switches, but it's important to keep best practices in mind so that your users enjoy using your app. It's best to:
+
+* Show your first app open ad after your users have used your app a few times.
+* Show app open ads during times when your users would otherwise be waiting for your app to load.
+* If a user returns to your app after having left it by clicking on an app open ad, make sure they're not presented with another app open ad immediately.
+
+You can choose when to show the ad by calling `show()`:
+
+<Tabs groupId="style">
+  <TabItem value="promise" label="Promise">
+
+```js
+casai.appOpenAd
+  .show()
+  .then(function () {
+    // Called when the ad dismissed full screen content.
+    console.log('Dismissed');
+  })
+  .catch(function (error) {
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', error.message);
+  });
+```
+
+  </TabItem>
+  <TabItem value="async" label="Async">
+
+```js
+try {
+  await casai.appOpenAd.show();
+  // Called when the ad dismissed full screen content.
+  console.log('Dismissed');
+} catch (error) {
+  // Called when the ad failed to show full screen content.
+  console.log('Failed to show:', error.message);
+}
+```
+
+  </TabItem>
+  <TabItem value="events" label="Events">
+
+```js
+function onAdFailedToShow(event){
+  if (event.format === casai.Format.APP_OPEN) {
+    // Called when the ad failed to show full screen content.
+    console.log('Failed to show:', event.message);
+  }
+}
+
+function onAdShowed(event){
+  if (event.format === casai.Format.APP_OPEN) {
+    // Called when the ad showed the full screen content.
+    console.log('Showed');
+  }
+}
+
+function onAdDismissed(event){
+  if (event.format === casai.Format.APP_OPEN) {
+    // Called when the ad dismissed full screen content.
+    console.log('Dismissed');
+  }
+}
+
+document.addEventListener('casai_ad_show_failed', onAdFailedToShow);
+document.addEventListener('casai_ad_showed', onAdShowed);
+document.addEventListener('casai_ad_dismissed', onAdDismissed);
+
+// Show without Promises - all results are handled via document events
+casai.appOpenAd.show();
+
+function unsubscribeAppOpenShowEvents() {
+  document.removeEventListener('casai_ad_show_failed', onAdFailedToShow);
+  document.removeEventListener('casai_ad_showed', onAdShowed);
+  document.removeEventListener('casai_ad_dismissed', onAdDismissed);
+}
+```
+
+<Info>
+When an error occurs during ad impression, only the `casai_ad_show_failed` document event is triggered.  
+In this case, the `casai_ad_dismissed` event will not be fired since the impression is not considered successful.
+</Info>
+
+  </TabItem>
+</Tabs>
+
+If the ad is not ready at that moment, the `casai_ad_show_failed` document event will be triggered with a reason provided in the `AdError`.
+
+You have the option to check `isLoaded()` if it's required by your app's logic.
+
+```js
+if (await casai.appOpenAd.isLoaded()) {
+  // The ad is loaded here
+}
+```
+
+### Auto Show mode
+
+CAS provides the option to automatically show a loaded ad when the user returns to the app.
+
+To enable this behavior, set autoshow enabled:
+
+```js
+casai.appOpenAd.load({
+  autoShow: true, // [!code highlight]
+});
+```
+
+## Listening for the Ad Clicked
+The plugin allows you to listen for the `casai_ad_clicked` event, which is triggered whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions. You can check `e.format` to determine the ad format.
+```js
+function onAdClicked(event){
+  if (event.format === casai.Format.APP_OPEN) {
+    // Called when a click is recorded for an AppOpen ad.
+  }
+}
+
+document.addEventListener('casai_ad_clicked', onAdClicked);
+```
+
+## Mute Ad sounds
+
+Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
+
+```js
+casai.setAdSoundsMuted(true);
+```
+
+Not muted by default.
+
+## Release ad resource
+
+Release ad resources when no longer needed.
+
+```js
+casai.appOpenAd.destroy();
+```
+
+## Cold starts and Loading screens
+
+There is a delay between when you request an ad and when you receive an ad to show.
+If you do not design your app well, the user may briefly see your app and then be surprised by an out-of-context ad.
+Prevent this bad user experience. You can handle cold starts by showing a loading screen before any app content, and then showing the ad after the loading screen.
+If your app shows any app content after the loading screen, do not show the ad.
+
+## Best Practices
+
+* When an app open ad is not yet loaded (i.e. on cold start), load it first. Load any other ad formats later so that you avoid loading them in parallel with the app open ad. Loading multiple ad formats in parallel is not good for the device’s resources or for ad demand SDKs.
+* If you have a loading screen under the app open ad, and your loading screen completes loading before the ad is dismissed, you may want to dismiss your loading screen in the `casai_ad_dismissed` and `casai_ad_show_failed` document event listeners.
+* Wait a variable number of days after initial install to show on cold start.
+* Only show an ad if the user backgrounds the app for a certain amount of time (i.e. 30 seconds).
+* If you show a cold start ad, do not show soft launch app open ads or interstitials for a certain amount of time.
+* Include a call-out to the user that tells them they will see an ad in the Splash/Loading screen. For example: “Watch an ad from our sponsor while the app loads.”
+
+## Complete example
+- [AppOpen ad example](https://github.com/cleveradssolutions/CAS-Cordova/blob/main/example/src/AppOpenExample.tsx)

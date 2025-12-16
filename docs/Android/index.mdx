@@ -7,7 +7,7 @@ Once you've integrated and initialized the SDK, you can choose an ad format and 
 
 ### App prerequisites
 Make sure that your app's build file uses the following values:
-- Minimum SDK version of `23` or higher
+- Minimum SDK version of `{{ min.api }}` or higher
 - Compile SDK version of `35` or higher
 
 ### Maven repositories
@@ -20,22 +20,25 @@ following `repositories` block so that Gradle can download the artifacts of ad n
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
   repositories {
-    google()  
-    mavenCentral()  
-    maven {  
+    google()
+    mavenCentral()
+    maven {
         name = "MintegralAdsRepo"  
         url = uri("https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea")  
         content { includeGroup("com.mbridge.msdk.oversea") }  
     }  
-    maven {  
+    maven {
         name = "PangleAdsRepo"  
         url = uri("https://artifact.bytedance.com/repository/pangle")  
         content { includeGroup("com.pangle.global") }  
     }
-    maven {  
+    maven {
         name = "ChartboostAdsRepo"  
         url = uri("https://cboost.jfrog.io/artifactory/chartboost-ads/")  
-        content { includeGroup("com.chartboost") }  
+        content {
+          includeGroup("com.chartboost")
+          includeGroup("com.iab.omid.library")
+      }
     }
     maven {  
         name = "YSONetworkRepo"  
@@ -71,6 +74,14 @@ Read more about Closed beta ads partners on [Mediation Networks](Android/Mediate
         url = uri("https://s3.amazonaws.com/smaato-sdk-releases/")  
         content { includeGroup("com.smaato.android.sdk") }  
     }  
+    maven {
+        name = "VerveAdsRepo"
+        url = uri("https://verve.jfrog.io/artifactory/verve-gradle-release")
+        content {
+            includeGroup("net.pubnative")
+            includeGroup("com.verve")
+        }
+    }
 ```
 
 </Accordion>
@@ -91,7 +102,7 @@ In your module **(app-level)** Gradle file (usually `<project>/<app-module>/buil
 ```groovy
 plugins {
     id("com.android.application") // before CAS plugin
-    id("com.cleveradssolutions.gradle-plugin") version "{{ versions.ios }}"
+    id("com.cleveradssolutions.gradle-plugin") version "{{ versions.android }}"
 }
 
 cas {
@@ -184,7 +195,7 @@ If you're unsure which solution best fits your application, please contact your 
 
 #### Optimal Ads Solution
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:  
-Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yandex Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
+Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
 
 ```groovy
 cas {
