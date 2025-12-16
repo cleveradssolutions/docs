@@ -99,23 +99,6 @@ repositories {
       url = uri("https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo")
       content { includeGroup("tv.superawesome.sdk.publisher") }
   }
-}
-```
-
-</Accordion>
-<Accordion title="Maven Ads repositories for Closed beta">
-
-Read more about Closed beta ads partners on [Android Mediation Networks](Android/Mediated-Networks) page.  
-```kotlin
-  maven {  
-      name = "MadexAdsRepo"  
-      url = uri("https://sdkpkg.sspnet.tech")  
-      content {  
-          includeGroup("sspnet.tech")  
-          includeGroup("sspnet.tech.adapters")  
-          includeGroup("sspnet.tech.madex.networks")
-      }  
-  }
   maven {  
       name = "SmaatoAdsRepo"  
       url = uri("https://s3.amazonaws.com/smaato-sdk-releases/")  
@@ -128,7 +111,29 @@ Read more about Closed beta ads partners on [Android Mediation Networks](Android
           includeGroup("net.pubnative")
           includeGroup("com.verve")
       }
+  }
 }
+```
+
+</Accordion>
+<Accordion title="Maven Ads repositories for Closed beta">
+
+Read more about Closed beta ads partners on [Android Mediation Networks](Android/Mediated-Networks) page.  
+```kotlin
+    maven {  
+        name = "MadexAdsRepo"  
+        url = uri("https://sdkpkg.sspnet.tech")  
+        content {  
+            includeGroup("sspnet.tech")  
+            includeGroup("sspnet.tech.adapters")  
+            includeGroup("sspnet.tech.madex.networks")
+        }  
+    }
+    maven {
+        name = "PubmaticAdsRepo"
+        url = uri("https://repo.pubmatic.com/artifactory/public-repos")
+        content { includeGroup("com.pubmatic.sdk") }
+    }
 ```
 
 </Accordion>

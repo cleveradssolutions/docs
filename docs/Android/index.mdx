@@ -53,6 +53,19 @@ dependencyResolutionManagement {
             includeGroup("co.ogury.module")  
         }  
     }  
+    maven {  
+        name = "SmaatoAdsRepo"  
+        url = uri("https://s3.amazonaws.com/smaato-sdk-releases/")  
+        content { includeGroup("com.smaato.android.sdk") }  
+    }  
+    maven {
+        name = "VerveAdsRepo"
+        url = uri("https://verve.jfrog.io/artifactory/verve-gradle-release")
+        content {
+            includeGroup("net.pubnative")
+            includeGroup("com.verve")
+        }
+    }
   }
 }
 ```
@@ -69,18 +82,10 @@ Read more about Closed beta ads partners on [Mediation Networks](Android/Mediate
             includeGroup("sspnet.tech.adapters")  
         }  
     }
-    maven {  
-        name = "SmaatoAdsRepo"  
-        url = uri("https://s3.amazonaws.com/smaato-sdk-releases/")  
-        content { includeGroup("com.smaato.android.sdk") }  
-    }  
     maven {
-        name = "VerveAdsRepo"
-        url = uri("https://verve.jfrog.io/artifactory/verve-gradle-release")
-        content {
-            includeGroup("net.pubnative")
-            includeGroup("com.verve")
-        }
+        name = "PubmaticAdsRepo"
+        url = uri("https://repo.pubmatic.com/artifactory/public-repos")
+        content { includeGroup("com.pubmatic.sdk") }
     }
 ```
 
