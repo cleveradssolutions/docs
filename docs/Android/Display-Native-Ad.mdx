@@ -97,7 +97,7 @@ If you display the ad immediately in `onNativeAdLoaded`, there's no need to chec
 
 ## Display native ad Templates
 
-#### Inflate the layout
+### Inflate the layout
 
 The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
 
@@ -191,7 +191,7 @@ void customizeAdViewAppearance(CASNativeView adView) {
 ```
 </CodeGroup>
 
-#### Register the asset views
+### Register the asset views
 
 When you set the ad template size using `setAdTemplateSize`, the `CASNativeView` automatically registers all native asset views with the corresponding template assets for the selected size.
 
@@ -215,7 +215,7 @@ The code below shows how to display a Native Ad View using an Android Layout.
 
 If you are using Jetpack Compose, it is recommended to check out the [Composable Views for Native Ad Assets](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/compose/NativeAdCompose.kt) in our usage sample project.
 
-#### Inflate the layout
+### Inflate the layout
 
 The view hierarchy for a native ad that uses a `LinearLayout` to display its asset views might look like this:
 
@@ -267,7 +267,7 @@ void inflateNativeAdView(ViewGroup container) {
 
 Assumes that your ad layout is in a file called `native_ad_layout.xml` in the `res/layout` folder.
 
-#### Register the asset views
+### Register the asset views
 
 To register the ad view with content, you need to register all the asset views that may be used.
 

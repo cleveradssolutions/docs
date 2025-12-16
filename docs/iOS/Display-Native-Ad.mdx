@@ -74,7 +74,7 @@ func registerNativeAdContent(_ nativeAd: NativeAdContent) {
 If you display the ad immediately in `nativeAdDidLoadContent(_:)`, there's no need to check its validity, as it is guaranteed to be fresh at that moment. 
 
 ## Display native ad Templates
-#### Layout the views
+### Layout the views
 The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
 
 <CodeGroup synchronize="true">
@@ -139,7 +139,7 @@ fun customizeAdViewAppearance(_ adView: CASNativeView) {
 ```
 </CodeGroup>
 
-#### Register the asset views
+### Register the asset views
 When you set the ad template size using `setAdTemplateSize(_:)`, the `CASNativeView` automatically registers all ad asset views with the corresponding template assets for the selected size. 
 
 ## Manual display native ad
