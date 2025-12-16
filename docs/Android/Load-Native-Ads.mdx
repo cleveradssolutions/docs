@@ -207,7 +207,7 @@ override fun onNativeAdLoaded(nativeAd: NativeAdContent,ad: AdContentInfo) {
     registerNativeAdContent(nativeAd)
 }
 ```
-```compose
+```kotlin
 DisposableEffect(Unit) {
     var isDisposed = false
     var currentAd: NativeAdContent? = null
