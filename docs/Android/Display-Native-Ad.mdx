@@ -125,6 +125,34 @@ void inflateNativeAdView(ViewGroup container) {
     container.addView(adView);
 }
 ```
+
+```compose
+@Composable
+fun NativeAdTemplateView(adContent: NativeAdContent, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp
+
+    // Create the native view once per width change.
+    val nativeView = remember(availableWidthDp) {
+        CASNativeView(context).apply {
+            setAdTemplateSize(AdSize.getInlineBanner(screenWidthDp, 300))
+        }
+    }
+
+    // Apply ad content to the view on the main thread
+    LaunchedEffect(adContent, nativeView) {
+        nativeView.setNativeAd(adContent)
+    }
+
+    // Compose android view
+    AndroidView(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        factory = { nativeView }
+    )
+}
+```
 </CodeGroup>
 
 <Info>
@@ -174,75 +202,11 @@ void registerAdAssetViews(CASNativeView adView) {
 ```
 </CodeGroup>
 
-## Jetpack Compose (Template)
-
-You can display the built-in native template inside Compose using `CASNativeView` + `AndroidView`.
-
-```kotlin
-@SuppressLint("ConfigurationScreenWidthHeight")
-@Composable
-fun NativeTemplateAd(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp
-
-    // If you render the view with horizontal padding = 16dp, align template width with available space.
-    val availableWidthDp = remember(screenWidthDp) { max(0, screenWidthDp - 32) }
-
-    // Create the native view once per width change.
-    val nativeView = remember(availableWidthDp) {
-        CASNativeView(context).apply {
-            setAdTemplateSize(AdSize.getInlineBanner(availableWidthDp, 300))
-        }
-    }
-
-    var adContent by remember { mutableStateOf<NativeAdContent?>(null) }
-    var isDisposed by remember { mutableStateOf(false) }
-
-    DisposableEffect(Unit) {
-        val callback = object : NativeAdContentCallback() {
-            override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContentInfo) {
-                if (!isDisposed) {
-                    adContent?.destroy()
-                    adContent = nativeAd
-                } else {
-                    nativeAd.destroy()
-                }
-            }
-
-            override fun onNativeAdFailedToLoad(error: AdError) {
-                // Optional: show fallback UI
-            }
-        }
-
-        CASNativeLoader(context, MyApplication.CAS_ID, callback).apply {
-            adChoicesPlacement = AdChoicesPlacement.TOP_LEFT
-            isStartVideoMuted = true
-            load()
-        }
-
-        onDispose {
-            isDisposed = true
-            adContent?.destroy()
-            adContent = null
-        }
-    }
-
-    // Apply ad content to the view on the main thread
-    LaunchedEffect(adContent, nativeView) {
-        nativeView.setNativeAd(adContent)
-    }
-
-    AndroidView(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(300.dp)
-            .padding(horizontal = 16.dp),
-        factory = { nativeView }
-    )
-}
-```
-
 ## Manual display native ad
+
+The code below shows how to display a Native Ad View using an Android Layout.  
+
+If you are using Jetpack Compose, it is recommended to check out the [Composable Views for Native Ad Assets](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/compose/NativeAdCompose.kt) in our usage sample project.
 
 #### Inflate the layout
 
@@ -341,11 +305,13 @@ void registerAdAssetViews(CASNativeView adView) {
 </CodeGroup>
 
 ## Samples
-- [Kotlin Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.kt)
-- [Kotlin Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.kt)
-- [Java Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.java)
-- [Java Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.java)
-- [Compose Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeScreen.kt)
-- [Compose Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeTemplateScreen.kt)
-
+- Kotlin samples
+  - [Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.kt)
+  - [Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.kt)
+- Java samples
+  - [Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.java)
+  - [Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.java)
+- Jetpack Compose samples
+  - [Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeScreen.kt)
+  - [Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeTemplateScreen.kt)
 

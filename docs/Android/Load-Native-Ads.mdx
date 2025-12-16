@@ -64,14 +64,10 @@ Native ads are loaded with the `com.cleveradssolutions.sdk.nativead.CASNativeLoa
 
 <CodeGroup synchronize={true}>
 ```kotlin
-lateinit var adLoader: CASNativeLoader
-val loadedNativeAds = mutableListOf<NativeAdContent>()
-
 fun loadNativeAd() {
-    var adLoader = CASNativeLoader(this, MyApplication.CAS_ID, nativeAdCallback).apply {
-    adChoicesPlacement = AdChoicesPlacement.TOP_LEFT // by default
-    isStartVideoMuted = true // by default
-    }
+    val adLoader = CASNativeLoader(this, MyApplication.CAS_ID, nativeAdCallback)
+    adLoader.adChoicesPlacement = AdChoicesPlacement.TOP_LEFT // by default
+    adLoader.isStartVideoMuted = true // by default
     adLoader.load()
 }
 
@@ -92,6 +88,31 @@ void keepNativeAdInMemory(NativeAdContent nativeAd) {
     loadedNativeAds.add(nativeAd);
 }
 ```
+
+```compose
+@Composable
+fun NativeAdScreen() {
+    val context = LocalContext.current
+    var loadedNativeAds by remember { mutableStateOf<List<NativeAdContent>>(emptyList()) }
+    var isDestroyed = false
+
+    fun keepNativeAdInMemory(nativeAd: NativeAdContent) {
+        loadedNativeAds = loadedNativeAds + nativeAd
+    }
+
+    // other functions here
+
+    DisposableEffect(Unit) {
+        val adLoader = CASNativeLoader(context, MyApplication.CAS_ID, nativeAdCallback)
+        adLoader.adChoicesPlacement = AdChoicesPlacement.TOP_LEFT // by default
+        adLoader.isStartVideoMuted = true // by default
+        adLoader.load()
+
+        onDispose { isDestroyed = true }
+    }
+}
+```
+
 </CodeGroup>
 
 After a call to `load()`, a single callback is made to the previously defined `NativeAdContentCallback` to deliver the native ad object or report an error.
@@ -152,41 +173,6 @@ public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdConte
 ```
 </CodeGroup>
 
-## Jetpack Compose
-
-Native ads are loaded the same way in Compose - you still use `CASNativeLoader` and `NativeAdContentCallback`.
-The main difference is lifecycle: you should load and destroy the ad from `DisposableEffect`.
-
-```kotlin
-@Composable
-fun LoadNativeAd(
-    onLoaded: (NativeAdContent) -> Unit,
-) {
-    val context = LocalContext.current
-    var isDisposed by remember { mutableStateOf(false) }
-
-    DisposableEffect(Unit) {
-        val loader = CASNativeLoader(
-            context,
-            MyApplication.CAS_ID,
-            object : NativeAdContentCallback() {
-                override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContentInfo) {
-                    if (!isDisposed) onLoaded(nativeAd) else nativeAd.destroy()
-                }
-
-                override fun onNativeAdFailedToLoad(error: AdError) {
-                    // optional
-                }
-            }
-        )
-
-        loader.load()
-
-        onDispose { isDisposed = true }
-    }
-}
-```
-
 ## Release ad resources
 
 It’s crucial to call the `destroy()` method on all loaded native ads, even if they were not used or referenced. This action releases utilized resources and helps prevent memory leaks.
@@ -205,33 +191,6 @@ override fun onNativeAdLoaded(nativeAd: NativeAdContent,ad: AdContentInfo) {
     }
     keepNativeAdInMemory(nativeAd)
     registerNativeAdContent(nativeAd)
-}
-```
-```compose
-DisposableEffect(Unit) {
-    var isDisposed = false
-    var currentAd: NativeAdContent? = null
-
-    val callback = object : NativeAdContentCallback() {
-        override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContentInfo) {
-            if (isDisposed) {
-                nativeAd.destroy()
-                return
-            }
-            currentAd?.destroy()
-            currentAd = nativeAd
-            // optional: registerNativeAdContent(nativeAd)
-        }
-    }
-
-    val loader = CASNativeLoader(context, MyApplication.CAS_ID, callback)
-    loader.load()
-
-    onDispose {
-        isDisposed = true
-        currentAd?.destroy()
-        currentAd = null
-    }
 }
 ```
 ```java
@@ -269,4 +228,14 @@ public void onDestroy() {
     super.onDestroy();
 }
 ```
+
+```compose
+DisposableEffect(Unit) {
+    onDispose {
+        isDestroyed = true
+        adContents.forEach { it.destroy() }
+    }
+}
+```
+
 </CodeGroup>

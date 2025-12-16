@@ -121,7 +121,7 @@ class MyActivity : Activity() {
         setContentView(R.layout.activity_main)
 
         bannerView = CASBannerView(this, MyApplication.CAS_ID)
-        bannerView.size = AdSize.BANNER // or any AdSize from above
+        bannerView.size = adSize
         bannerView.isAutoloadEnabled = true
 
         // Replace ad container with new ad view.
@@ -146,7 +146,7 @@ class MyActivity extends Activity {
         setContentView(R.layout.activity_main);
     
         bannerView = new CASBannerView(this, MyApplication.CAS_ID);
-        bannerView.setSize(AdSize.BANNER); // or any AdSize from above
+        bannerView.setSize(adSize); // or any AdSize from above
         bannerView.setAutoloadEnabled(true);
         
         // Replace ad container with new ad view.
@@ -222,34 +222,27 @@ class MyActivity extends Activity {
     }
 }
 ```
-
 </CodeGroup>
 
 </TabItem>
 
-<TabItem label="Jetpack Compose" value="compose">
+<TabItem label="Compose" value="compose">
 
 ```kotlin
-@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-fun BannerView(
-    modifier: Modifier = Modifier,
-) {
+fun BannerView(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val screenWidthDp = LocalConfiguration.current.screenWidthDp
 
     val bannerView = remember(screenWidthDp) {
         CASBannerView(context, MyApplication.CAS_ID).apply {
-            isAutoloadEnabled = true // default
-            size = AdSize.getAdaptiveBanner(context, screenWidthDp) // Adaptive banner based on current width.
+            // Adaptive banner based on current width.
+            size = AdSize.getAdaptiveBanner(context, screenWidthDp) 
+            isAutoloadEnabled = true
 
             // Add a listeners and other parameters to the banner view here.
             // adListener = ...
         }
-    }
-
-    DisposableEffect(bannerView) {
-        onDispose { bannerView.destroy() }
     }
 
     AndroidView(
@@ -321,12 +314,19 @@ bannerView.setAdListener(new AdViewListener() {
 Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class.
 
 <CodeGroup synchronize="true">
+
 ```kotlin
 bannerView.load()
 ```
 
 ```java
 bannerView.load();
+```
+
+```compose
+DisposableEffect(bannerView) {
+    bannerView.load()
+}
 ```
 
 </CodeGroup>
@@ -357,7 +357,7 @@ the device orientation changes and reload the banner ad to match the new layout.
 ```kotlin
 override fun onConfigurationChanged(newConfig: Configuration) {
     super.onConfigurationChanged(newConfig)
-    bannerView.size = AdSize.BANNER // or compute new AdSize for the orientation
+    bannerView.size = AdSize.getAdaptiveBanner(this, maxWidth)
     if (bannerView.isAutoloadEnabled == false) {
         bannerView.load()
     }
@@ -368,7 +368,7 @@ override fun onConfigurationChanged(newConfig: Configuration) {
 @Override
 public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
-    bannerView.setSize(AdSize.BANNER); // or compute new AdSize for the orientation
+    bannerView.setSize(AdSize.getAdaptiveBanner(this, maxWidth)); 
     if (bannerView.isAutoloadEnabled() == false) {
         bannerView.load();
     }
@@ -434,12 +434,14 @@ bannerView.disableAdRefresh();
 Be sure to release ad resources if you’re no longer going to use the ad view.
 
 <CodeGroup synchronize="true">
+
 ```kotlin
 override fun onDestroy() {
     super.onDestroy()
     bannerView.destroy()
 }
 ```
+
 ```java
 @Override
 protected void onDestroy() {
@@ -447,39 +449,14 @@ protected void onDestroy() {
   bannerView.destroy();
 }
 ```
-</CodeGroup>
 
-<Tabs>
-<TabItem label="Jetpack Compose" value="compose">
-
-```kotlin
-@Composable
-fun BannerView(
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp
-
-    val bannerView = remember(screenWidthDp) {
-        CASBannerView(context, MyApplication.CAS_ID).apply {
-            isAutoloadEnabled = true // default
-            size = AdSize.getAdaptiveBanner(context, screenWidthDp)
-        }
-    }
-
-    DisposableEffect(bannerView) {
-        onDispose { bannerView.destroy() }
-    }
-
-    AndroidView(
-        modifier = modifier.wrapContentSize(),
-        factory = { bannerView }
-    )
+```compose
+DisposableEffect(bannerView) {
+    onDispose { bannerView.destroy() }
 }
 ```
 
-</TabItem>
-</Tabs>
+</CodeGroup>
 
 ## Check Ad availability
 
@@ -499,12 +476,15 @@ if (bannerView.isLoaded()) {
 </CodeGroup>
 
 ## Samples
-- [Kotlin Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.kt)
-- [Kotlin Adaptive Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/xml/AdaptiveBannerAdActivity.kt)
-- [Java Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.java)
-- [Java Adaptive Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/banner/xml/AdaptiveBannerAdActivity.java)
-- [Compose Banner Screen](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/BannerScreen.kt)
-- [Compose Lazy Banner Screen](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/LazyBannerScreen.kt)
+- Kotlin samples
+  - [Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.kt)
+  - [Adaptive Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/xml/AdaptiveBannerAdActivity.kt)
+- Java samples
+  - [Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.java)
+  - [Adaptive Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/banner/xml/AdaptiveBannerAdActivity.java)
+- Jetpack Compose samples
+  - [Banner Screen](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/BannerScreen.kt)
+  - [Lazy Banner Screen](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/LazyBannerScreen.kt)
 
 ## Hardware acceleration for video ads
 
