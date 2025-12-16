@@ -41,7 +41,8 @@ final NativeAdContentCallback nativeAdCallback =  new NativeAdContentCallback() 
 ```
 
 ## Load ad
-Native ads are loaded with the `com.cleveradssolutions.sdk.nativead.CASNativeLoader` class. 
+
+Native ads are loaded with the `com.cleveradssolutions.sdk.nativead.CASNativeLoader` class.
 
 ```java
 void loadNativeAd() {  
@@ -56,22 +57,27 @@ void keepNativeAdInMemory(NativeAdContent nativeAd) {
     loadedNativeAds.add(nativeAd);
 }
 ```
+
 After a call to `load()`, a single callback is made to the previously defined `NativeAdContentCallback` to deliver the native ad object or report an error.
 
 ### Autoload Ad mode
+
 The `CASNativeLoader` does not have an autoload ad mode like other ad formats, so you need to implement error handling and ad reloading manually.
 
 ## Load multiple ads (optional)
+
 The `load()` method takes an additional parameter: the number of ads the SDK should attempt to load for the request. It's not guaranteed that the SDK will return the exact number of ads requested.
+
 ```java
 int maxNumberOfAdsToLoad = 3;
 adLoader.load(maxNumberOfAdsToLoad);
 ```
 
-The `onNativeAdLoaded` will be called multiple times, once for each ad that is successfully loaded, up to the specified maximum number of ads.  
+The `onNativeAdLoaded` will be called multiple times, once for each ad that is successfully loaded, up to the specified maximum number of ads.
 If the load operation fails, the `onNativeAdFailedToLoad` will be called once with the error details.
 
 Apps requesting multiple ads should call `CASNativeLoader.isLoading` in their callback implementations to determine whether the loading process has finished.
+
 ```java
 @Override  
 public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {  
@@ -87,7 +93,43 @@ public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdConte
 } 
 ```
 
+## Jetpack Compose
+
+Native ads are loaded the same way in Compose - you still use `CASNativeLoader` and `NativeAdContentCallback`.
+The main difference is lifecycle: you should load and destroy the ad from `DisposableEffect`.
+
+```kotlin
+@Composable
+fun LoadNativeAd(
+    onLoaded: (NativeAdContent) -> Unit,
+) {
+    val context = LocalContext.current
+    var isDisposed by remember { mutableStateOf(false) }
+
+    DisposableEffect(Unit) {
+        val loader = CASNativeLoader(
+            context,
+            MyApplication.CAS_ID,
+            object : NativeAdContentCallback() {
+                override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContentInfo) {
+                    if (!isDisposed) onLoaded(nativeAd) else nativeAd.destroy()
+                }
+
+                override fun onNativeAdFailedToLoad(error: AdError) {
+                    // optional
+                }
+            }
+        )
+
+        loader.load()
+
+        onDispose { isDisposed = true }
+    }
+}
+```
+
 ## Release ad resources
+
 It’s crucial to call the `destroy()` method on all loaded native ads, even if they were not used or referenced. This action releases utilized resources and helps prevent memory leaks.
 
 When you invoke the `load()` function, the `CASNativeLoader` will continue running until the ad finishes loading. This can lead to the `NativeAdContentCallback` being triggered after the `Activity` has been destroyed or at unexpected times. Therefore, you should implement checks to destroy the loaded ad if you do not plan to display it to the user.
@@ -109,6 +151,7 @@ public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdConte
 ```
 
 Make sure to destroy all `NativeAdContent` references in your activity’s `onDestroy()` function:
+
 ```java
 @Override
 public void onDestroy() {

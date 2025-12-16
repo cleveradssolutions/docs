@@ -47,6 +47,7 @@ The `setNativeAd(NativeAdContent)` method must be called from the main (UI) thre
 </Warning>
 
 ## Validate Ad Content (Optional)
+
 Native ads can be preloaded and cached to reduce latency when displaying ads to users. However, these ads have a limited lifespan and may expire after a certain period. To ensure a seamless user experience, you should validate the ad content before displaying it.
 
 Use the `NativeAdContent.isExpired` method to check if the ad has expired. If you attempt to display an expired ad, it will trigger an `onNativeAdFailedToShow` callback.
@@ -62,11 +63,14 @@ void registerNativeAdContent(NativeAdContent nativeAd) {
 }
 ```
 
-If you display the ad immediately in `onNativeAdLoaded`, there's no need to check its validity, as it is guaranteed to be fresh at that moment. 
+If you display the ad immediately in `onNativeAdLoaded`, there's no need to check its validity, as it is guaranteed to be fresh at that moment.
 
 ## Display native ad Templates
+
 #### Inflate the layout
+
 The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
+
 ```java
 void inflateNativeAdView(ViewGroup container) {
     adView = new CASNativeView(this);
@@ -78,12 +82,14 @@ void inflateNativeAdView(ViewGroup container) {
     container.addView(adView);
 }
 ```
+
 <Info>
 Creating the layout may cause UI rendering to freeze briefly, so it is recommended to set the template size only once when initializing the view.  
 The `setAdTemplateSize(AdSize)` method must be called from the main (UI) thread.
 </Info>
 
 **Optional:** Customize the appearance of asset views after calling `setAdTemplateSize` by modifying properties from the `CASNativeView`.
+
 ```java
 void customizeAdViewAppearance(CASNativeView adView) {
     // Default values are shown below:
@@ -95,16 +101,89 @@ void customizeAdViewAppearance(CASNativeView adView) {
 ```
 
 #### Register the asset views
-When you set the ad template size using `setAdTemplateSize`, the `CASNativeView` automatically registers all native asset views with the corresponding template assets for the selected size. 
+
+When you set the ad template size using `setAdTemplateSize`, the `CASNativeView` automatically registers all native asset views with the corresponding template assets for the selected size.
+
 ```java
 void registerAdAssetViews(CASNativeView adView) {
     // No manual registration is required.
 }
 ```
 
+## Jetpack Compose (Template)
+
+You can display the built-in native template inside Compose using `CASNativeView` + `AndroidView`.
+
+```kotlin
+@SuppressLint("ConfigurationScreenWidthHeight")
+@Composable
+fun NativeTemplateAd(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp
+
+    // If you render the view with horizontal padding = 16dp, align template width with available space.
+    val availableWidthDp = remember(screenWidthDp) { max(0, screenWidthDp - 32) }
+
+    // Create the native view once per width change.
+    val nativeView = remember(availableWidthDp) {
+        CASNativeView(context).apply {
+            setAdTemplateSize(AdSize.getInlineBanner(availableWidthDp, 300))
+        }
+    }
+
+    var adContent by remember { mutableStateOf<NativeAdContent?>(null) }
+    var isDisposed by remember { mutableStateOf(false) }
+
+    DisposableEffect(Unit) {
+        val callback = object : NativeAdContentCallback() {
+            override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContentInfo) {
+                if (!isDisposed) {
+                    adContent?.destroy()
+                    adContent = nativeAd
+                } else {
+                    nativeAd.destroy()
+                }
+            }
+
+            override fun onNativeAdFailedToLoad(error: AdError) {
+                // Optional: show fallback UI
+            }
+        }
+
+        CASNativeLoader(context, MyApplication.CAS_ID, callback).apply {
+            adChoicesPlacement = AdChoicesPlacement.TOP_LEFT
+            isStartVideoMuted = true
+            load()
+        }
+
+        onDispose {
+            isDisposed = true
+            adContent?.destroy()
+            adContent = null
+        }
+    }
+
+    // Apply ad content to the view on the main thread
+    LaunchedEffect(adContent, nativeView) {
+        nativeView.setNativeAd(adContent)
+    }
+
+    AndroidView(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(300.dp)
+            .padding(horizontal = 16.dp),
+        factory = { nativeView }
+    )
+}
+```
+
 ## Manual display native ad
+
 #### Inflate the layout
+
 The view hierarchy for a native ad that uses a `LinearLayout` to display its asset views might look like this:
+
 ```xml
 <com.cleveradssolutions.sdk.nativead.CASNativeView
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -124,9 +203,11 @@ The view hierarchy for a native ad that uses a `LinearLayout` to display its ass
     </LinearLayout>
 </com.cleveradssolutions.sdk.nativead.CASNativeView>
 ```
+
 Note that all assets for a given native ad should be rendered inside the `CASNativeView` layout.
 
 Here is an example that inflate a `CASNativeView` and populates it with a `NativeAdContent`:
+
 ```java
 void inflateNativeAdView(ViewGroup container) {
     boolean attachToContainer = false; // to return AdView
@@ -136,10 +217,13 @@ void inflateNativeAdView(ViewGroup container) {
     container.addView(adView);
 }
 ```
+
 Assumes that your ad layout is in a file called `native_ad_layout.xml` in the `res/layout` folder.
 
 #### Register the asset views
-To register the ad view with content, you need to register all the asset views that may be used. 
+
+To register the ad view with content, you need to register all the asset views that may be used.
+
 ```java
 void registerAdAssetViews(CASNativeView adView) {
     // You can also omit adChoicesView and it will be created automatically.
@@ -160,7 +244,10 @@ void registerAdAssetViews(CASNativeView adView) {
 ```
 
 ## Samples
+
 - [Kotlin Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.kt)
 - [Kotlin Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.kt)
 - [Java Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdActivity.java)
 - [Java Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/nativead/NativeAdTemplateActivity.java)
+- [Compose Native Ad View (manual)](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeScreen.kt)
+- [Compose Native Ad Template View](https://github.com/cleveradssolutions/CAS-Android/blob/master/composeSample/src/main/java/com/cleveradssolutions/sampleapp/formats/NativeTemplateScreen.kt)
