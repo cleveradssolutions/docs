@@ -59,7 +59,26 @@ final NativeAdContentCallback nativeAdCallback =  new NativeAdContentCallback() 
 </CodeGroup>
 
 ## Load ad
-Native ads are loaded with the `com.cleveradssolutions.sdk.nativead.CASNativeLoader` class. 
+
+Native ads are loaded with the `com.cleveradssolutions.sdk.nativead.CASNativeLoader` class.
+
+<CodeGroup synchronize={true}>
+```kotlin
+lateinit var adLoader: CASNativeLoader
+val loadedNativeAds = mutableListOf<NativeAdContent>()
+
+fun loadNativeAd() {
+    var adLoader = CASNativeLoader(this, MyApplication.CAS_ID, nativeAdCallback).apply {
+    adChoicesPlacement = AdChoicesPlacement.TOP_LEFT // by default
+    isStartVideoMuted = true // by default
+    }
+    adLoader.load()
+}
+
+fun keepNativeAdInMemory(nativeAd: NativeAdContent) {
+    loadedNativeAds.add(nativeAd)
+}
+```
 
 ```java
 void loadNativeAd() {  
@@ -73,6 +92,8 @@ void keepNativeAdInMemory(NativeAdContent nativeAd) {
     loadedNativeAds.add(nativeAd);
 }
 ```
+</CodeGroup>
+
 After a call to `load()`, a single callback is made to the previously defined `NativeAdContentCallback` to deliver the native ad object or report an error.
 
 ### Autoload Ad mode
@@ -82,6 +103,13 @@ The `CASNativeLoader` does not have an autoload ad mode like other ad formats, s
 ## Load multiple ads (optional)
 
 The `load()` method takes an additional parameter: the number of ads the SDK should attempt to load for the request. It's not guaranteed that the SDK will return the exact number of ads requested.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val maxNumberOfAdsToLoad = 3
+adLoader.load(maxNumberOfAdsToLoad)
+```
+
 ```java
 int maxNumberOfAdsToLoad = 3;
 adLoader.load(maxNumberOfAdsToLoad);
@@ -92,6 +120,22 @@ The `onNativeAdLoaded` will be called multiple times, once for each ad that is s
 If the load operation fails, the `onNativeAdFailedToLoad` will be called once with the error details.
 
 Apps requesting multiple ads should call `CASNativeLoader.isLoading` in their callback implementations to determine whether the loading process has finished.
+
+<CodeGroup synchronize={true}>
+```kotlin
+override fun onNativeAdLoaded(nativeAd: NativeAdContent,ad: AdContentInfo) {
+    keepNativeAdInMemory(nativeAd)
+    registerNativeAdContent(nativeAd)
+
+    if (adLoader.isLoading) {
+        // The AdLoader is still loading ads.
+        // Expect more onNativeAdLoaded or onNativeAdFailedToLoad callbacks.
+    } else {
+        // The AdLoader has finished loading ads.
+    }
+}
+```
+
 ```java
 @Override  
 public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {  
@@ -106,6 +150,7 @@ public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdConte
     }   
 } 
 ```
+</CodeGroup>
 
 ## Jetpack Compose
 
@@ -141,7 +186,6 @@ fun LoadNativeAd(
     }
 }
 ```
-</CodeGroup>
 
 ## Release ad resources
 
@@ -163,7 +207,33 @@ override fun onNativeAdLoaded(nativeAd: NativeAdContent,ad: AdContentInfo) {
     registerNativeAdContent(nativeAd)
 }
 ```
+```compose
+DisposableEffect(Unit) {
+    var isDisposed = false
+    var currentAd: NativeAdContent? = null
 
+    val callback = object : NativeAdContentCallback() {
+        override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContentInfo) {
+            if (isDisposed) {
+                nativeAd.destroy()
+                return
+            }
+            currentAd?.destroy()
+            currentAd = nativeAd
+            // optional: registerNativeAdContent(nativeAd)
+        }
+    }
+
+    val loader = CASNativeLoader(context, MyApplication.CAS_ID, callback)
+    loader.load()
+
+    onDispose {
+        isDisposed = true
+        currentAd?.destroy()
+        currentAd = null
+    }
+}
+```
 ```java
 @Override  
 public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {      
@@ -181,6 +251,15 @@ public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdConte
 </CodeGroup>
 
 Make sure to destroy all `NativeAdContent` references in your activity’s `onDestroy()` function:
+
+<CodeGroup synchronize={true}>
+```kotlin
+override fun onDestroy() {
+    loadedNativeAds.forEach { it.destroy() }
+    super.onDestroy()
+}
+```
+
 ```java
 @Override
 public void onDestroy() {
