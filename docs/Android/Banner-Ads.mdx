@@ -17,40 +17,118 @@ Below is a diagram showing the ad lifecycle.
 
 ## Get the Ad size
 To load a banner ad, you need to specify the ad size. To do this, choose one of the methods for obtaining an `AdSize` from the list below:
+
 1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val maxWidth = 360
+val adSize = AdSize.getAdaptiveBanner(maxWidth)
+```
+
 ```java
 int maxWidth = 360;
 AdSize adSize = AdSize.getAdaptiveBanner(maxWidth);
 ```
+
+</CodeGroup>
+
 2. **Inline banner** ads have a desired width and a maximum height, useful when you want to limit the banner's height. Inline banners are larger and taller compared to adaptive banners. They have variable height, including Medium Rectangle size, and can be as tall as the device screen.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val maxWidth = 360
+val maxHeight = 400
+val adSize = AdSize.getInlineBanner(maxWidth, maxHeight)
+```
+
 ```java
 int maxWidth = 360;
 int maxHeight = 400;
 AdSize adSize = AdSize.getInlineBanner(maxWidth, maxHeight);
 ```
+</CodeGroup>
+
 3. **Smart ad size** selects the optimal dimensions depending on the device type. For mobile devices, it returns 320x50, while for tablets, it returns 728x90. In the UI, these banners occupy the same amount of space regardless of device type.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val adSize = AdSize.getSmartBanner(context)
+```
+
 ```java
 AdSize adSize = AdSize.getSmartBanner(context);
 ```
+</CodeGroup>
+
 4. **Medium Rectangle** has a fixed size of 300x250.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val adSize = AdSize.MEDIUM_RECTANGLE
+```
+
 ```java
 AdSize adSize = AdSize.MEDIUM_RECTANGLE;
 ```
+</CodeGroup>
+
 5. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val adSize = AdSize.LEADERBOARD
+```
+
 ```java
 AdSize adSize = AdSize.LEADERBOARD;
 ```
+</CodeGroup>
+
 6. **Standard banner** has a fixed size of 320x50 and is the minimum ad size.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val adSize = AdSize.BANNER
+```
+
 ```java
 AdSize adSize = AdSize.BANNER;
 ```
+</CodeGroup>
 
 ## Create Ad View
-The first step toward displaying a banner is to place `CASBannerView` in the layout for the Activity or Fragment in which you'd like to display it. 
+
+The first step toward displaying a banner is to place `CASBannerView` in the layout for the Activity or Fragment in which you'd like to display it.
 
 <Tabs>
 <TabItem label="Programmatically" value="script">
 Create an `CASBannerView` using the ad size to add to your app's layout:
+
+<CodeGroup synchronize={true}>
+```kotlin
+import com.cleversolutions.ads.android.CASBannerView
+
+class MyActivity : Activity() {
+    private lateinit var bannerView: CASBannerView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        bannerView = CASBannerView(this, MyApplication.CAS_ID)
+        bannerView.size = AdSize.BANNER // or any AdSize from above
+        bannerView.isAutoloadEnabled = true
+
+        // Replace ad container with new ad view.
+        adContainerView.removeAllViews()
+        adContainerView.addView(
+            bannerView,
+            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+        )
+    }
+}
+```
 
 ```java
 import com.cleversolutions.ads.android.CASBannerView;
@@ -64,21 +142,27 @@ class MyActivity extends Activity {
         setContentView(R.layout.activity_main);
     
         bannerView = new CASBannerView(this, MyApplication.CAS_ID);
-        bannerView.setSize(AdSize...);
+        bannerView.setSize(AdSize.BANNER); // or any AdSize from above
         bannerView.setAutoloadEnabled(true);
         
         // Replace ad container with new ad view.
         adContainerView.removeAllViews();
-        adContainerView.addView(bannerView, 
+        adContainerView.addView(
+            bannerView, 
             new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
         );
     }
+}
 ```
+</CodeGroup>
+
 </TabItem>
+
 <TabItem label="XML Layout" value="xml">
 
-The easiest way to do this is to add one to the corresponding XML layout file. 
-Here's an example that shows an activity's `CASBannerView`:  
+The easiest way to do this is to add one to the corresponding XML layout file.
+Here's an example that shows an activity's `CASBannerView`:
+
 ```xml
 # main_activity.xml
 ...
@@ -91,11 +175,31 @@ Here's an example that shows an activity's `CASBannerView`:
       ads:bannerSize="Standard320x50"/>
 ...
 ```
-Note the following required attributes:  
-`ads:bannerSize` - Set the ad size you'd like to use.  
-See the banner size section below for details.  
 
-On create activity you should set CAS Id to the ad view:
+Note the following required attributes:
+`ads:bannerSize` - Set the ad size you'd like to use.
+See the banner size section below for details.
+
+On create activity you should set CAS Id to the ad view: 
+
+<CodeGroup synchronize={true}>
+```kotlin
+import com.cleversolutions.ads.android.CASBannerView
+
+class MyActivity : Activity() {
+    private lateinit var bannerView: CASBannerView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        bannerView = findViewById(R.id.bannerView)
+        bannerView.casId = MyApplication.CAS_ID
+        bannerView.isAutoloadEnabled = true
+    }
+}
+```
+
 ```java
 import com.cleversolutions.ads.android.CASBannerView;
 
@@ -111,18 +215,22 @@ class MyActivity extends Activity {
         bannerView.setCasId(MyApplication.CAS_ID);
         bannerView.setAutoloadEnabled(true);
     }
+}
 ```
+</CodeGroup>
+
 </TabItem>
 </Tabs>
 
 ## Listen Ad events
-To further customize the behavior of your ad, you can hook onto a number of events in the ad's lifecycle: loading, clicking, and so on. 
+
+To further customize the behavior of your ad, you can hook onto a number of events in the ad's lifecycle: loading, clicking, and so on.
 You can listen for these events through the `AdViewListener` interface.
 To use an `AdViewListener` with Banner View, call the `setAdListener()` method before loading the banner:
 
 <CodeGroup synchronize="true">
 ```kotlin
-bannerAd.adListener = object : AdViewListener {
+bannerView.adListener = object : AdViewListener {
     override fun onAdViewLoaded(view: CASBannerView) {
         // Invokes this callback when ad loaded and ready to present.
     }
@@ -166,53 +274,107 @@ bannerView.setAdListener(new AdViewListener() {
 ```
 </CodeGroup>
 
-## Load Ad 
-Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class.
+## Load Ad
+
+Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class. 
+
+<CodeGroup synchronize="true">
+```kotlin
+bannerView.load()
+```
+
 ```java
 bannerView.load();
 ```
+</CodeGroup>
 
 ### Autoload Ad mode
-If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process. 
+
+<CodeGroup synchronize="true">
+```kotlin
+bannerView.isAutoloadEnabled = false
+```
+
 ```java
 bannerView.setAutoloadEnabled(false);
 ```
+</CodeGroup>
+
 By default enabled.
 
 ### Handle Orientation Changes
-When using an `AdSize` based on screen width, you should recalculate the size whenever 
-the device orientation changes and reload the banner ad to match the new layout.
+
+When using an `AdSize` based on screen width, you should recalculate the size whenever
+the device orientation changes and reload the banner ad to match the new layout. 
+
+<CodeGroup synchronize="true">
 ```kotlin
-@Override
-public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    bannerView.setSize(AdSize...);
+override fun onConfigurationChanged(newConfig: Configuration) {
+    super.onConfigurationChanged(newConfig)
+    bannerView.size = AdSize.BANNER // or compute new AdSize for the orientation
     if (bannerView.isAutoloadEnabled == false) {
-        bannerView.load();
+        bannerView.load()
     }
 }
 ```
 
+```java
+@Override
+public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    bannerView.setSize(AdSize.BANNER); // or compute new AdSize for the orientation
+    if (bannerView.isAutoloadEnabled() == false) {
+        bannerView.load();
+    }
+}
+```
+</CodeGroup>
+
 ## Ad view visibility
-The banner is a normal view so you can feel free to change the visibility with the following method:
+
+The banner is a normal view so you can feel free to change the visibility with the following method: 
+
+<CodeGroup synchronize="true">
+```kotlin
+bannerView.visibility = View.GONE
+```
+
 ```java
 bannerView.setVisibility(View.GONE);
 ```
+</CodeGroup>
 
 ## Ad refresh interval
+
 The ad view’s automatic refresh interval determines how often a new ad request is generated for that ad view. You have the option to set a custom refresh interval longer than 10 seconds or to disable the Automatic refresh option for the ad view.
 
-Change the banner automatic refresh interval using the following method:
+Change the banner automatic refresh interval using the following method: 
+
+<CodeGroup synchronize="true">
+```kotlin
+bannerView.refreshInterval = interval
+```
+
 ```java
 bannerView.setRefreshInterval(interval);
 ```
+</CodeGroup>
 
 We recommend using optimal automatic refresh interval 30 seconds, by default.
 
-To disable refresh ad use following method:
+To disable refresh ad use following method: 
+
+<CodeGroup synchronize="true">
+```kotlin
+bannerView.disableAdRefresh()
+```
+
 ```java
 bannerView.disableAdRefresh();
 ```
+</CodeGroup>
 
 <Info>
 - The automatic refresh occurs only if the banner is visible on screen.  
@@ -220,13 +382,14 @@ bannerView.disableAdRefresh();
 </Info>
 
 ## Release ad resource
+
 Be sure to release ad resources if you’re no longer going to use the ad view.
 
 <CodeGroup synchronize="true">
 ```kotlin
 override fun onDestroy() {
     super.onDestroy()
-    bannerView?.destroy()
+    bannerView.destroy()
 }
 ```
 ```java
@@ -239,11 +402,20 @@ protected void onDestroy() {
 </CodeGroup>
 
 ## Check Ad availability
-Use `isLoaded()` to check whether an ad is currently loaded.
+
+Use `isLoaded()` to check whether an ad is currently loaded. 
+
+<CodeGroup synchronize="true">
+```kotlin
+if (bannerView.isLoaded) {
+}
+```
+
 ```java
 if (bannerView.isLoaded()) {
 }
 ```
+</CodeGroup>
 
 ## Samples
 - [Kotlin Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/banner/programmatic/BannerAdActivity.kt)
@@ -252,11 +424,13 @@ if (bannerView.isLoaded()) {
 - [Java Adaptive Banner Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/banner/xml/AdaptiveBannerAdActivity.java)
 
 ## Hardware acceleration for video ads
-In order for video ads to show successfully in your banner ad views, [hardware acceleration](https://developer.android.com/guide/topics/graphics/hardware-accel) must be enabled.  
 
-Hardware acceleration is enabled by default, but some apps may choose to disable it. If this applies to your app, we recommend enabling hardware acceleration for Activity classes that use ads.  
+In order for video ads to show successfully in your banner ad views, [hardware acceleration](https://developer.android.com/guide/topics/graphics/hardware-accel) must be enabled.
+
+Hardware acceleration is enabled by default, but some apps may choose to disable it. If this applies to your app, we recommend enabling hardware acceleration for Activity classes that use ads.
 
 If your app does not behave properly with hardware acceleration turned on globally, you can control it for individual activities as well. To enable or disable hardware acceleration, you can use the `android:hardwareAccelerated` attribute for the [application](https://developer.android.com/guide/topics/manifest/application-element) and [activity](https://developer.android.com/guide/topics/manifest/activity-element) elements in your **AndroidManifest.xml**. The following example enables hardware acceleration for the entire app but disables it for one activity:
+
 ```xml
 <application android:hardwareAccelerated="true">
     <!-- For activities that use ads, hardwareAcceleration should be true. -->
@@ -265,4 +439,7 @@ If your app does not behave properly with hardware acceleration turned on global
     <activity android:hardwareAccelerated="false" />
 </application>
 ```
+
 See the [HW acceleration](https://developer.android.com/guide/topics/graphics/hardware-accel) guide for more information about options for controlling hardware acceleration. Note that individual ad views cannot be enabled for hardware acceleration if the Activity is disabled, so the Activity itself must have hardware acceleration enabled.
+
+

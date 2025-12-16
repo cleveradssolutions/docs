@@ -7,6 +7,24 @@ This should be done only once, ideally during the app launch.
 
 To begin, create a string constant with your `CAS_ID`. This constant will be needed when creating each ad format instance.
 
+<CodeGroup synchronize={true}>
+```kotlin
+import com.cleversolutions.ads.android.CAS
+
+class MyApplication : Application() {
+
+    companion object {
+        const val CAS_ID: String = BuildConfig.APPLICATION_ID
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        initializeCAS()
+    }
+}
+```
+
 ```java
 import com.cleversolutions.ads.android.CAS;
 
@@ -22,6 +40,7 @@ class MyApplication extends Application {
     }
 }
 ```
+</CodeGroup>
 
 <Accordion title="What is CAS ID?">
 
@@ -38,6 +57,29 @@ Using `context.packageName` as CAS ID is not safe. If your app does not use `Bui
 </Info>
 
 You can skip the manual call for ad initialization, and then the SDK will automatically perform the initialization before the first ad load. However, if it's important for you to change the configuration or listen to states of the Consent Flow, make sure to initialize it at least once before the first ad load.
+
+<CodeGroup synchronize={true}>
+```kotlin
+private fun initializeCAS() {
+    val builder = CAS.buildManager()
+        .withCasId(CAS_ID)
+        .withCompletionListener(object : InitializationListener {
+            override fun onCASInitialized(config: InitialConfiguration) {
+                // The CAS SDK initializes if the error is `null`
+                val initErrorOrNull: String? = config.error
+                val userCountryISO2OrNull: String? = config.countryCode
+
+                // True if the user is protected by GDPR or other regulations
+                val protectionApplied: Boolean = config.isConsentRequired
+
+                // The user completes the consent flow
+                val consentFlowStatus: Int = config.consentFlowStatus
+            }
+        })
+
+    builder.build(this)
+}
+```
 
 ```java
 void initializeCAS() {
@@ -61,6 +103,7 @@ void initializeCAS() {
     builder.build(this);
 }
 ```
+</CodeGroup>
 
 The `onCASInitialized` listener may be called with an error. In this case, the SDK will attempt to reinitialize and the listener will be called again until the error is resolved.
 
@@ -75,11 +118,20 @@ To get consent for collecting personal data of your users, we suggest you use a 
 The user will see the consent flow when your app initialize CAS SDK. When the user completes the flow, the SDK calls your initialization-completion handler.
 
 CAS consent flow is enabled by default. You can disable the consent flow by add disabled  ConsentFlow instance to `withConsentFlow()`:
+
+<CodeGroup synchronize={true}>
+```kotlin
+builder.withConsentFlow(
+    ConsentFlow(/* isEnabled = */ false)
+)
+```
+
 ```java
 builder.withConsentFlow(
     new ConsentFlow(/* isEnabled = */ false)
 );
 ```
+</CodeGroup>
 
 Make sure to apply all configurations before calling `builder.build()`.
 
@@ -93,9 +145,16 @@ Read more about "Privacy options button" and "Debug geography" on [CAS User Cons
 When building and testing your apps, make sure you use test ads rather than live, production ads. Failure to do so can lead to suspension of your account.
 
 By default, CAS initializes mediation in live mode. To enable test ad mode, you should manually call `initializeCAS()` with the following option:
+
+<CodeGroup synchronize={true}>
+```kotlin
+builder.withTestAdMode(BuildConfig.DEBUG)
+```
+
 ```java
 builder.withTestAdMode(BuildConfig.DEBUG);
 ```
+</CodeGroup>
 
 For more information about how the CAS.AI SDK's test ads work, see [Enable test ads](Android/Enabling-test-ads)
 
@@ -104,9 +163,16 @@ For more information about how the CAS.AI SDK's test ads work, see [Enable test 
 Apps can be marked as child-directed or [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy) applicable through the CAS UI.  
 
 If the app determines that a user falls under COPPA regulations, the `setTaggedAudience()` method must be called before initializing the CAS SDK.
-```java
+
+<CodeGroup synchronize={true}>
+```kotlin
 CAS.settings.setTaggedAudience(Audience.CHILDREN)
 ```
+
+```java
+CAS.settings.setTaggedAudience(Audience.CHILDREN);
+```
+</CodeGroup>
 
 If your app targets both children and older users, all ads that may be shown to children must comply with COPPA.  
 To ensure compliance, a **neutral age screen** must be implemented so that ads unsuitable for children are only shown to appropriate audiences.  
@@ -117,16 +183,31 @@ A neutral age screen is a tool—such as an age gate—that verifies a user’s 
 We are not removing support for managing ads using `MediationManager` at this time, but we recommend migrating to the new `CASInterstitial` and `CASRewarded` components whenever possible.
 
 To continue using `MediationManager`, you still need to specify the ad formats you want to work with, just as before.  
+
+<CodeGroup synchronize={true}>
+```kotlin
+builder.withAdTypes(AdType.Interstitial, AdType.Rewarded)
+```
+
 ```java
 builder.withAdTypes(AdType.Interstitial, AdType.Rewarded);
 ```
+</CodeGroup>
+
 If your app no longer uses `MediationManager` for Interstitial and Rewarded formats, simply do not define any formats during initialization.
 
 ## (Optional) Retrieve the Version Number
 To programmatically retrieve the SDK version number at runtime, CAS provides the following method:
+
+<CodeGroup synchronize={true}>
+```kotlin
+val sdkVersion: String = CAS.getSDKVersion()
+```
+
 ```java
 String sdkVersion = CAS.getSDKVersion();
 ```
+</CodeGroup>
 
 ## (Optional) Trial ad-free interval
 Set the time interval during which users can enjoy an ad-free experience while retaining access
@@ -134,10 +215,17 @@ to Rewarded Ads and App Open Ads formats. This interval is defined from the mome
 app installation, in seconds. Within this interval, users enjoy privileged access to the
 application's features without intrusive advertisements.
 
+<CodeGroup synchronize={true}>
+```kotlin
+val secondsIn7Days = 604800 
+CAS.settings.setTrialAdFreeInterval(secondsIn7Days)
+```
+
 ```java
 int secondsIn7Days = 604800;
 CAS.settings.setTrialAdFreeInterval(secondsIn7Days);
 ```
+</CodeGroup>
 
 ## Complete sample
 - [Kotlin Sample Application](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/SampleApplication.kt)

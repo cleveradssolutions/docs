@@ -9,6 +9,7 @@ Follow the step-by-step guide below. Optional steps can be completed at your dis
 Find the repositories on the [Home page](Android).
 
 ### 2. Add the dependencies for the CAS SDK to your module-level build file:
+<CodeGroup synchronize={true}>
 ```kotlin
 dependencies {
     implementation("com.cleveradssolutions:cas-sdk:{{ versions.android }}")
@@ -16,6 +17,13 @@ dependencies {
 }
 ```
 
+```groovy
+ependencies {
+    implementation 'com.cleveradssolutions:cas-sdk:{{ versions.android }}")
+    ...
+}
+```
+</CodeGroup>
 All adapters for supported networks are found in the `com.cleveradssolutions` dependency group, and do not require additional SDK dependencies to be added.  
 
 <Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Android/subscription">
@@ -26,6 +34,7 @@ Subscribe to receive notifications about CAS updates.
 
 ### 3. Add mediated networks that are fully compatible with Google Play Families policies:
 
+<CodeGroup synchronize={true}>
 ```kotlin
 implementation("com.cleveradssolutions:ironsource:+")   // IronSource
 implementation("com.cleveradssolutions:google:+")       // Google Ads | Admob
@@ -38,6 +47,18 @@ implementation("com.cleveradssolutions:kidoz:+")        // Kidoz
 implementation("com.cleveradssolutions:superawesome:+") // SuperAwesome
 ```
 
+```groovy
+implementation 'com.cleveradssolutions:ironsource:+'   // IronSource
+implementation 'com.cleveradssolutions:google:+'       // Google Ads | AdMob
+implementation 'com.cleveradssolutions:unity:+'        // Unity Ads
+implementation 'com.cleveradssolutions:vungle:+'       // LiftoffMonetize
+implementation 'com.cleveradssolutions:inmobi:+'       // InMobi
+implementation 'com.cleveradssolutions:chartboost:+'   // Chartboost
+implementation 'com.cleveradssolutions:fyber:+'        // DT Exchange
+implementation 'com.cleveradssolutions:kidoz:+'        // Kidoz
+```
+</CodeGroup>
+
 <Info>
 - Read more about the adapter versions [here](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters).
 - For applications targeting children or audiences under the age of 13, monetization is only allowed using ad SDKs that are certified under the **Google Play Families Program**.
@@ -47,6 +68,7 @@ implementation("com.cleveradssolutions:superawesome:+") // SuperAwesome
 ### 4. Add mediated networks that are always recommended for app monetization.
 For applications not targeting children (adult or mixed audiences), it is recommended to include the following dependencies **in addition to those listed above**.
 
+<CodeGroup synchronize={true}>
 ```kotlin
 implementation("com.cleveradssolutions:cas-exchange:+") // CASExchange
 implementation("com.cleveradssolutions:mintegral:+")    // Mintegral
@@ -57,8 +79,19 @@ implementation("com.cleveradssolutions:yango:+")        // Yango Ads
 implementation("com.cleveradssolutions:bigo:+")         // Bigo
 ```
 
+```groovy
+implementation 'com.cleveradssolutions:cas-exchange:+' // CASExchange
+implementation 'com.cleveradssolutions:mintegral:+'    // Mintegral
+implementation 'com.cleveradssolutions:applovin:+'     // AppLovin
+implementation 'com.cleveradssolutions:facebook:+'     // Meta Audience Network
+implementation 'com.cleveradssolutions:pangle:+'       // Pangle
+implementation 'com.cleveradssolutions:yandex:+'       // Yandex Ads
+implementation 'com.cleveradssolutions:bigo:+'         // Bigo
+```
+</CodeGroup>
 ### 5. (Optional) Add other mediated networks.
 
+<CodeGroup synchronize={true}>
 ```kotlin
 implementation("com.cleveradssolutions:ysonetwork:+")   // YSO Network
 implementation("com.cleveradssolutions:ogury:+")        // Ogury
@@ -67,21 +100,43 @@ implementation("com.cleveradssolutions:startio:+")      // StartIO
 implementation("com.cleveradssolutions:prado:+")        // Prado
 ```
 
+```groovy
+implementation 'com.cleveradssolutions:ysonetwork:+'   // YSO Network
+implementation 'com.cleveradssolutions:ogury:+'        // Ogury
+implementation 'com.cleveradssolutions:hyprmx:+'       // HyprMX
+implementation 'com.cleveradssolutions:startio:+'      // StartIO
+```
+</CodeGroup>
 ### 6. (Optional) Add Cross Promo adapter.  
    Contact our account manager if you are interested in cross-promotion.
 
+<CodeGroup synchronize={true}>
 ```kotlin
 implementation("com.cleveradssolutions:cas-promo:+")
 ```
 
+```groovy
+implementation 'com.cleveradssolutions:cas-promo:+'
+```
+</CodeGroup>
+
 ### 7. (Optional) Add **Closed beta** mediated networks.
-   
+
+<CodeGroup synchronize={true}>   
 ```kotlin
 implementation("com.cleveradssolutions:maticoo:+")      // Maticoo
 implementation("com.cleveradssolutions:madex:+")        // Madex
 implementation("com.cleveradssolutions:smaato:+")       // Smaato
 implementation("com.cleveradssolutions:verve:+")        // Verve
 ```
+
+```groovy
+implementation 'com.cleveradssolutions:maticoo:+'  // Maticoo
+implementation 'com.cleveradssolutions:prado:+'    // Prado
+implementation 'com.cleveradssolutions:madex:+'    // Madex
+implementation 'com.cleveradssolutions:smaato:+'   // Smaato
+```
+</CodeGroup>
 
 <Info>
 Access to the monetization of the beta ad sources is closed. Please note that you may need to add additional [maven repositories](Android) for your project.
@@ -92,9 +147,16 @@ If you would like to monetize by one of these ad sources, please contact your ac
 The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.
 
 Add the Play Services Ads identifier into the `dependencies` block to allow GAID information to be retrieved.
+
+<CodeGroup synchronize={true}>
 ```kotlin
 implementation("com.google.android.gms:play-services-ads-identifier:18.1.0")
 ```
+
+```groovy
+implementation 'com.google.android.gms:play-services-ads-identifier:18.1.0'
+```
+</CodeGroup>
 
 Additionally, apps will need to declare a Google Play Services normal permission in the `AndroidManifest.xml` file as follows:
 ```xml

@@ -7,28 +7,77 @@ Meta Audience Network Data Processing Options for US Users Limited Data Use is a
 Visit [Meta’s developer documentation](https://developers.facebook.com/docs/marketing-apis/data-processing-options) for details.
 
 Import `AdSettings` from Audience Network library:
+
+<CodeGroup synchronize={true}>
+```kotlin
+import com.facebook.ads.AdSettings
+```
+
 ```java
 import com.facebook.ads.AdSettings;
 ```
+</CodeGroup>
 
-If you do not want to enable Limited Data Use (LDU) mode, pass an empty string array:
-```java
-AdSettings.setDataProcessingOptions( new String[] {} );  
-```
-To enable LDU for users and specify user geography, call `setDataProcessingOptions` in a form like this:
-```java
-AdSettings.setDataProcessingOptions( new String[] {"LDU"} );
+If you do not want to enable Limited Data Use (LDU) mode, pass an empty string array: 
+
+<CodeGroup synchronize={true}>
+```kotlin
+AdSettings.setDataProcessingOptions(arrayOf())
 ```
 
-You can determine whether the user has consented to Meta or not with Additional Consent from CMP. To do so, use code like the following:
 ```java
+AdSettings.setDataProcessingOptions(new String[] {});
+```
+</CodeGroup>
+
+To enable LDU for users and specify user geography, call `setDataProcessingOptions` in a form like this: 
+
+<CodeGroup synchronize={true}>
+```kotlin
+AdSettings.setDataProcessingOptions(arrayOf("LDU"))
+```
+
+```java
+AdSettings.setDataProcessingOptions(new String[] {"LDU"});
+```
+</CodeGroup>
+
+You can determine whether the user has consented to Meta or not with Additional Consent from CMP. To do so, use code like the following: 
+
+<CodeGroup synchronize={true}>
+```kotlin
+import com.cleversolutions.ads.ConsentStatus
+import com.cleversolutions.ads.android.CAS
+import com.facebook.ads.AdSettings
+
+val metaConsent: Int = CAS.settings.getAdditionalConsent(89)
+when (metaConsent) {
+    ConsentStatus.ACCEPTED -> {
+        AdSettings.setDataProcessingOptions(arrayOf())
+    }
+    ConsentStatus.DENIED -> {
+        AdSettings.setDataProcessingOptions(arrayOf("LDU"))
+    }
+    else -> {
+        // AC String is not available on disk.
+        // Please check for consent status after the user completes the CMP flow.
+    }
+}
+```
+
+```java
+import com.cleversolutions.ads.ConsentStatus;
+import com.cleversolutions.ads.android.CAS;
+import com.facebook.ads.AdSettings;
+
 int metaConsent = CAS.settings.getAdditionalConsent(89);
 if (metaConsent == ConsentStatus.ACCEPTED) {
-    AdSettings.setDataProcessingOptions( new String[] {} );
+    AdSettings.setDataProcessingOptions(new String[] {});
 } else if (metaConsent == ConsentStatus.DENIED) {
-    AdSettings.setDataProcessingOptions( new String[] {"LDU"} );
+    AdSettings.setDataProcessingOptions(new String[] {"LDU"});
 } else {
     // AC String is not available on disk. 
     // Please check for consent status after the user completes the CMP flow.
 }
 ```
+</CodeGroup>

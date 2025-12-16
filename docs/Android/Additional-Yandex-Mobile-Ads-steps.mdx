@@ -22,15 +22,51 @@ When the CAS SDK initializes the Yandex Mobile Ads SDK before initializing Fireb
 
 When using Firebase Performance Monitoring in Firebase version 31.0.0+, activate FirebaseApp for all processes, including the AppMetrica SDK process. In `Application#onCreate()`, call `FirebaseApp.initializeApp(this)` before activating the AppMetrica SDK. Otherwise, the AppMetrica SDK won't be activated.
 
-```java
-class YourApplication extends Application { 
-   
-    @Override 
-    public void onCreate() { 
-        super.onCreate() 
-        
+<CodeGroup synchronize={true}>
+```kotlin
+class YourApplication : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+
         // if app use FirebaseApp then init it first for all processes
         FirebaseApp.initializeApp(this)
+
+        // if app use AppMetrica then activate it for all processes
+        val config = AppMetricaConfig.newConfigBuilder(API_KEY).build()
+        AppMetrica.activate(this, config)
+
+        if (CASUtilities.isMainProcess(this)) {
+            // Before user finishes the consent flow
+
+            // Initializing third-party SDKs for main process only
+
+            // Initialize CAS
+            CAS.buildManager()
+                .withCompletionListener { initConfig ->
+                    // After the user finishes the consent flow
+
+                    // Initializing third-party SDKs for all processes
+
+                    if (CASUtilities.isMainProcess(this)) {
+                        // Initializing third-party SDKs for main process only
+                    }
+                }
+                .initialize()
+        }
+    }
+}
+```
+
+```java
+class YourApplication extends Application { 
+
+    @Override 
+    public void onCreate() { 
+        super.onCreate(); 
+        
+        // if app use FirebaseApp then init it first for all processes
+        FirebaseApp.initializeApp(this);
 
         // if app use AppMetrica then activate it for all processes
         AppMetricaConfig config = AppMetricaConfig.newConfigBuilder(API_KEY).build(); 
@@ -43,7 +79,7 @@ class YourApplication extends Application {
 
             // Initialize CAS 
             CAS.buildManager()
-               .withCompletionListener(config -> {
+               .withCompletionListener(initConfig -> {
                   // After the user finishes the consent flow
                 
                   // Initializing third-party SDKs for all processes 
@@ -51,14 +87,13 @@ class YourApplication extends Application {
                   if (CASUtilities.isMainProcess(this)) {
                       // Initializing thrid-party SDKs for main process only
                   }
-               }
+               })
                .initialize();
         }
-        
-        
     } 
 }
 ```
+</CodeGroup>
 
 <Success>
 - Se also [AppMetrica Error descriptions](https://yandex.ru/support2/appmetrica-io/en/sdk/android/analytics/android-errors) on developer docs.

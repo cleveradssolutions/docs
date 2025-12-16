@@ -2,7 +2,6 @@
 title: Native Ad assets
 ---
 
-
 | Name             | Type                          | Required    | Included                   | Description                                                                                                                                 |
 | ---------------- | ----------------------------- | ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | adChoicesView    | CASChoicesView                | Yes         | Always                     | Read below about [AdChoices overlay](Android/Native-Ad-assets#adchoices-overlay).                                                                                   |
@@ -44,26 +43,56 @@ Each ad view must display an AdChoices overlay logo. Also, it's important that t
 #### Use AdChoices placements
 An AdChoices overlay can be added by the SDK if `CASNativeView.adChoicesView` not registered. Leave space in your preferred corner of your native ad view for the automatically inserted AdChoices logo.  
 Use `AdChoicesPlacement` constants to set preferred corner. 
+
+<CodeGroup synchronize={true}>
+```kotlin
+adLoader.adChoicesPlacement = AdChoicesPlacement.TOP_RIGHT
+```
+
 ```java
 adLoader.setAdChoicesPlacement(AdChoicesPlacement.TOP_RIGHT);
 ```
+</CodeGroup>
+
 By default the AdChoices icon position is set to the top right.
 
 #### Use custom AdChoices view
-The AdChoices custom view feature lets you position the AdChoices icon in a custom location. This is different from AdChoices position controls, which only allows specification of one of the four corners.  
+
+The AdChoices custom view feature lets you position the AdChoices icon in a custom location. This is different from AdChoices position controls, which only allows specification of one of the four corners.
 The following example demonstrates how to set a custom AdChoices view, with the AdChoices icon rendered inside the `CASChoicesView`.
+
+<CodeGroup synchronize={true}>
+```kotlin
+adView.adChoicesView = adView.findViewById<CASChoicesView>(R.id.ad_choices_view)
+```
+
 ```java
 adView.setAdChoicesView((CASChoicesView) adView.findViewById(R.id.ad_choices_view));
 ```
+</CodeGroup>
 
 <Info>
 Google Ads does not support `adView.setAdChoicesView`. Instead, specify the desired `AdChoicesPlacement` for the logo. Other ad sources will display their logo in your custom view.
 </Info>
 
 ### Star Rating view
+
 The rating from 0.0-5.0 that represents the average rating of the app in a store.
+
 #### Use template view with auto populate rating value
+
 Add `CASStarRatingView` to view hierarchy and CAS SDK populate rating value for you.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val starRatingView = adView.findViewById<CASStarRatingView>(R.id.ad_star_rating)
+// Optionaly change space and color
+starRatingView.space = spaceInPixels
+starRatingView.color = Color.parseColor("#4285F4")
+
+adView.starRatingView = starRatingView
+```
+
 ```java
 CASStarRatingView starRatingView = (CASStarRatingView) adView.findViewById(R.id.ad_star_rating);
 // Optionaly change space and color
@@ -72,9 +101,24 @@ starRatingView.setColor(Color.parseColor("#4285F4"));
 
 adView.setStarRatingView(starRatingView);
 ```
+</CodeGroup>
 
-#### Use custom view with auto populate rating value 
+#### Use custom view with auto populate rating value
+
 Implement `NativeAdStarRating` interface in your custom view.
+
+<CodeGroup synchronize={true}>
+```kotlin
+class CustomRatingView @JvmOverloads constructor(context: Context,attrs: AttributeSet? = null) : View(context, attrs), NativeAdStarRating {
+    override fun getRating(): Double? = 5.0
+    override fun setRating(value: Double?) {
+        // Update star rating view
+    }
+}
+
+adView.starRatingView = adView.findViewById<CustomRatingView>(R.id.ad_star_rating)
+```
+
 ```java
 class CustomRatingView extends View implements NativeAdStarRating {
     @Nullable  
@@ -91,9 +135,25 @@ class CustomRatingView extends View implements NativeAdStarRating {
 
 adView.setStarRatingView((CustomRatingView) adView.findViewById(R.id.ad_star_rating));
 ```
+</CodeGroup>
 
 #### Use custom view with manual populate rating value
+
 You need populate `nativeAd.starRating` value to custom view, for example `RatingBar` view:
+
+<CodeGroup synchronize={true}>
+```kotlin
+val customRatingView = adView.findViewById<RatingBar>(R.id.ad_star_rating)
+customRatingView.numStars = 5
+customRatingView.stepSize = 0.5f
+
+nativeAd.starRating?.let { rating ->
+    customRatingView.rating = rating.toDouble()
+}
+
+adView.starRatingView = customRatingView
+```
+
 ```java
 RatingBar customRatingView = (RatingBar) adView.findViewById(R.id.ad_star_rating);
 customRatingView.setNumStars(5);
@@ -106,3 +166,4 @@ if (rating != null) {
 
 adView.setStarRatingView(customRatingView);
 ```
+</CodeGroup>

@@ -12,6 +12,23 @@ Below is a diagram showing the ad lifecycle.
 
 ## Create Ad instance
 Ad instance can be initialized along with the activity before `onCreate`.
+
+<CodeGroup synchronize="true">
+```kotlin
+import com.cleveradssolutions.sdk.screen.CASRewarded
+
+class MyActivity : Activity() {
+
+    private val rewardedAd = CASRewarded(MyApplication.CAS_ID)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        ...
+    }
+}
+```
+
 ```java
 import com.cleveradssolutions.sdk.screen.CASRewarded;
 
@@ -25,12 +42,45 @@ class MyActivity extends Activity {
         setContentView(R.layout.activity_main);
         ...
     }
+}
 ```
+</CodeGroup>
 
 The SDK provides the capability to create and precache multiple ad instances, enabling uninterrupted sequential ad display. CAS SDK will load mediation ads in order for each created instance.
 
 ## Create Ad Content callback
-The `com.cleveradssolutions.sdk.screen.ScreenAdContentCallback` handles events related to displaying your `CASRewarded`. Callbacks are called on the main thread. Before showing ad, make sure to `setContentCallback()`.
+
+The `com.cleveradssolutions.sdk.screen.ScreenAdContentCallback` handles events related to displaying your `CASRewarded`. Callbacks are called on the main thread. Before showing ad, make sure to set `contentCallback`.
+
+<CodeGroup synchronize="true">
+```kotlin
+val adContentCallback = object : ScreenAdContentCallback {
+    override fun onAdLoaded(ad: AdContentInfo) {
+    // (Optional) Called when the ad content has been successfully loaded.
+    }
+
+
+    override fun onAdFailedToLoad(format: AdFormat, error: AdError) {
+        // (Optional) Called when the ad content fails to load.
+    }
+
+    override fun onAdFailedToShow(format: AdFormat, error: AdError) {
+        // (Optional) Called when the ad content fails to show.
+    }
+
+    override fun onAdShowed(ad: AdContentInfo) {
+        // (Optional) Called when the ad content is successfully shown.
+    }
+
+    override fun onAdClicked(ad: AdContentInfo) {
+        // (Optional) Called when the ad content is clicked by the user.
+    }
+
+    override fun onAdDismissed(ad: AdContentInfo) {
+        // (Optional) Called when the ad content is dismissed.
+    }
+}
+```
 
 ```java
 final ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() {  
@@ -65,15 +115,29 @@ final ScreenAdContentCallback adContentCallback = new ScreenAdContentCallback() 
     }  
 };
 ```
+</CodeGroup>
 
 <Info>
 - Read more about `AdContentInfo` structure in [Impression Level Data](Android/Impression-Level-Data).
 - Attempting to load a new ad from the `onAdFailedToLoad()` method is strongly discouraged. Limit ad load retries to avoid continuous failed ad requests in situations such as limited network connectivity.
-- When an error occurs during ad impression, executed the `onAdFailedToShow` only.  In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
+- When an error occurs during ad impression, executed the `onAdFailedToShow` only. In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
 </Info>
 
 ## Load Ad
-The next step is to fill out the `load()` method and handle the ad load callbacks.
+
+The next step is to fill out the `load()` method and handle the ad load callbacks. 
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+
+    rewardedAd.contentCallback = adContentCallback
+    rewardedAd.load(this)
+}
+```
+
 ```java
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -84,11 +148,24 @@ protected void onCreate(Bundle savedInstanceState) {
     rewardedAd.load(this);
 }
 ```
+</CodeGroup>
 
 You can use ad load calls to build up a cache of preloaded ads before you intend to show them, so that ads can be shown with zero latency when needed. Since ads expire after an hour, you should clear this cache and reload with new ads every hour.
 
 ### Autoload mode
-If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.  
+
+If enabled, the ad will automatically load new content when the current ad is dismissed or completed. Additionally, it will automatically retry loading the ad if an error occurs during the loading process.
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
+
+    rewardedAd.contentCallback = adContentCallback
+    rewardedAd.isAutoloadEnabled = true
+}
+```
 
 ```java
 @Override
@@ -100,12 +177,29 @@ protected void onCreate(Bundle savedInstanceState) {
     rewardedAd.setAutoloadEnabled(true);
 }
 ```
+</CodeGroup>
+
 By default autoload disabled.
 
 ## Show Ad
+
 When you show a rewarded ad, you will use an `OnRewardEarnedListener` object to handle reward for the user.
 
+<CodeGroup synchronize="true">
+```kotlin
+import com.cleveradssolutions.sdk.screen.OnRewardEarnedListener
+
+rewardedAd.show(this, object : OnRewardEarnedListener {
+    override fun onUserEarnedReward(ad: AdContentInfo) {
+    // Called when a user earns a reward from the ad.
+    // TODO: Reward the user
+    }
+})
+```
+
 ```java
+import com.cleveradssolutions.sdk.screen.OnRewardEarnedListener;
+
 rewardedAd.show(MyActivity.this, new OnRewardEarnedListener() {  
     @Override  
     public void onUserEarnedReward(@NonNull AdContentInfo ad) {  
@@ -114,35 +208,72 @@ rewardedAd.show(MyActivity.this, new OnRewardEarnedListener() {
     }  
 });
 ```
+</CodeGroup>
 
 Starting with CAS SDK version 4.3.0, all ads functions can be safely called from any thread.
 
 ### Checking Ad Availability
-Use `isLoaded()` to check whether an ad is currently loaded.
+
+Use `isLoaded()` to check whether an ad is currently loaded. 
+
+<CodeGroup synchronize="true">
+```kotlin
+if (rewardedAd.isLoaded) {
+}
+```
+
 ```java
 if (rewardedAd.isLoaded()) {
 }
 ```
+</CodeGroup>
+
 Even if `isLoaded()` returns `true`, it does not guarantee that the ad will be shown successfully — various issues may still prevent it from being displayed. We strongly recommend handling potential display failures via `onAdFailedToShow(error)` callback to ensure a smoother user experience.
 
 By relying on these callbacks, you ensure that your application can react appropriately to real-time conditions, rather than making assumptions based on ad load state at a single point in time.
 
 ## Extra fill Interstitial Ad
+
 Controls whether interstitial ads are shown as a fallback when a rewarded video ad has no available fill. Interstitial ads do not require the user to watch the entire ad to completion. However, the `OnRewardEarnedListener` will still be triggered as if the user completed the rewarded video.
-This option is enabled by default. You can disable extra fill by following line:
+This option is enabled by default. You can disable extra fill by following line: 
+
+<CodeGroup synchronize="true">
+```kotlin
+rewardedAd.isExtraFillInterstitialAdEnabled = false
+```
+
 ```java
 rewardedAd.setExtraFillInterstitialAdEnabled(false);
 ```
+</CodeGroup>
 
 ## Mute Ad sounds
-Indicates if the application’s audio is muted. Affects initial mute state for all ads.  
-Use this method only if your application has its own volume controls.  
+
+Indicates if the application’s audio is muted. Affects initial mute state for all ads.
+Use this method only if your application has its own volume controls. 
+
+<CodeGroup synchronize="true">
+```kotlin
+CAS.settings.mutedAdSounds = true
+```
+
 ```java
 CAS.getSettings().setMutedAdSounds(true);
 ```
+</CodeGroup>
 
 ## Release ad resource
-It is important to `destroy()` loaded but not displayed ads.
+
+It is important to `destroy()` loaded but not displayed ads. 
+
+<CodeGroup synchronize="true">
+```kotlin
+override fun onDestroy() {
+    rewardedAd.destroy()
+    super.onDestroy()
+}
+```
+
 ```java
 @Override  
 protected void onDestroy() {  
@@ -150,7 +281,10 @@ protected void onDestroy() {
     super.onDestroy();  
 }
 ```
+</CodeGroup>
 
 ## Samples
 - [Kotlin Rewarded Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/kotlinSample/src/main/java/com/cleveradssolutions/sampleapp/rewarded/RewardedAdActivity.kt)
 - [Java Rewarded Ad Activity](https://github.com/cleveradssolutions/CAS-Android/blob/master/javaSample/src/main/java/com/cleveradssolutions/sampleapp/rewarded/RewardedAdActivity.java)
+
+
