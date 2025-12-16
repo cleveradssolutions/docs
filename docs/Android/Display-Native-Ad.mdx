@@ -101,7 +101,8 @@ If you display the ad immediately in `onNativeAdLoaded`, there's no need to chec
 
 The easiest way to integrate native ads into your app is via the templates API. You just need to create the empty `CASNativeView`, add ad view to layout and `setAdTemplateSize`.
 
-<CodeGroup synchronize={true}>
+<Tabs groupId="platform">
+<TabItem label="Kotlin" value="kotlin">
 ```kotlin
 fun inflateNativeAdView(container: ViewGroup) {
     adView = CASNativeView(this)
@@ -114,6 +115,8 @@ fun inflateNativeAdView(container: ViewGroup) {
 }
 ```
 
+</TabItem>
+<TabItem label="Java" value="java">
 ```java
 void inflateNativeAdView(ViewGroup container) {
     adView = new CASNativeView(this);
@@ -126,7 +129,9 @@ void inflateNativeAdView(ViewGroup container) {
 }
 ```
 
-```compose
+</TabItem>
+<TabItem label="Compose" value="compose">
+```kotlin
 @Composable
 fun NativeAdTemplateView(adContent: NativeAdContent, modifier: Modifier = Modifier) {
     val context = LocalContext.current
@@ -153,7 +158,9 @@ fun NativeAdTemplateView(adContent: NativeAdContent, modifier: Modifier = Modifi
     )
 }
 ```
-</CodeGroup>
+
+</TabItem>
+</Tabs>
 
 <Info>
 Creating the layout may cause UI rendering to freeze briefly, so it is recommended to set the template size only once when initializing the view.  

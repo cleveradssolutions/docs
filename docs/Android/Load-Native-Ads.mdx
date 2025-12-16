@@ -62,7 +62,8 @@ final NativeAdContentCallback nativeAdCallback =  new NativeAdContentCallback() 
 
 Native ads are loaded with the `com.cleveradssolutions.sdk.nativead.CASNativeLoader` class.
 
-<CodeGroup synchronize={true}>
+<Tabs groupId="platform">
+<TabItem label="Kotlin" value="kotlin">
 ```kotlin
 fun loadNativeAd() {
     val adLoader = CASNativeLoader(this, MyApplication.CAS_ID, nativeAdCallback)
@@ -76,6 +77,8 @@ fun keepNativeAdInMemory(nativeAd: NativeAdContent) {
 }
 ```
 
+</TabItem>
+<TabItem label="Java" value="java">
 ```java
 void loadNativeAd() {  
     CASNativeLoader adLoader = new CASNativeLoader(MyActivity.this, MyApplication.CAS_ID, nativeAdCallback);  
@@ -89,7 +92,9 @@ void keepNativeAdInMemory(NativeAdContent nativeAd) {
 }
 ```
 
-```compose
+</TabItem>
+<TabItem label="Compose" value="compose">
+```kotlin
 @Composable
 fun NativeAdScreen() {
     val context = LocalContext.current
@@ -113,7 +118,8 @@ fun NativeAdScreen() {
 }
 ```
 
-</CodeGroup>
+</TabItem>
+</Tabs>
 
 After a call to `load()`, a single callback is made to the previously defined `NativeAdContentCallback` to deliver the native ad object or report an error.
 
@@ -181,7 +187,7 @@ When you invoke the `load()` function, the `CASNativeLoader` will continue runni
 
 <CodeGroup synchronize={true}>
 ```kotlin
-override fun onNativeAdLoaded(nativeAd: NativeAdContent,ad: AdContentInfo) {
+override fun onNativeAdLoaded(nativeAd: NativeAdContent, ad: AdContentInfo) {
     // If this callback is invoked after the activity is destroyed,
     // call destroy and return to avoid potential memory leaks.
     // Note: `isDestroyed()` is a method available on Activity.
@@ -193,9 +199,10 @@ override fun onNativeAdLoaded(nativeAd: NativeAdContent,ad: AdContentInfo) {
     registerNativeAdContent(nativeAd)
 }
 ```
+
 ```java
-@Override  
-public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {      
+@Override
+public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdContentInfo ad) {
     // If this callback is invoked after the activity is destroyed,
     // call destroy and return to avoid potential memory leaks.
     // Note: `isDestroyed()` is a method available on Activity.
@@ -211,7 +218,8 @@ public void onNativeAdLoaded(@NonNull NativeAdContent nativeAd, @NonNull AdConte
 
 Make sure to destroy all `NativeAdContent` references in your activity’s `onDestroy()` function:
 
-<CodeGroup synchronize={true}>
+<Tabs groupId="platform">
+<TabItem label="Kotlin" value="kotlin">
 ```kotlin
 override fun onDestroy() {
     loadedNativeAds.forEach { it.destroy() }
@@ -219,6 +227,8 @@ override fun onDestroy() {
 }
 ```
 
+</TabItem>
+<TabItem label="Java" value="java">
 ```java
 @Override
 public void onDestroy() {
@@ -229,7 +239,9 @@ public void onDestroy() {
 }
 ```
 
-```compose
+</TabItem>
+<TabItem label="Compose" value="compose">
+```kotlin
 DisposableEffect(Unit) {
     onDispose {
         isDestroyed = true
@@ -238,4 +250,5 @@ DisposableEffect(Unit) {
 }
 ```
 
-</CodeGroup>
+</TabItem>
+</Tabs>

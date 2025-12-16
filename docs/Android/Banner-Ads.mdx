@@ -313,23 +313,28 @@ bannerView.setAdListener(new AdViewListener() {
 
 Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class.
 
-<CodeGroup synchronize="true">
-
+<Tabs groupId="platform">
+<TabItem label="Kotlin" value="kotlin">
 ```kotlin
 bannerView.load()
 ```
 
+</TabItem>
+<TabItem label="Java" value="java">
 ```java
 bannerView.load();
 ```
 
-```compose
+</TabItem>
+<TabItem label="Compose" value="compose">
+```kotlin
 DisposableEffect(bannerView) {
     bannerView.load()
 }
 ```
 
-</CodeGroup>
+</TabItem>
+</Tabs>
 
 ### Autoload Ad mode
 
@@ -433,8 +438,8 @@ bannerView.disableAdRefresh();
 
 Be sure to release ad resources if you’re no longer going to use the ad view.
 
-<CodeGroup synchronize="true">
-
+<Tabs groupId="platform">
+<TabItem label="Kotlin" value="kotlin">
 ```kotlin
 override fun onDestroy() {
     super.onDestroy()
@@ -442,6 +447,8 @@ override fun onDestroy() {
 }
 ```
 
+</TabItem>
+<TabItem label="Java" value="java">
 ```java
 @Override
 protected void onDestroy() {
@@ -450,13 +457,16 @@ protected void onDestroy() {
 }
 ```
 
-```compose
+</TabItem>
+<TabItem label="Compose" value="compose">
+```kotlin
 DisposableEffect(bannerView) {
     onDispose { bannerView.destroy() }
 }
 ```
 
-</CodeGroup>
+</TabItem>
+</Tabs>
 
 ## Check Ad availability
 
