@@ -46,7 +46,7 @@ You can find an app store ID in the URL of your app’s Apple App Store URL. For
 CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
 If you're unsure which solution best fits your application, please contact your account manager.
 
-Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Adapters#casai-mediation-adapters) tables.
+Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
 
 ### Optimal Ads Solution
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
@@ -70,14 +70,14 @@ Add the adapter names you want to CAS_ADAPTERS variables from the linked list fo
 
 <Tabs groupId="platform">
 <TabItem label="Android" value="android">
-For Android, the name must match the Adapter names from the [Android Adapters table](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
+For Android, the name must match the Adapter names from the [Android Adapters table](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
 ```xml
 <variable name="ANDROID_CAS_ADAPTERS" value="googleAds casExchange dtExchange" />
 ```
 
 </TabItem>
 <TabItem label="iOS" value="ios">
-For iOS, the name must match the Adapter names from the [iOS Adapters table](https://github.com/cleveradssolutions/CAS-Android/tree/master/Adapters#casai-mediation-adapters). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
+For iOS, the name must match the Adapter names from the [iOS Adapters table](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md). Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
 ```xml
 <variable name="IOS_CAS_ADAPTERS" value="GoogleAds CASExchange DTExchange" />
 ```
