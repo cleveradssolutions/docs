@@ -12,12 +12,12 @@ Make sure that your app's `config.xml` file uses the following minimum values:
 ```xml
 <platform name="ios">
     <preference name="SwiftVersion" value="5.0" />
-    <preference name="deployment-target" value="13.0" />
+    <preference name="deployment-target" value="{{ min.ios }}" />
 </platform>
 <platform name="android">
-    <preference name="android-targetSdkVersion" value="35" />
+    <preference name="android-targetSdkVersion" value="{{ min.targetapi }}" />
     <preference name="GradlePluginKotlinEnabled" value="true" />
-    <preference name="GradlePluginKotlinVersion" value="2.0.21" />
+    <preference name="GradlePluginKotlinVersion" value="{{ min.kotlin }}" />
 </platform>
 ```
 

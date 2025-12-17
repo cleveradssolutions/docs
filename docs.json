@@ -15,9 +15,10 @@
         },
         "min": {
             "xcode": "16.4",
-            "ios": "13",
+            "ios": "13.0",
             "api": "23",
-            "targetapi": "35"
+            "targetapi": "35",
+            "kotlin": "2.1.21"
         }
     },
     "favicon": "https://cas.ai/wp-content/uploads/2025/08/favicon-80x80.png",
