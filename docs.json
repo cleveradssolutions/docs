@@ -3,15 +3,15 @@
     "description": "Increase your mobile app monetization efficiency with CAS.AI.",
     "variables": {
         "versions": {
-            "android": "4.5.2",
-            "ios": "4.5.2",
+            "android": "4.5.4",
+            "ios": "4.5.4",
             "iosconfig": "4.5.0",
-            "unity": "4.5.2",
-            "flutter": "4.5.2",
+            "unity": "4.5.4",
+            "flutter": "4.5.4",
             "unreal": "4.5.2",
-            "reactnative": "4.5.2",
-            "cordova": "4.5.2",
-            "construct": "4.5.2.0"
+            "reactnative": "4.5.4",
+            "cordova": "4.5.4",
+            "construct": "4.5.4.0"
         },
         "min": {
             "xcode": "16.4",
