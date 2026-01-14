@@ -1,0 +1,67 @@
+---
+title: Native Ad templates
+description: Display a native ad using the built-in template view.
+---
+
+Native templates are the fastest way to display native ads.
+To use a template, render `NativeAdView` **without children**.
+The native SDK will build the layout and populate it automatically.
+
+```ts
+import { NativeAdView, NativeTemplateStyle, NativeAdType } from 'react-native-cas';
+```
+
+## Display a template view
+
+Render the view like a regular React Native component.
+Native ads do not have a fixed intrinsic size, so providing a size is recommended for predictable layout.
+
+```tsx
+import React from 'react';
+import { View } from 'react-native';
+import { NativeAdView, NativeAdType } from 'react-native-cas';
+
+type Props = { ad: NativeAdType };
+
+export function NativeTemplateCard({ ad }: Props) {
+  return (
+    <View style={{ width: '100%' }}>
+      <NativeAdView ad={ad} width={360} height={250} />
+    </View>
+  );
+}
+```
+
+<Info>
+`width` and `height` are optional, but recommended.  
+If not provided, sizing depends on the template and parent layout constraints.
+</Info>
+
+## Customize template style (optional)
+
+You can customize template appearance using `templateStyle`:
+
+```tsx
+<NativeAdView
+  ad={ad}
+  width={360}
+  height={250}
+  templateStyle={{
+    backgroundColor: '#FFFFFF',
+    primaryColor: '#3B82F6',
+    primaryTextColor: '#FFFFFF',
+    headlineTextColor: '#111827',
+    headlineFontStyle: 'bold',
+    secondaryTextColor: '#6B7280',
+    secondaryFontStyle: 'normal',
+  }}
+/>
+```
+
+## Notes
+
+- If you add **any** children to `NativeAdView`, the template mode is disabled and you must provide asset views manually.
+- Avoid frequently unmounting/remounting the view. Keep it mounted while it’s visible for smoother UX.
+
+## Next step
+- To build a custom layout with manual assets, continue with: [Native Ad asset views](ReactNative/Native-Ad-Assets)
