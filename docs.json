@@ -792,8 +792,8 @@
                             "href": "/ReactNative/Native-Ads-Templates"
                         },
                         {
-                            "title": "Native Ad asset",
-                            "href": "/ReactNative/Native-Ad-Assets"
+                            "title": "Manual Native Ad",
+                            "href": "/ReactNative/Native-Ad-Manual"
                         }
                     ]
                 }

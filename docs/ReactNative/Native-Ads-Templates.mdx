@@ -29,7 +29,7 @@ The template layout depends on the `NativeAdView` size (mainly height).
 
 ## Display a template view
 
-Provide size for predictable layout (recommended).
+Provide a size for predictable layout (recommended).
 
 ```tsx
 import React from 'react';
@@ -52,7 +52,15 @@ If not provided, sizing depends on the template and parent layout constraints.
 
 ## Customize template style (optional)
 
-You can customize template appearance using `templateStyle`:
+You can customize the template appearance using `templateStyle`.
+
+- The background color
+- The primary color for Call-to-Action background
+- The text color for Call-to-Action
+- The Headline text color
+- The Headline text font style
+- The Secondary text color
+- The Secondary text font style
 
 ```tsx
 import React from 'react';
@@ -84,7 +92,3 @@ export function StyledTemplate({ ad }: { ad: NativeAdContent }) {
 
 - If you add **any** children to `NativeAdView`, the template mode is disabled and you must provide asset views manually.
 - Keep the view mounted while it’s visible for smoother UX.
-
-## Next step
-
-- To build a custom layout with manual assets, continue with: [Native Ad asset views](ReactNative/Native-Ad-Assets)
