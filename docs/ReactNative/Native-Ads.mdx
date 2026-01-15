@@ -4,122 +4,142 @@ description: This guide explains how to load native ads in a React Native app.
 ---
 
 Native ads are ad assets presented to users using UI components that match your app’s look and feel.
-When a native ad loads, your app receives a `NativeAdType` object that contains the ad assets and a `destroyAd()` method for cleanup.
-
-Native Ad loading in **React Native** is handled through the `NativeAdLoader` from **react-native-cas**:
+In React Native, a loaded native ad is represented by `NativeAdContent`.
 
 ```ts
-import { NativeAdLoader, NativeAdType, AdChoicesPlacement } from 'react-native-cas';
-```
-
-## Load native ads
-
-`NativeAdLoader.loadAds(maxNumberOfAds)` requests one or more native ads.
-It is not guaranteed that the exact number of ads requested will be returned.
-Each successfully loaded ad is delivered via the `addAdLoadedEventListener` callback.
-
-You can configure:
-
-- `setStartVideoMuted(true | false)` — whether video starts muted (if supported).
-- `setAdChoicesPlacement(...)` — preferred corner for the AdChoices icon.
-
-<Info>
-`addAdLoadedEventListener` may be called multiple times if you request multiple ads.  
-If a request fails, `addAdFailedToLoadEventListener` will be called instead.
-</Info>
-
-### Subscribe to loader events
-
-```tsx
-import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
 import {
   NativeAdLoader,
-  NativeAdType,
+  NativeAdContent,
   AdChoicesPlacement,
+} from 'react-native-cas';
+```
+
+## Add ad event listeners
+
+Subscribe to loader events before loading ads.
+
+```tsx
+import { useEffect } from 'react';
+import {
+  NativeAdLoader,
+  NativeAdContent,
   AdError,
   AdContentInfo,
-  NativeAdView,
 } from 'react-native-cas';
 
-export function NativeAdScreen() {
-  const [nativeAd, setNativeAd] = useState<NativeAdType | null>(null);
+useEffect(() => {
+  const unsubLoaded = NativeAdLoader.addAdLoadedEventListener((ad: NativeAdContent) => {
+    // Called when an ad is successfully loaded.
+    console.log('Native Ad loaded');
+  });
 
-  useEffect(() => {
-    // Optional loader configuration
-    NativeAdLoader.setStartVideoMuted(true);
-    NativeAdLoader.setAdChoicesPlacement(AdChoicesPlacement.topRightCorner);
+  const unsubFailedToLoad = NativeAdLoader.addAdFailedToLoadEventListener((error: AdError) => {
+    console.log('Native Ad failed to load', error);
+  });
 
-    // Events
-    const unsubLoaded = NativeAdLoader.addAdLoadedEventListener((ad: NativeAdType) => {
-      setNativeAd(prev => {
-        prev?.destroyAd(); // optional: replace previous
-        return ad;
-      });
-    });
+  const unsubImpression = NativeAdLoader.addAdImpressionEventListener((info: AdContentInfo) => {
+    console.log('Native Ad impression', info);
+  });
 
-    const unsubFailedToLoad = NativeAdLoader.addAdFailedToLoadEventListener((error: AdError) => {
-      console.log('Native Ad failed to load', error);
-    });
+  const unsubClicked = NativeAdLoader.addAdClickedEventListener(() => {
+    console.log('Native Ad clicked');
+  });
 
-    const unsubImpression = NativeAdLoader.addAdImpressionEventListener((info: AdContentInfo) => {
-      console.log('Native Ad impression', info);
-    });
+  const unsubFailedToShow = NativeAdLoader.addAdFailedToShowEventListener((error: AdError) => {
+    console.log('Native Ad failed to show', error);
+  });
 
-    const unsubClicked = NativeAdLoader.addAdClickedEventListener(() => {
-      console.log('Native Ad clicked');
-    });
-
-    const unsubFailedToShow = NativeAdLoader.addAdFailedToShowEventListener((error: AdError) => {
-      console.log('Native Ad failed to show', error);
-    });
-
-    // Load 1 ad
-    NativeAdLoader.loadAds(1);
-
-    return () => {
-      unsubLoaded();
-      unsubFailedToLoad();
-      unsubImpression();
-      unsubClicked();
-      unsubFailedToShow();
-
-      setNativeAd(prev => {
-        prev?.destroyAd();
-        return null;
-      });
-    };
-  }, []);
-
-  return (
-    <View>
-      {!nativeAd ? (
-        <Text>Loading native ad...</Text>
-      ) : (
-        <NativeAdView ad={nativeAd} width={360} height={250} />
-      )}
-    </View>
-  );
-}
+  return () => {
+    unsubLoaded();
+    unsubFailedToLoad();
+    unsubImpression();
+    unsubClicked();
+    unsubFailedToShow();
+  };
+}, []);
 ```
+
+## Load ad content
+
+Configure optional settings and request one native ad.
+
+```ts
+NativeAdLoader.setStartVideoMuted(true);
+NativeAdLoader.setAdChoicesPlacement(AdChoicesPlacement.TOP_RIGHT_CORNER);
+```
+
+```ts
+NativeAdLoader.loadAds(1);
+```
+
+A successfully loaded ad is delivered via `addAdLoadedEventListener`.
+
+```ts
+import { useState } from 'react';
+import { NativeAdContent } from 'react-native-cas';
+
+const [nativeAd, setNativeAd] = useState<NativeAdContent | null>(null);
+
+NativeAdLoader.addAdLoadedEventListener((ad: NativeAdContent) => {
+  setNativeAd(prev => {
+    prev?.destroyAd(); // optional: replace previous ad
+    return ad;
+  });
+});
+```
+
+## Load multiple ads (optional)
+
+Request multiple native ads by passing a larger number to `loadAds`.
+Each loaded ad will be delivered through `addAdLoadedEventListener` (potentially multiple times).
+
+```ts
+NativeAdLoader.loadAds(3);
+```
+
+One simple approach is to keep a small queue:
+
+```ts
+import { useState } from 'react';
+import { NativeAdContent } from 'react-native-cas';
+
+const [queue, setQueue] = useState<NativeAdContent[]>([]);
+
+NativeAdLoader.addAdLoadedEventListener((ad: NativeAdContent) => {
+  setQueue(prev => [...prev, ad]);
+});
+```
+
+## Display ad content
+
+Native ad content is displayed using `NativeAdView`. You have two approaches:
+
+- **Template view** — quickest way to display native ads (no children inside `NativeAdView`).
+  Continue with: [Native Ad templates](ReactNative/Native-Ads-Templates)
+
+- **Manual asset views** — fully custom layout using asset components inside `NativeAdView`.
+  Continue with: [Native Ad asset views](ReactNative/Native-Ad-Assets)
+
+## Release ad resources
+
+When an ad is no longer used, release resources by calling `destroyAd()`.
+
+```ts
+nativeAd?.destroyAd();
+```
+
+If you keep multiple ads (queue), release each one:
+
+```ts
+queue.forEach(ad => ad.destroyAd());
+```
+
+<Warning>
+Always call `destroyAd()` when a loaded ad is no longer displayed.  
+Do not display the same `NativeAdContent` in multiple views at the same time.
+</Warning>
 
 <Info>
 Read more about `AdContentInfo` structure in [Impression Level Data](ReactNative/Impression-Level-Data).
 </Info>
-
-## NativeAdType
-
-A loaded native ad is represented by `NativeAdType`:
-
-- `instanceId: number` — native instance identifier.
-- `content: (string | null)[]` — internal asset payload used by asset views.
-- `destroyAd(): void` — frees all underlying native ad resources.
-
-<Warning>
-A loaded native ad should not be displayed in multiple views at the same time.  
-Always call `destroyAd()` when the ad is no longer used.
-</Warning>
-
-## Next steps
-- To display a ready-to-use template view, continue with: [Native Ad templates](ReactNative/Native-Ads-Templates)
-- To build a fully custom layout, continue with: [Native Ad asset views](ReactNative/Native-Ad-Assets)
+```

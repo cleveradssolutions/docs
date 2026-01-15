@@ -8,22 +8,35 @@ To use a template, render `NativeAdView` **without children**.
 The native SDK will build the layout and populate it automatically.
 
 ```ts
-import { NativeAdView, NativeTemplateStyle, NativeAdType } from 'react-native-cas';
+import { NativeAdView, NativeAdContent, NativeTemplateStyle } from 'react-native-cas';
 ```
+
+## Template layouts
+
+The template layout depends on the `NativeAdView` size (mainly height).
+
+1. If the height is greater than 500, a large native ad layout is used.
+
+   <Image height="500" alt="Large native template" src="/assets/Native-Template-Screen.jpg" />
+
+2. If the height is greater than 200, a medium layout is used.
+
+   <Image width="300" alt="Medium native template" src="/assets/Native-Template-MRec.jpg" />
+
+3. Otherwise, a small layout is used.
+
+   <Image width="300" alt="Small native template" src="/assets/Native-Template-Small.jpg" />
 
 ## Display a template view
 
-Render the view like a regular React Native component.
-Native ads do not have a fixed intrinsic size, so providing a size is recommended for predictable layout.
+Provide size for predictable layout (recommended).
 
 ```tsx
 import React from 'react';
 import { View } from 'react-native';
-import { NativeAdView, NativeAdType } from 'react-native-cas';
+import { NativeAdView, NativeAdContent } from 'react-native-cas';
 
-type Props = { ad: NativeAdType };
-
-export function NativeTemplateCard({ ad }: Props) {
+export function NativeTemplateCard({ ad }: { ad: NativeAdContent }) {
   return (
     <View style={{ width: '100%' }}>
       <NativeAdView ad={ad} width={360} height={250} />
@@ -42,26 +55,36 @@ If not provided, sizing depends on the template and parent layout constraints.
 You can customize template appearance using `templateStyle`:
 
 ```tsx
-<NativeAdView
-  ad={ad}
-  width={360}
-  height={250}
-  templateStyle={{
-    backgroundColor: '#FFFFFF',
-    primaryColor: '#3B82F6',
-    primaryTextColor: '#FFFFFF',
-    headlineTextColor: '#111827',
-    headlineFontStyle: 'bold',
-    secondaryTextColor: '#6B7280',
-    secondaryFontStyle: 'normal',
-  }}
-/>
+import React from 'react';
+import { NativeAdView, NativeAdContent } from 'react-native-cas';
+
+const templateStyle = {
+  backgroundColor: '#FFFFFF',
+  primaryColor: '#3B82F6',
+  primaryTextColor: '#FFFFFF',
+  headlineTextColor: '#111827',
+  headlineFontStyle: 'bold',
+  secondaryTextColor: '#6B7280',
+  secondaryFontStyle: 'normal',
+};
+
+export function StyledTemplate({ ad }: { ad: NativeAdContent }) {
+  return (
+    <NativeAdView
+      ad={ad}
+      width={360}
+      height={250}
+      templateStyle={templateStyle}
+    />
+  );
+}
 ```
 
 ## Notes
 
 - If you add **any** children to `NativeAdView`, the template mode is disabled and you must provide asset views manually.
-- Avoid frequently unmounting/remounting the view. Keep it mounted while it’s visible for smoother UX.
+- Keep the view mounted while it’s visible for smoother UX.
 
 ## Next step
+
 - To build a custom layout with manual assets, continue with: [Native Ad asset views](ReactNative/Native-Ad-Assets)

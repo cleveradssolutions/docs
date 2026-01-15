@@ -13,14 +13,13 @@ import { NativeAdView } from 'react-native-cas';
 ## Manual display
 
 Below is a minimal example of a manual layout.
-You can include all assets — assets not provided by the loaded ad will not be rendered.
 
 ```tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { NativeAdView, NativeAdType } from 'react-native-cas';
+import { NativeAdView, NativeAdContent } from 'react-native-cas';
 
-export function NativeManualCard({ ad }: { ad: NativeAdType }) {
+export function NativeManualCard({ ad }: { ad: NativeAdContent }) {
   return (
     <View style={S.card}>
       <NativeAdView ad={ad} style={S.root}>
@@ -98,7 +97,6 @@ The SDK tracks interactions through the provided asset view.
 - Do not edit SDK-provided images.
 - At a single point in time, a loaded native ad should be displayed in one view only.
 
-<Info>
-If you want a ready-to-use layout without manual assets, use [Native Ad templates](ReactNative/Native-Ads-Templates).
-</Info>
-```
+## Next step
+
+- If you want a ready-to-use layout without manual assets, use [Native Ad templates](ReactNative/Native-Ads-Templates).
