@@ -6,12 +6,12 @@
             "android": "4.6.0",
             "ios": "4.6.0",
             "iosconfig": "4.5.0",
-            "unity": "4.5.4",
-            "flutter": "4.5.4",
+            "unity": "4.6.0",
+            "flutter": "4.6.0",
             "unreal": "4.5.2",
             "reactnative": "4.5.4",
-            "cordova": "4.5.4",
-            "construct": "4.5.4.0"
+            "cordova": "4.6.0",
+            "construct": "4.6.0.0"
         },
         "min": {
             "xcode": "26.0",
