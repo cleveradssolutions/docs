@@ -1,0 +1,97 @@
+---
+title: Manual Native Ad
+description: Build a fully custom native ad layout using asset components.
+---
+
+To build a custom native ad layout, render `NativeAdView` **with children** and place asset views inside it.
+Each asset view is a React Native component that binds to the underlying native ad.
+
+```ts
+import { NativeAdView } from 'react-native-cas';
+```
+
+## Asset views reference
+
+| Component                   | Type           | Recommended | Description |
+| --------------------------- | -------------- | ----------- | ----------- |
+| `NativeAdView.AdChoices`    | View           | Yes         | AdChoices overlay icon. Place it in a visible corner (or reserve space for it).                                         |
+| `NativeAdView.Media`        | View           | Yes         | Main media content (image or video). Use this instead of a regular `Image` when you need primary content.               |
+| `NativeAdView.Headline`     | Text           | Yes         | The ad headline/title text.                                                                                             |
+| `NativeAdView.CallToAction` | Text + overlay | If provided | Call-to-action element (e.g., “Install”, “Open”, “Learn more”). Includes an internal overlay view for correct tracking. |
+| `NativeAdView.Icon`         | View           | If provided | App icon / advertiser logo (usually square 1:1).                                                                        |
+| `NativeAdView.Body`         | Text           | Optional    | Main body text for the ad.                                                                                              |
+| `NativeAdView.Advertiser`   | Text           | Optional    | Advertiser/brand name (commonly present for content ads).                                                               |
+| `NativeAdView.Store`        | Text           | Optional    | Store name where the product is available.                                                                              |
+| `NativeAdView.Price`        | Text           | Optional    | Price text for the advertised product/service.                                                                          |
+| `NativeAdView.ReviewCount`  | Text           | Optional    | Review count for the app/product (if available).                                                                        |
+| `NativeAdView.StarRating`   | View           | Optional    | Star rating visualization (if available).                                                                               |
+| `NativeAdView.AdLabel`      | Text           | Optional    | Optional “Ad” label provided by the network/SDK (if available). You may also render your own static badge.              |
+
+## Advertising requirements
+
+- The ad view must be visible and non-transparent.
+- Do not edit the text content of SDK-provided assets.
+- Do not edit SDK-provided images.
+- At a single point in time, a loaded native ad should be displayed in one view only.
+
+<Info>
+If you want a ready-to-use layout without manual assets, use [Native Ad templates](ReactNative/Native-Ads-Templates).
+</Info>
+
+## Display ad views
+Below is a minimal example of a manual layout.
+
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import { NativeAdView, type NativeAdContent } from 'react-native-cas';
+
+export function NativeManualCard({ ad }: { ad: NativeAdContent }) {
+  return (
+    <View style={{ padding: 12 }}>
+      <NativeAdView ad={ad} style={{ width: '100%' }}>
+        <NativeAdView.AdChoices style={{ position: 'absolute', top: 8, right: 8 }} />
+
+        <NativeAdView.Headline style={{ fontSize: 16, fontWeight: '600' }} />
+
+        <View style={{ flexDirection: 'row', marginTop: 8, alignItems: 'center' }}>
+          <NativeAdView.Icon style={{ width: 48, height: 48, borderRadius: 8 }} />
+          <View style={{ marginLeft: 10, flex: 1 }}>
+            <NativeAdView.Advertiser style={{ fontSize: 12, opacity: 0.8 }} />
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+              <NativeAdView.StarRating style={{ height: 12, width: 80 }} />
+              <NativeAdView.ReviewCount style={{ marginLeft: 6, fontSize: 12, opacity: 0.8 }} />
+            </View>
+          </View>
+        </View>
+
+        <Text style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>Ad</Text>
+
+        <View style={{ marginTop: 8, width: '100%', height: 180 }}>
+          <NativeAdView.Media style={{ width: '100%', height: '100%' }} />
+        </View>
+
+        <NativeAdView.Body style={{ marginTop: 8, fontSize: 14 }} />
+
+        <View style={{ flexDirection: 'row', marginTop: 8, justifyContent: 'space-between' }}>
+          <NativeAdView.Price style={{ fontSize: 12, opacity: 0.8 }} />
+          <NativeAdView.Store style={{ fontSize: 12, opacity: 0.8 }} />
+        </View>
+
+        <NativeAdView.CallToAction style={{ marginTop: 10, paddingVertical: 10, paddingHorizontal: 14 }} />
+      </NativeAdView>
+    </View>
+  );
+}
+```
+
+<Info>
+If an asset is not provided by the loaded ad, the corresponding asset component renders nothing.  
+Design your layout so it doesn’t break when optional assets (Icon, StarRating, Price, Store, etc.) are missing.
+</Info>
+
+<Warning>
+- Do not implement custom click handlers on top of the native ad content.
+- Do not wrap `NativeAdView.CallToAction` with `Pressable` / `TouchableOpacity`.
+- Clicks and impressions are tracked by the SDK through the provided asset views.
+</Warning>
