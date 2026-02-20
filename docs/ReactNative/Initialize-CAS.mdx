@@ -6,6 +6,10 @@ Before loading ads, initialize the CAS Mobile Ads SDK by calling `CASMobileAds.i
 
 The `casId` is a unique identifier for CAS content on each platform. You can use `demo` to force test-ads mode if you haven't registered a `casId` yet.
 
+<Info>
+If you use Expo, run this integration in a development build (`npx expo run:android` / `npx expo run:ios`), not in Expo Go. Setup details are described on the [React Native index page](ReactNative).
+</Info>
+
 ```ts
 import { Platform } from 'react-native';
 import CASMobileAds, { InitializationStatus, Audience, PrivacyGeography, ConsentFlowStatus } from 'react-native-cas';

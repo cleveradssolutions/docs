@@ -44,6 +44,10 @@ If an app does not present this request, the IDFA will automatically be zeroed o
 * Users who have already answered so far
 * The app does not have a usage tracking description in **Info.plist** under `NSUserTrackingUsageDescription` key
 
+<Info>
+For Expo projects, add `NSUserTrackingUsageDescription` in `app.json` (or `app.config.js/ts`) under `expo.ios.infoPlist`, then run `npx expo prebuild` and rebuild the iOS app.
+</Info>
+
 ## Automatic consent flow
 The automatic consent flow is enabled by default and described on the [CAS initialization page](ReactNative/Initialize-CAS).
 

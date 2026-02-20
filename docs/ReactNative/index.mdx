@@ -16,10 +16,36 @@ Make sure that your app's build file uses the following values:
 ## Import CAS.AI Mobile Ads package
 Include the [CAS.AI plugin for ReactNative](https://www.npmjs.com/package/react-native-cas) in your ReactNative project.
 
+<Tabs groupId="rn-workflow">
+<TabItem label="React Native" value="react-native">
 With npm command:
 ```shell
 npm install react-native-cas
 ```
+</TabItem>
+
+<TabItem label="Expo" value="expo">
+Install the package in your Expo project:
+```shell
+npm install react-native-cas
+```
+
+CAS.AI uses native modules, so it is not supported in **Expo Go**. Use a development build instead.
+
+Generate native Android and iOS projects:
+```shell
+npx expo prebuild
+```
+
+Run your app with Expo native builds:
+```shell
+npx expo run:android
+npx expo run:ios
+```
+
+After `expo prebuild`, complete the platform setup below in the generated `android` and `ios` projects.
+</TabItem>
+</Tabs>
 
 <Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-ReactNative/subscription">
 Subscribe to receive notifications about CAS updates.
@@ -32,6 +58,10 @@ import * as CASModule from 'react-native-cas';
 
 ## Platform specific setup
 To monetize your app using CAS.AI mediation, in addition to importing the package, you need to configure your Android and iOS projects by using the **CAS Gradle plugin** for Android and a **Ruby CAS script** for iOS.  
+
+<Info>
+For Expo projects, apply the Android and iOS steps below in the generated native folders after running `npx expo prebuild`.
+</Info>
 
 <Tabs groupId="platform">
 <TabItem label="Android" value="android">
@@ -265,6 +295,8 @@ To use the App Tracking Transparency authorization request for accessing the IDF
 <key>NSUserTrackingUsageDescription</key>
 <string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
 ```
+
+For Expo projects, set this key in `app.json` (or `app.config.js/ts`) under `expo.ios.infoPlist`, then run `npx expo prebuild` and rebuild iOS.
 
 <AccordionGroup>
 <Accordion title="Usage description examples">
