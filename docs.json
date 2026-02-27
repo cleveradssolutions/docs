@@ -3,15 +3,15 @@
     "description": "Increase your mobile app monetization efficiency with CAS.AI.",
     "variables": {
         "versions": {
-            "android": "4.6.2",
-            "ios": "4.6.2",
-            "iosconfig": "4.5.0",
-            "unity": "4.6.2",
-            "flutter": "4.6.2",
+            "android": "4.6.3",
+            "ios": "4.6.3",
+            "iosconfig": "4.6.3",
+            "unity": "4.6.3",
+            "flutter": "4.6.3",
             "unreal": "4.5.4",
             "reactnative": "4.6.2",
-            "cordova": "4.6.2",
-            "construct": "4.6.2.0"
+            "cordova": "4.6.3",
+            "construct": "4.6.3.0"
         },
         "min": {
             "xcode": "26.0",
@@ -978,49 +978,49 @@
     "anchors": [
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "android",
             "href": "https://github.com/cleveradssolutions/CAS-Android/releases"
         },
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "ios",
             "href": "https://github.com/cleveradssolutions/CAS-iOS/releases"
         },
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "unity",
             "href": "https://github.com/cleveradssolutions/CAS-Unity/releases"
         },
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "flutter",
             "href": "https://github.com/cleveradssolutions/CAS-Flutter/releases"
         },
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "unreal",
             "href": "https://github.com/cleveradssolutions/CAS-Unreal/releases"
         },
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "reactnative",
             "href": "https://github.com/cleveradssolutions/CAS-ReactNative/releases"
         },
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "cordova",
             "href": "https://github.com/cleveradssolutions/CAS-Cordova/releases"
         },
         {
             "title": "Release Notes",
-            "icon": "file-pen",
+            "icon": "github",
             "tab": "construct",
             "href": "https://github.com/cleveradssolutions/CAS-Construct/releases"
         }
