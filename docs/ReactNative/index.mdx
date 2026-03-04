@@ -22,6 +22,7 @@ With npm command:
 ```shell
 npm install react-native-cas
 ```
+
 </TabItem>
 
 <TabItem label="Expo" value="expo">
@@ -33,18 +34,20 @@ npm install react-native-cas
 CAS.AI uses native modules, so it is not supported in **Expo Go**. Use a development build instead.
 
 Generate native Android and iOS projects:
+
 ```shell
 npx expo prebuild
 ```
 
 Run your app with Expo native builds:
+
 ```shell
 npx expo run:android
 npx expo run:ios
 ```
 
-After `expo prebuild`, complete the platform setup below in the generated `android` and `ios` projects.
-</TabItem>
+For Expo projects, CAS can be configured through `app.json` / `app.config.js` using the Expo config plugin (see below). 
+</TabItem> 
 </Tabs>
 
 <Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-ReactNative/subscription">
@@ -52,15 +55,106 @@ Subscribe to receive notifications about CAS updates.
 </Card>
 
 Now in your code, you can use:
+
 ```ts
 import * as CASModule from 'react-native-cas';
 ```
 
 ## Platform specific setup
-To monetize your app using CAS.AI mediation, in addition to importing the package, you need to configure your Android and iOS projects by using the **CAS Gradle plugin** for Android and a **Ruby CAS script** for iOS.  
+
+To monetize your app using CAS.AI mediation, in addition to importing the package, you need to configure your Android and iOS projects by using the **CAS Gradle plugin** for Android and a **Ruby CAS script** for iOS.
+
+### Expo (Config Plugin)
+
+If you use Expo (development build / prebuild workflow), you can configure CAS via `app.json` / `app.config.js`.
+The config plugin will patch the generated native projects during `expo prebuild`.
+
+Add the plugin:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-cas",
+        {
+          "casId": "demo",
+          "solutions": ["optimal"],
+          "adapters": [],
+          "useAdvertisingId": true,
+          "runCasConfig": false
+        }
+      ]
+    ]
+  }
+}
+```
+
+#### solutions
+
+Enable one or more solution packs:
+
+- `"optimal"` — Optimal Ads Solution
+- `"families"` — Families Ads Solution (Advertising ID / IDFA will be disabled automatically)
+
+Example:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-cas",
+        {
+          "solutions": ["optimal", "families"]
+        }
+      ]
+    ]
+  }
+}
+```
+
+#### adapters
+
+Enable any number of adapters. This can be used together with `solutions`.
+
+Example:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-cas",
+        {
+          "solutions": ["optimal"],
+          "adapters": ["unityAds", "pangle", "mintegral"]
+        }
+      ]
+    ]
+  }
+}
+```
+
+#### Apply changes
+
+After updating `solutions` / `adapters`, regenerate native projects:
+
+```shell
+npx expo prebuild --clean
+# Android only:
+npx expo prebuild --platform android --clean
+```
+
+Then run:
+
+```shell
+npx expo run:android
+npx expo run:ios
+```
 
 <Info>
-For Expo projects, apply the Android and iOS steps below in the generated native folders after running `npx expo prebuild`.
+The sections below describe the **manual** setup for Android and iOS (non-Expo workflow or custom native projects).
 </Info>
 
 <Tabs groupId="platform">
@@ -69,6 +163,7 @@ The CAS Android SDK provide a Gradle Plugin to simplify and automate certain int
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
 In your Android app Gradle file (usually `<project>/android/app/build.gradle`), add the `com.cleveradssolutions.gradle-plugin` inside the `plugins` block.
+
 ```kotlin
 plugins {
   id("com.android.application") // before CAS plugin
@@ -148,7 +243,8 @@ repositories {
 </Accordion>
 <Accordion title="Maven Ads repositories for Closed beta">
 
-Read more about Closed beta ads partners on [Android Mediation Networks](Android/Mediated-Networks) page.  
+Read more about Closed beta ads partners on [Android Mediation Networks](Android/Mediated-Networks) page.
+
 ```kotlin
     maven {  
         name = "MadexAdsRepo"  
@@ -190,29 +286,31 @@ Repeat the script before every update of the app to make sure you are using up-t
 
 <Accordion title="What is CAS ID in iOS?">
 
-In most cases, a CASID is the same as your app store ID.  
-You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
- 
-If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai  
+In most cases, a CASID is the same as your app store ID.
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.
+
+If you haven't created an CAS account and registered an app yet, now's a great time to do so at [https://cas.ai](https://cas.ai)
 If you just want to experiment or test the SDK, you can skip the configuration your project.
 
 </Accordion>
 
-
-The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project. 
+The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project.
 All CAS frameworks are hosted and distributed through their own source repository. Please add CAS source repository url to the beginning of the Podfile:
+
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/cleveradssolutions/CAS-Specs.git'
 ```
 
 Mediation dependencies should be added to the `target` block, before the `end` line.
+
 ```ruby
 target 'Runner' do
     pod ...
     ...
 end
 ```
+
 Run `pod update` terminal command inside the `ios` directory after modifying the `Podfile`.
 
 <Info>
@@ -223,14 +321,34 @@ Make sure to update the CAS pods version whenever you update the CAS ReactNative
 </Tabs>
 
 ## Mediated Networks
+
 CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
 If you're unsure which solution best fits your application, please contact your account manager.
 
 Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
+
 ### Optimal Ads Solution
+
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
 <Tabs groupId="platform">
+<TabItem label="Expo" value="expo">
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-cas",
+        {
+          "solutions": ["optimal"]
+        }
+      ]
+    ]
+  }
+}
+```
+</TabItem>
+
 <TabItem label="Android" value="android">
 ```kotlin
 cas {
@@ -247,9 +365,27 @@ pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 </Tabs>
 
 ### Families Ads Solution
+
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
 
 <Tabs groupId="platform">
+<TabItem label="Expo" value="expo">
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-cas",
+        {
+          "solutions": ["families"]
+        }
+      ]
+    ]
+  }
+}
+```
+</TabItem>
+
 <TabItem label="Android" value="android">
 ```kotlin
 cas {
@@ -266,13 +402,50 @@ pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 </Tabs>
 
 ### Choice networks
+
 Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks) and the [iOS page](iOS/Mediated-Networks).
 
+For Expo projects, use `adapters` to enable any number of network adapters:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-cas",
+        {
+          "adapters": ["unityAds", "pangle", "mintegral"]
+        }
+      ]
+    ]
+  }
+}
+```
+
 ## Advertising Identifier
-CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
+
+CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.
 To enable the use of the Advertising ID in your app, you need to complete the following setup steps.
 
 <Tabs groupId="platform">
+<TabItem label="Expo" value="expo">
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "react-native-cas",
+        {
+          "useAdvertisingId": true
+        }
+      ]
+    ]
+  }
+}
+```
+
+If you enable the Families solution, `useAdvertisingId` will be disabled automatically. </TabItem>
+
 <TabItem label="Android" value="android">
 CAS Mediation allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
 
@@ -283,6 +456,7 @@ cas {
 ```
 
 An application must not use an advertising identifier if **at least one** of the following conditions is true:
+
 - The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
 - The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
 
@@ -291,12 +465,13 @@ An application must not use an advertising identifier if **at least one** of the
 <TabItem label="iOS" value="ios">
 
 To use the App Tracking Transparency authorization request for accessing the IDFA, update your `<project>/ios/Runner/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
+
 ```xml
 <key>NSUserTrackingUsageDescription</key>
 <string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
 ```
 
-For Expo projects, set this key in `app.json` (or `app.config.js/ts`) under `expo.ios.infoPlist`, then run `npx expo prebuild` and rebuild iOS.
+For Expo projects, set this key using the config plugin option `trackingDescription`, then run `npx expo prebuild` and rebuild iOS.
 
 <AccordionGroup>
 <Accordion title="Usage description examples">
@@ -312,11 +487,11 @@ For Expo projects, set this key in `app.json` (or `app.config.js/ts`) under `exp
 </Accordion>
 <Accordion title="Localizing Usage description (optional)">
 
-To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.  
+To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.
 The table below gives you a variety of localizations that you can use at your discretion.
 
-| Locale | Description |
-|-----------------|--------------------------------------------------------------------|
+| Locale          | Description                                                                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | English (en)    | Your data will remain confidential and will only be used to provide you a better and personalised ad experience                               |
 | German (de)     | Ihre Daten bleiben vertraulich und werden nur dazu verwendet, Ihnen ein besseres und personalisiertes Werbeerlebnis zu bieten                 |
 | French (fr)     | Vos données resteront confidentielles et seront utilisées uniquement pour vous offrir une expérience publicitaire meilleure et personnalisée  |
