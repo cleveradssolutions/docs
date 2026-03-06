@@ -7,6 +7,21 @@ CAS.AI (Clever Ads Solutions) provides a powerful monetization platform for mobi
 CAS.AI Mediation allows you to serve ads from multiple ad networks through a single integration.
 The CAS SDK helps you maximize fill rates and boost monetization by sending ad requests to multiple networks, ensuring the best available one delivers the ad.
 
+
+export const FlutterCard = props => {
+  return (
+    <Card>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="21" height="21" style={{ fill: 'currentColor' }} >
+        <path d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z"/>
+      </svg>
+      <b>Flutter</b>
+    </div>
+    {props.children}
+    </Card>
+  );
+};
+
 <CardGroup>
   <Card title="Android" icon="android">
     <ul>
@@ -181,18 +196,3 @@ For support using these libraries, file an issue through the links in GitHub Sou
     </ul>
   </Card>
 </CardGroup>
-
-
-export const FlutterCard = props => {
-  return (
-    <Card>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="21" height="21" style={{ fill: 'currentColor' }} >
-        <path d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z"/>
-      </svg>
-      <b>Flutter</b>
-    </div>
-    {props.children}
-    </Card>
-  );
-};
