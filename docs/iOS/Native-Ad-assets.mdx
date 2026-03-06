@@ -29,7 +29,7 @@ title: Native Ad assets
 
 ### Media Content
 You're required to use the `CASMediaView` asset instead of the `UIImageView` asset if you want to include a main image asset in the layout for your native ad.  
-The `CASMediaView` is a special `UIView` designed to display the main media asset, either video or image. Can be defined in an XML layout or constructed dynamically. It should be placed within the view hierarchy of a `CASNativeView`, just like any other asset view.  The media view will be populated automatically when calling setNativeAd().
+The `CASMediaView` is a special `UIView` designed to display the main media asset, either video or image. Can be defined in an XML layout or constructed dynamically. It should be placed within the view hierarchy of a `CASNativeView`, just like any other asset view.  The media view will be populated automatically when calling `bindAdContent()`.
 - Check if the video asset is available using `nativeAd.hasVideoContent`.
 - Obtain the recommended aspect ratio of the media content using `nativeAd.mediaContentAspectRatio`.
 

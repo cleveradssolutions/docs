@@ -95,16 +95,8 @@ Contact your account manager for details of enabling automatic events.
 
 ### Google Analytics
 To measure ad revenue with Google Analytics:
-
-<Steps>
-<Step>
-Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
-</Step>
-<Step>
-Link your Firebase project to a Google Analytics account.
-</Step>
-</Steps>
-
+1. Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
+2. Link your Firebase project to a Google Analytics account.
 
 The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
 events whenever an ad is displayed.
@@ -112,21 +104,9 @@ Events include parameters such as ad platform, source, currency, and value.
 Alternatively, CAS may log the event as `CAS_Impression`.
 
 ### Tenjin
-To measure ad revenue with Tenjin Analytics:
-
-<Steps>
-<Step>
-Integrate the [Tenjin plugin](https://www.npmjs.com/package/cordova-plugin-tenjin).
-</Step>
-<Step>
-Ensure a Tenjin session is initialized, **or** pass your key to CAS SDK so it initializes Tenjin automatically:
-
-```js
-casai.initialize({
-  mediationExtras: { tenjin_key: TENJIN_SDK_KEY },
-});
+To measure ad revenue with Tenjin Analytics integrate the [Tenjin plugin](https://www.npmjs.com/package/cordova-plugin-tenjin) or just include Tenjin SDK by CAS PLugin variable:
+```xml
+<variable name="IOS_CAS_SOLUTIONS" value="... tenjin" />
+<variable name="ANDROID_CAS_SOLUTIONS" value="... tenjin" />
 ```
-</Step>
-</Steps>
-
-
+CAS SDK automatically initializes the Tenjin SDK and sends ILRD if this option is enabled for your application.

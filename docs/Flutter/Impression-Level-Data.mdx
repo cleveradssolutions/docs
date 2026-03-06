@@ -5,22 +5,60 @@ title: Impression Level Data
 CAS.AI SDK enables you to access detailed information for each impression through the impressions callback APIs. The information includes, for example, which demand source served the ad, the expected or exact revenue associated with it. In addition, it contains granular details to allow you to analyze and, ultimately, optimize user acquisition strategies.
 
 ### AdContentInfo
-The `AdContentInfo` data structure, which contains information about the loaded/displayed ad.
+The `AdContentInfo` data structure, which contains information about a displayed ad. 
 
 Additionally to `onAdImpression` callback, each ad format has a `getContentInfo()` method that returns `AdContentInfo?`, but the content info may be `null` before the ad is loaded.
 ```dart
 AdContentInfo? info = await eachAd.getContentInfo();
 ```
 
-| Name               | Type      | Description                                                                                                                                                             |
-| ------------------ | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sourceName`       | `String`  | Gets the display name of the mediated network that purchased the impression.                                                                                            |
-| `sourceUnitId`     | `String`  | Gets the Ad Unit ID from the mediated network that purchased the impression.                                                                                            |
-| `creativeId`       | `String?` | Gets the Creative ID associated with the ad, if available. May be null. You can use this ID to report creative issues to the Ad review team.                            |
-| `revenue`          | `Double`  | Gets the revenue generated from the impression, in USD. The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. |
-| `revenuePrecision` | `Int`     | Gets the precision type of the revenue field. See new `AdRevenuePrecision` constants.                                                                                   |
-| `revenueTotal`     | `Double`  | Gets the accumulated value of user ad revenue in USD from all ad format impressions.                                                                                    |
-| `impressionDepth`  | `Int`     | Gets the total number of impressions across all ad formats for the current user, across all sessions.                                                                   |
+<Property name="format" type="AdFormat">
+  The format of the ad that is shown.
+</Property>
+
+---
+
+<Property name="sourceName" type="String">
+  The display name of the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="sourceUnitId" type="String">
+  The Ad Unit ID from the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="creativeId" type="String?" optional>
+  The Creative ID associated with the ad, if available.
+  You can use this ID to report creative issues to the Ad review team. 
+</Property>
+
+---
+
+<Property name="revenue" type="Double">
+  The revenue generated from the impression, in USD. 
+  The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. 
+</Property>
+
+---
+
+<Property name="revenuePrecision" type="Int">
+  The precision type of the revenue field. See new `AdRevenuePrecision` constants.
+</Property>
+
+---
+
+<Property name="revenueTotal" type="Double">
+  The accumulated value of user ad revenue in USD from all ad format impressions. 
+</Property>
+
+---
+
+<Property name="impressionDepth" type="Int">
+  The total number of impressions across all ad formats for the current user, across all sessions. 
+</Property>
 
 ### Ad Impression callback
 A `onAdImpression` callback for ad impression with impression details in `AdContentInfo` for each ad formats:
@@ -67,15 +105,8 @@ The CAS SDK have features to automatically collect ad revenue to Google Analytic
 ### Google Analytics
 To measure ad revenue with Google Analytics:
 
-<Steps>
-<Step>
-Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
-</Step>
-<Step>
-Link your Firebase project to a Google Analytics account.
-</Step>
-</Steps>
-
+1. Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
+2. Link your Firebase project to a Google Analytics account.
 
 The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
 events whenever an ad is displayed.
@@ -83,19 +114,22 @@ Events include parameters such as ad platform, source, currency, and value.
 Alternatively, CAS may log the event as `CAS_Impression`.
 
 ### Tenjin
-To measure ad revenue with Tenjin Analytics:
-<Steps>
-<Step>
-Integrate the [Tenjin SDK](https://pub.dev/packages/tenjin_plugin).
-</Step>
-<Step>
-Ensure a Tenjin session is initialized, **or** pass your key to CAS SDK so it initializes Tenjin automatically:
+To measure ad revenue with Tenjin Analytics integrate the [Tenjin SDK](https://pub.dev/packages/tenjin_plugin) or just include Tenjin SDK by CAS Gadle plugin and CAS Cocoapods:
 
-```dart
-CASMobileAds.initialize(
-  casId: casId, 
-  mediationExtras: { 'tenjin_key': TENJIN_SDK_KEY },
-);
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+```kotlin
+cas {
+    includeTenjinSDK = true
+}
 ```
-</Step>
-</Steps>
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+```ruby
+pod 'CleverAdsSolutions-SDK/Tenjin', '{{ versions.ios }}'
+```
+</TabItem>
+</Tabs>
+
+CAS SDK automatically initializes the Tenjin SDK and sends ILRD if this option is enabled for your application.

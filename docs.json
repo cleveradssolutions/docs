@@ -122,6 +122,10 @@
                     "href": "/general/AppStore-data-disclosure"
                 },
                 {
+                    "title": "Apple Ad Attribution",
+                    "href": "/general/Apple-Ad-Attribution"
+                },
+                {
                     "title": "Apple Kids category",
                     "href": "/general/Apple-Kids-Category"
                 },
@@ -255,6 +259,10 @@
                         {
                             "title": "Manual setup",
                             "href": "/iOS/Manually-configure-project"
+                        },
+                        {
+                            "title": "Apple Ad Attribution",
+                            "href": "/general/Apple-Ad-Attribution"
                         }
                     ]
                 },

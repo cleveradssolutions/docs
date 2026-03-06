@@ -161,7 +161,7 @@ class AppController: UIViewController, CASNativeContentDelegate, CASNativeLoader
     
     func nativeAd(_ ad: NativeAdContent, didFailToPresentWithError error: AdError) {
         // (Optional) Handle Ad render errors. 
-        // Called from CASNativeView.setNativeAd(nativeAd)  
+        // Called from CASNativeView.bindAdContent(nativeAd)  
     }
 
     func nativeAdDidClickContent(_ ad: NativeAdContent) {
@@ -185,7 +185,7 @@ class AppController: UIViewController, CASNativeContentDelegate, CASNativeLoader
 
 - (void)nativeAd:(CASNativeAdContent *)ad didFailToPresentWithError:(CASError *)error {
     // (Optional) Handle Ad render errors.
-    // Called from [CASNativeView setNativeAd:nativeAd]
+    // Called from [CASNativeView bindAdContent:nativeAd]
 }
 
 - (void)nativeAdDidClickContent:(CASNativeAdContent *)ad {

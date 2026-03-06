@@ -6,6 +6,97 @@ CAS.AI SDK enables you to access detailed information for each impression throug
 The information includes, for example, which demand source served the ad, the expected or exact revenue associated with it. 
 In addition, it contains granular details to allow you to analyze and, ultimately, optimize user acquisition strategies. 
 
+## AdContentInfo
+
+The `com.cleveradssolutions.sdk.AdContentInfo` data structure, which contains information about the loaded/displayed ad.
+
+Additionally to `OnAdImpressionListener`, each ad format has a `getContentInfo()`/`contentInfo` accessor that returns `AdContentInfo`, but the info may be `null` before the ad is loaded.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val info = eachAd.contentInfo
+```
+
+```java
+AdContentInfo info = eachAd.getContentInfo();
+```
+</CodeGroup>
+
+
+<Property name="format" type="AdFormat">
+  The format of the ad that is shown.
+</Property>
+
+---
+
+<Property name="sourceName" type="String">
+  The display name of the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="sourceId" type="Int">
+  The ID of the mediated network that purchased the impression. See `AdSource` constants.
+</Property>
+
+---
+
+<Property name="sourceUnitId" type="String">
+  The Ad Unit ID from the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="creativeId" type="String?" optional>
+  The Creative ID associated with the ad, if available.
+  You can use this ID to report creative issues to the Ad review team. 
+</Property>
+
+---
+
+<Property name="revenue" type="Double">
+  The revenue generated from the impression, in USD. 
+  The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. 
+</Property>
+
+---
+
+<Property name="revenuePrecision" type="Int">
+  The precision type of the revenue field. See `AdRevenuePrecision` constants.
+</Property>
+
+---
+
+<Property name="revenueTotal" type="Double">
+  The accumulated value of user ad revenue in USD from all ad format impressions. 
+</Property>
+
+---
+
+<Property name="impressionDepth" type="Int">
+  The total number of impressions across all ad formats for the current user, across all sessions. 
+</Property>
+
+### User ad summary
+
+CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val totalImpressions: Int = impression.impressionDepth
+val totalRevenue: Double = impression.revenueTotal
+```
+
+```java
+int totalImpressions = impression.getImpressionDepth();
+Double totalRevenue = impression.getRevenueTotal();
+```
+</CodeGroup>
+
+<Info>
+Progress is saved between sessions until the user clears your app's data.
+</Info>
+
 ### OnAdImpressionListener
 A functional interface for listening to ad impression events.
 
@@ -62,54 +153,6 @@ nativeAd.setOnImpressionListener(impressionListener);
 ```
 </CodeGroup>
 
-### AdContentInfo
-
-The `com.cleveradssolutions.sdk.AdContentInfo` data structure, which contains information about the loaded/displayed ad.
-
-Additionally to `OnAdImpressionListener`, each ad format has a `getContentInfo()`/`contentInfo` accessor that returns `AdContentInfo`, but the info may be `null` before the ad is loaded.
-
-<CodeGroup synchronize={true}>
-```kotlin
-val info = eachAd.contentInfo
-```
-
-```java
-AdContentInfo info = eachAd.getContentInfo();
-```
-</CodeGroup>
-
-| Name               | Type       | Description                                                                                                                                                             |
-| ------------------ | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `format`           | `AdFormat` | Gets the format of the ad that is shown. See new `AdFormat` enum.                                                                                                       |
-| `sourceName`       | `String`   | Gets the display name of the mediated network that purchased the impression.                                                                                            |
-| `sourceId`         | `Int`      | Gets the ID of the mediated network that purchased the impression. See new `AdSourceId` constants.                                                                      |
-| `sourceUnitId`     | `String`   | Gets the Ad Unit ID from the mediated network that purchased the impression.                                                                                            |
-| `creativeId`       | `String?`  | Gets the Creative ID associated with the ad, if available. May be null. You can use this ID to report creative issues to the Ad review team.                            |
-| `revenue`          | `Double`   | Gets the revenue generated from the impression, in USD. The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`. |
-| `revenuePrecision` | `Int`      | Gets the precision type of the revenue field. See new `AdRevenuePrecision` constants.                                                                                   |
-| `impressionDepth`  | `Int`      | Gets the total number of impressions across all ad formats for the current user, across all sessions.                                                                   |
-| `revenueTotal`     | `Double`   | Gets the accumulated value of user ad revenue in USD from all ad format impressions.                                                                                    |
-
-### User ad summary
-
-CAS count the number of ad impressions and the total revenue of all formats at the time of a new impression.
-
-<CodeGroup synchronize={true}>
-```kotlin
-val totalImpressions: Int = impression.impressionDepth
-val totalRevenue: Double = impression.revenueTotal
-```
-
-```java
-int totalImpressions = impression.getImpressionDepth();
-Double totalRevenue = impression.getRevenueTotal();
-```
-</CodeGroup>
-
-<Info>
-Progress is saved between sessions until the user clears your app's data.
-</Info>
-
 ## Automatic collect ad revenue
 
 The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
@@ -125,13 +168,14 @@ If you haven't already, make sure to complete the following tasks:
 To measure ad revenue, CAS SDK log [`ad_impression` events](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression) whenever your user sees an advertisement in your app. These events contain details such as the ad platform, source, currency, and value. Optionally, the alternative event name can be `CAS_Impression`.
 
 #### Tenjin
+To measure ad revenue with Tenjin Analytics integrate the [Tenjin SDK](https://docs.tenjin.com/docs/android-sdk#basic-integration) or just include Tenjin SDK by CAS Cocoapods:
+```kotlin
+cas {
+    includeTenjinSDK = true
+}
+```
 
-If you haven't already, make sure to complete the following tasks:
-
-1. Set up your project and app as described in [Get Started with Analytics](https://docs.tenjin.com/docs/android-sdk#basic-integration).
-2. Make sure that you've [initialize tenjin session](https://docs.tenjin.com/docs/android-sdk#app-initialization). Or provide `TENJIN_SDK_KEY` with CAS SDK initialization to allow CAS initialize Tenjin SDK automatically.
-   `builder.withMediationExtras("tenjin_key", TENJIN_SDK_KEY)`
-3. Ensure that you've included in your app the CAS SDK 3.7.2+.
+CAS SDK automatically initializes the Tenjin SDK and sends ILRD if this option is enabled for your application.
 
 ## Custom collect ad revenue
 

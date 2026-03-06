@@ -82,14 +82,18 @@ Add one of the following lines of Clever Ads Solutions to your apps's target bui
 Subscribe to receive notifications about CAS updates.
 </Card>
 
-#### Optimal Ads Solution
+<AccordionGroup>
+<Accordion title="Optimal Ads Solution">
+
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:   
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange.  
 ```ruby
 pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 ```
 
-#### A Families Ads Solution
+</Accordion>
+<Accordion title="Families Ads Solution">
+
 Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). Networks included:  
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Chartboost, DTExchange, Kidoz.
 ```ruby
@@ -98,7 +102,18 @@ pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 
 The families ads solution is NOT intended for apps in [Apple Kids Category](iOS/Apple-Kids-Category).
 
-#### Choice networks
+</Accordion>
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions:  
+Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Unity Ads, Yango Ads, Yso Network.
+```ruby
+pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
+```
+
+</Accordion>
+<Accordion title="Choice networks">
+
 Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
 
 When you are not using the solution pods, you must add a `CleverAdsSolutions-Base` pod for the CAS base framework. 
@@ -107,6 +122,9 @@ pod 'CleverAdsSolutions-Base', '{{ versions.ios }}'
 ```
 
 Follow the instructions on the [Mediated Networks](iOS/Mediated-Networks) page.
+
+</Accordion>
+</AccordionGroup>
 
 ### Check project’s build settings
 - Open Xcode `<Project>.xcodeproj`

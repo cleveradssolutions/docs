@@ -112,6 +112,7 @@ CAS.AI SDK offers three integration paths. Choose one based on your app’s targ
 If you're unsure which solution best fits your application, please contact your account manager.
 
 Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
+
 ### Optimal Ads Solution
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
@@ -146,6 +147,26 @@ cas {
 <TabItem label="iOS" value="ios">
 ```ruby
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
+```
+</TabItem>
+</Tabs>
+
+### VPN Compliant Ads Solutions
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions:  
+Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+```kotlin
+cas {
+    includeVPNCompliantAds = true
+}
+```
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+```ruby
+pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 ```
 </TabItem>
 </Tabs>

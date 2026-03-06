@@ -199,7 +199,9 @@ Note that you cannot use `applicationId` because the library module does not hav
 CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
 If you're unsure which solution best fits your application, please contact your account manager.
 
-#### Optimal Ads Solution
+<AccordionGroup>
+<Accordion title="Optimal Ads Solution">
+
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:  
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
 
@@ -209,7 +211,9 @@ cas {
 }
 ```
 
-#### Families Ads Solution
+</Accordion>
+<Accordion title="Families Ads Solution">
+
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en). Networks included:
 Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
 
@@ -219,10 +223,27 @@ cas {
 }
 ```
 
-#### Choice networks
+</Accordion>
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions:  
+Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
+
+```groovy
+cas {
+    includeVPNCompliantAds = true
+}
+```
+
+</Accordion>
+<Accordion title="Choice networks">
+
 Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
 
 Follow the instructions on the [Mediated Networks](Android/Mediated-Networks) page.
+
+</Accordion>
+</AccordionGroup>
 
 ### Google Advertising Identifier
 The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.

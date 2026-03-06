@@ -12,7 +12,7 @@ See below how you can layout the views using Templates or Manual.
 </Step>
 <Step title="Register the asset views">
 See below how you can register the asset views using Templates or Manual.
-Values for registered views will be set automatically when calling `setNativeAd()`.  
+Values for registered views will be set automatically when calling `bindAdContent()`.  
 Note that views for which the loaded ad does not provide content will be hidden with `view.setVisibility(View.GONE)`.
 See below for the implementation of `registerAdAssetViews(adView)` function.
 </Step>
@@ -20,7 +20,7 @@ See below for the implementation of `registerAdAssetViews(adView)` function.
 Don't implement any custom click handlers on any views over or within the native ad view. To observe click events yourself, use the ad callback `onNativeAdClicked`. Clicks on the ad view assets are handled by the SDK as long as you correctly populate and register the asset views, as discussed in the previous section.
 </Step>
 <Step title="Register the native ad content">
-This final step registers the native ad object with the view that's responsible for displaying it. Note that you can also reuse an existing `CASNativeView` if one is already present in your fragment or activity, or you can create an instance dynamically without using a layout file. Simply call `setNativeAd` for each new `NativeAdContent` as shown in `registerNativeAdContent()` function.
+This final step registers the native ad object with the view that's responsible for displaying it. Note that you can also reuse an existing `CASNativeView` if one is already present in your fragment or activity, or you can create an instance dynamically without using a layout file. Simply call `bindAdContent` for each new `NativeAdContent` as shown in `registerNativeAdContent()` function.
 </Step>
 </Steps>
 
@@ -38,7 +38,7 @@ override fun onCreate(@Nullable savedInstanceState: Bundle?) {
 }
 
 fun registerNativeAdContent(nativeAd: NativeAdContent) {
-    adView.setNativeAd(nativeAd)
+    adView.bindAdContent(nativeAd)
 }
 ```
 
@@ -56,13 +56,13 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 }
 
 void registerNativeAdContent(NativeAdContent nativeAd) {
-    adView.setNativeAd(nativeAd);
+    adView.bindAdContent(nativeAd);
 }
 ```
 </CodeGroup>
 
 <Warning>  
-The `setNativeAd(NativeAdContent)` method must be called from the main (UI) thread.
+The `bindAdContent(NativeAdContent)` method must be called from the main (UI) thread.
 </Warning>
 
 ## Validate Ad Content (Optional)
@@ -78,7 +78,7 @@ fun registerNativeAdContent(nativeAd: NativeAdContent) {
         loadNativeAds()
         return
     }
-    adView.setNativeAd(nativeAd)
+    adView.bindAdContent(nativeAd)
 }
 ```
 
@@ -88,7 +88,7 @@ void registerNativeAdContent(NativeAdContent nativeAd) {
         loadNativeAds();
         return;
     }
-    adView.setNativeAd(nativeAd);
+    adView.bindAdContent(nativeAd);
 }
 ```
 </CodeGroup>
@@ -146,7 +146,7 @@ fun NativeAdTemplateView(adContent: NativeAdContent, modifier: Modifier = Modifi
 
     // Apply ad content to the view on the main thread
     LaunchedEffect(adContent, nativeView) {
-        nativeView.setNativeAd(adContent)
+        nativeView.bindAdContent(adContent)
     }
 
     // Compose android view
