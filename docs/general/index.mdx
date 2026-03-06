@@ -47,13 +47,7 @@ The CAS SDK helps you maximize fill rates and boost monetization by sending ad r
       </li>
     </ul>
   </Card>
-  <Card>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="21" height="21" style={{ fill: 'currentColor' }} >
-        <path d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z"/>
-      </svg>
-      <b>Flutter</b>
-    </div>
+  <FlutterCard>
     <ul>
       <li>
         <a href="https://github.com/cleveradssolutions/CAS-Flutter/releases">Latest Release: {'{{ versions.flutter }}'}</a>
@@ -65,7 +59,7 @@ The CAS SDK helps you maximize fill rates and boost monetization by sending ad r
         <a href="https://github.com/cleveradssolutions/CAS-Flutter">Examples</a>
       </li>
     </ul>
-  </Card>
+  </FlutterCard>
   <Card>
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
       <svg viewBox="0 0 24 24" width="21" height="21" xmlns="http://www.w3.org/2000/svg" style={{ fill: 'currentColor' }}>
@@ -187,3 +181,18 @@ For support using these libraries, file an issue through the links in GitHub Sou
     </ul>
   </Card>
 </CardGroup>
+
+
+export const FlutterCard = props => {
+  return (
+    <Card>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="21" height="21" style={{ fill: 'currentColor' }} >
+        <path d="M14.314 0L2.3 12 6 15.7 21.684.013h-7.357zm.014 11.072L7.857 17.53l6.47 6.47H21.7l-6.46-6.468 6.46-6.46h-7.37z"/>
+      </svg>
+      <b>Flutter</b>
+    </div>
+    {props.children}
+    </Card>
+  );
+};

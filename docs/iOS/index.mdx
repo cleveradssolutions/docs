@@ -9,52 +9,9 @@ Once you've integrated and initialized the SDK, you can choose an ad format and 
 - Use Xcode `{{ min.xcode }}` or higher
 - Target minimum iOS `{{ min.ios }}` or higher
 
-## Automatically configure project
-Your project requires additional configurations that can be performed automatically by a special script.
-1. Download the <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a>  
-2. Place the script in directory with the app `.xcodeproj` 
-3. Open the terminal window and run command:
-```
-cd into/your/project/folder
-```
-5. Run ruby script:
-```
-ruby casconfig.rb <CAS_ID>
-```
-
-<AccordionGroup>
-<Accordion title="What is CAS ID?">
-
-In most cases, a CASID is the same as your app store ID.  
-You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
- 
-If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai  
-If you just want to experiment or test the SDK, you can skip the configuration your project.
-
-</Accordion>
-
-<Accordion title="What does the script do?">
-
-The script automatically performs the following integration steps:
-- [x] SKAdNetwork Support
-- [x] App Transport Security
-- [x] Link the CAS project
-- [X] Set User Tracking usage description
-- [x] Set Google Ads App ID
-- [x] Set Delay app measurement
-
-</Accordion>
-</AccordionGroup>
-
-For more details about the script and its updates, please refer to the [the CAS iOS repository](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
-
-<Info>
-Repeat the script before every update of the application to make sure you are using up-to-date configurations.
-</Info>
-
-<Success>  
-Instead of using the `casconfig.rb` script, you can manually complete [additional steps to configure your project](iOS/Manually-configure-project). (Not recomended)
-</Success>
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-iOS/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
 
 ## CocoaPods
 Follow these steps to integrate CAS.AI framework with [CocoaPods](http://guides.cocoapods.org/using/getting-started.html).  CocoaPods is a dependency manager for Objective-C and Swift; it automates and simplifies the SDK integration process. 
@@ -77,10 +34,6 @@ CAS.AI SDK offers three integration paths. Choose one based on your app’s targ
 If you're unsure which solution best fits your application, please contact your account manager.
 
 Add one of the following lines of Clever Ads Solutions to your apps's target build configuration.
-
-<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-iOS/subscription">
-Subscribe to receive notifications about CAS updates.
-</Card>
 
 <AccordionGroup>
 <Accordion title="Optimal Ads Solution">
@@ -134,11 +87,11 @@ Follow the instructions on the [Mediated Networks](iOS/Mediated-Networks) page.
 
 ### Install pods to the project
 Open the terminal window and run:
-```
+```sh
 cd into/your/project/folder
 ```
 Run pod install with repo update:
-```
+```sh
 pod update
 ```
 
@@ -150,7 +103,7 @@ Read more about [Cocoapods troubleshooting](https://guides.cocoapods.org/using/t
 
 ### Open XCode Workspace
 Make sure to always open the Xcode workspace instead of the project file when building your project:
-```
+```sh
 open <Project>.xcworkspace
 ```
 
@@ -178,7 +131,54 @@ Please note that SPM integration does not support certain adapters due to limita
 ## Manual download
 For projects where you cannot use CocoaPods during Xcode build, you need to manually collect all frameworks from the CAS Pod dependencies and add them to the project. Our script, which can be found in the repository [here](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20PodFrameworks), will assist you with this process.
 
-## User Tracking usage description
+## Configure Info.plist
+Your project `Info.plist` requires additional configurations that can be performed automatically by a special script.
+1. Download the <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a>  
+2. Place the script in directory with the app `.xcodeproj` 
+3. Open the terminal window and run command:
+```
+cd into/your/project/folder
+```
+5. Run ruby script:
+```
+ruby casconfig.rb <CAS_ID>
+```
+
+<AccordionGroup>
+<Accordion title="What is CAS ID?">
+
+In most cases, a CASID is the same as your app store ID.  
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
+ 
+If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai  
+If you just want to experiment or test the SDK, you can skip the configuration your project.
+
+</Accordion>
+
+<Accordion title="What does the script do?">
+
+The script automatically performs the following integration steps:
+- [x] Set [AdAttributionKit and SKAdNetwork Support](general/Apple-Ad-Attribution) to Info.plist
+- [x] Set [App Transport Security](iOS/Manually-configure-project) to Info.plist
+- [X] Set User Tracking usage description to Info.plist
+- [x] Set [Google Ads App ID](iOS/Manually-configure-project) to Info.plist
+- [x] Set Delay app measurement to Info.plist
+- [x] [Link the CAS project](iOS/Manually-configure-project)
+
+</Accordion>
+</AccordionGroup>
+
+For more details about the script and its updates, please refer to the [the CAS iOS repository](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
+
+<Info>
+Repeat the script before every update of the application to make sure you are using up-to-date configurations.
+</Info>
+
+<Success>  
+Instead of using the `casconfig.rb` script, you can manually complete [additional steps to configure your project](iOS/Manually-configure-project). (Not recomended)
+</Success>
+
+### User Tracking usage description
 To display the App Tracking Transparency authorization request for accessing the IDFA, update your `Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key with a custom message describing your usage. Below is an example description text:
 ```xml
 <key>NSUserTrackingUsageDescription</key>

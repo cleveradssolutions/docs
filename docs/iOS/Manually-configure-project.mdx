@@ -6,15 +6,8 @@ title: Manually configure project
 We have created a script that performs all the steps below automatically for you. Learn how to invoke automatic configuration on the [Project Setup page](iOS).
 </Info>
 
-## SKAdNetwork Support
-iOS versions 14+ require that you include the `SKAdNetworkIdentifier` for all of mediated ad networks in the `Info.plist`. For more information, see "SKAdNetwork: Configuring the Participating Apps" in [Apple’s StoreKit Developer documentation](https://developer.apple.com/documentation/storekit/skadnetwork/configuring_a_source_app).
-
-1. An up-to-date list of SKAdNetwork partners can be found in the repository: [SKAdNetworkItems.xml](https://github.com/cleveradssolutions/CAS-iOS/blob/master/AdNetworkIdentifiers/SKAdNetworkItems.xml)
-2. Copy the `<key>SKAdNetworkItems</key><array>...</array>` tags from the `SKAdNetworkItems.xml`.
-3. Open `Info.plist` file as Source Code.
-4. Paste the content at the end of the file before `</dict></plist>`
-
-Additional `SKAdNetworkIdentifier` values may be added in the future. We recommend checking back on this page for updates.
+## AdAttributionKit and SKAdNetwork Support
+Read more on [Apple Ad Attribution page](general/Apple-Ad-Attribution).
 
 ## App Transport Security
 [App Transport Security (ATS)](https://developer.apple.com/documentation/bundleresources/information_property_list/nsapptransportsecurity) is a privacy feature introduced in iOS 9. It's enabled by default for new apps and enforces secure connections.   
