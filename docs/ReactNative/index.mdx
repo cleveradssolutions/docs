@@ -16,10 +16,36 @@ Make sure that your app's build file uses the following values:
 ## Import CAS.AI Mobile Ads package
 Include the [CAS.AI plugin for ReactNative](https://www.npmjs.com/package/react-native-cas) in your ReactNative project.
 
-With npm command:
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
 ```shell
 npm install react-native-cas
 ```
+  </TabItem>
+  <TabItem label="Expo" value="expo">
+```shell
+npx expo install react-native-cas
+```
+
+CAS.AI provides an Expo config plugin that automatically configures the native Android and iOS projects during the `npx expo prebuild` step.
+Add the plugin to your `app.json`, `app.config.js`, or `app.config.ts` file:
+```config.js
+{
+  "expo": {
+    "plugins": [
+        [
+            "react-native-cas",
+            {
+                // Options
+            }
+        ]
+    ]
+  }
+}
+```
+  </TabItem>
+</Tabs>
+
 
 <Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-ReactNative/subscription">
 Subscribe to receive notifications about CAS updates.
@@ -31,10 +57,13 @@ import * as CASModule from 'react-native-cas';
 ```
 
 ## Platform specific setup
-To monetize your app using CAS.AI mediation, in addition to importing the package, you need to configure your Android and iOS projects by using the **CAS Gradle plugin** for Android and a **Ruby CAS script** for iOS.  
+To monetize your app using CAS.AI mediation, in addition to importing the package, you need to configure your Android and iOS projects.
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
+### Android setup
+
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
+
 The CAS Android SDK provide a Gradle Plugin to simplify and automate certain integration steps.
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
@@ -139,34 +168,24 @@ Read more about Closed beta ads partners on [Android Mediation Networks](Android
 </Accordion>
 </AccordionGroup>
 
-</TabItem>
+  </TabItem>
+  <TabItem label="Expo" value="expo">
+Expo configuration automatically sets up the CAS Gradle Plugin and CAS Mediation Maven repositories for the Android project.
+  </TabItem>
+</Tabs>
 
-<TabItem label="iOS" value="ios">
-The Ruby script performs automatic configuration of your iOS project. To apply it, follow the steps outlined below.
-1. Download the <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a> 
-2. Place the script in ios app directory `<project>/ios`
-3. Open the terminal window and go to `ios` directory:
-```
-cd ios
-```
-4. Run ruby script with your app CAS ID:
-```
-ruby casconfig.rb <CAS ID>
-```
 
-<Info>
-Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
-</Info>
+### iOS setup
+React Native automatically adds an Xcode Build Phase to run [the Ruby script for CAS project configuration](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
 
-<Accordion title="What is CAS ID in iOS?">
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
+ To complete the setup, you need to add the `<key>CASAIAppIdentifier</key>` property with the `<string>CASID</string>` value to the `<project>/ios/Runner/Info.plist`.
 
-In most cases, a CASID is the same as your app store ID.  
-You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
- 
-If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai  
-If you just want to experiment or test the SDK, you can skip the configuration your project.
-
-</Accordion>
+| Key                        |    Type    | Value                                  |
+| -------------------------- | :--------: | -------------------------------------- |
+| Information Property List  | Dictionary |                                        |
+| ▼ CASAIAppIdentifier       |   String   | CASID                                  |
 
 
 The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project. 
@@ -189,64 +208,183 @@ Run `pod update` terminal command inside the `ios` directory after modifying the
 Make sure to update the CAS pods version whenever you update the CAS ReactNative package. The Ads Solution pods version matches the version of [the CAS iOS SDK](https://github.com/cleveradssolutions/CAS-iOS/releases).
 </Info>
 
-</TabItem>
+  </TabItem>
+  <TabItem label="Expo" value="expo">
+To complete the setup, you need to add the `iosAppId` property with the `CASID` value to the Expo configuration.
+```config.js
+[
+    "react-native-cas",
+    {
+        "iosAppId": "CASID" // [!code focus]
+    }
+]
+```
+
+  </TabItem>
 </Tabs>
+
+<Accordion title="What is CAS ID in iOS?">
+
+In most cases, a CASID is the same as your app store ID.  
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
+ 
+If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai  
+If you just want to experiment or test the SDK, you can skip the configuration your project.
+
+</Accordion>
 
 ## Mediated Networks
 CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
 If you're unsure which solution best fits your application, please contact your account manager.
 
 Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
-### Optimal Ads Solution
+
+<AccordionGroup>
+<Accordion title="Optimal Ads Solution">
+
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
-```kotlin
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
+  <CodeGroup>
+```gradle
 cas {
     includeOptimalAds = true
 }
 ```
-</TabItem>
 
-<TabItem label="iOS" value="ios">
-```ruby
+```podfile
 pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 ```
-</TabItem>
-</Tabs>
+</CodeGroup>
+  </TabItem>
+  <TabItem label="Expo" value="expo">
 
-### Families Ads Solution
+```config.js
+[
+    "react-native-cas",
+    {
+        "includeOptimalAds": true // [!code focus]
+    }
+]
+```
+  </TabItem>
+</Tabs>
+</Accordion>
+
+<Accordion title="Families Ads Solution">
+
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
-```kotlin
+
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
+  <CodeGroup>
+```gradle
 cas {
     includeFamiliesAds = true
 }
 ```
-</TabItem>
 
-<TabItem label="iOS" value="ios">
-```ruby
+```podfile
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 ```
-</TabItem>
+</CodeGroup>
+  </TabItem>
+  <TabItem label="Expo" value="expo">
+
+```config.js
+[
+    "react-native-cas",
+    {
+        "includeFamiliesAds": true // [!code focus]
+    }
+]
+```
+  </TabItem>
+</Tabs>
+</Accordion>
+
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
+
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
+  <CodeGroup>
+```gradle
+cas {
+    includeVPNCompliantAds = true
+}
+```
+
+```podfile
+pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
+```
+</CodeGroup>
+  </TabItem>
+  <TabItem label="Expo" value="expo">
+
+```config.js
+[
+    "react-native-cas",
+    {
+        "includeVPNCompliantAds": true // [!code focus]
+    }
+]
+```
+  </TabItem>
+</Tabs>
+</Accordion>
+
+<Accordion title="Choice mediation adapters">
+
+Advanced publishers familiar with ad network integrations can configure their own set of adapters.
+
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
+ 
+For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks) and the [iOS page](iOS/Mediated-Networks).
+
+  </TabItem>
+  <TabItem label="Expo" value="expo">
+Set list of adapters to `androidAdapters` and `iosAdapters` property.
+- For iOS, the name must match the Adapter names (first column) from the [iOS Adapters table](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md). 
+- For Android, the name must match the Adapter names (first column) from the [Android Adapters table](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md). 
+
+Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
+
+```config.js
+[
+    "react-native-cas",
+    {
+        "androidAdapters": ["googleAds", "casExchange", "dtExchange"] // [!code focus]
+        "iosAdapters": ["GoogleAds", "CASExchange", "DTExchange"] // [!code focus]
+    }
+]
+```
+<Info>
+The same adapter names can be used for both platforms if convenient.
+</Info>
+
+  </TabItem>
 </Tabs>
 
-### Choice networks
-Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks) and the [iOS page](iOS/Mediated-Networks).
+</Accordion>
+</AccordionGroup>
 
 ## Advertising Identifier
-CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
+CAS.AI Plugin uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
 To enable the use of the Advertising ID in your app, you need to complete the following setup steps.
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
-CAS Mediation allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
+<Tabs groupId="setup">
+  <TabItem label="React Native" value="react">
 
-```kotlin
+<AccordionGroup>
+<Accordion title="Android Google Adverision ID">
+CAS.AI Plugin allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
+
+```gradle
 cas {
     useAdvertisingId = true
 }
@@ -256,29 +394,17 @@ An application must not use an advertising identifier if **at least one** of the
 - The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
 - The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
 
-</TabItem>
+</Accordion>
 
-<TabItem label="iOS" value="ios">
+<Accordion title="iOS User Tracking Usage description">
 
 To use the App Tracking Transparency authorization request for accessing the IDFA, update your `<project>/ios/Runner/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
 ```xml
 <key>NSUserTrackingUsageDescription</key>
 <string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
 ```
-
-<AccordionGroup>
-<Accordion title="Usage description examples">
-
-- Your data will remain confidential and will only be used to provide you a better and personalised ad experience
-- Your data will be used to provide you a better and personalised ad experience
-- Your data will be used to create a customized experience tailored to your interests
-- Allowing tracking will enable more personalized ads for you
-- We try to show ads for apps and products that will be most interesting to you based on the apps you use
-- This identifier will be used to deliver personalized ads to you
-- This only uses device info for more interesting and relevant ads
-
 </Accordion>
-<Accordion title="Localizing Usage description (optional)">
+<Accordion title="iOS Localizing Usage description (optional)">
 
 To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.  
 The table below gives you a variety of localizations that you can use at your discretion.
@@ -296,5 +422,42 @@ The table below gives you a variety of localizations that you can use at your di
 
 </Accordion>
 </AccordionGroup>
-</TabItem>
+
+  </TabItem>
+  <TabItem label="Expo" value="expo">
+CAS.AI Plugin allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
+
+```config.js
+[
+    "react-native-cas",
+    {
+        "useAdvertisingId": true // [!code focus]
+    }
+]
+```
+
+To use the iOS App Tracking Transparency authorization request for accessing the IDFA, update the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key with a custom message describing your usage by CAS.AI plugin config. Below is an example description text:
+```config.js
+[
+    "react-native-cas",
+    {
+        "userTrackingUsageDescription": "Your data will remain confidential and will only be used to provide you a better and personalised ad experience" // [!code focus]
+    }
+]
+```
+  </TabItem>
 </Tabs>
+
+<AccordionGroup>
+<Accordion title="iOS User Tracking Usage description examples">
+
+- Your data will remain confidential and will only be used to provide you a better and personalised ad experience
+- Your data will be used to provide you a better and personalised ad experience
+- Your data will be used to create a customized experience tailored to your interests
+- Allowing tracking will enable more personalized ads for you
+- We try to show ads for apps and products that will be most interesting to you based on the apps you use
+- This identifier will be used to deliver personalized ads to you
+- This only uses device info for more interesting and relevant ads
+
+</Accordion>
+</AccordionGroup>

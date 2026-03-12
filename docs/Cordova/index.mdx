@@ -34,12 +34,14 @@ All plugin variables must be defined within the `<plugin>` tag, for example `IOS
 </plugin>
 ```
 
+<AccordionGroup>
 <Accordion title="What is CAS ID in iOS?">
 
 In most cases, a CASID is the same as your app store ID.  
 You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
  
 </Accordion>
+</AccordionGroup>
 
 
 ## Mediated Networks
@@ -74,8 +76,7 @@ Required for applications **directed exclusively at children**, in accordance wi
 </Accordion>
 <Accordion title="VPN Compliant Ads Solutions">
 
-Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions:  
-Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
 
 ```xml
 <variable name="IOS_CAS_SOLUTIONS" value="vpnCompliant" />
@@ -124,6 +125,7 @@ To use the [App Tracking Transparency authorization request](https://developer.a
 <variable name="IOS_USER_TRACKING_USAGE" value="Your data will remain confidential and will only be used to provide you a better and personalised ad experience" />
 ```
 
+<AccordionGroup>
 <Accordion title="Usage description examples">
 
 - Your data will remain confidential and will only be used to provide you a better and personalised ad experience
@@ -135,6 +137,7 @@ To use the [App Tracking Transparency authorization request](https://developer.a
 - This only uses device info for more interesting and relevant ads
 
 </Accordion>
+</AccordionGroup>
 
 </TabItem>
 </Tabs>
