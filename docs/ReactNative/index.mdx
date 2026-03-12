@@ -29,7 +29,7 @@ npx expo install react-native-cas
 
 CAS.AI provides an Expo config plugin that automatically configures the native Android and iOS projects during the `npx expo prebuild` step.
 Add the plugin to your `app.json`, `app.config.js`, or `app.config.ts` file:
-```config.js
+```js
 {
   "expo": {
     "plugins": [
@@ -68,7 +68,7 @@ The CAS Android SDK provide a Gradle Plugin to simplify and automate certain int
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
 In your Android app Gradle file (usually `<project>/android/app/build.gradle`), add the `com.cleveradssolutions.gradle-plugin` inside the `plugins` block.
-```kotlin
+```gradle
 plugins {
   id("com.android.application") // before CAS plugin
   id("com.cleveradssolutions.gradle-plugin") version "{{ versions.android }}"
@@ -88,7 +88,7 @@ Some advertising SDKs are published in their own Maven repositories. To allow Gr
 <AccordionGroup>
 <Accordion title="Manven Ads repositories">
 
-```kotlin
+```gradle
 repositories {
   google()  
   mavenCentral()  
@@ -148,7 +148,7 @@ repositories {
 <Accordion title="Maven Ads repositories for Closed beta">
 
 Read more about Closed beta ads partners on [Android Mediation Networks](Android/Mediated-Networks) page.  
-```kotlin
+```gradle
     maven {  
         name = "MadexAdsRepo"  
         url = uri("https://sdkpkg.sspnet.tech")  
@@ -211,7 +211,7 @@ Make sure to update the CAS pods version whenever you update the CAS ReactNative
   </TabItem>
   <TabItem label="Expo" value="expo">
 To complete the setup, you need to add the `iosAppId` property with the `CASID` value to the Expo configuration.
-```config.js
+```js
 [
     "react-native-cas",
     {
@@ -253,14 +253,14 @@ cas {
 }
 ```
 
-```podfile
+```ruby
 pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 ```
 </CodeGroup>
   </TabItem>
   <TabItem label="Expo" value="expo">
 
-```config.js
+```js
 [
     "react-native-cas",
     {
@@ -286,14 +286,14 @@ cas {
 }
 ```
 
-```podfile
+```ruby
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 ```
 </CodeGroup>
   </TabItem>
   <TabItem label="Expo" value="expo">
 
-```config.js
+```js
 [
     "react-native-cas",
     {
@@ -318,14 +318,14 @@ cas {
 }
 ```
 
-```podfile
+```ruby
 pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 ```
 </CodeGroup>
   </TabItem>
   <TabItem label="Expo" value="expo">
 
-```config.js
+```js
 [
     "react-native-cas",
     {
@@ -354,7 +354,7 @@ Set list of adapters to `androidAdapters` and `iosAdapters` property.
 
 Below, as an example, only GoogleAds, CASExchange, and DTExchange are shown.
 
-```config.js
+```js
 [
     "react-native-cas",
     {
@@ -427,7 +427,7 @@ The table below gives you a variety of localizations that you can use at your di
   <TabItem label="Expo" value="expo">
 CAS.AI Plugin allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
 
-```config.js
+```js
 [
     "react-native-cas",
     {
@@ -437,7 +437,7 @@ CAS.AI Plugin allows you to easily enable or disable the use of the Advertising 
 ```
 
 To use the iOS App Tracking Transparency authorization request for accessing the IDFA, update the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key with a custom message describing your usage by CAS.AI plugin config. Below is an example description text:
-```config.js
+```js
 [
     "react-native-cas",
     {
