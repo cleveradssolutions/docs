@@ -931,6 +931,10 @@
                     "href": "/Construct"
                 },
                 {
+                    "title": "Build",
+                    "href": "/Construct/Build"
+                },
+                {
                     "title": "Automation Options",
                     "href": "/Construct/Automation-Options"
                 },

@@ -1,0 +1,103 @@
+---
+title: Build Construct app for Mobile platforms
+description: This guide explains how to build Android and iOS Construct app.
+---
+
+<Warning>
+CAS.AI Addon only supports building mobile apps locally with Cordova CLI, as cordova-plugin-casai is not yet whitelisted for Server build.
+</Warning>
+
+Construct 3 has its own mobile app build service. For most users this is the recommended way to build mobile apps. However there are limits on which third-party Cordova plugins can be used, and the build involves uploading your project and downloading an APK, which can be slow with large projects or slow connections. Using the Cordova CLI allows offline builds and use of any third-party Cordova plugins.
+
+
+## Setting up Cordova
+To set up the Cordova CLI on your computer, you'll first need to install [Node.js](https://nodejs.org). Then install the cordova module using npm. For Windows, use the command:
+```sh
+npm install -g cordova
+```
+On macOS or Linux use the command:
+```sh
+sudo npm install -g cordova
+```
+For more information, see the section Installing the Cordova CLI in the [Cordova documentation](https://cordova.apache.org/docs/en/latest/guide/cli/index.html).
+
+At this point you should be able to enter the command cordova in a command prompt or terminal, and see that it prints help text about using Cordova.
+
+<Tabs groupId="platform">
+<TabItem label="Android setup" value="android">
+For Android builds, you'll need to install the [JDK (Java Development Kit)](https://www.oracle.com/java/technologies/downloads/) and [Android Studio](https://www.construct.net/out?u=https%3a%2f%2fdeveloper.android.com%2fstudio). For more information see the [Cordova Android Platform Guide](https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html).
+
+</TabItem>
+<TabItem label="iOS setup" value="ios">
+For iOS builds you'll need to install Xcode from the App Store, as well as the ios-deploy npm module via
+```sh
+npm install -g ios-deploy
+``` 
+
+For more information see the [Cordova iOS Platform Guide](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/index.html).
+
+<Info>
+Note that iOS apps must be built on a Mac. You can get as far as generating an Xcode project on a Windows or Linux machine, but you must move to a Mac to finish the build.
+</Info>
+
+</TabItem>
+</Tabs>
+
+## Exporting from Construct
+In Construct 3, choose the Android (Cordova) or iOS (Cordova) options when exporting, depending on which platform you want to build for.
+
+In the Cordova options dialog, choose **Cordova project** for Android build or iOS build. Construct 3 will export a zip file. Extract this zip file to a folder on your computer.
+
+- Minimum API level `{{ min.api }}` or higher
+- Kotlin build suport by Cordova preference:
+
+### iOS Cordova:
+- Use Xcode `{{ min.xcode }}` or higher
+- Minimum Target iOS version `{{ min.ios }}` or higher
+- Swift build support by Cordova preference:
+
+
+## Preparing Cordova project
+By now you should have a folder with `config.xml` in it (and possibly some other files), and a `www` subfolder. 
+
+<Tabs groupId="platform">
+<TabItem label="Android setup" value="android">
+Add the following preferences to `config.xml` for Android Kotlin support.
+```xml
+<platform name="android">
+    <preference name="GradlePluginKotlinEnabled" value="true" /> // [!code highlight]
+    <preference name="GradlePluginKotlinVersion" value="{{ min.kotlin }}" /> // [!code highlight]
+    ...
+</platform>
+```
+
+</TabItem>
+<TabItem label="iOS setup" value="ios">
+Add the following preferences to `config.xml` for iOS Swift support.
+```xml
+<preference name="SwiftVersion" value="5.0" />
+```
+
+</TabItem>
+</Tabs>
+
+Open a command prompt with the current directory set to the location `config.xml` is in. 
+Use the following command to prepare a full Cordova project based on the exported files:
+```sh
+cordova prepare
+```
+
+This may take a while as it fetches dependencies and configures the project.
+
+Once it's done, if this is your first build, you might want to check you have the right software installed. You can do this with:
+```sh
+cordova requirements
+```
+
+Cordova will then tell you if it has everything it needs. If anything is missing you might have to go back and install something else. Cordova should provide instructions if so.
+
+## Building apps
+To build the app, simply use:
+```sh
+cordova build
+```
