@@ -58,27 +58,6 @@ In the Cordova options dialog, choose **Cordova project** for Android build or i
 ## Preparing Cordova project
 By now you should have a folder with `config.xml` in it (and possibly some other files), and a `www` subfolder. 
 
-<Tabs groupId="platform">
-<TabItem label="Android setup" value="android">
-Add the following preferences to `config.xml` for Android Kotlin support.
-```xml
-<platform name="android">
-    <preference name="GradlePluginKotlinEnabled" value="true" /> // [!code highlight]
-    <preference name="GradlePluginKotlinVersion" value="{{ min.kotlin }}" /> // [!code highlight]
-    ...
-</platform>
-```
-
-</TabItem>
-<TabItem label="iOS setup" value="ios">
-Add the following preferences to `config.xml` for iOS Swift support.
-```xml
-<preference name="SwiftVersion" value="5.0" />
-```
-
-</TabItem>
-</Tabs>
-
 Open a command prompt with the current directory set to the location `config.xml` is in. 
 Use the following command to prepare a full Cordova project based on the exported files:
 ```sh
