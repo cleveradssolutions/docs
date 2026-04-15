@@ -68,7 +68,13 @@ dependencyResolutionManagement {
         content {
             includeGroup("net.pubnative")
             includeGroup("com.verve")
+            includeGroup("com.smaato.android.sdk")
         }
+    }
+    maven {
+        name = "SuperAwesomeRepo"
+        url = uri("https://aa-sdk.s3-eu-west-1.amazonaws.com/android_repo/")
+        content { includeGroup("tv.superawesome.sdk.publisher") }
     }
   }
 }
