@@ -7,21 +7,20 @@ description: This guide explains how to build Android and iOS Construct app.
 Construct 3 has its own mobile app build service. For most users this is the recommended way to build mobile apps. However there are limits on which third-party Cordova plugins can be used, and the build involves uploading your project and downloading an APK, which can be slow with large projects or slow connections. Using the Cordova CLI allows offline builds and use of any third-party Cordova plugins.
 
 ## Construct Build Service
-The build server uses an allowlist system for Cordova plugins. Hence only plugins which have been specifically allowed can be used. 
+Construct 3 Build Service uses an allowlist system for Cordova plugins, so only explicitly allowed plugins can be used. The CAS.AI add-on depends on [cordova-plugin-cas-ai](https://www.npmjs.com/package/cordova-plugin-casai).
+> [Original Construct topic](https://www.construct.net/en/forum/construct-3/plugin-sdk-10/build-server-cordova-plugin-149266)
 
-> [Original Construct topic](https://www.construct.net/en/forum/construct-3/plugin-sdk-10/build-server-cordova-plugin-149266).
+We submit each `cordova-plugin-cas-ai` update for whitelisting in the Construct Build Service, but reviews by the Construct support team can take up to a week.
 
-If you attempt to build your application with a version that has not been whitelisted, our plugin will not be included in your build without any errors, the issue will only become visible as an error when running on a device.
+The latest CAS.AI plugin versions may not yet be available in the Construct Build Service. Consider using the [Cordova CLI](https://docs.page/cleveradssolutions/docs/Construct/Build) to build your application in the meantime. 
 
-We submit each CAS.AI Cordova plugin update for whitelisting in the Construct Build Service, but reviews by the Construct support team can take up to a week. Therefore, the latest versions of the CAS.AI plugin may not always be available in the Construct Build Service, and you may want to use the Cordova CLI to build your application instead. 
+Follow [this issue](https://github.com/cleveradssolutions/CAS-Construct/issues/2) to track currently available versions.
 
-We will try to keep this page updated with the plugin versions available for the Construct Build Service. Alternatively, follow CAS.AI issues in the [Construct bug reports](https://github.com/Scirra/Construct-bugs/issues/9068). 
+<Warning>
+If you attempt to build your application with a plugin version that has not been whitelisted, our Cordova plugin will not be included in your build with no errors shown. The issue will only become visible when running on a device.
+</Warning>
 
-Below is the list of versions available for building.
-- [x] 4.6.6
-- [x] 4.6.5
-
-> [Original Build App in COnstruct topic](https://www.construct.net/en/tutorials/publish-mobile-apps-26) 
+> [Original Build App in Construct topic](https://www.construct.net/en/tutorials/publish-mobile-apps-26) 
 
 ## Cordova CLI
 To set up the Cordova CLI on your computer, you'll first need to install [Node.js](https://nodejs.org). Then install the cordova module using npm. For Windows, use the command:
