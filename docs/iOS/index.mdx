@@ -29,17 +29,24 @@ source 'https://github.com/cleveradssolutions/CAS-Specs.git'
 use_frameworks!
 ```
 
-### Mediated Networks
-CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
-If you're unsure which solution best fits your application, please contact your account manager.
+### Choose Mediated Networks
+<Warning>
+CAS.AI is a mediation SDK with no built-in live ad inventory. At least one ad network adapter or solution must be integrated before publishing to display ads and generate revenue.
+</Warning>
 
-Add one of the following lines of Clever Ads Solutions to your apps's target build configuration.
+Choose an integration path based on your app's target audience. If you're unsure which solution best fits your application, please contact your account manager.
+
+<Info>
+During development, you can test ad formats using [Test Ads](iOS/Enabling-test-ads) without adding any ad network SDKs.
+</Info>
 
 <AccordionGroup>
-<Accordion title="Optimal Ads Solution">
+<Accordion defaultOpen title="Optimal Ads Solution">
 
-Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:   
-Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange.  
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange.  
+
 ```ruby
 pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 ```
@@ -47,8 +54,9 @@ pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 </Accordion>
 <Accordion title="Families Ads Solution">
 
-Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). Networks included:  
-Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Chartboost, DTExchange, Kidoz.
+Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). 
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Chartboost, DTExchange, Kidoz.
+
 ```ruby
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 ```
@@ -58,8 +66,9 @@ The families ads solution is NOT intended for apps in [Apple Kids Category](iOS/
 </Accordion>
 <Accordion title="VPN Compliant Ads Solutions">
 
-Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions:  
-Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Unity Ads, Yango Ads, Yso Network.
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions. 
+> Networks included: Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Unity Ads, Yango Ads, Yso Network.
+
 ```ruby
 pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 ```
@@ -124,8 +133,16 @@ To add CAS as a package dependency to your Xcode project:
 7. Locate the `OTHER_LDFLAGS` setting.
 8. Ensure that `$(inherited)` and the `-ObjC` flag are at the beginning of the list.
 
+<Warning>
+CAS.AI is a mediation SDK with no built-in live ad inventory. At least one ad network adapter must be integrated before publishing to display ads and generate revenue.
+</Warning>
+
 <Info>
 Please note that SPM integration does not support certain adapters due to limitations of the ad frameworks. If you need to use these adapters, consider using the CocoaPods integration instead.
+</Info>
+
+<Info>
+During development, you can test ad formats using [Test Ads](iOS/Enabling-test-ads) with adding Clever Ads Solution framework only.
 </Info>
 
 ## Manual download

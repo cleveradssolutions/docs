@@ -230,14 +230,21 @@ If you just want to experiment or test the SDK, you can skip the configuration y
 
 </Accordion>
 
-## Mediated Networks
-CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
-If you're unsure which solution best fits your application, please contact your account manager.
+## Choice Mediated Networks
+<Warning>
+CAS.AI is a mediation SDK with no built-in live ad inventory. At least one ad network adapter or solution must be integrated before publishing to display ads and generate revenue.
+</Warning>
+
+Choose an integration path based on your app's target audience. If you're unsure which solution best fits your application, please contact your account manager.
+
+<Info>
+During development, you can test ad formats using [Test Ads](ReactNative/Enabling-test-ads) without adding any ad network SDKs.
+</Info>
 
 Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
 
 <AccordionGroup>
-<Accordion title="Optimal Ads Solution">
+<Accordion defaultOpen title="Optimal Ads Solution">
 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 

@@ -56,14 +56,27 @@ adb shell setprop debug.clever.ads.solutions.whitelist .
 adb shell setprop debug.clever.ads.solutions.filter .
 ```
 
-
 ## Switch to Test Ads mode
 Switch all ad impressions to CAS Test Ads.
-```
+```bash
 adb shell setprop debug.clever.ads.solutions.testmode 1
 ```
 
 <Info>Introduced with CAS 4.1.2.</Info>
+
+## Override A/B Test group
+Override live A/B test group.
+```bash
+adb shell setprop debug.clever.ads.solutions.abtest TEST_NAME
+```
+
+To disable override test group, use the following command:
+```bash
+adb shell setprop debug.clever.ads.solutions.abtest .
+```
+
+<Info>Introduced with CAS 4.6.7.</Info>
+
 
 ## Open Test Suite
 To open a selected test suite upon application launch, use the command below. Supported values include 'cas', 'max', and 'is'.

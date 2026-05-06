@@ -11,7 +11,7 @@ Make sure that your app's build file uses the following values:
 - Compile SDK version of `{{ min.targetapi }}` or higher
 - Kotlin version of `{{ min.kotlin }}` or higher
 
-### Maven repositories
+### Add Maven repositories
 In your Gradle settings file (`<project>/settings.gradle.kts`), include the
 following `repositories` block so that Gradle can download the artifacts of ad networks:
 
@@ -109,7 +109,7 @@ You can integrate CAS to your Android app using one of the following options:
 - **Option 1**: Use the CAS Gradle plugin setup workflow _(recommended, below)_.
 - **Option 2**: Use the [default Gradle setup](Android/Manual-setup) _(may require additional configuration)_.
 
-## CAS Gradle Plugin
+## Add CAS Gradle Plugin
 The CAS SDK provide a Gradle Plugin to simplify and automate certain integration steps. 
 Our plugin will automatically add mediated network dependencies to your project, which you configure in an `cas { }` block.
 
@@ -204,15 +204,22 @@ Note that you cannot use `applicationId` because the library module does not hav
 </Accordion>
 </AccordionGroup>
 
-## Mediated Networks
-CAS.AI SDK offers three integration paths. Choose one based on your app’s target audience.
-If you're unsure which solution best fits your application, please contact your account manager.
+## Choose Mediated Networks
+<Warning>
+CAS.AI is a mediation SDK with no built-in live ad inventory. At least one ad network adapter or solution must be integrated before publishing to display ads and generate revenue.
+</Warning>
+
+Choose an integration path based on your app's target audience. If you're unsure which solution best fits your application, please contact your account manager.
+
+<Info>
+During development, you can test ad formats using [Test Ads](Android/Enabling-test-ads) without adding any ad network SDKs.
+</Info>
 
 <AccordionGroup>
-<Accordion title="Optimal Ads Solution">
+<Accordion defaultOpen title="Optimal Ads Solution">
 
-Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks:  
-Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks. 
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
 
 ```groovy
 cas {
@@ -223,8 +230,8 @@ cas {
 </Accordion>
 <Accordion title="Families Ads Solution">
 
-Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en). Networks included:
-Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
+Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en). 
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
 
 ```groovy
 cas {
@@ -235,8 +242,8 @@ cas {
 </Accordion>
 <Accordion title="VPN Compliant Ads Solutions">
 
-Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions:  
-Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
+> Networks included: Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
 
 ```groovy
 cas {
@@ -269,7 +276,7 @@ An application must not use an advertising identifier if **at least one** of the
 - The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
 </Info>
 
-### Code minification
+### Enable Code minification
 Enabling `minifyEnabled` is a crucial step in optimizing your mobile application, especially when integrating ad mediation SDKs that augment your codebase's size. By leveraging code minification, you not only reduce the overall footprint of your app but also enhance its performance, security, and compatibility.
 ```kotlin
 android {
