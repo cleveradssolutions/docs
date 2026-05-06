@@ -5,13 +5,13 @@ title: CAS.AI Android SDK
 Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
 Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
 
-### App prerequisites
+## App prerequisites
 Make sure that your app's build file uses the following values:
 - Minimum SDK version of `{{ min.api }}` or higher
 - Compile SDK version of `{{ min.targetapi }}` or higher
 - Kotlin version of `{{ min.kotlin }}` or higher
 
-### Add Maven repositories
+## Add Maven repositories
 In your Gradle settings file (`<project>/settings.gradle.kts`), include the
 following `repositories` block so that Gradle can download the artifacts of ad networks:
 
@@ -261,7 +261,7 @@ Follow the instructions on the [Mediated Networks](Android/Mediated-Networks) pa
 </Accordion>
 </AccordionGroup>
 
-### Google Advertising Identifier
+## Google Advertising Identifier
 The [Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is a unique, user-resettable, and user-deletable ID for advertising, provided by Google Play services.
 
 ```groovy
@@ -276,7 +276,7 @@ An application must not use an advertising identifier if **at least one** of the
 - The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
 </Info>
 
-### Enable Code minification
+## Enable Code minification
 Enabling `minifyEnabled` is a crucial step in optimizing your mobile application, especially when integrating ad mediation SDKs that augment your codebase's size. By leveraging code minification, you not only reduce the overall footprint of your app but also enhance its performance, security, and compatibility.
 ```kotlin
 android {
@@ -294,7 +294,7 @@ android {
 The CAS SDK and adapters come bundled with the required ProGuard rules in the AARs. Therefore, you do not need to add any additional ProGuard rules to your project.
 </Info>
 
-### Optional permissions 
+## Optional permissions 
 The following permissions are not required for our SDK or 3rd-party SDKs to function, but including them in your `AndroidManifest.xml` may result in improved eCPM and user experience.
 ```xml
 <uses-permission android:name="android.permission.READ_PHONE_STATE"/>  
