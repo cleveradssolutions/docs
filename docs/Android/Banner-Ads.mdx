@@ -312,28 +312,18 @@ bannerView.setAdListener(new AdViewListener() {
 ## Optional Placement name
 An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
 
-The placement name should be set before loading the ads.
+The placement name should be set before loading the ads. Maximum 100 characters allowed for the placement name.
 
-<Tabs groupId="platform">
-<TabItem label="Kotlin" value="kotlin">
+<CodeGroup synchronize="true">
 ```kotlin
 bannerView.placement = "BestPlace"
 ```
 
-</TabItem>
-<TabItem label="Java" value="java">
 ```java
 bannerView.setPlacement("BestPlace")
 ```
 
-</TabItem>
-<TabItem label="Compose" value="compose">
-```kotlin
-bannerView.placement = "BestPlace"
-```
-
-</TabItem>
-</Tabs>
+</CodeGroup>
 
 ## Load Ad
 

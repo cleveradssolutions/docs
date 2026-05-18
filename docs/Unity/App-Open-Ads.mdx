@@ -129,6 +129,12 @@ void AdFailedToShow(string error)
 }
 ```
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+```cs
+manager.ShowAd(AdType.AppOpen, "BestPlace");
+```
+
 ## Cold starts and loading screens
 The documentation thus far assumes that you only show app open ads when users foreground your app when it is suspended in memory. "Cold starts" occur when your app is launched but was not previously suspended in memory.  
 

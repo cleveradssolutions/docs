@@ -126,28 +126,18 @@ After a call to `load()`, a single callback is made to the previously defined `N
 ### Optional Placement name
 An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
 
-The placement name should be set before loading the ads.
+The placement name should be set before loading the ads. Maximum 100 characters allowed for the placement name.
 
-<Tabs groupId="platform">
-<TabItem label="Kotlin" value="kotlin">
+<CodeGroup synchronize="true">
 ```kotlin
 adLoader.placement = "BestPlace"
 ```
 
-</TabItem>
-<TabItem label="Java" value="java">
 ```java
 adLoader.setPlacement("BestPlace")
 ```
 
-</TabItem>
-<TabItem label="Compose" value="compose">
-```kotlin
-adLoader.placement = "BestPlace"
-```
-
-</TabItem>
-</Tabs>
+</CodeGroup>
 
 ### Autoload Ad mode
 

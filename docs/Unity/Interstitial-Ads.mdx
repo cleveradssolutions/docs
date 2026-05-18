@@ -78,6 +78,12 @@ Use `AdType.Interstitial` parameter to show ad:
 manager.ShowAd(AdType.Interstitial);
 ```
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+```cs
+manager.ShowAd(AdType.Interstitial, "BestPlace");
+```
+
 ## Minimum interval between impressions
 You can limit the posting of an interstitial ad to a period of time in seconds after the ad is closed, during which display attempts will fail.
 That the interval starts only after the Interstitial Ad **closes** `OnInterstitialAdClosed`.  

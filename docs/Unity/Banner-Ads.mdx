@@ -56,6 +56,16 @@ adView.Load();
 ```
 
 Also you can use the load for cancel current impression and load next ad.
+
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
+
+The placement name should be set before loading the ads. Maximum 100 characters allowed for the placement name.
+```cs
+adView.placement = "BestPlace";
+adView.Load();
+```
+
 ## Ad events
 To further customize the behavior of your ad, you can hook into a number of events in the ad's lifecycle: loading, clicking, and so on. Listen for these events by registering a delegate for the appropriate event, as shown below.
 

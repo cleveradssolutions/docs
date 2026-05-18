@@ -89,6 +89,12 @@ Use `AdType.Rewarded` parameter to show ad:
 manager.ShowAd(AdType.Rewarded);
 ```
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+```cs
+manager.ShowAd(AdType.Rewarded, "BestPlace");
+```
+
 ## Muted Ads Sounds
 Sounds in Interstitial and Rewarded ads mute state. Disabled by default.  
 ```cs
