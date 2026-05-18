@@ -181,6 +181,21 @@ protected void onCreate(Bundle savedInstanceState) {
 
 By default autoload disabled.
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
+
+The placement name should be set before showing the ads.
+
+<CodeGroup synchronize="true">
+```kotlin
+interstitialAd.placement = "BestPlace"
+```
+
+```java
+interstitialAd.setPlacement("BestPlace")
+```
+</CodeGroup>
+
 ## Show Ad
 
 Interstitial ads should be displayed during natural pauses in the flow of an app. Between levels of a game is a good example, or after the user completes a task. To show an interstitial, use the `show(Activity?)` method.

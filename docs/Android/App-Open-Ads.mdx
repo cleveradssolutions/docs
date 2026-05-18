@@ -181,6 +181,21 @@ protected void onCreate(Bundle savedInstanceState) {
 </CodeGroup>
 By default autoload disabled.
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
+
+The placement name should be set before showing the ads.
+
+<CodeGroup synchronize="true">
+```kotlin
+appOpenAd.placement = "BestPlace"
+```
+
+```java
+appOpenAd.setPlacement("BestPlace")
+```
+</CodeGroup>
+
 ## Show Ad
 
 The most common app open implementation is to attempt to show an app open ad near app launch, start app content if the ad isn't ready, and preload another ad for the next app open opportunity.

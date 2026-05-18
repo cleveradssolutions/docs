@@ -309,6 +309,32 @@ bannerView.setAdListener(new AdViewListener() {
 
 </CodeGroup>
 
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
+
+The placement name should be set before loading the ads.
+
+<Tabs groupId="platform">
+<TabItem label="Kotlin" value="kotlin">
+```kotlin
+bannerView.placement = "BestPlace"
+```
+
+</TabItem>
+<TabItem label="Java" value="java">
+```java
+bannerView.setPlacement("BestPlace")
+```
+
+</TabItem>
+<TabItem label="Compose" value="compose">
+```kotlin
+bannerView.placement = "BestPlace"
+```
+
+</TabItem>
+</Tabs>
+
 ## Load Ad
 
 Once the ad view is in place, the next step is to load an ad. That's done with the `loadAd()` method in the `CASBannerView`class.

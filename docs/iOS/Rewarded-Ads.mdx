@@ -161,6 +161,21 @@ override func viewDidLoad() {
 
 By default autoload disabled.
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
+
+The placement name should be set before showing the ads.
+
+<CodeGroup synchronize="true">
+```swift
+rewardedAd.placement = "BestPlace"
+```
+
+```objc
+rewardedAd.placement = @"BestPlace";
+```
+</CodeGroup>
+
 ## Show Ad
 When you present a rewarded ad, you will use an `userDidEarnRewardHandler` to handle reward  for the user.
 

@@ -123,6 +123,32 @@ fun NativeAdScreen() {
 
 After a call to `load()`, a single callback is made to the previously defined `NativeAdContentCallback` to deliver the native ad object or report an error.
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements.
+
+The placement name should be set before loading the ads.
+
+<Tabs groupId="platform">
+<TabItem label="Kotlin" value="kotlin">
+```kotlin
+adLoader.placement = "BestPlace"
+```
+
+</TabItem>
+<TabItem label="Java" value="java">
+```java
+adLoader.setPlacement("BestPlace")
+```
+
+</TabItem>
+<TabItem label="Compose" value="compose">
+```kotlin
+adLoader.placement = "BestPlace"
+```
+
+</TabItem>
+</Tabs>
+
 ### Autoload Ad mode
 
 The `CASNativeLoader` does not have an autoload ad mode like other ad formats, so you need to implement error handling and ad reloading manually.
