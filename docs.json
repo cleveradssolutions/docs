@@ -3,10 +3,10 @@
     "description": "Increase your mobile app monetization efficiency with CAS.AI.",
     "variables": {
         "versions": {
-            "android": "4.7.1",
-            "ios": "4.7.1",
+            "android": "4.7.3",
+            "ios": "4.7.3",
             "iosconfig": "4.7.0",
-            "unity": "4.7.1",
+            "unity": "4.7.3",
             "flutter": "4.7.1",
             "unreal": "4.7.1",
             "reactnative": "4.7.2",
