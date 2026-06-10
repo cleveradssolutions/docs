@@ -119,16 +119,20 @@ useEffect(() => {
 ### Autoload Ad mode
 The `NativeAdLoader` does not have an autoload ad mode like other ad formats, so you need to implement error handling and ad reloading manually.
 
-### Ad Loader options
-You can configure optional loader parameters:
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
 
-#### StartVideoMuted
+```ts
+NativeAdLoader.setPlacement("BestPlace");
+```
+
+### StartVideoMuted
 Controls whether native video content starts muted. Muted by default.
 ```ts
 NativeAdLoader.setStartVideoMuted(true);
 ```
 
-#### AdChoicesPlacement
+### AdChoicesPlacement
 Preferred placement for the AdChoices icon inside your native ad view. Leave space in your preferred corner of your native ad view for the automatically inserted AdChoices logo. Available values: `TOP_LEFT`, `TOP_RIGHT`, `BOTTOM_RIGHT`, `BOTTOM_LEFT`. 
 ```ts
 NativeAdLoader.setAdChoicesPlacement(AdChoicesPlacement.TOP_RIGHT);

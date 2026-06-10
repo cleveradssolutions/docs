@@ -51,9 +51,9 @@ cas {
 }
 ```
 
-<Info>
+<Success>
 Make sure to update the CAS Gradle plugin version whenever you update the CAS Flutter package. The CASGradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](Android#integration-options).
-</Info>
+</Success>
 </TabItem>
 
 <TabItem label="iOS" value="ios">
@@ -81,10 +81,9 @@ If you just want to experiment or test the SDK, you can skip the configuration y
 </Accordion>
 </AccordionGroup>
 
-
-<Info>
+<Success>
 Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
-</Info>
+</Success>
 
 The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project. 
 All CAS frameworks are hosted and distributed through their own source repository. Please add CAS source repository url to the beginning of the Podfile:
@@ -102,9 +101,9 @@ end
 ```
 Run `pod update` terminal command inside the `ios` directory after modifying the `Podfile`.
 
-<Info>
+<Success>
 Make sure to update the CAS pods version whenever you update the CAS Flutter package. The Ads Solution pods version matches the version of [the CAS iOS SDK](https://github.com/cleveradssolutions/CAS-iOS/releases).
-</Info>
+</Success>
 
 </TabItem>
 </Tabs>
@@ -122,76 +121,84 @@ During development, you can test ad formats using [Test Ads](Flutter/Enabling-te
 
 Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
 
-### Optimal Ads Solution
+<AccordionGroup>
+<Accordion defaultOpen title="Optimal Ads Solution">
+
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
+<CodeGroup synchronize={true}>
 ```kotlin
+// <project>/android/app/build.gradle
 cas {
     includeOptimalAds = true
 }
 ```
-</TabItem>
 
-<TabItem label="iOS" value="ios">
 ```ruby
+# <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 ```
-</TabItem>
-</Tabs>
+</CodeGroup>
 
-### Families Ads Solution
+</Accordion>
+
+<Accordion title="Families Ads Solution">
+
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
+<CodeGroup synchronize={true}>
 ```kotlin
+// <project>/android/app/build.gradle
 cas {
     includeFamiliesAds = true
 }
 ```
-</TabItem>
 
-<TabItem label="iOS" value="ios">
 ```ruby
+# <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 ```
-</TabItem>
-</Tabs>
+</CodeGroup>
 
-### VPN Compliant Ads Solutions
+</Accordion>
+
+<Accordion title="VPN Compliant Ads Solutions">
+
 Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions:  
 Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
+<CodeGroup synchronize={true}>
 ```kotlin
+// <project>/android/app/build.gradle
 cas {
     includeVPNCompliantAds = true
 }
 ```
-</TabItem>
-
-<TabItem label="iOS" value="ios">
 ```ruby
+# <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 ```
-</TabItem>
-</Tabs>
+</CodeGroup>
 
-### Choice networks
+</Accordion>
+
+<Accordion title="Choice mediation adapters">
+
 Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks) and the [iOS page](iOS/Mediated-Networks).
+
+</Accordion>
+</AccordionGroup>
 
 ## Advertising Identifier
 CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
 To enable the use of the Advertising ID in your app, you need to complete the following setup steps.
 
-<Tabs groupId="platform">
-<TabItem label="Android" value="android">
+<AccordionGroup>
+<Accordion title="Android Google Adverision ID">
 CAS Mediation allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
 
 ```kotlin
+// <project>/android/app/build.gradle
 cas {
     useAdvertisingId = true
 }
@@ -201,18 +208,15 @@ An application must not use an advertising identifier if **at least one** of the
 - The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
 - The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
 
-</TabItem>
+</Accordion>
 
-<TabItem label="iOS" value="ios">
+<Accordion title="iOS User Tracking Usage description">
 
 To use the App Tracking Transparency authorization request for accessing the IDFA, update your `<project>/ios/Runner/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
 ```xml
 <key>NSUserTrackingUsageDescription</key>
 <string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
 ```
-
-<AccordionGroup>
-<Accordion title="Usage description examples">
 
 - Your data will remain confidential and will only be used to provide you a better and personalised ad experience
 - Your data will be used to provide you a better and personalised ad experience
@@ -223,7 +227,7 @@ To use the App Tracking Transparency authorization request for accessing the IDF
 - This only uses device info for more interesting and relevant ads
 
 </Accordion>
-<Accordion title="Localizing Usage description (optional)">
+<Accordion title="iOS Localizing Usage description (optional)">
 
 To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.  
 The table below gives you a variety of localizations that you can use at your discretion.
@@ -237,9 +241,7 @@ The table below gives you a variety of localizations that you can use at your di
 | Ukrainian (uk)  | Ваші дані залишатимуться конфіденційними та використовуватимуться лише для надання вам кращої та персоналізованої реклами                     |
 | Russian (ru)    | Ваши данные останутся конфиденциальными и будут использоваться только для предоставления вам более качественной и персонализированной рекламы |
 | Portuguese (pt) | Seus dados permanecerão confidenciais e serão usados apenas para lhe proporcionar uma experiência publicitária melhor e personalizada         |
-| Japanese (ja)   | お客様のデータは機密として保持され、より優れたパーソナライズされた広告エクスペリエンスを提供するためにのみ使用されます                                                                                   |
+| Japanese (ja)   | お客様のデータは機密として保持され、より優れたパーソナライズされた広告エクスペリエンスを提供するためにのみ使用されます |
 
 </Accordion>
 </AccordionGroup>
-</TabItem>
-</Tabs>

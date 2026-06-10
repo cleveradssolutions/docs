@@ -7,11 +7,11 @@
             "ios": "4.7.3",
             "iosconfig": "4.7.0",
             "unity": "4.7.3",
-            "flutter": "4.7.1",
-            "unreal": "4.7.1",
-            "reactnative": "4.7.2",
-            "cordova": "4.7.2",
-            "construct": "4.7.2.0"
+            "flutter": "4.7.3",
+            "unreal": "4.7.3",
+            "reactnative": "4.7.3",
+            "cordova": "4.7.3",
+            "construct": "4.7.3.0"
         },
         "min": {
             "xcode": "26.0",

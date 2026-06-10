@@ -61,6 +61,15 @@ class NativeAdExampleState extends State<NativeAdExample> {
 Read more about `AdContentInfo` structure in [Impression Level Data](Flutter/Impression-Level-Data).
 </Info>
 
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```dart
+CASNativeContent.load( 
+  placement: "BestPlace", // [!code focus] 
+)
+```
+
 ## Show Ad Widget
 `CASWidget` inherits from Flutter's Widget class and can be used like any other widget.  
 Ensure that you define the desired widget size, as native ads do not have an intrinsic size and will expand to fit the constraints of their container. You may provide a fixed size or use `LayoutBuilder` to dynamically allocate space for the ad.

@@ -256,13 +256,15 @@ Recommended for **most applications** targeting a **general or mixed audience**.
 <Tabs groupId="setup">
   <TabItem label="React Native" value="react">
   <CodeGroup>
-```gradle
+```kotlin
+// <project>/android/app/build.gradle
 cas {
     includeOptimalAds = true
 }
 ```
 
 ```ruby
+# <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 ```
 </CodeGroup>
@@ -289,13 +291,15 @@ Required for applications **directed exclusively at children**, in accordance wi
 <Tabs groupId="setup">
   <TabItem label="React Native" value="react">
   <CodeGroup>
-```gradle
+```kotlin
+// <project>/android/app/build.gradle
 cas {
     includeFamiliesAds = true
 }
 ```
 
 ```ruby
+# <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 ```
 </CodeGroup>
@@ -321,13 +325,15 @@ Designed specifically for applications that provide VPN or proxy services. This 
 <Tabs groupId="setup">
   <TabItem label="React Native" value="react">
   <CodeGroup>
-```gradle
+```kotlin
+// <project>/android/app/build.gradle
 cas {
     includeVPNCompliantAds = true
 }
 ```
 
 ```ruby
+# <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 ```
 </CodeGroup>
@@ -393,9 +399,9 @@ To enable the use of the Advertising ID in your app, you need to complete the fo
 <Accordion title="Android Google Adverision ID">
 CAS.AI Plugin allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
 
-```gradle
+```kotlin
 cas {
-    useAdvertisingId = true
+    useAdvertisingId = true // [!code focus]
 }
 ```
 

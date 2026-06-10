@@ -43,6 +43,14 @@ To ensure the ad displays instantly when needed, load the ad instance in advance
 
 Use the `addAdLoadedEventListener` event to be notified when the ad is ready for display.
 
+### Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```ts
+useEffect(() => {
+  RewardedAd.setPlacement("BestPlace"); // [!code focus] 
+}, []);
+```
 
 ## Ad content callbacks
 `InterstitialAd` has several optional callbacks for the ad lifecycle. These callbacks can be registered via event listeners.

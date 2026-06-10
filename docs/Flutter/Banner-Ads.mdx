@@ -164,6 +164,16 @@ Override the automatic refresh interval in `createAndLoad()` arguments:
 Read more about `AdContentInfo` structure in [Impression Level Data](Flutter/Impression-Level-Data).
 </Info>
 
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```dart
+_bannerAd = CASBanner.createAndLoad( 
+  size: adSize,
+  placement: "BestPlace", // [!code focus]
+);
+```
+
 ## Show Ad Widget
 `CASWidget` inherits from Flutter's Widget class and can be used like any other widget.
 ```dart

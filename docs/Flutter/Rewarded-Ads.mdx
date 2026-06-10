@@ -55,7 +55,7 @@ Ad content may take some time to load after creating an ad instance. To ensure t
 
 CAS provides functionality to create and preload multiple ad instances in advance, ensuring uninterrupted sequential ad delivery. Mediation ads are loaded in order for each created instance.
 
-## Ad  content callbacks
+## Ad content callbacks
 `CASRewarded` has several optional callbacks for the ad lifecycle. These callbacks can be set either as arguments in the `createAndLoad()` function or later via the properties of the ad instance.
 
 ```dart
@@ -85,6 +85,15 @@ _rewardedAd.onAdDismissed = (AdScreenInstance ad) {
 - Read more about `AdContentInfo` structure in [Impression Level Data](Flutter/Impression-Level-Data).
 - When an error occurs during ad impression, executed the `onAdFailedToShow` only.  In this case the `onAdDismissed` will not be executed, since the impression is not considered successful.
 </Info>
+
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```dart
+_rewardedAd = CASRewarded.createAndLoad( 
+  placement: "BestPlace", // [!code focus] 
+)
+```
 
 ## Show Ad
 Be sure to implement `onUserEarnedReward` callback and reward the user for watching an ad.  
