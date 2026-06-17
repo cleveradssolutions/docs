@@ -95,7 +95,7 @@ An optional placement name for the ad instance that helps categorize and track s
 
 ```dart
 _appOpenAd = CASAppOpen.createAndLoad( 
-  placement: "BestPlace", // [!code focus] 
+  placement: "BestPlace", // [!code highlight]
 )
 ```
 
@@ -131,7 +131,7 @@ Be sure to release ad resources if you’re no longer going to use the ad instan
 ```dart
   @override
   void dispose() {
-    _appOpenAd.dispose();
+    _appOpenAd.dispose(); // [!code highlight]
     super.dispose();
   }
 ```
