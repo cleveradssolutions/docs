@@ -224,7 +224,6 @@ During development, you can test ad formats using [Test Ads](Android/Enabling-te
 <Accordion defaultOpen title="Optimal Ads Solution">
 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks. 
-> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange
 
 ```groovy
 cas {
@@ -232,11 +231,12 @@ cas {
 }
 ```
 
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange, Monetrix, Maticoo, YSO Netowrk
+
 </Accordion>
 <Accordion title="Families Ads Solution">
 
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en). 
-> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
 
 ```groovy
 cas {
@@ -244,17 +244,20 @@ cas {
 }
 ```
 
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Chartboost, DTExchange, Kidoz
+
 </Accordion>
 <Accordion title="VPN Compliant Ads Solutions">
 
 Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
-> Networks included: Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
 
 ```groovy
 cas {
     includeVPNCompliantAds = true
 }
 ```
+
+> Networks included: Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Monetrix, Unity Ads, Yango Ads, Yso Network.
 
 </Accordion>
 <Accordion title="Choice networks">

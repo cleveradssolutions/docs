@@ -45,33 +45,37 @@ During development, you can test ad formats using [Test Ads](iOS/Enabling-test-a
 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, Chartboost, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange.  
-
 ```ruby
 pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 ```
+
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Pangle, DTExchange, AppLovin, AudienceNetwork, Bigo, CASExchange, Maticoo, YSONetwork, Monetrix
 
 </Accordion>
 <Accordion title="Families Ads Solution">
 
 Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). 
-> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Chartboost, DTExchange, Kidoz.
 
 ```ruby
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 ```
 
+> Networks included: Google Ads, Unity Ads, IronSource, LiftoffMonetize, InMobi, Yango Ads, Mintegral, Chartboost, DTExchange, Kidoz.
+
+<Info>
 The families ads solution is NOT intended for apps in [Apple Kids Category](iOS/Apple-Kids-Category).
+</Info>
 
 </Accordion>
 <Accordion title="VPN Compliant Ads Solutions">
 
 Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions. 
-> Networks included: Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Unity Ads, Yango Ads, Yso Network.
 
 ```ruby
 pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 ```
+
+> Networks included: Bigo Ads, Chartboost, Google Ads, InMobi, IronSource, Liftoff Monetize, Mintegral, Unity Ads, Yango Ads, Yso Network.
 
 </Accordion>
 <Accordion title="Choice networks">
