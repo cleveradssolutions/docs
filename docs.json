@@ -1036,12 +1036,5 @@
             "tab": "construct",
             "href": "https://github.com/cleveradssolutions/CAS-Construct/releases"
         }
-    ],
-    "search": {
-        "docsearch": {
-            "appId": "348UOG7ZJB",
-            "apiKey": "750c6310c305f85a64f7b5c57273c0c2",
-            "indexName": "CAS.AI Development Docs"
-        }
-    }
+    ]
 }
