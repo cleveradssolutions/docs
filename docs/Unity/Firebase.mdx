@@ -1,0 +1,68 @@
+---
+title: Firebase
+---
+
+Setting up Firebase lets your project collect analytics and export raw event data, which CAS.AI uses to evaluate performance and prepare a test purchase. Follow the steps below in order.
+
+## Create a Firebase project
+
+<Info>
+If you already have a Firebase project, you can skip this step and continue with the existing one.
+</Info>
+
+1. Go to the [Firebase console](https://console.firebase.google.com/) and log in with your Google account.
+2. Press `Add project` and follow the prompts to name your project.
+3. Keep `Enable Google Analytics for this project` turned on, choose or create a Google Analytics account, then press `Create project`.
+4. Press `Add app` to register your app, then download its configuration file and add it to your project. Without it, the Firebase SDK won't initialize.
+
+## Share permissions
+Grant CAS.AI access so we can handle billing and analytics on your behalf. Your manager will provide the exact email addresses to add.
+- Go to: `Project Settings > Users and permissions` and press `Add member`
+- Add `chellenger98@gmail.com` with the `Owner` role in `Firebase` and `Google Analytics`.  
+  Owner access is needed to manage billing for you, such as switching to the Blaze plan.
+- Add `cas_firebase_user@cas.ai ` with the `Editor` role in `Firebase` and `Google Analytics`.  
+  This access is needed to analyze your metrics and set up campaigns.
+
+## Switch to the Blaze plan
+Exporting data to BigQuery, which you'll set up below, is only available on the paid `Blaze` plan.
+- Check the current plan at the bottom of the left panel.
+- If the project is on `Spark`, open the billing dialog and upgrade to `Blaze`.
+<Info>
+If you can't switch the plan yourself, your CAS.AI manager can do it for you using the `Owner` access granted in the previous step.
+</Info>
+
+## Set up integrations
+Go to: `Project settings > Integrations`. Both BigQuery and Google Play are linked from this tab.
+
+<Image width="650" alt="image" src="/assets/unity/publishers/Integrations-Tab.png" />
+
+### Link BigQuery
+1. Go to: `BigQuery > Link`, then continue through the linking flow.
+2. In `Select a region`, choose `europe-central2`.
+3. In `Export settings`, check every box:
+  - [x] `Daily`
+  - [x] `Streaming`
+  - [x] `Include advertising identifiers in export`
+
+<Image width="650" alt="image" src="/assets/unity/publishers/BigQuery-Export.png" />
+
+<Warning>
+The BigQuery region **must** be `europe-central2`. If a different region is used, the timezone has to be corrected manually in analytics afterwards.
+</Warning>
+
+### Link Google Play
+
+<Info>
+This step is only required for apps published on **Google Play**. The email you are signed in with must be linked to an account in the Google Play Console.
+</Info>
+
+- Go to: `Google Play > Link`, then confirm the connection to associate your app with the project.
+
+<Image width="650" alt="image" src="/assets/unity/publishers/google-play-linking.png" />
+
+## Set up the GA timezone
+In Google Analytics, set the reporting time zone so the exported data lines up with CAS.AI reporting.
+- Go to: `Admin > Property settings > Reporting time zone` and choose a `(GMT+03:00)` option.
+- Press `Save`.
+
+<Image width="650" alt="image" src="/assets/unity/publishers/Set-Timezone.png" />

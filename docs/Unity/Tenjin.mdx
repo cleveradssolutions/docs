@@ -1,0 +1,37 @@
+---
+title: Tenjin
+description: Integrate the Tenjin SDK through CAS.AI to attribute installs and track purchases.
+---
+ 
+Tenjin handles install attribution and purchase tracking. The CAS SDK already bundles automatic Tenjin initialization, so the setup below covers the manual options and what's required to track in-app purchases.
+ 
+## Add the Tenjin SDK
+Download the latest version of the [Tenjin SDK](https://github.com/tenjin/tenjin-unity-sdk/releases) and add it to your project.
+ 
+## Initialize Tenjin
+<Info>
+If your app has **no** in-app purchases, you can skip manual setup and ask your manager to enable the Tenjin integration automatically, since the CAS SDK already includes automatic initialization.
+</Info>
+ 
+For manual initialization of Tenjin through CAS, pass the Tenjin key as a mediation extra on the CAS builder:
+ 
+```csharp
+builder.WithMediationExtras("tenjin_key", <TENJIN_SDK_KEY>);
+```
+ 
+## Track purchases
+ 
+To send purchases to Tenjin, integrate the purchase-tracking code from the Tenjin [example](https://docs.tenjin.com/docs/unity-sdk#ios-and-android-iap-example) into your app.
+
+<Warning>
+Don't forget to insert the **Tenjin SDK Key** into your code.
+</Warning>
+
+If your app includes in-app purchases, you must provide your manager with the following so Tenjin can track them:
+ 
+- **Public Key** for the Android app
+- **Shared Secret** for the iOS app (only for subscriptions)
+
+<Warning>
+Without the Public Key (Android) and Shared Secret (iOS), Tenjin will not be able to track your purchases.
+</Warning>
