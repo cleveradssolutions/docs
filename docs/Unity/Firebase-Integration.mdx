@@ -29,6 +29,7 @@ Exporting data to BigQuery, which you'll set up below, is only available on the 
 - Check the current plan at the bottom of the left panel.
 - If the project is on `Spark`, open the billing dialog and upgrade to `Blaze`.
 <Info>
+`Blaze` is pay-as-you-go but includes a free usage tier — you're only charged if your project exceeds the free limits, so the switch itself costs nothing.
 If you can't switch the plan yourself, your CAS.AI manager can do it for you using the `Owner` access granted in the previous step.
 </Info>
 
@@ -41,9 +42,9 @@ Go to: `Project settings > Integrations`. Both BigQuery and Google Play are link
 1. Go to: `BigQuery > Link`, then continue through the linking flow.
 2. In `Select a region`, choose `europe-central2`.
 3. In `Export settings`, check every box:
-  - [x] `Daily`
-  - [x] `Streaming`
-  - [x] `Include advertising identifiers in export`
+   - [x] `Daily`
+   - [x] `Streaming`
+   - [x] `Include advertising identifiers in export`
 
 <Image width="650" alt="image" src="/assets/unity/publishers/bigquery-export.png" />
 
