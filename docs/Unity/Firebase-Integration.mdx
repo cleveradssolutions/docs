@@ -17,7 +17,7 @@ If you already have a Firebase project, you can skip this step and continue with
 4. Press `Add app` to register your app, then download its configuration file and add it to your project. Without it, the Firebase SDK won't initialize.
 
 ## Share permissions
-Grant CAS.AI access so we can handle billing and analytics on your behalf. Your manager will provide the exact email addresses to add.
+Grant CAS.AI access so we can handle billing and analytics on your behalf.
 - Go to: `Project Settings > Users and permissions` and press `Add member`
 - Add `chellenger98@gmail.com` with the `Owner` role in `Firebase` and `Google Analytics`.  
   Owner access is needed to manage billing for you, such as switching to the Blaze plan.
@@ -30,8 +30,10 @@ Exporting data to BigQuery, which you'll set up below, is only available on the 
 - If the project is on `Spark`, open the billing dialog and upgrade to `Blaze`.
 <Info>
 `Blaze` is pay-as-you-go but includes a free usage tier — you're only charged if your project exceeds the free limits, so the switch itself costs nothing.
-If you can't switch the plan yourself, your CAS.AI manager can do it for you using the `Owner` access granted in the previous step.
 </Info>
+<Success>
+If you can't switch the plan yourself, your CAS.AI manager can do it for you using the `Owner` access granted in the previous step.
+</Success
 
 ## Set up integrations
 Go to: `Project settings > Integrations`. Both BigQuery and Google Play are linked from this tab.
