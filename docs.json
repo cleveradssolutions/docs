@@ -507,6 +507,26 @@
             ]
         },
         {
+            "group": "CAS.AI Game Publisher",
+            "tab": "unity",
+            "pages": [
+                {
+                    "group": "Integration Checklist",
+                    "href": "/Unity/Publisher-Integrations",
+                    "pages": [
+                        {
+                            "title": "Firebase",
+                            "href": "/Unity/Firebase-Integration"
+                        },
+                        {
+                            "title": "Tenjin",
+                            "href": "/Unity/Tenjin-Integration"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "group": "Get Started",
             "tab": "flutter",
             "pages": [
