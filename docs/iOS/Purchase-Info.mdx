@@ -138,3 +138,11 @@ CAS.reportPurchase(purchaseInfo)
 [CAS reportPurchase:purchaseInfo];
 ```
 </CodeGroup>
+
+## Automatic forwarding to Tenjin
+ 
+Purchases reported through `CAS.reportPurchase(_:)` can also be forwarded automatically to Tenjin Analytics, so you don't need a separate integration to get IAP revenue into Tenjin.
+ 
+<Info>
+This requires CAS SDK 4.8.1 or higher, and the feature must be enabled for your account. Contact your account manager to request it.
+</Info>
