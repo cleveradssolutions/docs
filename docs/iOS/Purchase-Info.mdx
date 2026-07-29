@@ -12,200 +12,125 @@ revenue = quantity * price * currency_rate
 
 ## Reporting a purchase
 
-Create a `PurchaseInfo` object with the product details, then pass it to `CAS.reportPurchase`. Depending on which version of StoreKit you use, you should also attach validation data so CAS.AI can verify the purchase server-side.
-
-### StoreKit 2
-
-```swift
-CAS.reportPurchase(
-    PurchaseInfo(
-        productID: transaction.productID,
-        price: transaction.price ?? 0,
-        currency: transaction.currency?.identifier,
-        quantity: transaction.purchasedQuantity
-    )
-    // Recommended: add info to validate purchase
-    .addValidation(
-        transactionID: transaction.id,
-        jwsRepresentation: verificationResult.jwsRepresentation
-    )
-    // If the product is a subscription
-    .addSubscription(
-        originalID: transaction.originalID,
-        originalPurchaseDate: transaction.originalPurchaseDate,
-        jsonRepresentation: transaction.jsonRepresentation
-    )
-)
-```
-
-### StoreKit 1
-
-```swift
-guard transaction.transactionState == .purchased else { return }
-let receiptURL = Bundle.main.appStoreReceiptURL
-let receiptData = receiptURL.flatMap { try? Data(contentsOf: $0) }
-
-CAS.reportPurchase(
-    PurchaseInfo(
-        productID: transaction.payment.productIdentifier,
-        price: product.price as Decimal,
-        currency: product.priceLocale.currencyCode,
-        quantity: transaction.payment.quantity
-    )
-    // Recommended: add info to validate purchase
-    .addValidation(
-        transactionID: transaction.transactionIdentifier,
-        receiptData: receiptData
-    )
-    // If the product is a subscription
-    .addSubscription()
-)
-```
+Call `CAS.reportPurchase(_:)` with a `PurchaseInfo` object as soon as you've confirmed a completed transaction — this is what feeds IAP revenue into CAS.AI alongside your ad revenue.
 
 <Info>
 `PurchaseInfo` is exposed to Objective-C as `CASPurchaseInfo`.
 </Info>
 
-## Initialization
+Where you call it depends on which StoreKit version you use:
+- **StoreKit 2 (Swift):** inside your `Transaction.updates` listener, right after you verify the transaction — the same place you'd typically call `transaction.finish()`.
+- **StoreKit 1 (Objective-C):** inside your `SKPaymentTransactionObserver`'s `paymentQueue:updatedTransactions:` delegate method, in the `SKPaymentTransactionStatePurchased` case — the same place you'd typically call `finishTransaction:`.
 
-<Property name="productID" type="String">
-  Product identifier from the IAP provider.
-</Property>
+### 1. Create `PurchaseInfo`
 
----
+Build the object from the transaction's product ID, price, currency, and quantity.
 
-<Property name="price" type="NSDecimalNumber">
-  Price of one purchased item in the selected currency. A `Decimal` convenience initializer is also available.
-</Property>
+<CodeGroup synchronize="true">
+```swift SK2 (Swift)
+// Inside your Transaction.updates listener
+func listenForTransactions() -> Task<Void, Error> {
+    Task.detached {
+        for await result in Transaction.updates {
+            guard let transaction = try? self.verify(result) else { continue }
 
----
+            let purchaseInfo = PurchaseInfo(
+                productID: transaction.productID,
+                price: transaction.price ?? 0,
+                currency: transaction.currency?.identifier,
+                quantity: transaction.purchasedQuantity
+            )
 
-<Property name="currency" type="String?" optional>
-  ISO 4217 currency code, for example `USD` or `EUR`.
-</Property>
+            // See steps 2-4 below, then call CAS.reportPurchase(purchaseInfo)
 
----
-
-<Property name="quantity" type="Int" default="1">
-  Number of items being purchased.
-</Property>
-
-<Info>
-On initialization, `productID` must not be empty, `quantity` must be at least `1`, `price` must not be negative, and `currency` — if provided — must be a valid, 3-letter ISO 4217 code. These are enforced with runtime assertions.
-</Info>
-
-## Properties
-
-<Property name="receiptBase64" type="String?" optional>
-  StoreKit 1 only. Base64-encoded binary receipt (ASN.1) from `Bundle.main.appStoreReceiptURL`. Set via `addValidation(transactionID:receiptData:)`.
-</Property>
-
----
-
-<Property name="jwsRepresentation" type="String?" optional>
-  StoreKit 2 only. The cryptographically signed JWS representation from `VerificationResult.jwsRepresentation`, used for backend verification. Set via `addValidation(transactionID:jwsRepresentation:)`.
-</Property>
-
----
-
-<Property name="jsonRepresentation" type="String?" optional>
-  StoreKit 2 only. Plain-text JSON dump of the transaction fields from `Transaction.jsonRepresentation`, used for server analytics. Set via `addSubscription(originalID:originalPurchaseDate:jsonRepresentation:)`.
-</Property>
-
----
-
-<Property name="transactionID" type="String?" optional>
-  Transaction identifier from StoreKit.
-  - StoreKit 1: `SKPaymentTransaction.transactionIdentifier`
-  - StoreKit 2: `Transaction.id`
-</Property>
-
----
-
-<Property name="originalTransactionID" type="String?" optional>
-  Original transaction identifier, used for subscription validation.
-  - StoreKit 1: `SKPaymentTransaction.original.transactionIdentifier`
-  - StoreKit 2: `Transaction.originalID`
-</Property>
-
----
-
-<Property name="originalPurchaseDate" type="Int64" default="0">
-  Original purchase date (Unix time in milliseconds), used for subscription analytics.
-  - StoreKit 1: `SKPaymentTransaction.original.transactionDate`
-  - StoreKit 2: `Transaction.originalPurchaseDate`
-</Property>
-
----
-
-<Property name="userID" type="String?" optional>
-  Original IAP user ID. Set when validating a purchase through Xsolla.
-</Property>
-
----
-
-<Property name="provider" type="String" default="apple">
-  The IAP provider that processed the purchase. Use `PurchaseInfo.providerAppleAppStore` or `PurchaseInfo.providerXsolla`, or set automatically when calling `addXsollaValidation`.
-</Property>
-
-## Methods
-
-### addValidation(transactionID:jwsRepresentation:)
-Available on iOS 15.0+. Adds StoreKit 2 data required to validate the purchase.
-
-```swift
-@discardableResult
-func addValidation(
-    transactionID: UInt64,
-    jwsRepresentation: String?
-) -> PurchaseInfo
+            await transaction.finish()
+        }
+    }
+}
 ```
 
----
+```objc SK1 (Objective-C)
+// Inside your SKPaymentTransactionObserver
+- (void)paymentQueue:(SKPaymentQueue *)queue
+ updatedTransactions:(NSArray<SKPaymentTransaction *> *)transactions {
+    for (SKPaymentTransaction *transaction in transactions) {
+        if (transaction.transactionState != SKPaymentTransactionStatePurchased) {
+            continue;
+        }
 
-### addValidation(transactionID:receiptData:)
-Adds StoreKit 1 data required to validate the purchase.
+        CASPurchaseInfo *purchaseInfo = [[CASPurchaseInfo alloc]
+            initWithProductID:transaction.payment.productIdentifier
+                        price:product.price
+                     currency:product.priceLocale.currencyCode
+                     quantity:transaction.payment.quantity];
 
-```swift
-@discardableResult
-func addValidation(
-    transactionID: String?,
-    receiptData: Data?
-) -> PurchaseInfo
+        // See steps 2-4 below, then call [CAS reportPurchase:purchaseInfo]
+
+        [queue finishTransaction:transaction];
+    }
+}
 ```
+</CodeGroup>
 
----
+### 2. Recommended: attach validation data
 
-### addXsollaValidation(orderID:userID:)
-Adds the required Order ID data to validate an Xsolla purchase, and marks this `PurchaseInfo` as coming from Xsolla.
+Add the transaction's validation info so CAS.AI can verify the purchase server-side.
 
-```swift
-func addXsollaValidation(
-    orderID: String,
-    userID: String?
+<CodeGroup synchronize="true">
+```swift SK2 (Swift)
+purchaseInfo.addValidation(
+    transactionID: transaction.id,
+    jwsRepresentation: result.jwsRepresentation
 )
 ```
 
----
+```objc SK1 (Objective-C)
+NSURL *receiptURL = [[NSBundle mainBundle] appStoreReceiptURL];
+NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
 
-### addSubscription(originalID:originalPurchaseDate:jsonRepresentation:)
-Adds StoreKit subscription purchase data required for validation.
+[purchaseInfo addValidationWithTransactionID:transaction.transactionIdentifier
+                                  receiptData:receiptData];
+```
+</CodeGroup>
 
-```swift
-@discardableResult
-func addSubscription(
-    originalID: UInt64,
-    originalPurchaseDate: Date?,
-    jsonRepresentation: Data?
-) -> PurchaseInfo
+### 3. If the product is a subscription, also call `addSubscription`
+
+StoreKit doesn't hand you a ready-made "is this a subscription" flag on the transaction itself — that comes from your own product catalog (e.g. the `Product.ProductType` you fetched when listing products, or however you classify product IDs on your side). Check that first, then attach the subscription data:
+
+<CodeGroup synchronize="true">
+```swift SK2 (Swift)
+// Determine this from your product catalog, e.g. product.type == .autoRenewable
+let isSubscription: Bool = MyStore.isSubscription(transaction.productID)
+
+if isSubscription {
+    purchaseInfo.addSubscription(
+        originalID: transaction.originalID,
+        originalPurchaseDate: transaction.originalPurchaseDate,
+        jsonRepresentation: transaction.jsonRepresentation
+    )
+}
 ```
 
----
+```objc SK1 (Objective-C)
+// Determine this from your product catalog
+BOOL isSubscription = [MyStore isSubscriptionProductID:transaction.payment.productIdentifier];
 
-### addSubscriptionFromStoreKit()
-Available on iOS 16.0+. Adds StoreKit subscription purchase data required for validation, sourced automatically from `Transaction.currentEntitlement`.
-
-```swift
-@discardableResult
-func addSubscriptionFromStoreKit() -> PurchaseInfo
+if (isSubscription) {
+    [purchaseInfo addSubscription];
+}
 ```
+</CodeGroup>
+
+### 4. Report
+
+With the product info, validation, and (if applicable) subscription data attached, `purchaseInfo` is ready to send:
+
+<CodeGroup synchronize="true">
+```swift SK2 (Swift)
+CAS.reportPurchase(purchaseInfo)
+```
+
+```objc SK1 (Objective-C)
+[CAS reportPurchase:purchaseInfo];
+```
+</CodeGroup>
