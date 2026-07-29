@@ -352,6 +352,10 @@
                     "href": "/iOS/Impression-Level-Data"
                 },
                 {
+                    "title": "Purchase Info",
+                    "href": "/iOS/Purchase-Info"
+                },
+                {
                     "title": "Reporting API",
                     "href": "/general/ReportingAPI"
                 }
