@@ -12,15 +12,15 @@ revenue = quantity * price * currency_rate
 
 ## Reporting a purchase
 
-Call `CAS.reportPurchase(_:)` with a `PurchaseInfo` object as soon as you've confirmed a completed transaction — this is what feeds IAP revenue into CAS.AI alongside your ad revenue.
+Call `CAS.reportPurchase(_:)` with a `PurchaseInfo` object as soon as you've confirmed a completed transaction. This feeds IAP revenue into CAS.AI alongside your ad revenue.
 
 <Info>
 `PurchaseInfo` is exposed to Objective-C as `CASPurchaseInfo`.
 </Info>
 
 Where you call it depends on which StoreKit version you use:
-- **StoreKit 2 (Swift):** inside your `Transaction.updates` listener, right after you verify the transaction — the same place you'd typically call `transaction.finish()`.
-- **StoreKit 1 (Objective-C):** inside your `SKPaymentTransactionObserver`'s `paymentQueue:updatedTransactions:` delegate method, in the `SKPaymentTransactionStatePurchased` case — the same place you'd typically call `finishTransaction:`.
+- **StoreKit 2 (Swift):** inside your `Transaction.updates` listener, right after you verify the transaction. This is typically also where you'd call `transaction.finish()`.
+- **StoreKit 1 (Objective-C):** inside your `SKPaymentTransactionObserver`'s `paymentQueue:updatedTransactions:` delegate method, in the `SKPaymentTransactionStatePurchased` case. This is typically also where you'd call `finishTransaction:`.
 
 ### 1. Create `PurchaseInfo`
 
@@ -95,7 +95,7 @@ NSData *receiptData = [NSData dataWithContentsOfURL:receiptURL];
 
 ### 3. If the product is a subscription, also call `addSubscription`
 
-StoreKit doesn't hand you a ready-made "is this a subscription" flag on the transaction itself — that comes from your own product catalog (e.g. the `Product.ProductType` you fetched when listing products, or however you classify product IDs on your side). Check that first, then attach the subscription data:
+StoreKit doesn't hand you a ready-made "is this a subscription" flag on the transaction itself. That comes from your own product catalog (e.g. the `Product.ProductType` you fetched when listing products, or however you classify product IDs on your side). Check that first, then attach the subscription data:
 
 <CodeGroup synchronize="true">
 ```swift SK2 (Swift)
@@ -116,10 +116,14 @@ if isSubscription {
 BOOL isSubscription = [MyStore isSubscriptionProductID:transaction.payment.productIdentifier];
 
 if (isSubscription) {
-    [purchaseInfo addSubscription];
+    [purchaseInfo addSubscriptionFromStoreKit];
 }
 ```
 </CodeGroup>
+
+<Info>
+`addSubscriptionFromStoreKit` requires iOS 16.0+ and pulls the subscription data automatically from `Transaction.currentEntitlement`.
+</Info>
 
 ### 4. Report
 
