@@ -1,0 +1,211 @@
+---
+title: Purchase Info
+---
+
+The `PurchaseInfo` class is used to report in-app purchases to CAS.AI. Along with the SDK's ad revenue tracking, this allows you to get a complete picture of a user's total value by combining ad revenue and IAP revenue in one place.
+
+The total reported revenue is calculated as:
+
+```
+revenue = quantity * price * currency_rate
+```
+
+## Reporting a purchase
+
+Create a `PurchaseInfo` object with the product details, then pass it to `CAS.reportPurchase`. Depending on which version of StoreKit you use, you should also attach validation data so CAS.AI can verify the purchase server-side.
+
+### StoreKit 2
+
+```swift
+CAS.reportPurchase(
+    PurchaseInfo(
+        productID: transaction.productID,
+        price: transaction.price ?? 0,
+        currency: transaction.currency?.identifier,
+        quantity: transaction.purchasedQuantity
+    )
+    // Recommended: add info to validate purchase
+    .addValidation(
+        transactionID: transaction.id,
+        jwsRepresentation: verificationResult.jwsRepresentation
+    )
+    // If the product is a subscription
+    .addSubscription(
+        originalID: transaction.originalID,
+        originalPurchaseDate: transaction.originalPurchaseDate,
+        jsonRepresentation: transaction.jsonRepresentation
+    )
+)
+```
+
+### StoreKit 1
+
+```swift
+guard transaction.transactionState == .purchased else { return }
+let receiptURL = Bundle.main.appStoreReceiptURL
+let receiptData = receiptURL.flatMap { try? Data(contentsOf: $0) }
+
+CAS.reportPurchase(
+    PurchaseInfo(
+        productID: transaction.payment.productIdentifier,
+        price: product.price as Decimal,
+        currency: product.priceLocale.currencyCode,
+        quantity: transaction.payment.quantity
+    )
+    // Recommended: add info to validate purchase
+    .addValidation(
+        transactionID: transaction.transactionIdentifier,
+        receiptData: receiptData
+    )
+    // If the product is a subscription
+    .addSubscription()
+)
+```
+
+<Info>
+`PurchaseInfo` is exposed to Objective-C as `CASPurchaseInfo`.
+</Info>
+
+## Initialization
+
+<Property name="productID" type="String">
+  Product identifier from the IAP provider.
+</Property>
+
+---
+
+<Property name="price" type="NSDecimalNumber">
+  Price of one purchased item in the selected currency. A `Decimal` convenience initializer is also available.
+</Property>
+
+---
+
+<Property name="currency" type="String?" optional>
+  ISO 4217 currency code, for example `USD` or `EUR`.
+</Property>
+
+---
+
+<Property name="quantity" type="Int" default="1">
+  Number of items being purchased.
+</Property>
+
+<Info>
+On initialization, `productID` must not be empty, `quantity` must be at least `1`, `price` must not be negative, and `currency` — if provided — must be a valid, 3-letter ISO 4217 code. These are enforced with runtime assertions.
+</Info>
+
+## Properties
+
+<Property name="receiptBase64" type="String?" optional>
+  StoreKit 1 only. Base64-encoded binary receipt (ASN.1) from `Bundle.main.appStoreReceiptURL`. Set via `addValidation(transactionID:receiptData:)`.
+</Property>
+
+---
+
+<Property name="jwsRepresentation" type="String?" optional>
+  StoreKit 2 only. The cryptographically signed JWS representation from `VerificationResult.jwsRepresentation`, used for backend verification. Set via `addValidation(transactionID:jwsRepresentation:)`.
+</Property>
+
+---
+
+<Property name="jsonRepresentation" type="String?" optional>
+  StoreKit 2 only. Plain-text JSON dump of the transaction fields from `Transaction.jsonRepresentation`, used for server analytics. Set via `addSubscription(originalID:originalPurchaseDate:jsonRepresentation:)`.
+</Property>
+
+---
+
+<Property name="transactionID" type="String?" optional>
+  Transaction identifier from StoreKit.
+  - StoreKit 1: `SKPaymentTransaction.transactionIdentifier`
+  - StoreKit 2: `Transaction.id`
+</Property>
+
+---
+
+<Property name="originalTransactionID" type="String?" optional>
+  Original transaction identifier, used for subscription validation.
+  - StoreKit 1: `SKPaymentTransaction.original.transactionIdentifier`
+  - StoreKit 2: `Transaction.originalID`
+</Property>
+
+---
+
+<Property name="originalPurchaseDate" type="Int64" default="0">
+  Original purchase date (Unix time in milliseconds), used for subscription analytics.
+  - StoreKit 1: `SKPaymentTransaction.original.transactionDate`
+  - StoreKit 2: `Transaction.originalPurchaseDate`
+</Property>
+
+---
+
+<Property name="userID" type="String?" optional>
+  Original IAP user ID. Set when validating a purchase through Xsolla.
+</Property>
+
+---
+
+<Property name="provider" type="String" default="apple">
+  The IAP provider that processed the purchase. Use `PurchaseInfo.providerAppleAppStore` or `PurchaseInfo.providerXsolla`, or set automatically when calling `addXsollaValidation`.
+</Property>
+
+## Methods
+
+### addValidation(transactionID:jwsRepresentation:)
+Available on iOS 15.0+. Adds StoreKit 2 data required to validate the purchase.
+
+```swift
+@discardableResult
+func addValidation(
+    transactionID: UInt64,
+    jwsRepresentation: String?
+) -> PurchaseInfo
+```
+
+---
+
+### addValidation(transactionID:receiptData:)
+Adds StoreKit 1 data required to validate the purchase.
+
+```swift
+@discardableResult
+func addValidation(
+    transactionID: String?,
+    receiptData: Data?
+) -> PurchaseInfo
+```
+
+---
+
+### addXsollaValidation(orderID:userID:)
+Adds the required Order ID data to validate an Xsolla purchase, and marks this `PurchaseInfo` as coming from Xsolla.
+
+```swift
+func addXsollaValidation(
+    orderID: String,
+    userID: String?
+)
+```
+
+---
+
+### addSubscription(originalID:originalPurchaseDate:jsonRepresentation:)
+Adds StoreKit subscription purchase data required for validation.
+
+```swift
+@discardableResult
+func addSubscription(
+    originalID: UInt64,
+    originalPurchaseDate: Date?,
+    jsonRepresentation: Data?
+) -> PurchaseInfo
+```
+
+---
+
+### addSubscriptionFromStoreKit()
+Available on iOS 16.0+. Adds StoreKit subscription purchase data required for validation, sourced automatically from `Transaction.currentEntitlement`.
+
+```swift
+@discardableResult
+func addSubscriptionFromStoreKit() -> PurchaseInfo
+```
