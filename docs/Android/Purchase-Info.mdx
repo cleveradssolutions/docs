@@ -1,0 +1,128 @@
+---
+title: Purchase Info
+---
+
+The `PurchaseInfo` class is used to report in-app purchases to CAS.AI. Along with the SDK's ad revenue tracking, this allows you to get a complete picture of a user's total value by combining ad revenue and IAP revenue in one place.
+The total reported revenue is calculated as:
+
+```
+revenue = quantity * price * currency_rate
+```
+
+## Reporting a purchase
+Call `CAS.reportPurchase(...)` with a `PurchaseInfo` object as soon as you've confirmed a completed transaction. This feeds IAP revenue into CAS.AI alongside your ad revenue.
+For Google Play Billing, report the purchase after it has been successfully completed and verified.
+
+### 1. Create `PurchaseInfo`
+Build the object from the purchase's product ID, price, currency, and quantity.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val purchaseInfo = PurchaseInfo(
+    productId = productId,
+    price = price,
+    currency = currency,
+    iapProvider = IAPProvider.GOOGLE_PLAY_BILLING,
+    quantity = purchase.quantity
+)
+```
+
+```java
+PurchaseInfo purchaseInfo = new PurchaseInfo(
+    productId,
+    price,
+    currency,
+    IAPProvider.GOOGLE_PLAY_BILLING,
+    purchase.getQuantity()
+);
+```
+</CodeGroup>
+
+Google Play Billing is used by default. For purchases processed by another provider, use `IAPProvider.AMAZON_APPSTORE`, `IAPProvider.XSOLLA`, or `IAPProvider.OTHER`.
+
+### 2. Recommended: attach validation data
+For Google Play purchases, pass the original purchase data and signature when they are available.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val purchaseInfo = PurchaseInfo(
+    productId = productId,
+    price = price,
+    currency = currency,
+    iapProvider = IAPProvider.GOOGLE_PLAY_BILLING,
+    quantity = purchase.quantity,
+    receipt = purchase.originalJson,
+    signature = purchase.signature
+)
+```
+
+```java
+PurchaseInfo purchaseInfo = new PurchaseInfo(
+    productId,
+    price,
+    currency,
+    IAPProvider.GOOGLE_PLAY_BILLING,
+    purchase.getQuantity(),
+    0L,
+    purchase.getOriginalJson(),
+    purchase.getSignature()
+);
+```
+</CodeGroup>
+
+<Info>
+Validation data is optional, but it is recommended when available.
+</Info>
+
+### 3. If the product is a subscription
+For Google Play subscriptions, additionally provide the subscription start time and purchase token.
+
+<CodeGroup synchronize={true}>
+```kotlin
+val purchaseInfo = PurchaseInfo(
+    productId = productId,
+    price = price,
+    currency = currency,
+    iapProvider = IAPProvider.GOOGLE_PLAY_BILLING,
+    quantity = purchase.quantity,
+    subscriptionTime = purchase.purchaseTime,
+    receipt = purchase.originalJson,
+    signature = purchase.signature,
+    receiptId = purchase.purchaseToken
+)
+```
+
+```java
+PurchaseInfo purchaseInfo = new PurchaseInfo(
+    productId,
+    price,
+    currency,
+    IAPProvider.GOOGLE_PLAY_BILLING,
+    purchase.getQuantity(),
+    purchase.getPurchaseTime(),
+    purchase.getOriginalJson(),
+    purchase.getSignature(),
+    purchase.getPurchaseToken()
+);
+```
+</CodeGroup>
+
+### 4. Report
+With the purchase information prepared, `purchaseInfo` is ready to send:
+
+<CodeGroup synchronize={true}>
+```kotlin
+CAS.reportPurchase(purchaseInfo)
+```
+
+```java
+CAS.reportPurchase(purchaseInfo);
+```
+</CodeGroup>
+
+## Automatic forwarding to Tenjin
+Purchases reported through `CAS.reportPurchase(...)` can also be forwarded automatically to Tenjin Analytics, so you don't need a separate integration to get IAP revenue into Tenjin.
+
+<Info>
+This requires CAS SDK 4.8.1 or higher, and the feature must be enabled for your account. Contact your account manager to request it.
+</Info>

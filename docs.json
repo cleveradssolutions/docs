@@ -239,6 +239,10 @@
                     "href": "/Android/Impression-Level-Data"
                 },
                 {
+                    "title": "Purchase Info",
+                    "href": "/Android/Purchase-Info"
+                },
+                {
                     "title": "Reporting API",
                     "href": "/general/ReportingAPI"
                 }
