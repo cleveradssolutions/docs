@@ -6,6 +6,16 @@ You can now easily tailor the way you serve your ads to fit a specific audience!
 You’ll need to inform our servers of the users’ details so the SDK will know to serve ads according
 to the segment the user belongs to.
 
+### User ID
+The userID is a unique identifier supplied by your application and must be static for each user across sessions. 
+```csharp
+CAS.MobileAds.targetingOptions.userID = "user-hash-code";
+```
+
+<Warning>  
+Your userID should not contain any personally identifiable information such as  an email address, screen name, Android ID (AID), or Google Advertising ID (GAID).
+</Warning>
+
 ## User Age
 
 Set user age. Limitation: 1-99 and 0 is 'unknown'.
