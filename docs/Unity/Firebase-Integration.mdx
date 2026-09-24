@@ -17,12 +17,41 @@ If you already have a Firebase project, you can skip this step and continue with
 4. Press `Add app` to register your app, then download its configuration file and add it to your project. Without it, the Firebase SDK won't initialize.
 
 ## Share permissions
-Grant CAS.AI access so we can handle billing and analytics on your behalf.
+
+Choose one of the two options below, depending on how much access you're comfortable granting.
+
+### Option A - Owner (single account)
+
+Grant one account full Owner access, and CAS.AI handles everything through it.
+
 - Go to: `Project Settings > Users and permissions` and press `Add member`
-- Add `chellenger98@gmail.com` and `attrendcorp@gmail.com` with the `Owner` role in `Firebase` and `Google Analytics`.  
-  Owner access is needed to manage billing for you, such as switching to the Blaze plan.
-- Add `cas_firebase_user@cas.ai ` with the `Editor` role in `Firebase` and `Google Analytics`.  
-  This access is needed to analyze your metrics and set up campaigns.
+
+| Account | Firebase | Google Analytics |
+|---|---|---|
+| `publishing_admin@cas.ai` | Owner | Administrator |
+
+### Option B - Editor (separate accounts, limited access)
+
+If you'd rather not grant Owner access, add these accounts instead - each gets only the access it actually needs.
+
+- Go to: `Project Settings > Users and permissions` and press `Add member`
+
+| Account | Firebase | Google Analytics |
+|---|---|---|
+| `publishing_admin@cas.ai` | Editor | Editor |
+| `Serhii.Liakh@cas.ai` | Editor | Editor |
+| `cas_firebase_user@cas.ai` | Editor | Administrator |
+
+<Info>
+`cas_firebase_user@cas.ai` runs our automated integration checks - Google Analytics only exposes the access list to Administrators via API, so it needs that specific role to work.
+</Info>
+
+- In Google Cloud Console, under `IAM & Admin > IAM`, add:
+
+| Account | BigQuery role |
+|---|---|
+| `core-automation@data-warehouse-2025-0424.iam.gserviceaccount.com` | BigQuery Data Editor |
+| `viktor-trukhnov@data-warehouse-2025-0424.iam.gserviceaccount.com` | BigQuery Data Viewer |
 
 ## Switch to the Blaze plan
 Exporting data to BigQuery, which you'll set up below, is only available on the paid `Blaze` plan.
