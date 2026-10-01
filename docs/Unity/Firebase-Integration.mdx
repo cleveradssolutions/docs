@@ -18,21 +18,35 @@ If you already have a Firebase project, you can skip this step and continue with
 
 ## Share permissions
 
-Add the accounts below to your project. The table lists the minimum required role for each account - a higher role also works.
+Access has to be granted in three places: Firebase, Google Analytics and Google Cloud. The tables list the minimum required role for each account - a higher role also works.
+
+### Firebase
 
 - Go to: `Project Settings > Users and permissions` and press `Add member`
 
-| Account | Firebase | Google Analytics |
-|---|---|---|
-| `publishing_admin@cas.ai` | Editor | Editor |
-| `Serhii.Liakh@cas.ai` | Editor | Editor |
-| `cas_firebase_user@cas.ai` | Editor | Administrator |
+| Account | Firebase role |
+|---|---|
+| `publishing_admin@cas.ai` | Editor |
+| `Serhii.Liakh@cas.ai` | Editor |
+| `cas_firebase_user@cas.ai` | Editor |
+
+### Google Analytics
+
+- Go to: `Admin > Property > Property Access Management` and press `+`
+
+| Account | Google Analytics role |
+|---|---|
+| `publishing_admin@cas.ai` | Editor |
+| `Serhii.Liakh@cas.ai` | Editor |
+| `cas_firebase_user@cas.ai` | Administrator |
 
 <Info>
 `cas_firebase_user@cas.ai` runs our automated integration checks - Google Analytics only exposes the access list to Administrators via API, so it needs that specific role to work.
 </Info>
 
-- In Google Cloud Console, under `IAM & Admin > IAM`, add:
+### Google Cloud
+
+- Go to: Google Cloud Console, `IAM & Admin > IAM`, and press `Grant access`:
 
 | Account | BigQuery role |
 |---|---|
