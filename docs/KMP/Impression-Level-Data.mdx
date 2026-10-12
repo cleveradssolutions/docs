@@ -1,0 +1,155 @@
+---
+title: Impression Level Data
+---
+
+CAS.AI SDK enables you to access detailed information for each impression through the impression callback APIs. The information includes, for example, which demand source served the ad, the expected or exact revenue associated with it. In addition, it contains granular details to allow you to analyze and, ultimately, optimize user acquisition strategies.
+
+### CASAdContentInfo
+The `CASAdContentInfo` structure contains information about a displayed ad.
+
+In addition to the impression callback, each ad format exposes a `contentInfo` property. It is `null` before
+the ad is loaded, except on `CASNativeAdContent` where the content info is always available.
+
+```kotlin
+val info: CASAdContentInfo? = interstitialAd.contentInfo
+```
+
+<Property name="format" type="CASAdFormat">
+  The format of the ad that is shown.
+</Property>
+
+---
+
+<Property name="sourceName" type="String">
+  The display name of the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="sourceUnitId" type="String">
+  The Ad Unit ID from the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="creativeId" type="String?" optional>
+  The Creative ID associated with the ad, if available.
+  You can use this ID to report creative issues to the Ad review team.
+</Property>
+
+---
+
+<Property name="revenue" type="Double">
+  The revenue generated from the impression, in USD.
+  The revenue value may be either estimated or exact, depending on the precision specified by `revenuePrecision`.
+</Property>
+
+---
+
+<Property name="revenuePrecision" type="CASAdRevenuePrecision">
+  The precision type of the revenue field.
+</Property>
+
+---
+
+<Property name="revenueTotal" type="Double">
+  The accumulated value of user ad revenue in USD from all ad format impressions.
+</Property>
+
+---
+
+<Property name="impressionDepth" type="Int">
+  The total number of impressions across all ad formats for the current user, across all sessions.
+</Property>
+
+### Revenue precision
+`CASAdRevenuePrecision` tells you how exact the `revenue` value is.
+
+| Value | Meaning |
+|---|---|
+| `UNKNOWN` | There is insufficient data for CAS to calculate a revenue value. CAS returns $0 in revenue. |
+| `PRECISE` | The revenue is provided as part of a real-time auction and is the most accurate value available. |
+| `FLOOR` | The revenue is based on the manual CPM value entered for the waterfall instance. Actual revenue is expected to be 10-20% higher than this floor value. |
+| `ESTIMATED` | The revenue is calculated from historical performance data. Estimates may differ from actual values by up to 10%. |
+
+### Ad Impression callback
+Every ad format exposes an `impressionCallback` property that accepts a `CASAdImpressionCallback`.
+The same callback can be reused for all formats, because `CASAdContentInfo.format` tells you which one it was.
+
+```kotlin
+import com.cleveradssolutions.plugin.kmp.CASAdContentInfo
+import com.cleveradssolutions.plugin.kmp.CASAdImpressionCallback
+
+val impressionCallback = CASAdImpressionCallback { info: CASAdContentInfo ->
+    // Called when an ad impression occurs.
+    val adPlatform = "CAS"
+    val adFormat = info.format.name
+    val adSource = info.sourceName
+    val adUnitName = info.sourceUnitId
+    val value = info.revenue
+    // All CAS revenue is sent in USD
+    val currency = "USD"
+}
+
+appOpenAd.impressionCallback = impressionCallback
+interstitialAd.impressionCallback = impressionCallback
+rewardedAd.impressionCallback = impressionCallback
+bannerContent.impressionCallback = impressionCallback
+nativeAdContent.impressionCallback = impressionCallback
+```
+
+Banner ads additionally report impressions through `CASBannerAdContentCallback.onBannerAdImpression`, so you can
+choose whichever fits your code better.
+
+<Info>
+All callbacks are invoked on the main thread. Because the callback lives in `commonMain`, the reporting code is
+written once and runs on both platforms.
+</Info>
+
+### User ad summary
+CAS counts the number of ad impressions and the total revenue of all formats at the time of a new impression.
+```kotlin
+val totalImpressions: Int = info.impressionDepth
+val totalRevenue: Double = info.revenueTotal
+```
+<Info>
+Progress is saved between sessions until the user clears your app's data.
+</Info>
+
+## Automatic collect ad revenue
+The CAS SDK has features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. Contact your account manager for details of enabling automatic events.
+
+### Google Analytics
+To measure ad revenue with Google Analytics:
+
+1. Get started with [Firebase Analytics](https://firebase.google.com/docs/analytics/get-started).
+2. Link your Firebase project to a Google Analytics account.
+
+The SDK automatically logs [`ad_impression`](https://firebase.google.com/docs/reference/android/com/google/firebase/analytics/FirebaseAnalytics.Event#public-static-final-string-ad_impression)
+events whenever an ad is displayed.
+Events include parameters such as ad platform, source, currency, and value.
+Alternatively, CAS may log the event as `CAS_Impression`.
+
+### Tenjin
+To measure ad revenue with Tenjin Analytics, include the Tenjin SDK in each platform project.
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+The CAS Gradle plugin can add the Tenjin SDK for you:
+```kotlin
+// <project>/shared/build.gradle.kts
+cas {
+    includeTenjinSDK = true
+}
+```
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+Add the [Tenjin Swift Package](https://github.com/tenjin/tenjin-ios-sdk) to your Xcode project:
+```
+https://github.com/tenjin/tenjin-ios-sdk
+```
+</TabItem>
+</Tabs>
+
+CAS SDK automatically initializes the Tenjin SDK and sends ILRD if this option is enabled for your application.

@@ -1,0 +1,372 @@
+---
+title: CAS.AI plugin for Kotlin Multiplatform
+---
+
+Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue.
+Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
+
+The plugin exposes a single `expect` API from `commonMain`, backed by the native CAS.AI SDK on each platform.
+Banner and Native ads are also available as Compose Multiplatform composables, so the whole integration can live in shared code.
+
+## Prerequisites
+Make sure that your app's build files use the following values:
+- Use Kotlin `{{ min.kotlin }}` or higher
+- Use Compose Multiplatform `{{ min.compose }}` or higher, if you use the ad composables
+- For Android:
+  - Minimum API level `{{ min.api }}` or higher
+  - Compile SDK version of `{{ min.targetapi }}` or higher
+- For iOS:
+  - Use Xcode `{{ min.xcode }}` or higher
+  - Minimum Target iOS version `{{ min.ios }}` or higher
+  - Supported targets: `iosArm64`, `iosX64`, `iosSimulatorArm64`
+
+## Import CAS.AI Mobile Ads library
+Add the CAS.AI Kotlin Multiplatform library to the common source set of your shared module.
+
+```kotlin
+// <project>/shared/build.gradle.kts
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("com.cleveradssolutions:cas-kmp:{{ versions.kmp }}")
+        }
+    }
+}
+```
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Kotlin/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
+
+Now in your common Kotlin code, you can use:
+```kotlin
+import com.cleveradssolutions.plugin.kmp.*
+```
+
+<Info>
+The Android artifact declares the CAS.AI Android SDK as `compileOnly`, so the SDK itself and the
+mediation adapters are resolved by your application. The platform setup below adds them.
+</Info>
+
+## Platform specific setup
+To monetize your app using CAS.AI mediation, in addition to importing the library, you need to configure
+your Android and iOS projects by using the **CAS Gradle plugin** for Android and the **CAS Swift Package** for iOS.
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+The CAS Android SDK provides a Gradle Plugin to simplify and automate certain integration steps.
+Our plugin will automatically add mediated network dependencies to your project, which you configure in a `cas { }` block.
+
+Apply `com.cleveradssolutions.gradle-plugin` to the module that holds the Android target, inside the `plugins` block
+and after the Android plugin itself.
+
+```kotlin
+// <project>/shared/build.gradle.kts
+plugins {
+    kotlin("multiplatform")
+    id("com.android.application") // before CAS plugin
+    id("com.cleveradssolutions.gradle-plugin") version "{{ versions.android }}"
+}
+
+cas {
+    // Plugin configuration
+}
+```
+
+Several ad networks do not publish their Android SDK to Maven Central, so their adapters need the network's
+own repository. Add them to `dependencyResolutionManagement` in `settings.gradle.kts`, as shown in
+[the CAS Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/settings.gradle).
+
+<Success>
+Make sure to update the CAS Gradle plugin version whenever you update the CAS Kotlin Multiplatform library. The CAS Gradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](Android#integration-options).
+</Success>
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+The CAS iOS SDK is distributed as a **Swift Package**. Add it to the Xcode project that hosts your shared module.
+
+<Steps>
+<Step title="Add the package dependency">
+In Xcode, open **File ▸ Add Package Dependencies…** and enter the repository URL:
+```
+https://github.com/cleveradssolutions/CAS-iOS
+```
+</Step>
+<Step title="Pin the version">
+Set **Dependency Rule** to **Exact Version** and enter `{{ versions.ios }}`.
+
+Pinning an exact version keeps the CAS.AI SDK in step with the CAS Gradle plugin on Android. Both have to
+be updated together with the Kotlin Multiplatform library.
+</Step>
+<Step title="Choose the library products">
+Add the `CleverAdsSolutionsSPM` library product to your application target. It contains the CAS.AI SDK itself.
+
+Then add one product per mediation network you want to integrate, see [Choose Mediated Networks](#choose-mediated-networks) below.
+</Step>
+</Steps>
+
+Alternatively, declare the package in a `Package.swift` of your own:
+```swift
+dependencies: [
+    .package(url: "https://github.com/cleveradssolutions/CAS-iOS", exact: "{{ versions.ios }}")
+],
+targets: [
+    .target(
+        name: "YourApp",
+        dependencies: [
+            .product(name: "CleverAdsSolutionsSPM", package: "CleverAdsSolutions")
+        ]
+    )
+]
+```
+
+<Info>
+The CAS.AI SDK is also published through CocoaPods. Swift Package Manager is the recommended option for
+new projects and is the one these pages document. If your project already uses CocoaPods, follow
+[the iOS integration page](iOS) instead.
+</Info>
+
+### Deliver the Kotlin framework to Xcode
+Your shared module is compiled into an Apple framework that the Xcode project links against. Declare the
+framework binary in the shared module:
+
+```kotlin
+// <project>/shared/build.gradle.kts
+kotlin {
+    listOf(iosArm64(), iosX64(), iosSimulatorArm64()).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "Shared"
+            isStatic = true
+        }
+    }
+}
+```
+
+Then connect it to Xcode with the direct integration mechanism of the Kotlin Gradle plugin:
+1. In your Xcode project, select the application target and open the **Build Phases** tab.
+2. Add a **New Run Script Phase** and move it **before** the **Compile Sources** phase.
+3. Use the following script, where `shared` is the Gradle path of your shared module:
+```shell
+cd "$SRCROOT/.."
+./gradlew :shared:embedAndSignAppleFrameworkForXcode
+```
+4. In **Build Settings**, add the framework output directory to **Framework Search Paths**:
+```
+$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)
+```
+5. Build the project once, then add `Shared.framework` under **Frameworks, Libraries, and Embedded Content** of the application target.
+
+<Info>
+See [Integration with the Xcode build](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-direct-integration.html) in the Kotlin Multiplatform documentation for the full description of this mechanism.
+</Info>
+
+### Configure the iOS project
+A Ruby script performs the remaining automatic configuration of your iOS project, such as the `SKAdNetworkItems`
+of the mediated networks. To apply it, follow the steps below.
+1. Download the <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a>
+2. Place the script in the iOS app directory `<project>/iosApp`
+3. Open a terminal window and go to that directory:
+```shell
+cd iosApp
+```
+4. Run the Ruby script with your app CAS ID:
+```shell
+ruby casconfig.rb <CAS ID>
+```
+
+<AccordionGroup>
+<Accordion title="What is CAS ID in iOS?">
+
+In most cases, a CASID is the same as your app store ID.
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.
+
+If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai
+If you just want to experiment or test the SDK, you can skip the configuration your project.
+
+</Accordion>
+</AccordionGroup>
+
+<Success>
+Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
+</Success>
+
+</TabItem>
+</Tabs>
+
+## Choose Mediated Networks
+<Warning>
+CAS.AI is a mediation SDK with no built-in live ad inventory. At least one ad network adapter or solution must be integrated before publishing to display ads and generate revenue.
+</Warning>
+
+Choose an integration path based on your app's target audience. If you're unsure which solution best fits your application, please contact your account manager.
+
+<Info>
+During development, you can test ad formats using [Test Ads](KMP/Enabling-test-ads) without adding any ad network SDKs.
+</Info>
+
+Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
+
+### Android
+The CAS Gradle plugin offers curated solutions that CAS.AI keeps up to date.
+
+<AccordionGroup>
+<Accordion defaultOpen title="Optimal Ads Solution">
+
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+```kotlin
+// <project>/shared/build.gradle.kts
+cas {
+    includeOptimalAds = true
+}
+```
+
+</Accordion>
+
+<Accordion title="Families Ads Solution">
+
+Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
+
+```kotlin
+// <project>/shared/build.gradle.kts
+cas {
+    includeFamiliesAds = true
+}
+```
+
+</Accordion>
+
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
+
+```kotlin
+// <project>/shared/build.gradle.kts
+cas {
+    includeVPNCompliantAds = true
+}
+```
+
+</Accordion>
+
+<Accordion title="Choice mediation adapters">
+
+Advanced publishers familiar with ad network integrations can configure their own set of adapters.
+
+```kotlin
+// <project>/shared/build.gradle.kts
+cas {
+    adapters {
+        googleAds = true
+        unityAds = true
+        appLovin = true
+    }
+}
+```
+
+For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks).
+
+</Accordion>
+</AccordionGroup>
+
+### iOS
+The Swift Package exposes one library product per mediation network. Add the products of the networks you need
+to your application target, alongside `CleverAdsSolutionsSPM`.
+
+| Network | Library product |
+|---|---|
+| Google Ads | `CASMediationGoogleAds` |
+| Unity Ads | `CASMediationUnityAds` |
+| LevelPlay (ironSource) | `CASMediationIronSource` |
+| AppLovin | `CASMediationAppLovin` |
+| Liftoff Monetize | `CASMediationLiftoffMonetize` |
+| InMobi | `CASMediationInMobi` |
+| Mintegral | `CASMediationMintegral` |
+| Pangle | `CASMediationPangle` |
+| DT Exchange | `CASMediationDTExchange` |
+| Chartboost | `CASMediationChartboost` |
+| Meta Audience Network | `CASMediationAudienceNetwork` |
+| Yango Ads | `CASMediationYangoAds` |
+| Yso Network | `CASMediationYsoNetwork` |
+| CAS Exchange | `CASMediationExchange` |
+| Cross Promo | `CASMediationCrossPromo` |
+| Start.io | `CASMediationStartIO` |
+| HyprMX | `CASMediationHyprMX` |
+| Kidoz | `CASMediationKidoz` |
+| Prado | `CASMediationPrado` |
+| Ogury | `CASMediationOgury` |
+| PubMatic | `CASMediationPubMatic` |
+| Verve | `CASMediationVerve` |
+| Display.io | `CASMediationDisplayIO` |
+| Smaato | `CASMediationSmaato` |
+| Moloco | `CASMediationMoloco` |
+
+<Warning>
+The Android and iOS network sets are configured separately and are expected to differ. Not every network
+ships an adapter for both platforms, store policies for child-directed apps do not approve the same networks,
+and individual iOS adapters raise the minimum deployment target. Pick the networks per platform rather than
+mirroring one list onto the other.
+</Warning>
+
+<Info>
+The curated `Optimal`, `Families` and `VPNCompliant` solutions are available on iOS through CocoaPods only.
+With Swift Package Manager, add the network products individually. Contact your account manager if you want
+the current composition of a solution for your audience.
+</Info>
+
+## Advertising Identifier
+CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.
+To enable the use of the Advertising ID in your app, you need to complete the following setup steps.
+
+<AccordionGroup>
+<Accordion title="Android Google Advertising ID">
+CAS Mediation allows you to easily enable or disable the use of the Advertising ID, depending on your app’s privacy requirements.
+
+```kotlin
+// <project>/shared/build.gradle.kts
+cas {
+    useAdvertisingId = true
+}
+```
+
+An application must not use an advertising identifier if **at least one** of the following conditions is true:
+- The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
+- The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
+
+</Accordion>
+
+<Accordion title="iOS User Tracking Usage description">
+
+To use the App Tracking Transparency authorization request for accessing the IDFA, update your `<project>/iosApp/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
+```
+
+- Your data will remain confidential and will only be used to provide you a better and personalised ad experience
+- Your data will be used to provide you a better and personalised ad experience
+- Your data will be used to create a customized experience tailored to your interests
+- Allowing tracking will enable more personalized ads for you
+- We try to show ads for apps and products that will be most interesting to you based on the apps you use
+- This identifier will be used to deliver personalized ads to you
+- This only uses device info for more interesting and relevant ads
+
+</Accordion>
+<Accordion title="iOS Localizing Usage description (optional)">
+
+To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.
+The table below gives you a variety of localizations that you can use at your discretion.
+
+| Locale          | Description                            |
+|-----------------|----------------------------------------------------------------------------|
+| English (en)    | Your data will remain confidential and will only be used to provide you a better and personalised ad experience                               |
+| German (de)     | Ihre Daten bleiben vertraulich und werden nur dazu verwendet, Ihnen ein besseres und personalisiertes Werbeerlebnis zu bieten                 |
+| French (fr)     | Vos données resteront confidentielles et seront utilisées uniquement pour vous offrir une expérience publicitaire meilleure et personnalisée  |
+| Spanish (es)    | Sus datos permanecerán confidenciales y solo se utilizarán para brindarle una experiencia publicitaria mejor y personalizada                  |
+| Ukrainian (uk)  | Ваші дані залишатимуться конфіденційними та використовуватимуться лише для надання вам кращої та персоналізованої реклами                     |
+| Russian (ru)    | Ваши данные останутся конфиденциальными и будут использоваться только для предоставления вам более качественной и персонализированной рекламы |
+| Portuguese (pt) | Seus dados permanecerão confidenciais e serão usados apenas para lhe proporcionar uma experiência publicitária melhor e personalizada         |
+| Japanese (ja)   | お客様のデータは機密として保持され、より優れたパーソナライズされた広告エクスペリエンスを提供するためにのみ使用されます |
+
+</Accordion>
+</AccordionGroup>

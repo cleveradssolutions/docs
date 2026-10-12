@@ -1,0 +1,256 @@
+---
+title: Banner Ads
+description: This guide explains how to integrate banner ads into a Kotlin Multiplatform app.
+---
+
+Banner ads occupy a spot within an app's layout, either at the top or bottom of the device screen.
+They stay on screen while users interact with the app, and can refresh automatically after a period of time.
+
+Banner ads consist of two parts:
+- `CASBannerAdContent` loads and owns the ad. It lives in `commonMain` and is independent of the UI.
+- The `CASBannerAd` composable displays an already created content instance in your Compose layout.
+
+This split lets you create the content once, keep it across navigation, and place it wherever the layout needs it.
+
+<Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
+
+## Create Ad content
+```kotlin
+import com.cleveradssolutions.plugin.kmp.CASAdContentInfo
+import com.cleveradssolutions.plugin.kmp.CASBannerAdContent
+import com.cleveradssolutions.plugin.kmp.CASBannerAdContentCallback
+import com.cleveradssolutions.plugin.kmp.CASBannerSize
+import com.cleveradssolutions.plugin.kmp.CASError
+import com.cleveradssolutions.plugin.kmp.CASMobileAds
+
+val bannerContent = CASBannerAdContent(
+    casId = CASMobileAds.TEST_ID,
+    size = CASBannerSize.BANNER,
+    autoLoad = true,
+    refreshInterval = 30,
+    callback = object : CASBannerAdContentCallback {
+        override fun onBannerAdLoaded(info: CASAdContentInfo) {
+            println("Banner ad loaded")
+        }
+
+        override fun onBannerAdFailed(error: CASError) {
+            println("Banner ad failed: ${error.message}")
+        }
+    },
+)
+```
+
+<Warning>
+`CASBannerAdContent` must be created and used on the main thread.
+</Warning>
+
+## Display the banner
+Pass the content instance to the `CASBannerAd` composable. Until the ad is loaded, the composable does not
+show any visible content, so it is safe to place it in the layout from the start.
+
+```kotlin
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import com.cleveradssolutions.plugin.kmp.composable.CASBannerAd
+
+@Composable
+fun BannerScreen() {
+    val bannerContent = remember {
+        CASBannerAdContent(
+            casId = CASMobileAds.TEST_ID,
+            size = CASBannerSize.BANNER,
+        )
+    }
+
+    DisposableEffect(bannerContent) {
+        onDispose { bannerContent.destroy() } // [!code highlight]
+    }
+
+    CASBannerAd(
+        adContent = bannerContent,
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
+```
+
+The same content instance can be shown by only one `CASBannerAd` at a time. To display banners on several
+screens at once, create one content instance per screen.
+
+## Banner sizes
+`CASBannerSize` provides the standard sizes and the adaptive factory functions. Each size exposes its
+`width` and `height` in dp.
+
+<AccordionGroup>
+<Accordion defaultOpen title="Standard sizes">
+
+```kotlin
+CASBannerSize.BANNER            // 320 x 50 dp
+CASBannerSize.LEADERBOARD       // 728 x 90 dp
+CASBannerSize.MEDIUM_RECTANGLE  // 300 x 250 dp
+```
+
+</Accordion>
+
+<Accordion title="Smart banner">
+
+Typically, smart banners on phones have a `BANNER` size. On tablets they usually have a `LEADERBOARD` size.
+
+```kotlin
+val size = CASBannerSize.getSmartBanner()
+```
+
+</Accordion>
+
+<Accordion title="Adaptive banner">
+
+Creates an adaptive banner size with a maximum width in dp for the current screen orientation.
+Adaptive banners use fixed aspect ratios instead of fixed heights.
+
+```kotlin
+val size = CASBannerSize.getAdaptiveBanner(maxWidthDP = 360)
+```
+
+- The height of adaptive banners cannot be less than 50 dp and more than 250 dp.
+- The width of adaptive banners cannot be less than 300 dp.
+
+To use the full available width, read it from the layout:
+```kotlin
+BoxWithConstraints {
+    val size = remember(maxWidth) {
+        CASBannerSize.getAdaptiveBanner(maxWidthDP = maxWidth.value.toInt())
+    }
+    // Create the content with this size
+}
+```
+
+</Accordion>
+
+<Accordion title="Inline adaptive banner">
+
+Inline adaptive banners are larger and taller than anchored adaptive banners. They are of variable height and
+can be as tall as the device screen.
+
+```kotlin
+val size = CASBannerSize.getInlineBanner(width = 360, maxHeight = 200)
+```
+
+- The height of adaptive banners cannot be less than 32 dp.
+- You must know the width of the view that the ad will be placed in, taking into account the device width and any applicable safe areas.
+- The inline adaptive banner sizes are designed to work best when using the full available width.
+
+</Accordion>
+
+<Accordion title="MREC">
+
+The Medium Rectangle size is the same `MEDIUM_RECTANGLE` constant, usually placed inside scrollable content
+rather than anchored to an edge.
+
+```kotlin
+val mrecContent = CASBannerAdContent(
+    casId = CASMobileAds.TEST_ID,
+    size = CASBannerSize.MEDIUM_RECTANGLE,
+)
+```
+
+</Accordion>
+</AccordionGroup>
+
+## Refresh interval
+The number of seconds an ad is displayed before a new ad is shown. Set `0` to disable automatic refresh.
+
+```kotlin
+val bannerContent = CASBannerAdContent(
+    casId = CASMobileAds.TEST_ID,
+    size = CASBannerSize.BANNER,
+    refreshInterval = 30, // [!code highlight]
+)
+```
+
+The default is 30 seconds. Values that are too small can be rejected by mediated networks.
+
+## Ad content callbacks
+Every method of `CASBannerAdContentCallback` has a default empty implementation, so override only the ones you need.
+All callbacks are invoked on the main thread.
+
+```kotlin
+object : CASBannerAdContentCallback {
+    override fun onBannerAdLoaded(info: CASAdContentInfo) {
+        // Invoked when the ad is loaded and ready to present.
+    }
+
+    override fun onBannerAdFailed(error: CASError) {
+        // Invoked when an error occurred with the ad.
+    }
+
+    override fun onBannerAdClicked(info: CASAdContentInfo) {
+        // Invoked when a user clicks the ad.
+    }
+
+    override fun onBannerAdImpression(info: CASAdContentInfo) {
+        // Invoked when an ad impression is recorded.
+    }
+}
+```
+
+An impression callback can also be assigned separately:
+```kotlin
+bannerContent.impressionCallback = CASAdImpressionCallback { ad ->
+    println("Impression from ${ad.sourceName} with revenue ${ad.revenue}")
+}
+```
+
+<Info>
+Read more about the `CASAdContentInfo` structure in [Impression Level Data](KMP/Impression-Level-Data).
+</Info>
+
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```kotlin
+val bannerContent = CASBannerAdContent(
+    casId = CASMobileAds.TEST_ID,
+    size = CASBannerSize.BANNER,
+    placement = "MainScreenBottom", // [!code highlight]
+)
+```
+
+## Manual reload Ad
+With `autoLoad = false`, load the banner yourself before presenting it. Calling `load()` on an already loaded
+banner reloads the content and skips the pending impression.
+
+```kotlin
+bannerContent.load()
+```
+
+You have the option to check `isLoaded` if it's required by your app's logic.
+```kotlin
+val isAdLoaded: Boolean = bannerContent.isLoaded
+```
+
+## Release ad resource
+Destroy the content when the banner is no longer needed. The ad stops refreshing and releases its resources.
+
+```kotlin
+bannerContent.destroy()
+```
+
+## Some best practices
+#### Place the banner outside of scrollable content when it should stay visible.
+Anchored banners belong at the top or the bottom of the screen, outside the scrolling area, so they remain
+visible while the user interacts with your content.
+
+#### Do not stack banners.
+Only one banner should be visible in the same place at the same time. Several overlapping banners reduce
+viewability and can violate network policies.
+
+#### Reserve the space in advance.
+Create the content and place `CASBannerAd` in the layout before the ad arrives, so your UI does not shift when
+the banner appears.
+
+## Complete example
+- [Banner ad example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/BannerExampleScreens.kt)
+- [Adaptive banner example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/AdaptiveBannerExampleScreen.kt)
+- [MREC example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/MRecExampleScreen.kt)

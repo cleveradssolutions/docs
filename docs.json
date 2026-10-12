@@ -8,6 +8,7 @@
             "iosconfig": "4.7.0",
             "unity": "4.8.0",
             "flutter": "4.8.0",
+            "kmp": "4.8.0",
             "unreal": "4.8.0",
             "reactnative": "4.8.0",
             "cordova": "4.8.0",
@@ -18,7 +19,8 @@
             "ios": "13.0",
             "api": "24",
             "targetapi": "36",
-            "kotlin": "2.2.0"
+            "kotlin": "2.3.21",
+            "compose": "1.10.3"
         }
     },
     "favicon": "https://cas.ai/wp-content/uploads/2025/08/favicon-80x80.png",
@@ -78,6 +80,11 @@
             "id": "flutter",
             "title": "Flutter",
             "href": "/Flutter"
+        },
+        {
+            "id": "kmp",
+            "title": "KMP",
+            "href": "/KMP"
         },
         {
             "id": "unreal",
@@ -635,6 +642,105 @@
         },
         {
             "group": "Get Started",
+            "tab": "kmp",
+            "pages": [
+                {
+                    "title": "Integration",
+                    "href": "/KMP"
+                },
+                {
+                    "group": "Initialization",
+                    "href": "/KMP/Initialize-CAS",
+                    "pages": [
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/KMP/User-Consent-Flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/KMP/Enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/Google-Play-data-disclosure"
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/AppStore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/Authorized-Sellers-for-Apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/KMP/Additional-Meta-AudienceNetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "kmp",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/KMP/App-Open-Ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/KMP/Interstitial-Ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/KMP/Rewarded-Ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/KMP/Banner-Ads"
+                },
+                {
+                    "group": "Native Ad",
+                    "href": "/KMP/Native-Ads",
+                    "pages": [
+                        {
+                            "title": "Native Ad templates",
+                            "href": "/KMP/Native-Ads-templates"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "kmp",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/KMP/Targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/KMP/Ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/KMP/Impression-Level-Data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/ReportingAPI"
+                }
+            ]
+        },
+        {
+            "group": "Get Started",
             "tab": "unreal",
             "pages": [
                 {
@@ -1031,6 +1137,12 @@
             "icon": "github",
             "tab": "flutter",
             "href": "https://github.com/cleveradssolutions/CAS-Flutter/releases"
+        },
+        {
+            "title": "Release Notes",
+            "icon": "github",
+            "tab": "kmp",
+            "href": "https://github.com/cleveradssolutions/CAS-Kotlin/releases"
         },
         {
             "title": "Release Notes",

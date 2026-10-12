@@ -1,0 +1,83 @@
+---
+title: Targeting options
+---
+
+You can now easily tailor the way you serve your ads to fit a specific audience!
+You’ll need to inform our servers of the users’ details so the SDK will know to serve ads according
+to the segment the user belongs to.
+
+All options are available from common code through `CASMobileAds.targetingOptions`.
+
+<Warning>
+Targeting options must be set **before** initializing the SDK, otherwise the first ad requests will not
+take them into account.
+</Warning>
+
+```kotlin
+import com.cleveradssolutions.plugin.kmp.CASGender
+import com.cleveradssolutions.plugin.kmp.CASMobileAds
+
+CASMobileAds.targetingOptions.apply {
+    userId = "user-hash-code"
+    age = 12
+    gender = CASGender.MALE
+    keywords = setOf("puzzle", "casual game")
+    contentUrl = "https://example.com/related-content"
+    locationCollectionEnabled = true
+}
+
+CASMobileAds.initialize(context = context, casId = CASMobileAds.TEST_ID)
+```
+
+### User ID
+The user ID is a unique identifier supplied by your application and must be static for each user across sessions.
+```kotlin
+CASMobileAds.targetingOptions.userId = "user-hash-code"
+```
+
+<Warning>
+Your user ID should not contain any personally identifiable information such as an email address, screen name, Android ID (AID), or Google Advertising ID (GAID).
+</Warning>
+
+### User Age
+Set the user age. Limitation: 1-99. By default `0` is 'unknown'.
+
+```kotlin
+CASMobileAds.targetingOptions.age = 12
+```
+
+### User Gender
+Set targeting to the user’s gender. Available values are `CASGender.UNKNOWN`, `CASGender.MALE` and `CASGender.FEMALE`.
+
+```kotlin
+CASMobileAds.targetingOptions.gender = CASGender.MALE
+```
+
+### User Location auto collection
+Collect from the device the latitude and longitude coordinates truncated to the hundredths decimal place.
+- Collect only if your application already has the relevant end-user permissions.
+- Does not collect if the target audience is children.
+- Disabled by default.
+
+```kotlin
+CASMobileAds.targetingOptions.locationCollectionEnabled = true
+```
+
+<Warning>
+Do not use Location just for advertising. Your app should have a valid use case for it as well.
+</Warning>
+
+### App Keywords
+Set a list of keywords, interests, or intents related to your application. Words or phrases describe
+the current activity of the user for targeting purposes.
+
+```kotlin
+CASMobileAds.targetingOptions.keywords = setOf("puzzle", "casual game")
+```
+
+### App Content URL
+Set the content URL for a website whose content matches the app's primary content. This website content is used for targeting and brand safety purposes. Limitation: max URL length 512.
+
+```kotlin
+CASMobileAds.targetingOptions.contentUrl = "https://example.com/related-content"
+```

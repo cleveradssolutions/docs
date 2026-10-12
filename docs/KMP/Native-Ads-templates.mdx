@@ -1,0 +1,98 @@
+---
+title: Native Ads templates
+previous: /KMP/Native-Ads
+previousTitle: Load Native Ad
+---
+
+Native templates are code-complete layouts for your native ads, designed for fast implementation and easy modification.
+With native templates, the plugin provides prebuilt Android and iOS layouts for you, and you can customize the style
+of the native assets from common Kotlin code.
+
+Use `CASNativeAdTemplate` instead of `CASNativeAd` when you do not need a custom layout. The template picks its
+internal layout from the size you give it:
+
+1. If the height is greater than 500 dp, a large native ad layout is used.
+<Image height="500" alt="Image" src="/assets/Native-Template-Screen.jpg" />
+
+2. If the height is greater than 200 dp, a medium layout is used.
+<Image width="300" alt="Image" src="/assets/Native-Template-MRec.jpg" />
+
+3. Otherwise, a banner layout is used.
+<Image width="300" alt="Image" src="/assets/Native-Template-Small.jpg" />
+
+## Display the template
+`maxWidth` and `maxHeight` are required, because they decide which layout the template uses.
+
+```kotlin
+import androidx.compose.ui.unit.dp
+import com.cleveradssolutions.plugin.kmp.composable.CASNativeAdTemplate
+
+CASNativeAdTemplate(
+    adContent = adContent,
+    maxWidth = 360.dp,
+    maxHeight = 300.dp,
+)
+```
+
+To fill the available width, read it from the layout:
+```kotlin
+BoxWithConstraints {
+    CASNativeAdTemplate(
+        adContent = adContent,
+        maxWidth = maxWidth,
+        maxHeight = 300.dp,
+    )
+}
+```
+
+[Loading the ad content](KMP/Native-Ads#load-ad-content) and releasing it with `destroy()` work exactly the same
+as for a custom layout.
+
+## Customize ad
+The CAS Template can be customized by changing the colors of individual components and the font style.
+All style parameters are optional, and `null` keeps the default of the template.
+
+<Property name="backgroundColor" type="Color?">
+The background color of the template.
+</Property>
+<Property name="primaryColor" type="Color?">
+The primary color, used for the "Call to action" button background.
+</Property>
+<Property name="primaryTextColor" type="Color?">
+The text color of the "Call to action" button.
+</Property>
+<Property name="headlineTextColor" type="Color?">
+The headline text color.
+</Property>
+<Property name="headlineFontStyle" type="CASNativeTemplateFontStyle?">
+The headline text font style.
+</Property>
+<Property name="secondaryTextColor" type="Color?">
+The color of the remaining text assets.
+</Property>
+<Property name="secondaryFontStyle" type="CASNativeTemplateFontStyle?">
+The font style of the remaining text assets.
+</Property>
+
+The following example renders the template with a full custom style:
+```kotlin
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.cleveradssolutions.plugin.kmp.CASNativeTemplateFontStyle
+import com.cleveradssolutions.plugin.kmp.composable.CASNativeAdTemplate
+
+CASNativeAdTemplate(
+    adContent = adContent,
+    maxWidth = 360.dp,
+    maxHeight = 300.dp,
+    backgroundColor = Color.White,
+    primaryColor = Color(0xFF2563EB),
+    primaryTextColor = Color.White,
+    headlineTextColor = Color.Black,
+    headlineFontStyle = CASNativeTemplateFontStyle.BOLD,
+    secondaryTextColor = Color.DarkGray,
+    secondaryFontStyle = null,
+)
+```
+
+**Continue to use Native Ad as usual.**

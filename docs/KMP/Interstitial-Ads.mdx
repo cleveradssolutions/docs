@@ -1,0 +1,211 @@
+---
+title: Interstitial Ads
+description: This guide explains how to integrate interstitial ads into a Kotlin Multiplatform app.
+---
+
+Interstitial ads are full-screen ads that cover the interface of their host app.
+They're typically displayed at natural transition points in the flow of an app, such as between screens.
+When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.
+
+Interstitial Ad management is handled through the `CASInterstitialAd` class from `commonMain`.
+The ad is presented by the native CAS.AI SDK on top of all app content, so it is not part of the Compose tree
+and nothing has to be added to your UI.
+
+CAS provides an option to enable `autoLoad` to simplify your app logic. Before using the ad, you should decide whether to enable `autoLoad`, or manually manage each ad loading cycle in your code.
+
+When `autoLoad` is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+```kotlin
+val isAutoLoadEnabled = true
+```
+
+Manual load mode (`autoLoad = false`) is useful when you only need to show a single ad per app screen, and the screens change frequently.
+
+Below is a diagram showing the ad lifecycle and how `autoLoad` affects it.
+
+<Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
+
+## Create Ad instance
+The following example creates and loads an interstitial ad:
+```kotlin
+import com.cleveradssolutions.plugin.kmp.CASAdContentInfo
+import com.cleveradssolutions.plugin.kmp.CASAdFormat
+import com.cleveradssolutions.plugin.kmp.CASError
+import com.cleveradssolutions.plugin.kmp.CASInterstitialAd
+import com.cleveradssolutions.plugin.kmp.CASMobileAds
+import com.cleveradssolutions.plugin.kmp.CASScreenAdContentCallback
+
+val interstitialAd = CASInterstitialAd(
+    casId = CASMobileAds.TEST_ID,
+    autoLoad = isAutoLoadEnabled,
+    callback = object : CASScreenAdContentCallback {
+        override fun onAdLoaded(ad: CASAdContentInfo) {
+            // Called when an ad is successfully loaded.
+            println("Interstitial ad loaded")
+        }
+
+        override fun onAdFailedToLoad(format: CASAdFormat, error: CASError) {
+            // Called when an ad load failed.
+            println("Interstitial ad failed to load: ${error.message}")
+        }
+    },
+)
+```
+
+In Compose code, keep the instance across recompositions with `remember`:
+```kotlin
+@Composable
+fun InterstitialScreen() {
+    val interstitialAd = remember {
+        CASInterstitialAd(casId = CASMobileAds.TEST_ID, autoLoad = true)
+    }
+
+    DisposableEffect(interstitialAd) {
+        onDispose { interstitialAd.destroy() }
+    }
+}
+```
+
+Ad content may take some time to load after creating an ad instance. To ensure the ad displays instantly when needed, create the ad instance in advance. Use the `onAdLoaded` callback to be notified when the ad is ready for display.
+
+## Ad content callbacks
+`CASScreenAdContentCallback` declares the full ad lifecycle. Every method has a default empty implementation,
+so override only the ones you need.
+
+```kotlin
+object : CASScreenAdContentCallback {
+    override fun onAdLoaded(ad: CASAdContentInfo) {
+        // Called when an ad is successfully loaded.
+    }
+
+    override fun onAdFailedToLoad(format: CASAdFormat, error: CASError) {
+        // Called when an ad load failed.
+    }
+
+    override fun onAdFailedToShow(format: CASAdFormat, error: CASError) {
+        // Called when the ad failed to show full screen content.
+    }
+
+    override fun onAdShowed(ad: CASAdContentInfo) {
+        // Called when the ad showed the full screen content.
+    }
+
+    override fun onAdClicked(ad: CASAdContentInfo) {
+        // Called when a click is recorded for an ad.
+    }
+
+    override fun onAdDismissed(ad: CASAdContentInfo) {
+        // Called when the ad dismissed full screen content.
+    }
+}
+```
+
+Impressions are reported through a separate callback, which you can change at any time:
+```kotlin
+interstitialAd.impressionCallback = CASAdImpressionCallback { ad ->
+    // Called when an impression occurs on the ad.
+    println("Impression from ${ad.sourceName} with revenue ${ad.revenue}")
+}
+```
+
+<Info>
+- All callbacks are invoked on the main thread.
+- Read more about the `CASAdContentInfo` structure in [Impression Level Data](KMP/Impression-Level-Data).
+- When an error occurs during ad impression, only `onAdFailedToShow` is executed. In this case `onAdDismissed` will not be executed, since the impression is not considered successful.
+</Info>
+
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```kotlin
+interstitialAd.placement = "BestPlace" // [!code highlight]
+```
+
+## Show Ad
+Interstitial ads should be displayed during natural pauses in the flow of an app. Between app screens is a good example, or after the user completes a task.
+
+You can choose when to show the ad by calling `show()`:
+```kotlin
+interstitialAd.show()
+```
+
+If the ad is not ready at that moment, the `onAdFailedToShow` callback will be triggered with a reason provided in the `CASError`.
+
+You have the option to check `isLoaded` if it's required by your app's logic.
+```kotlin
+val isAdLoaded: Boolean = interstitialAd.isLoaded
+```
+
+### Auto Show Ad mode
+CAS provides the option to automatically show a loaded ad when the user returns to the app. To enable this behavior, set the `autoShow` argument to `true`.
+```kotlin
+val interstitialAd = CASInterstitialAd(
+    casId = CASMobileAds.TEST_ID,
+    autoShow = true, // [!code highlight]
+)
+```
+
+The mode can also be changed later through `interstitialAd.isAutoShowEnabled`.
+
+## Release ad resource
+Be sure to release ad resources if you’re no longer going to use the ad instance.
+```kotlin
+interstitialAd.destroy() // [!code highlight]
+```
+
+It may be useful to store the ad instance in a shared object for reuse across multiple screens. This way, you don't need to call `destroy()` and can show the already loaded ad without delay.
+
+## Manual reload Ad
+When you want to manually control ad loading, use `load()` on the created ad instance to retry loading with the same configuration.
+```kotlin
+interstitialAd.load()
+```
+
+Autoload can also be switched at runtime:
+```kotlin
+interstitialAd.isAutoLoadEnabled = false
+```
+
+## Minimum interval between impressions
+The minimum interval between showing interstitial ads, in seconds.
+Attempting to show a new interstitial ad before the interval has passed after the previous one was dismissed will trigger `onAdFailedToShow`.
+
+```kotlin
+interstitialAd.minInterval = 30 // [!code highlight]
+```
+
+By default, this interval is set to 0 seconds.
+
+Note that the timer for the minimum interval is shared across all interstitial ad instances, but the minimum interval value may differ for each ad instance.
+
+If you need to reset the minimum interval timer after showing a Rewarded Ad or an App Open Ad, you can call
+`interstitialAd.restartInterval()` in the `onAdDismissed` callback of those ad formats.
+
+```kotlin
+interstitialAd.restartInterval()
+```
+
+By default, the interval before the first interstitial ad impression is ignored. Use this method to delay
+displaying the ad by restarting the interval countdown.
+
+## Mute Ad sounds
+Indicates if the application’s audio is muted. Affects the initial mute state for fullscreen ads. Use this property only if your application has its own volume controls (e.g., custom music or sound effect muting).
+```kotlin
+CASMobileAds.adSoundsMuted = true
+```
+Not muted by default.
+
+## Some best practices
+#### Consider whether interstitial ads are the right type of ad for your app.
+Interstitial ads work best in apps with natural transition points. The conclusion of a task within an app, like sharing an image or completing a game level, creates such a point. Because the user is expecting a break in the action, it's easy to present an interstitial ad without disrupting their experience. Make sure you consider at which points in your app's workflow you'll display interstitial ads and how the user is likely to respond.
+
+#### Remember to pause the action when displaying an interstitial ad.
+There are a number of different types of interstitial ads: text, image, video, and more. It's important to make sure that when your app displays an interstitial ad, it also suspends its use of some resources to allow the ad to take advantage of them. For example, when you make the call to display an interstitial ad, be sure to pause any audio output being produced by your app.
+
+#### Allow for adequate loading time.
+Just as it's important to make sure you display interstitial ads at an appropriate time, it's also important to make sure the user doesn't have to wait for them to load. Loading the ad in advance by calling `load()` before you intend to call `show()` can ensure that your app has a fully loaded interstitial ad at the ready when the time comes to display one.
+
+#### Don't flood the user with ads.
+While increasing the frequency of interstitial ads in your app might seem like a great way to increase revenue, it can also degrade the user experience and lower clickthrough rates. Make sure that users aren't so frequently interrupted that they're no longer able to enjoy the use of your app.
+
+## Complete example
+- [Interstitial ad example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/InterstitialExampleScreen.kt)

@@ -1,0 +1,264 @@
+---
+title: Native Ads
+description: This guide explains how to integrate native ads into a Kotlin Multiplatform app.
+---
+
+Native ads are ad assets presented to users through UI components that are native to the platform.
+You decide the layout, so a native ad can match the look and feel of your app much more closely than a banner.
+
+Native ads consist of three parts:
+- `CASNativeAdLoader` requests one or more ads.
+- `CASNativeAdContent` holds the assets of a single loaded ad.
+- The `CASNativeAd` composable renders the assets you choose, or `CASNativeAdTemplate` renders a ready-made layout.
+
+<Image zoom src="/assets/Lifecycle-Native-Ad.png" alt="Diagram" height="500" />
+
+## Load Ad content
+```kotlin
+import com.cleveradssolutions.plugin.kmp.CASError
+import com.cleveradssolutions.plugin.kmp.CASMobileAds
+import com.cleveradssolutions.plugin.kmp.CASNativeAdContent
+import com.cleveradssolutions.plugin.kmp.CASNativeAdContentCallback
+import com.cleveradssolutions.plugin.kmp.CASNativeAdLoader
+
+val loader = CASNativeAdLoader(
+    casId = CASMobileAds.TEST_ID,
+    startVideoMuted = true,
+    callback = object : CASNativeAdContentCallback {
+        override fun onNativeAdLoaded(ad: CASNativeAdContent) {
+            // Keep the content and render it.
+        }
+
+        override fun onNativeAdFailedToLoad(error: CASError) {
+            println("Native ad failed to load: ${error.message}")
+        }
+    },
+)
+
+loader.load()
+```
+
+`onNativeAdLoaded` is invoked once per loaded ad. To request several ads at once, pass the count to `load()`:
+```kotlin
+loader.load(maxNumberOfAds = 5)
+```
+
+In Compose code, hold the loaded content in state:
+```kotlin
+@Composable
+fun NativeScreen() {
+    var adContent by remember { mutableStateOf<CASNativeAdContent?>(null) }
+
+    val loader = remember {
+        CASNativeAdLoader(
+            casId = CASMobileAds.TEST_ID,
+            callback = object : CASNativeAdContentCallback {
+                override fun onNativeAdLoaded(ad: CASNativeAdContent) {
+                    adContent = ad
+                }
+            },
+        )
+    }
+
+    LaunchedEffect(loader) { loader.load() }
+
+    DisposableEffect(Unit) {
+        onDispose { adContent?.destroy() } // [!code highlight]
+    }
+
+    adContent?.let { content ->
+        // Render the ad, see below.
+    }
+}
+```
+
+## Ad content callbacks
+Only `onNativeAdLoaded` is required, the rest have default empty implementations.
+
+```kotlin
+object : CASNativeAdContentCallback {
+    override fun onNativeAdLoaded(ad: CASNativeAdContent) {
+        // Called when an ad is successfully loaded.
+    }
+
+    override fun onNativeAdFailedToLoad(error: CASError) {
+        // Called when an ad load failed.
+    }
+
+    override fun onNativeAdFailedToShow(ad: CASNativeAdContent, error: CASError) {
+        // Called when the ad failed to present its assets.
+    }
+
+    override fun onNativeAdClicked(ad: CASNativeAdContent) {
+        // Called when a click is recorded for an ad.
+    }
+}
+```
+
+Impressions are reported per content instance:
+```kotlin
+adContent.impressionCallback = CASAdImpressionCallback { ad ->
+    println("Impression from ${ad.sourceName} with revenue ${ad.revenue}")
+}
+```
+
+<Info>
+Read more about the `CASAdContentInfo` structure in [Impression Level Data](KMP/Impression-Level-Data).
+</Info>
+
+## Ad assets
+`CASNativeAdContent` exposes the text assets so you can decide what your layout needs. Every asset except
+`contentInfo` is optional and can be `null`, because each mediated network provides a different subset.
+
+<Property name="headline" type="String?">
+The primary headline of the ad. Required by most networks and should always be displayed.
+</Property>
+<Property name="body" type="String?">
+The body text of the ad.
+</Property>
+<Property name="callToAction" type="String?">
+The text of the call to action, for example "Install".
+</Property>
+<Property name="advertiser" type="String?">
+The name of the advertiser.
+</Property>
+<Property name="price" type="String?">
+The price of the promoted product.
+</Property>
+<Property name="store" type="String?">
+The store the promoted app is distributed through.
+</Property>
+<Property name="starRating" type="Double?">
+The rating of the promoted app, from 0 to 5.
+</Property>
+<Property name="reviewCount" type="String?">
+The number of reviews of the promoted app.
+</Property>
+<Property name="adLabel" type="String?">
+The localized "Ad" label that has to be shown next to the ad content.
+</Property>
+<Property name="isExpired" type="Boolean">
+Whether the ad content has expired and should no longer be displayed.
+</Property>
+<Property name="contentInfo" type="CASAdContentInfo">
+Information about the loaded ad, see [Impression Level Data](KMP/Impression-Level-Data).
+</Property>
+
+Always check `isExpired` before rendering content that was loaded a while ago, and request a new ad instead of
+showing an expired one.
+
+## Build your own layout
+`CASNativeAd` registers your composable content with the native SDK, so clicks and impressions are tracked
+correctly. Inside its content block, place the asset composables of `NativeAdScope`.
+
+```kotlin
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.cleveradssolutions.plugin.kmp.composable.AdBodyText
+import com.cleveradssolutions.plugin.kmp.composable.AdCallToAction
+import com.cleveradssolutions.plugin.kmp.composable.AdChoices
+import com.cleveradssolutions.plugin.kmp.composable.AdHeadlineText
+import com.cleveradssolutions.plugin.kmp.composable.AdIconImage
+import com.cleveradssolutions.plugin.kmp.composable.AdMedia
+import com.cleveradssolutions.plugin.kmp.composable.CASNativeAd
+
+CASNativeAd(
+    adContent = adContent,
+    modifier = Modifier.fillMaxWidth(),
+) {
+    Column {
+        Row {
+            AdIconImage(modifier = Modifier.size(48.dp))
+            Column {
+                AdHeadlineText()
+                AdBodyText()
+            }
+            AdChoices()
+        }
+        AdMedia(modifier = Modifier.fillMaxWidth().height(180.dp))
+        AdCallToAction(modifier = Modifier.fillMaxWidth())
+    }
+}
+```
+
+<Warning>
+Render the asset composables of `NativeAdScope` only inside `CASNativeAd`. Drawing the asset values with your
+own `Text` or `Image` composables prevents the SDK from registering clicks and impressions, which breaks
+reporting and can be treated as invalid traffic.
+</Warning>
+
+### Available asset composables
+| Composable | Asset |
+|---|---|
+| `AdHeadlineText()` | Headline |
+| `AdBodyText()` | Body text |
+| `AdCallToAction()` | Call to action button |
+| `AdIconImage()` | Icon image |
+| `AdMedia()` | Main media, image or video |
+| `AdChoices()` | AdChoices overlay |
+| `AdAdvertiserText()` | Advertiser name |
+| `AdLabelText()` | "Ad" label |
+| `AdPriceText()` | Price |
+| `AdStoreText()` | Store name |
+| `AdStarRating()` | Star rating |
+| `AdReviewCountText()` | Review count |
+
+The text composables accept the usual Compose text parameters, such as `color`, `fontSize`, `fontWeight`,
+`textAlign` and `maxLines`, so they can be styled to match your design.
+
+`AdMedia` additionally accepts a `scaleType` of `CASNativeScaleType`, and `AdCallToAction` accepts
+`textColor`, `backgroundColor` and `shape`.
+
+## AdChoices placement
+The AdChoices icon placement is chosen when the loader is created.
+
+```kotlin
+val loader = CASNativeAdLoader(
+    casId = CASMobileAds.TEST_ID,
+    adChoicesPlacement = CASNativeAdChoicesPlacement.TOP_RIGHT, // [!code highlight]
+    callback = callback,
+)
+```
+
+## Start video muted
+Whether the video of the main media asset starts muted. Enabled by default.
+
+```kotlin
+val loader = CASNativeAdLoader(
+    casId = CASMobileAds.TEST_ID,
+    startVideoMuted = false, // [!code highlight]
+    callback = callback,
+)
+```
+
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```kotlin
+val loader = CASNativeAdLoader(
+    casId = CASMobileAds.TEST_ID,
+    placement = "FeedItem", // [!code highlight]
+    callback = callback,
+)
+```
+
+## Release ad resource
+Each loaded `CASNativeAdContent` owns native resources and has to be destroyed when it is no longer displayed.
+
+```kotlin
+adContent.destroy()
+```
+
+When you preload several ads, destroy every instance you do not display.
+
+## Ready-made templates
+If you do not need a custom layout, `CASNativeAdTemplate` renders a complete native ad for you.
+See [Native Ad templates](KMP/Native-Ads-templates).
+
+## Complete example
+- [Native ad example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/NativeExampleScreens.kt)

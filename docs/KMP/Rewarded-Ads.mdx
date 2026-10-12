@@ -1,0 +1,155 @@
+---
+title: Rewarded Ads
+description: This guide explains how to integrate rewarded ads into a Kotlin Multiplatform app.
+---
+
+Rewarded ads are full-screen ads that users choose to watch in exchange for in-app rewards.
+Unlike other formats, the user has to opt in and watch the ad to completion before the reward is granted.
+
+Rewarded Ad management is handled through the `CASRewardedAd` class from `commonMain`.
+The ad is presented by the native CAS.AI SDK on top of all app content, so it is not part of the Compose tree.
+
+<Image zoom src="/assets/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
+
+## Create Ad instance
+```kotlin
+import com.cleveradssolutions.plugin.kmp.CASAdContentInfo
+import com.cleveradssolutions.plugin.kmp.CASAdFormat
+import com.cleveradssolutions.plugin.kmp.CASError
+import com.cleveradssolutions.plugin.kmp.CASMobileAds
+import com.cleveradssolutions.plugin.kmp.CASRewardedAd
+import com.cleveradssolutions.plugin.kmp.CASScreenAdContentCallback
+
+val rewardedAd = CASRewardedAd(
+    casId = CASMobileAds.TEST_ID,
+    autoLoad = true,
+    callback = object : CASScreenAdContentCallback {
+        override fun onAdLoaded(ad: CASAdContentInfo) {
+            println("Rewarded ad loaded")
+        }
+
+        override fun onAdFailedToLoad(format: CASAdFormat, error: CASError) {
+            println("Rewarded ad failed to load: ${error.message}")
+        }
+    },
+)
+```
+
+When `autoLoad` is enabled, a new ad is automatically loaded after each display, and loading failures trigger
+automatic retry attempts. Set it to `false` to control every load yourself with `load()`.
+
+In Compose code, keep the instance across recompositions with `remember` and release it on dispose:
+```kotlin
+@Composable
+fun RewardedScreen() {
+    val rewardedAd = remember {
+        CASRewardedAd(casId = CASMobileAds.TEST_ID, autoLoad = true)
+    }
+
+    DisposableEffect(rewardedAd) {
+        onDispose { rewardedAd.destroy() }
+    }
+}
+```
+
+## Show Ad and grant the reward
+Unlike the other full screen formats, `show()` requires a `CASRewardEarnedListener`. It is invoked only when
+the user has watched enough of the ad to earn the reward.
+
+```kotlin
+rewardedAd.show(
+    rewardEarnedListener = CASRewardEarnedListener { ad ->
+        // Reward the user here.
+        println("User earned reward from ${ad.sourceName}")
+    },
+)
+```
+
+<Warning>
+`onUserEarnedReward` is the only correct place to grant a reward. Do not grant it from `onAdDismissed`,
+because the user may dismiss the ad before completing it.
+</Warning>
+
+If the ad is not ready at that moment, the `onAdFailedToShow` callback is triggered with a reason provided in
+the `CASError`, and the reward listener is not invoked.
+
+You have the option to check `isLoaded` if it's required by your app's logic.
+```kotlin
+val isAdLoaded: Boolean = rewardedAd.isLoaded
+```
+
+## Ad content callbacks
+`CASRewardedAd` uses the same `CASScreenAdContentCallback` as the other full screen formats. Every method has a
+default empty implementation, so override only the ones you need.
+
+```kotlin
+object : CASScreenAdContentCallback {
+    override fun onAdLoaded(ad: CASAdContentInfo) {}
+    override fun onAdFailedToLoad(format: CASAdFormat, error: CASError) {}
+    override fun onAdFailedToShow(format: CASAdFormat, error: CASError) {}
+    override fun onAdShowed(ad: CASAdContentInfo) {}
+    override fun onAdClicked(ad: CASAdContentInfo) {}
+    override fun onAdDismissed(ad: CASAdContentInfo) {}
+}
+```
+
+Impressions are reported through a separate callback:
+```kotlin
+rewardedAd.impressionCallback = CASAdImpressionCallback { ad ->
+    println("Impression from ${ad.sourceName} with revenue ${ad.revenue}")
+}
+```
+
+<Info>
+Read more about the `CASAdContentInfo` structure in [Impression Level Data](KMP/Impression-Level-Data).
+</Info>
+
+## Server-Side Verification
+Server-side verification callbacks let your server verify that the user has earned the reward before you grant it.
+Set the custom data that CAS.AI sends to your server together with the reward notification.
+
+```kotlin
+rewardedAd.serverSideVerificationData = "user-123" // [!code highlight]
+```
+
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```kotlin
+rewardedAd.placement = "LevelComplete" // [!code highlight]
+```
+
+## Manual reload Ad
+When you want to manually control ad loading, use `load()` on the created ad instance to retry loading with the same configuration.
+```kotlin
+rewardedAd.load()
+```
+
+Autoload can also be switched at runtime:
+```kotlin
+rewardedAd.isAutoLoadEnabled = false
+```
+
+## Release ad resource
+Be sure to release ad resources if you’re no longer going to use the ad instance.
+```kotlin
+rewardedAd.destroy() // [!code highlight]
+```
+
+## Reset the interstitial interval
+Showing a rewarded ad does not reset the [minimum interval](KMP/Interstitial-Ads#minimum-interval-between-impressions)
+of your interstitial ads. If you want the interval to start counting from the rewarded impression, call
+`restartInterval()` on your interstitial instance from `onAdDismissed`:
+
+```kotlin
+override fun onAdDismissed(ad: CASAdContentInfo) {
+    interstitialAd.restartInterval()
+}
+```
+
+## Ad-free users still get rewarded ads
+The [trial ad-free interval](KMP/Initialize-CAS#optional-trial-ad-free-interval) suppresses other ad formats for
+new users, but keeps Rewarded Ads available, so the reward mechanics of your app keep working from the first launch.
+
+## Complete example
+- [Rewarded ad example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/RewardedExampleScreen.kt)

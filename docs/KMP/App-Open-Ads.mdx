@@ -1,0 +1,139 @@
+---
+title: App Open Ads
+description: This guide explains how to integrate app open ads into a Kotlin Multiplatform app.
+---
+
+App open ads are full-screen ads shown when the user opens or returns to your app.
+They are designed to capture attention at a moment when the user expects a short wait, such as a loading screen.
+
+App Open Ad management is handled through the `CASAppOpenAd` class from `commonMain`.
+The ad is presented by the native CAS.AI SDK on top of all app content, so it is not part of the Compose tree.
+
+<Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
+
+## Create Ad instance
+```kotlin
+import com.cleveradssolutions.plugin.kmp.CASAdContentInfo
+import com.cleveradssolutions.plugin.kmp.CASAdFormat
+import com.cleveradssolutions.plugin.kmp.CASAppOpenAd
+import com.cleveradssolutions.plugin.kmp.CASError
+import com.cleveradssolutions.plugin.kmp.CASMobileAds
+import com.cleveradssolutions.plugin.kmp.CASScreenAdContentCallback
+
+val appOpenAd = CASAppOpenAd(
+    casId = CASMobileAds.TEST_ID,
+    autoLoad = true,
+    autoShow = true,
+    callback = object : CASScreenAdContentCallback {
+        override fun onAdLoaded(ad: CASAdContentInfo) {
+            println("App open ad loaded")
+        }
+
+        override fun onAdFailedToLoad(format: CASAdFormat, error: CASError) {
+            println("App open ad failed to load: ${error.message}")
+        }
+    },
+)
+```
+
+<Info>
+App open ads are most useful with both `autoLoad` and `autoShow` enabled: the SDK keeps an ad ready and
+presents it when the user returns to the app, without any additional code in your app.
+</Info>
+
+## Auto Show Ad mode
+With `autoShow` enabled, the SDK displays the loaded ad as soon as the user returns to the app. Note that the ad
+must be ready for display at that moment, otherwise nothing is shown and loading continues in the background.
+
+```kotlin
+appOpenAd.isAutoShowEnabled = true // [!code highlight]
+```
+
+Disabled by default.
+
+<Warning>
+Do not show an app open ad on the very first launch before your app is ready to be used, and do not show it on
+top of another full screen ad. Both lead to a poor user experience and may violate store policies.
+</Warning>
+
+## Show Ad manually
+If you prefer to control the moment of display, keep `autoShow` disabled and call `show()` yourself, for
+example once your splash screen has finished loading.
+
+```kotlin
+appOpenAd.show()
+```
+
+If the ad is not ready at that moment, the `onAdFailedToShow` callback is triggered with a reason provided in the `CASError`.
+
+You have the option to check `isLoaded` if it's required by your app's logic.
+```kotlin
+val isAdLoaded: Boolean = appOpenAd.isLoaded
+```
+
+## Ad content callbacks
+`CASAppOpenAd` uses the same `CASScreenAdContentCallback` as the other full screen formats. Every method has a
+default empty implementation, so override only the ones you need.
+
+```kotlin
+object : CASScreenAdContentCallback {
+    override fun onAdLoaded(ad: CASAdContentInfo) {}
+    override fun onAdFailedToLoad(format: CASAdFormat, error: CASError) {}
+    override fun onAdFailedToShow(format: CASAdFormat, error: CASError) {}
+    override fun onAdShowed(ad: CASAdContentInfo) {}
+    override fun onAdClicked(ad: CASAdContentInfo) {}
+    override fun onAdDismissed(ad: CASAdContentInfo) {}
+}
+```
+
+Impressions are reported through a separate callback:
+```kotlin
+appOpenAd.impressionCallback = CASAdImpressionCallback { ad ->
+    println("Impression from ${ad.sourceName} with revenue ${ad.revenue}")
+}
+```
+
+<Info>
+Read more about the `CASAdContentInfo` structure in [Impression Level Data](KMP/Impression-Level-Data).
+</Info>
+
+## Optional Placement name
+An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+
+```kotlin
+appOpenAd.placement = "ColdStart" // [!code highlight]
+```
+
+## Manual reload Ad
+When you want to manually control ad loading, use `load()` on the created ad instance to retry loading with the same configuration.
+```kotlin
+appOpenAd.load()
+```
+
+Autoload can also be switched at runtime:
+```kotlin
+appOpenAd.isAutoLoadEnabled = false
+```
+
+## Release ad resource
+Be sure to release ad resources if you’re no longer going to use the ad instance.
+```kotlin
+appOpenAd.destroy() // [!code highlight]
+```
+
+Because app open ads follow the application lifecycle rather than a single screen, it usually makes sense to keep
+one instance in a shared object for the whole app session instead of creating one per screen.
+
+## Reset the interstitial interval
+Showing an app open ad does not reset the [minimum interval](KMP/Interstitial-Ads#minimum-interval-between-impressions)
+of your interstitial ads. If you want the interval to start counting from the app open impression, call
+`restartInterval()` on your interstitial instance from `onAdDismissed`:
+
+```kotlin
+override fun onAdDismissed(ad: CASAdContentInfo) {
+    interstitialAd.restartInterval()
+}
+```
+
+## Complete example
+- [App open ad example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/AppOpenExampleScreen.kt)
