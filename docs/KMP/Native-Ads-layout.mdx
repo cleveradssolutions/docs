@@ -1,0 +1,75 @@
+---
+title: Native Ad custom layout
+previous: /KMP/Native-Ads
+previousTitle: Load Native Ad
+---
+
+A custom layout gives you full control over how the ad assets are arranged, so a native ad can match the look
+and feel of your app exactly. If you do not need that control, use the ready-made
+[Native Ad templates](KMP/Native-Ads-templates) instead.
+
+`CASNativeAd` registers your composable content with the native SDK, so clicks and impressions are tracked
+correctly. Inside its content block, place the asset composables of `NativeAdScope`.
+
+```kotlin
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.cleveradssolutions.plugin.kmp.composable.AdBodyText
+import com.cleveradssolutions.plugin.kmp.composable.AdCallToAction
+import com.cleveradssolutions.plugin.kmp.composable.AdChoices
+import com.cleveradssolutions.plugin.kmp.composable.AdHeadlineText
+import com.cleveradssolutions.plugin.kmp.composable.AdIconImage
+import com.cleveradssolutions.plugin.kmp.composable.AdMedia
+import com.cleveradssolutions.plugin.kmp.composable.CASNativeAd
+
+CASNativeAd(
+    adContent = adContent,
+    modifier = Modifier.fillMaxWidth(),
+) {
+    Column {
+        Row {
+            AdIconImage(modifier = Modifier.size(48.dp))
+            Column {
+                AdHeadlineText()
+                AdBodyText()
+            }
+            AdChoices()
+        }
+        AdMedia(modifier = Modifier.fillMaxWidth().height(180.dp))
+        AdCallToAction(modifier = Modifier.fillMaxWidth())
+    }
+}
+```
+
+<Warning>
+Render the asset composables of `NativeAdScope` only inside `CASNativeAd`. Drawing the asset values with your
+own `Text` or `Image` composables prevents the SDK from registering clicks and impressions, which breaks
+reporting and can be treated as invalid traffic.
+</Warning>
+
+## Available asset composables
+| Composable | Asset |
+|---|---|
+| `AdHeadlineText()` | Headline |
+| `AdBodyText()` | Body text |
+| `AdCallToAction()` | Call to action button |
+| `AdIconImage()` | Icon image |
+| `AdMedia()` | Main media, image or video |
+| `AdChoices()` | AdChoices overlay |
+| `AdAdvertiserText()` | Advertiser name |
+| `AdLabelText()` | "Ad" label |
+| `AdPriceText()` | Price |
+| `AdStoreText()` | Store name |
+| `AdStarRating()` | Star rating |
+| `AdReviewCountText()` | Review count |
+
+The text composables accept the usual Compose text parameters, such as `color`, `fontSize`, `fontWeight`,
+`textAlign` and `maxLines`, so they can be styled to match your design.
+
+`AdMedia` additionally accepts a `scaleType` of `CASNativeScaleType`, and `AdCallToAction` accepts
+`textColor`, `backgroundColor` and `shape`.

@@ -147,72 +147,18 @@ Information about the loaded ad, see [Impression Level Data](KMP/Impression-Leve
 Always check `isExpired` before rendering content that was loaded a while ago, and request a new ad instead of
 showing an expired one.
 
-## Build your own layout
-`CASNativeAd` registers your composable content with the native SDK, so clicks and impressions are tracked
-correctly. Inside its content block, place the asset composables of `NativeAdScope`.
+## Display the ad
+Once the content is loaded, render it in one of two ways.
 
-```kotlin
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.cleveradssolutions.plugin.kmp.composable.AdBodyText
-import com.cleveradssolutions.plugin.kmp.composable.AdCallToAction
-import com.cleveradssolutions.plugin.kmp.composable.AdChoices
-import com.cleveradssolutions.plugin.kmp.composable.AdHeadlineText
-import com.cleveradssolutions.plugin.kmp.composable.AdIconImage
-import com.cleveradssolutions.plugin.kmp.composable.AdMedia
-import com.cleveradssolutions.plugin.kmp.composable.CASNativeAd
+<CardGroup>
+<Card title="Custom layout" href="/KMP/Native-Ads-layout">
+Arrange the assets yourself with the `CASNativeAd` composable and the `NativeAdScope` elements.
+</Card>
+<Card title="Ready-made templates" href="/KMP/Native-Ads-templates">
+Render a complete native ad with `CASNativeAdTemplate` and style it with a few parameters.
+</Card>
+</CardGroup>
 
-CASNativeAd(
-    adContent = adContent,
-    modifier = Modifier.fillMaxWidth(),
-) {
-    Column {
-        Row {
-            AdIconImage(modifier = Modifier.size(48.dp))
-            Column {
-                AdHeadlineText()
-                AdBodyText()
-            }
-            AdChoices()
-        }
-        AdMedia(modifier = Modifier.fillMaxWidth().height(180.dp))
-        AdCallToAction(modifier = Modifier.fillMaxWidth())
-    }
-}
-```
-
-<Warning>
-Render the asset composables of `NativeAdScope` only inside `CASNativeAd`. Drawing the asset values with your
-own `Text` or `Image` composables prevents the SDK from registering clicks and impressions, which breaks
-reporting and can be treated as invalid traffic.
-</Warning>
-
-### Available asset composables
-| Composable | Asset |
-|---|---|
-| `AdHeadlineText()` | Headline |
-| `AdBodyText()` | Body text |
-| `AdCallToAction()` | Call to action button |
-| `AdIconImage()` | Icon image |
-| `AdMedia()` | Main media, image or video |
-| `AdChoices()` | AdChoices overlay |
-| `AdAdvertiserText()` | Advertiser name |
-| `AdLabelText()` | "Ad" label |
-| `AdPriceText()` | Price |
-| `AdStoreText()` | Store name |
-| `AdStarRating()` | Star rating |
-| `AdReviewCountText()` | Review count |
-
-The text composables accept the usual Compose text parameters, such as `color`, `fontSize`, `fontWeight`,
-`textAlign` and `maxLines`, so they can be styled to match your design.
-
-`AdMedia` additionally accepts a `scaleType` of `CASNativeScaleType`, and `AdCallToAction` accepts
-`textColor`, `backgroundColor` and `shape`.
 
 ## AdChoices placement
 The AdChoices icon placement is chosen when the loader is created.
@@ -255,10 +201,6 @@ adContent.destroy()
 ```
 
 When you preload several ads, destroy every instance you do not display.
-
-## Ready-made templates
-If you do not need a custom layout, `CASNativeAdTemplate` renders a complete native ad for you.
-See [Native Ad templates](KMP/Native-Ads-templates).
 
 ## Complete example
 - [Native ad example](https://github.com/cleveradssolutions/CAS-Kotlin/blob/master/cas-demo-app/src/commonMain/kotlin/com/cleveradssolutions/kmp/demo/screens/NativeExampleScreens.kt)

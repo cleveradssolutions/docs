@@ -710,6 +710,10 @@
                     "href": "/KMP/Native-Ads",
                     "pages": [
                         {
+                            "title": "Native Ad custom layout",
+                            "href": "/KMP/Native-Ads-layout"
+                        },
+                        {
                             "title": "Native Ad templates",
                             "href": "/KMP/Native-Ads-templates"
                         }
