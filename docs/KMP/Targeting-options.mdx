@@ -6,28 +6,13 @@ You can now easily tailor the way you serve your ads to fit a specific audience!
 You’ll need to inform our servers of the users’ details so the SDK will know to serve ads according
 to the segment the user belongs to.
 
-All options are available from common code through `CASMobileAds.targetingOptions`.
+All options are available from common code through `CASMobileAds.targetingOptions`, and every one of them is
+optional.
 
 <Warning>
-Targeting options must be set **before** initializing the SDK, otherwise the first ad requests will not
-take them into account.
+Targeting options must be set **before** [initializing the SDK](KMP/Initialize-CAS), otherwise the first ad
+requests will not take them into account.
 </Warning>
-
-```kotlin
-import com.cleveradssolutions.plugin.kmp.CASGender
-import com.cleveradssolutions.plugin.kmp.CASMobileAds
-
-CASMobileAds.targetingOptions.apply {
-    userId = "user-hash-code"
-    age = 12
-    gender = CASGender.MALE
-    keywords = setOf("puzzle", "casual game")
-    contentUrl = "https://example.com/related-content"
-    locationCollectionEnabled = true
-}
-
-CASMobileAds.initialize(context = context, casId = "APP CAS ID")
-```
 
 ### User ID
 The user ID is a unique identifier supplied by your application and must be static for each user across sessions.
