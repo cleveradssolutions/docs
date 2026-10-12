@@ -73,9 +73,18 @@ cas {
 }
 ```
 
-Several ad networks do not publish their Android SDK to Maven Central, so their adapters need the network's
-own repository. Add them to `dependencyResolutionManagement` in `settings.gradle.kts`, as shown in
-[the CAS Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/settings.gradle).
+#### Add Maven repositories
+Several ad networks do not publish their Android SDK to Maven Central, so their adapters cannot be resolved
+without the network's own repository. The CAS Gradle plugin does not add them for you.
+
+Copy the repositories block from [Add Maven repositories](Android#add-maven-repositories) into the
+`dependencyResolutionManagement` of your `settings.gradle.kts`.
+
+<Error>
+Without them the Android build fails while resolving dependencies, with a message such as
+`Could not find com.mbridge.msdk.oversea:mbridge_android_sdk`, and the same for `com.pangle.global`,
+`com.ysocorp` and the other networks that host their own artifacts.
+</Error>
 
 <Success>
 Make sure to update the CAS Gradle plugin version whenever you update the CAS Kotlin Multiplatform library. The CAS Gradle plugin version matches the version of [the CAS Android SDK](https://github.com/cleveradssolutions/CAS-Android/releases). For detailed setup instructions, visit [the CAS Android repository](Android#integration-options).
