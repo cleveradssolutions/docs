@@ -87,38 +87,52 @@ The CAS iOS SDK is distributed as a **Swift Package**. Add it to the Xcode proje
 
 <Steps>
 <Step title="Add the package dependency">
-In Xcode, open **File ▸ Add Package Dependencies…** and enter the repository URL:
+In Xcode, select **File ▸ Add Package Dependencies…** and enter the CAS Git repository URL into the
+**Search or Enter Package URL** field:
 ```
 https://github.com/cleveradssolutions/CAS-iOS
 ```
 </Step>
-<Step title="Pin the version">
-Set **Dependency Rule** to **Exact Version** and enter `{{ versions.ios }}`.
+<Step title="Specify the version">
+Set the **Dependency Rule** to **Up to Next Minor Version** and enter `{{ versions.ios }}`, then click **Add Package**.
 
-Pinning an exact version keeps the CAS.AI SDK in step with the CAS Gradle plugin on Android. Both have to
-be updated together with the Kotlin Multiplatform library.
+Keep this version in step with the CAS Gradle plugin on Android. Both are updated together with the Kotlin
+Multiplatform library.
 </Step>
 <Step title="Choose the library products">
-Add the `CleverAdsSolutionsSPM` library product to your application target. It contains the CAS.AI SDK itself.
+Xcode then asks which library products to add to which target. Check `CleverAdsSolutionsSPM`, which is the
+CAS.AI SDK itself, and one `CASMediation*` product per ad network you want to monetize with. The list of
+products is in [Choose Mediated Networks](#choose-mediated-networks) below.
 
-Then add one product per mediation network you want to integrate, see [Choose Mediated Networks](#choose-mediated-networks) below.
+Nothing has to be imported or called in code for an adapter to work: each product carries the adapter binary,
+and the CAS.AI SDK discovers it at runtime.
+</Step>
+<Step title="Add the -ObjC linker flag">
+The adapters are discovered by class name at runtime, so the linker must keep their Objective-C classes
+instead of stripping them.
+
+1. Open the **Build Settings** of your application target.
+2. Locate the **Other Linker Flags** (`OTHER_LDFLAGS`) setting.
+3. Make sure that `$(inherited)` and `-ObjC` are at the beginning of the list.
+
+<Error>
+Without the `-ObjC` flag the project builds and the SDK initializes, but every mediated network stays
+unavailable and ads are never filled.
+</Error>
 </Step>
 </Steps>
 
-Alternatively, declare the package in a `Package.swift` of your own:
+Alternatively, if your Xcode project consumes a local Swift package of your own, declare the dependency in its
+`Package.swift`:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/cleveradssolutions/CAS-iOS", exact: "{{ versions.ios }}")
-],
-targets: [
-    .target(
-        name: "YourApp",
-        dependencies: [
-            .product(name: "CleverAdsSolutionsSPM", package: "CleverAdsSolutions")
-        ]
+    .package(
+        url: "https://github.com/cleveradssolutions/CAS-iOS",
+        .upToNextMinor(from: "{{ versions.ios }}")
     )
 ]
 ```
+The products then go into the dependencies of your target, see [Choose Mediated Networks](#choose-mediated-networks).
 
 <Info>
 The CAS.AI SDK is also published through CocoaPods. Swift Package Manager is the recommended option for
@@ -270,8 +284,42 @@ For detailed instructions on how to integrate specific adapters into your app, r
 </AccordionGroup>
 
 ### iOS
-The Swift Package exposes one library product per mediation network. Add the products of the networks you need
-to your application target, alongside `CleverAdsSolutionsSPM`.
+The Swift Package exposes one library product per mediation network. Adding a network is an Xcode step, not a
+code change: the product carries the adapter binary and the CAS.AI SDK picks it up at runtime.
+
+<Tabs groupId="iosnetworks">
+<TabItem label="In Xcode" value="xcode">
+If you are adding the package for the first time, tick the products in the dialog that Xcode shows after
+**Add Package**.
+
+To change the selection later:
+1. Select your project in the Project navigator, then select the application target.
+2. Open the **General** tab and find **Frameworks, Libraries, and Embedded Content**.
+3. Click **+**, pick the `CASMediation*` products you want from the `CleverAdsSolutions` package, and confirm.
+4. Remove a product from the same list to drop a network.
+
+Make sure `-ObjC` is still present in **Other Linker Flags** after changing the selection.
+</TabItem>
+<TabItem label="In Package.swift" value="manifest">
+If your Xcode project consumes a local Swift package of your own, list the products as dependencies of your target:
+
+```swift
+.target(
+    name: "YourApp",
+    dependencies: [
+        .product(name: "CleverAdsSolutionsSPM", package: "CleverAdsSolutions"),
+        .product(name: "CASMediationGoogleAds", package: "CleverAdsSolutions"),
+        .product(name: "CASMediationUnityAds", package: "CleverAdsSolutions"),
+    ],
+    linkerSettings: [
+        .unsafeFlags(["-ObjC"])
+    ]
+)
+```
+</TabItem>
+</Tabs>
+
+Add the products of the networks you need to your application target, alongside `CleverAdsSolutionsSPM`.
 
 | Network | Library product |
 |---|---|
@@ -312,6 +360,12 @@ mirroring one list onto the other.
 The curated `Optimal`, `Families` and `VPNCompliant` solutions are available on iOS through CocoaPods only.
 With Swift Package Manager, add the network products individually. Contact your account manager if you want
 the current composition of a solution for your audience.
+</Info>
+
+<Info>
+A few adapters are not distributed through Swift Package Manager because of limitations of the ad frameworks
+themselves. If you need one of them, use the [CocoaPods integration](iOS#cocoapods) instead.
+The [iOS Swift Package Manager page](iOS#swift-package-manager) is the source of truth for the current list.
 </Info>
 
 ## Advertising Identifier
