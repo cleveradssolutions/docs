@@ -6,7 +6,6 @@ Before loading ads, have your app initialize the CAS Mobile Ads SDK by calling `
 The call returns immediately and reports the result through a `CASInitializationListener`.
 
 The `casId` is a unique identifier for the CAS content registered for your app on each platform.
-You can use `CASMobileAds.TEST_ID` to force test ads mode on all devices if you haven't registered a `casId` yet.
 
 ```kotlin
 import com.cleveradssolutions.plugin.kmp.CASInitializationListener
@@ -16,7 +15,7 @@ fun initializeAds(context: Any?) {
     CASMobileAds.initialize(
         // Android: an Activity, Application or any other Context. iOS: pass null.
         context = context,
-        casId = CASMobileAds.TEST_ID,
+        casId = "APP CAS ID",
         listener = CASInitializationListener { config ->
             if (config.error != null) {
                 println("CAS Mobile Ads SDK initialization failed: ${config.error}")
@@ -27,6 +26,72 @@ fun initializeAds(context: Any?) {
     )
 }
 ```
+
+<Warning>
+The CAS ID is **different on each platform**, so shared code cannot use a single literal. Declare it per
+platform as shown below.
+</Warning>
+
+## The CAS ID of each platform
+On Android the CAS ID is your application package name, on iOS it is your App Store ID. Declare it with an
+`expect` property so that common code stays platform agnostic:
+
+```kotlin
+// commonMain
+expect val casId: String
+
+// androidMain
+actual val casId: String = "com.yourcompany.yourproject"
+
+// iosMain
+actual val casId: String = "123456789"
+```
+
+```kotlin
+CASMobileAds.initialize(
+    context = context,
+    casId = casId, // [!code highlight]
+)
+```
+
+<AccordionGroup>
+<Accordion title="What is CAS ID on Android?">
+
+In most cases, a `casId` is the same as your application package name.
+- A [package name](https://developer.android.com/studio/build/application-id) uniquely identifies your app on the device and in the Google Play Store.
+- The package name value is case-sensitive and is often referred to as an `APPLICATION_ID`.
+- Find your app's package name in your module (app-level) Gradle file, usually `shared/build.gradle.kts` (example package name: `com.yourcompany.yourproject`).
+
+You can read it from `BuildConfig` instead of hardcoding it:
+```kotlin
+// androidMain
+actual val casId: String = BuildConfig.APPLICATION_ID
+```
+
+</Accordion>
+<Accordion title="What is CAS ID on iOS?">
+
+In most cases, a CAS ID is the same as your app store ID.
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, if the URL is
+`apps.apple.com/us/app/id123456789` then the app store ID is `123456789`.
+
+</Accordion>
+<Accordion title="I have not registered an app yet">
+
+If you haven't created a CAS account and registered an app yet, now's a great time to do so at https://cas.ai
+
+To experiment before that, use the demo CAS ID, which always serves test ads on every device:
+```kotlin
+CASMobileAds.initialize(
+    context = context,
+    casId = CASMobileAds.TEST_ID, // [!code highlight]
+)
+```
+
+See [Enable test ads](KMP/Enabling-test-ads) for the other ways to test safely.
+
+</Accordion>
+</AccordionGroup>
 
 The `context` parameter is only used on Android. On iOS the value is ignored, so shared code can pass the
 platform context it already has without branching.
@@ -99,7 +164,7 @@ You can choose whether to `showConsentFormIfRequired` in the arguments of `initi
 ```kotlin
 CASMobileAds.initialize(
     context = context,
-    casId = CASMobileAds.TEST_ID,
+    casId = casId,
     showConsentFormIfRequired = true, // [!code highlight]
     listener = CASInitializationListener { config ->
         if (config.consentFlowStatus == CASConsentFlowStatus.OBTAINED) {
@@ -122,7 +187,7 @@ By default, CAS initializes mediation in live mode. To enable test ad mode, set 
 ```kotlin
 CASMobileAds.initialize(
     context = context,
-    casId = CASMobileAds.TEST_ID,
+    casId = casId,
     forceTestAds = true, // [!code highlight]
     testDeviceIds = setOf(
         "Your test device ID", // [!code highlight]
@@ -142,7 +207,7 @@ If the app has knowledge of specific individuals as being COPPA-applicable, it s
 ```kotlin
 CASMobileAds.initialize(
     context = context,
-    casId = CASMobileAds.TEST_ID,
+    casId = casId,
     targetAudience = CASTaggedAudience.NOT_CHILDREN, // [!code highlight]
     listener = null,
 )
@@ -159,7 +224,7 @@ Additional key-value settings passed to the mediation networks.
 ```kotlin
 CASMobileAds.initialize(
     context = context,
-    casId = CASMobileAds.TEST_ID,
+    casId = casId,
     mediationExtras = mapOf("key" to "value"), // [!code highlight]
     listener = null,
 )

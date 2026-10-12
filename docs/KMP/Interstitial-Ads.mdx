@@ -35,7 +35,7 @@ import com.cleveradssolutions.plugin.kmp.CASMobileAds
 import com.cleveradssolutions.plugin.kmp.CASScreenAdContentCallback
 
 val interstitialAd = CASInterstitialAd(
-    casId = CASMobileAds.TEST_ID,
+    casId = "APP CAS ID",
     autoLoad = isAutoLoadEnabled,
     callback = object : CASScreenAdContentCallback {
         override fun onAdLoaded(ad: CASAdContentInfo) {
@@ -56,7 +56,7 @@ In Compose code, keep the instance across recompositions with `remember`:
 @Composable
 fun InterstitialScreen() {
     val interstitialAd = remember {
-        CASInterstitialAd(casId = CASMobileAds.TEST_ID, autoLoad = true)
+        CASInterstitialAd(casId = "APP CAS ID", autoLoad = true)
     }
 
     DisposableEffect(interstitialAd) {
@@ -139,7 +139,7 @@ val isAdLoaded: Boolean = interstitialAd.isLoaded
 CAS provides the option to automatically show a loaded ad when the user returns to the app. To enable this behavior, set the `autoShow` argument to `true`.
 ```kotlin
 val interstitialAd = CASInterstitialAd(
-    casId = CASMobileAds.TEST_ID,
+    casId = "APP CAS ID",
     autoShow = true, // [!code highlight]
 )
 ```

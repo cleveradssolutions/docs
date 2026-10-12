@@ -24,7 +24,7 @@ import com.cleveradssolutions.plugin.kmp.CASError
 import com.cleveradssolutions.plugin.kmp.CASMobileAds
 
 val bannerContent = CASBannerAdContent(
-    casId = CASMobileAds.TEST_ID,
+    casId = "APP CAS ID",
     size = CASBannerSize.BANNER,
     autoLoad = true,
     refreshInterval = 30,
@@ -60,7 +60,7 @@ import com.cleveradssolutions.plugin.kmp.composable.CASBannerAd
 fun BannerScreen() {
     val bannerContent = remember {
         CASBannerAdContent(
-            casId = CASMobileAds.TEST_ID,
+            casId = "APP CAS ID",
             size = CASBannerSize.BANNER,
         )
     }
@@ -150,7 +150,7 @@ rather than anchored to an edge.
 
 ```kotlin
 val mrecContent = CASBannerAdContent(
-    casId = CASMobileAds.TEST_ID,
+    casId = "APP CAS ID",
     size = CASBannerSize.MEDIUM_RECTANGLE,
 )
 ```
@@ -163,7 +163,7 @@ The number of seconds an ad is displayed before a new ad is shown. Set `0` to di
 
 ```kotlin
 val bannerContent = CASBannerAdContent(
-    casId = CASMobileAds.TEST_ID,
+    casId = "APP CAS ID",
     size = CASBannerSize.BANNER,
     refreshInterval = 30, // [!code highlight]
 )
@@ -211,7 +211,7 @@ An optional placement name for the ad instance that helps categorize and track s
 
 ```kotlin
 val bannerContent = CASBannerAdContent(
-    casId = CASMobileAds.TEST_ID,
+    casId = "APP CAS ID",
     size = CASBannerSize.BANNER,
     placement = "MainScreenBottom", // [!code highlight]
 )

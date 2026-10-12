@@ -21,7 +21,7 @@ import com.cleveradssolutions.plugin.kmp.CASRewardedAd
 import com.cleveradssolutions.plugin.kmp.CASScreenAdContentCallback
 
 val rewardedAd = CASRewardedAd(
-    casId = CASMobileAds.TEST_ID,
+    casId = "APP CAS ID",
     autoLoad = true,
     callback = object : CASScreenAdContentCallback {
         override fun onAdLoaded(ad: CASAdContentInfo) {
@@ -43,7 +43,7 @@ In Compose code, keep the instance across recompositions with `remember` and rel
 @Composable
 fun RewardedScreen() {
     val rewardedAd = remember {
-        CASRewardedAd(casId = CASMobileAds.TEST_ID, autoLoad = true)
+        CASRewardedAd(casId = "APP CAS ID", autoLoad = true)
     }
 
     DisposableEffect(rewardedAd) {
