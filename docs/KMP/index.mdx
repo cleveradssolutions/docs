@@ -321,33 +321,24 @@ If your Xcode project consumes a local Swift package of your own, list the produ
 
 Add the products of the networks you need to your application target, alongside `CleverAdsSolutionsSPM`.
 
-| Network | Library product |
-|---|---|
-| Google Ads | `CASMediationGoogleAds` |
-| Unity Ads | `CASMediationUnityAds` |
-| LevelPlay (ironSource) | `CASMediationIronSource` |
-| AppLovin | `CASMediationAppLovin` |
-| Liftoff Monetize | `CASMediationLiftoffMonetize` |
-| InMobi | `CASMediationInMobi` |
-| Mintegral | `CASMediationMintegral` |
-| Pangle | `CASMediationPangle` |
-| DT Exchange | `CASMediationDTExchange` |
-| Chartboost | `CASMediationChartboost` |
-| Meta Audience Network | `CASMediationAudienceNetwork` |
-| Yango Ads | `CASMediationYangoAds` |
-| Yso Network | `CASMediationYsoNetwork` |
-| CAS Exchange | `CASMediationExchange` |
-| Cross Promo | `CASMediationCrossPromo` |
-| Start.io | `CASMediationStartIO` |
-| HyprMX | `CASMediationHyprMX` |
-| Kidoz | `CASMediationKidoz` |
-| Prado | `CASMediationPrado` |
-| Ogury | `CASMediationOgury` |
-| PubMatic | `CASMediationPubMatic` |
-| Verve | `CASMediationVerve` |
-| Display.io | `CASMediationDisplayIO` |
-| Smaato | `CASMediationSmaato` |
-| Moloco | `CASMediationMoloco` |
+The [adapters table of the CAS iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md)
+lists every network and is kept up to date with each release. Three of its columns matter when you pick yours:
+
+- **SPM** — whether the adapter is distributed through Swift Package Manager. A few are not, because of
+  limitations of the ad frameworks themselves. If you need one of those, use the
+  [CocoaPods integration](iOS#cocoapods) instead.
+- **Optimal**, **Families**, **VPN** — which curated CAS.AI solution the network belongs to. Take the rows
+  ticked in the column of the solution that fits your audience, the same set that `includeOptimalAds` and its
+  siblings give you on Android.
+
+The library product of a network is its name in the table prefixed with `CASMediation`, for example
+`CASMediationGoogleAds` for the `GoogleAds` row. The one exception is `CASExchange`, whose product is
+`CASMediationExchange`. Xcode lists the exact products when you add the package, so you never have to guess.
+
+<Info>
+Curated `Optimal`, `Families` and `VPNCompliant` products do not exist in the Swift Package yet, so the
+networks of a solution are added one by one for now. They are planned for a future update of the package.
+</Info>
 
 <Warning>
 The Android and iOS network sets are configured separately and are expected to differ. Not every network
@@ -355,18 +346,6 @@ ships an adapter for both platforms, store policies for child-directed apps do n
 and individual iOS adapters raise the minimum deployment target. Pick the networks per platform rather than
 mirroring one list onto the other.
 </Warning>
-
-<Info>
-The curated `Optimal`, `Families` and `VPNCompliant` solutions are available on iOS through CocoaPods only.
-With Swift Package Manager, add the network products individually. Contact your account manager if you want
-the current composition of a solution for your audience.
-</Info>
-
-<Info>
-A few adapters are not distributed through Swift Package Manager because of limitations of the ad frameworks
-themselves. If you need one of them, use the [CocoaPods integration](iOS#cocoapods) instead.
-The [iOS Swift Package Manager page](iOS#swift-package-manager) is the source of truth for the current list.
-</Info>
 
 ## Advertising Identifier
 CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.
