@@ -18,7 +18,8 @@ Make sure that your app's build files use the following values:
 - For iOS:
   - Use Xcode `{{ min.xcode }}` or higher
   - Minimum Target iOS version `{{ min.ios }}` or higher
-  - Supported targets: `iosArm64`, `iosX64`, `iosSimulatorArm64`
+  - Supported targets: `iosArm64` and `iosSimulatorArm64`. There is no x86_64 simulator target,
+    so a Mac with an Intel processor cannot run the simulator build
 
 ## Import CAS.AI Mobile Ads library
 Add the CAS.AI Kotlin Multiplatform library to the common source set of your shared module.
@@ -159,7 +160,7 @@ framework binary in the shared module:
 ```kotlin
 // <project>/shared/build.gradle.kts
 kotlin {
-    listOf(iosArm64(), iosX64(), iosSimulatorArm64()).forEach { iosTarget ->
+    listOf(iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "Shared"
             isStatic = true
