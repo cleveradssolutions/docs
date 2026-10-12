@@ -124,6 +124,9 @@ instead of stripping them.
 2. Locate the **Other Linker Flags** (`OTHER_LDFLAGS`) setting.
 3. Make sure that `$(inherited)` and `-ObjC` are at the beginning of the list.
 
+The [configuration script](#configure-the-ios-project) below sets this flag for you, so you can skip this step
+if you run it.
+
 <Error>
 Without the `-ObjC` flag the project builds and the SDK initializes, but every mediated network stays
 unavailable and ads are never filled.
@@ -184,18 +187,39 @@ See [Integration with the Xcode build](https://www.jetbrains.com/help/kotlin-mul
 </Info>
 
 ### Configure the iOS project
-A Ruby script performs the remaining automatic configuration of your iOS project, such as the `SKAdNetworkItems`
-of the mediated networks. To apply it, follow the steps below.
-1. Download the <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a>
-2. Place the script in the iOS app directory `<project>/iosApp`
-3. Open a terminal window and go to that directory:
+The Xcode project needs a set of additional settings that CAS.AI maintains for you in a Ruby script, so that
+they stay correct as the mediated networks change. The script configures:
+
+- `SKAdNetworkItems` and the AdAttributionKit identifiers of every mediated network, in `Info.plist`
+- `NSUserTrackingUsageDescription`, the App Tracking Transparency prompt text
+- `GADApplicationIdentifier` and the Google delay app measurement flag
+- App Transport Security
+- `$(inherited)` and `-ObjC` in the **Other Linker Flags** of the project
+
+<Steps>
+<Step title="Download the script">
+Download <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a> and place it next to your `.xcodeproj`, usually `<project>/iosApp`.
+</Step>
+<Step title="Run it with your CAS ID">
 ```shell
 cd iosApp
-```
-4. Run the Ruby script with your app CAS ID:
-```shell
 ruby casconfig.rb <CAS ID>
 ```
+
+The script can also live anywhere else, as long as you point it at the project:
+```shell
+ruby /path/to/casconfig.rb <CAS ID> --project=/path/to/iosApp.xcodeproj
+```
+
+Run `ruby casconfig.rb --help` to see the rest of its options.
+</Step>
+</Steps>
+
+<Success>
+Repeat the script before every update of the app to make sure you are using up-to-date configurations. It is
+also the easiest way to get the `-ObjC` linker flag right, since it sets it for you. For details on what each
+setting does, and how to apply them by hand, see [Manually configure project](iOS/Manually-configure-project).
+</Success>
 
 <AccordionGroup>
 <Accordion title="What is CAS ID in iOS?">
@@ -208,10 +232,6 @@ If you just want to experiment or test the SDK, you can skip the configuration y
 
 </Accordion>
 </AccordionGroup>
-
-<Success>
-Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
-</Success>
 
 </TabItem>
 </Tabs>
