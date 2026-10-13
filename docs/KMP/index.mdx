@@ -199,7 +199,9 @@ they stay correct as the mediated networks change. The script configures:
 
 <Steps>
 <Step title="Download the script">
-Download <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a> and place it next to your `.xcodeproj`, usually `<project>/iosApp`.
+
+Download [casconfig.rb](https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb) and place it in the `iosApp` directory, next to the app `.xcodeproj`.
+
 </Step>
 <Step title="Run it with your CAS ID">
 ```shell
@@ -400,7 +402,7 @@ An application must not use an advertising identifier if **at least one** of the
 
 <Accordion title="iOS User Tracking Usage description">
 
-To use the App Tracking Transparency authorization request for accessing the IDFA, update your `<project>/iosApp/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
+To use the App Tracking Transparency authorization request for accessing the IDFA, update the `iosApp/Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key (Name in Xcode Property List Editor: `Privacy - Tracking Usage Description`) with a custom message describing your usage. Below is an example description text:
 ```xml
 <key>NSUserTrackingUsageDescription</key>
 <string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
