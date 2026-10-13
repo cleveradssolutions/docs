@@ -28,8 +28,10 @@
         "light": "https://cas.ai/wp-content/uploads/2025/08/favicon.png"
     },
     "theme": {
-        "primaryLight": "#2563EB",
-        "primaryDark": "#3B82F6"
+        "preset": "b1Gx6WUOu",
+        "primaryDark": "#fdc700",
+        "backgroundDark": "#18181b",
+        "primaryLight": "#f5c000"
     },
     "content": {
         "showPageTitle": true,
