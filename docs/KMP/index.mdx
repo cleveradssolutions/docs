@@ -117,22 +117,6 @@ products is in [Choose Mediated Networks](#choose-mediated-networks) below.
 Nothing has to be imported or called in code for an adapter to work: each product carries the adapter binary,
 and the CAS.AI SDK discovers it at runtime.
 </Step>
-<Step title="Add the -ObjC linker flag">
-The adapters are discovered by class name at runtime, so the linker must keep their Objective-C classes
-instead of stripping them.
-
-1. Open the **Build Settings** of your application target.
-2. Locate the **Other Linker Flags** (`OTHER_LDFLAGS`) setting.
-3. Make sure that `$(inherited)` and `-ObjC` are at the beginning of the list.
-
-The [configuration script](#configure-the-ios-project) below sets this flag for you, so you can skip this step
-if you run it.
-
-<Error>
-Without the `-ObjC` flag the project builds and the SDK initializes, but every mediated network stays
-unavailable and ads are never filled.
-</Error>
-</Step>
 </Steps>
 
 Alternatively, if your Xcode project consumes a local Swift package of your own, declare the dependency in its
@@ -197,6 +181,12 @@ they stay correct as the mediated networks change. The script configures:
 - App Transport Security
 - `$(inherited)` and `-ObjC` in the **Other Linker Flags** of the project
 
+<Error>
+The adapters are discovered by class name at runtime. Without the `-ObjC` flag the linker strips their
+Objective-C classes: the project builds and the SDK initializes, but every mediated network stays
+unavailable and ads are never filled.
+</Error>
+
 <Steps>
 <Step title="Download the script">
 
@@ -219,9 +209,9 @@ Run `ruby casconfig.rb --help` to see the rest of its options.
 </Steps>
 
 <Success>
-Repeat the script before every update of the app to make sure you are using up-to-date configurations. It is
-also the easiest way to get the `-ObjC` linker flag right, since it sets it for you. For details on what each
-setting does, and how to apply them by hand, see [Manually configure project](iOS/Manually-configure-project).
+Repeat the script before every update of the app to make sure you are using up-to-date configurations. For
+details on what each setting does, and how to apply them by hand, see
+[Manually configure project](iOS/Manually-configure-project).
 </Success>
 
 <AccordionGroup>
@@ -330,7 +320,8 @@ To change the selection later:
 3. Click **+**, pick the `CASMediation*` products you want from the `CleverAdsSolutions` package, and confirm.
 4. Remove a product from the same list to drop a network.
 
-Make sure `-ObjC` is still present in **Other Linker Flags** after changing the selection.
+Re-run the [configuration script](#configure-the-ios-project) after changing the selection. It refreshes the
+`SKAdNetworkItems` of the networks you added and keeps the `-ObjC` linker flag in place.
 </TabItem>
 <TabItem label="In Package.swift" value="manifest">
 If your Xcode project consumes a local Swift package of your own, list the products as dependencies of your target:
