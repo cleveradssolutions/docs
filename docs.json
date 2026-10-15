@@ -23,15 +23,16 @@
             "compose": "1.10.3"
         }
     },
-    "favicon": "https://cas.ai/wp-content/uploads/2025/08/favicon-80x80.png",
+    "favicon": "/assets/logo-light.svg",
     "logo": {
-        "light": "https://cas.ai/wp-content/uploads/2025/08/favicon.png"
+        "light": "/assets/logo-light.svg",
+        "dark": "/assets/logo-dark.svg"
     },
     "theme": {
         "preset": "b1Gx6WUOu",
-        "primaryDark": "#fdc700",
+        "primaryDark": "#E4F222",
         "backgroundDark": "#18181b",
-        "primaryLight": "#f5c000"
+        "primaryLight": "#F2D321"
     },
     "content": {
         "showPageTitle": true,
