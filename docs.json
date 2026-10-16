@@ -628,6 +628,10 @@
                     "href": "/Flutter/Impression-Level-Data"
                 },
                 {
+                    "title": "Purchase Info",
+                    "href": "/Flutter/Purchase-Info"
+                },
+                {
                     "title": "Reporting API",
                     "href": "/general/ReportingAPI"
                 }
