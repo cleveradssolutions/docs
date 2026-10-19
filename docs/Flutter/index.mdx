@@ -12,7 +12,9 @@ Make sure that your app's build file uses the following values:
   - Minimum API level `{{ min.api }}` or higher
 - For iOS:
   - Use Xcode `{{ min.xcode }}` or higher
-  - Minimum Target iOS version `{{ min.ios }}` or higher
+  - Minimum Target iOS version `15.0` or higher
+  - Flutter `3.47` and newer build the plugin as a Swift package. Earlier versions, and projects that
+    turn Swift Package Manager off, keep using CocoaPods
 
 ## Import CAS.AI Mobile Ads package
 Include the [CAS.AI plugin for Flutter](https://pub.dev/packages/clever_ads_solutions/install) in your Flutter project.
@@ -85,6 +87,27 @@ If you just want to experiment or test the SDK, you can skip the configuration y
 Repeat the script before every update of the app to make sure you are using up-to-date configurations. For more details about the script and its updates, visit [the CAS iOS repository🔗](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
 </Success>
 
+### Add the CAS iOS SDK
+Flutter `3.47` and newer build the plugin as a Swift package and wire it into the `Runner` target for you.
+Projects on an earlier Flutter, or with Swift Package Manager turned off, keep using CocoaPods. Both paths
+install the same SDK and are configured by the same script above.
+
+<Tabs groupId="iosdeps">
+<TabItem label="Swift Package Manager" value="spm">
+There is nothing to add for the SDK itself: `flutter build ios` resolves the CAS iOS Swift Package through the
+plugin and links it into `Runner`.
+
+Ad network adapters are not part of that package. Add the ones your app needs to the `Runner` target, see
+[Choose Mediated Networks](#choose-mediated-networks) below.
+
+<Info>
+Swift Package Manager is enabled by default since Flutter `3.47`. Run `flutter config` to see the state of the
+setting, and `flutter config --no-enable-swift-package-manager` to fall back to CocoaPods. Flutter has
+announced that disabling it will not be allowed in a future release.
+</Info>
+</TabItem>
+
+<TabItem label="CocoaPods" value="cocoapods">
 The `<project>/ios/Podfile` is a specification that describes the dependencies of your iOS project. 
 All CAS frameworks are hosted and distributed through their own source repository. Please add CAS source repository url to the beginning of the Podfile:
 ```ruby
@@ -104,6 +127,14 @@ Run `pod update` terminal command inside the `ios` directory after modifying the
 <Success>
 Make sure to update the CAS pods version whenever you update the CAS Flutter package. The Ads Solution pods version matches the version of [the CAS iOS SDK](https://github.com/cleveradssolutions/CAS-iOS/releases).
 </Success>
+</TabItem>
+</Tabs>
+
+<Warning>
+Pick one dependency manager for CAS.AI, not both. A project that keeps the Swift Package and also adds CAS pods
+links two copies of the SDK and fails to build with duplicate symbols. To take the adapters as pods, turn
+Swift Package Manager off first.
+</Warning>
 
 </TabItem>
 </Tabs>
@@ -121,12 +152,14 @@ During development, you can test ad formats using [Test Ads](Flutter/Enabling-te
 
 Check the details of the ad network adapters supported by CAS.AI Mediation in the [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) and [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) tables.
 
+### Android
+The CAS Gradle plugin offers curated solutions that CAS.AI keeps up to date.
+
 <AccordionGroup>
 <Accordion defaultOpen title="Optimal Ads Solution">
 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-<CodeGroup synchronize={true}>
 ```kotlin
 // <project>/android/app/build.gradle
 cas {
@@ -134,19 +167,12 @@ cas {
 }
 ```
 
-```ruby
-# <project>/ios/Podfile
-pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
-```
-</CodeGroup>
-
 </Accordion>
 
 <Accordion title="Families Ads Solution">
 
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
 
-<CodeGroup synchronize={true}>
 ```kotlin
 // <project>/android/app/build.gradle
 cas {
@@ -154,11 +180,109 @@ cas {
 }
 ```
 
+</Accordion>
+
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
+
+```kotlin
+// <project>/android/app/build.gradle
+cas {
+    includeVPNCompliantAds = true
+}
+```
+
+</Accordion>
+
+<Accordion title="Choice mediation adapters">
+
+Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks).
+
+</Accordion>
+</AccordionGroup>
+
+### iOS
+How you add a network depends on the dependency manager your project uses, see
+[Add the CAS iOS SDK](#add-the-cas-ios-sdk) above.
+
+<Tabs groupId="iosdeps">
+<TabItem label="Swift Package Manager" value="spm">
+The Swift Package exposes one library product per mediation network. Adding a network is an Xcode step, not a
+code change: the product carries the adapter binary and the CAS.AI SDK picks it up at runtime.
+
+<Steps>
+<Step title="Add the CAS package to the Runner target">
+Open `<project>/ios/Runner.xcworkspace` in Xcode, select **File ▸ Add Package Dependencies…** and enter the CAS
+Git repository URL into the **Search or Enter Package URL** field:
+```
+https://github.com/cleveradssolutions/CAS-iOS
+```
+Set the **Dependency Rule** to **Up to Next Minor Version**, enter `{{ versions.ios }}` and click **Add Package**.
+</Step>
+<Step title="Pick the networks">
+Xcode then asks which library products to add to which target. Check one `CASMediation*` product per ad network
+you want to monetize with, and add them to the **Runner** target.
+
+The CAS.AI SDK itself arrives through the plugin, so `CleverAdsSolutionsSPM` does not have to be checked here.
+Nothing has to be imported or called in Dart or Swift for an adapter to work.
+</Step>
+<Step title="Run the configuration script again">
+```shell
+cd ios
+ruby casconfig.rb <CAS ID>
+```
+It adds the `SKAdNetworkItems` of the networks you picked and keeps the `-ObjC` linker flag in place.
+</Step>
+</Steps>
+
+To change the selection later, select the project in the Project navigator, select the **Runner** target, open
+the **General** tab and edit **Frameworks, Libraries, and Embedded Content**. Re-run the configuration script
+after every change.
+
+The [adapters table of the CAS iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) lists every network and is kept up to date with each
+release. Three of its columns matter when you pick yours:
+
+- **SPM** — whether the adapter is distributed through Swift Package Manager. A few are not, because of
+  limitations of the ad frameworks themselves. If you need one of those, use CocoaPods instead.
+- **Optimal**, **Families**, **VPN** — which curated CAS.AI solution the network belongs to. Take the rows
+  ticked in the column of the solution that fits your audience, the same set that `includeOptimalAds` and its
+  siblings give you on Android.
+
+The library product of a network is its name in the table prefixed with `CASMediation`, for example
+`CASMediationGoogleAds` for the `GoogleAds` row. The one exception is `CASExchange`, whose product is
+`CASMediationExchange`. Xcode lists the exact products when you add the package, so you never have to guess.
+
+<Info>
+Curated `Optimal`, `Families` and `VPNCompliant` products do not exist in the Swift Package yet, so the
+networks of a solution are added one by one for now. They are planned for a future update of the package.
+</Info>
+</TabItem>
+
+<TabItem label="CocoaPods" value="cocoapods">
+Add the solution to the `target 'Runner'` block of `<project>/ios/Podfile`, then run `pod update` inside the
+`ios` directory.
+
+<AccordionGroup>
+<Accordion defaultOpen title="Optimal Ads Solution">
+
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+```ruby
+# <project>/ios/Podfile
+pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
+```
+
+</Accordion>
+
+<Accordion title="Families Ads Solution">
+
+Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
+
 ```ruby
 # <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 ```
-</CodeGroup>
 
 </Accordion>
 
@@ -166,27 +290,28 @@ pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
 
 Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
 
-<CodeGroup synchronize={true}>
-```kotlin
-// <project>/android/app/build.gradle
-cas {
-    includeVPNCompliantAds = true
-}
-```
 ```ruby
 # <project>/ios/Podfile
 pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 ```
-</CodeGroup>
 
 </Accordion>
 
 <Accordion title="Choice mediation adapters">
 
-Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [Android page](Android/Mediated-Networks) and the [iOS page](iOS/Mediated-Networks).
+Advanced publishers familiar with ad network integrations can configure their own set of adapters. For detailed instructions on how to integrate specific adapters into your app, refer to the [iOS page](iOS/Mediated-Networks).
 
 </Accordion>
 </AccordionGroup>
+</TabItem>
+</Tabs>
+
+<Warning>
+The Android and iOS network sets are configured separately and are expected to differ. Not every network ships
+an adapter for both platforms, store policies for child-directed apps do not approve the same networks, and
+individual iOS adapters raise the minimum deployment target. Pick the networks per platform rather than
+mirroring one list onto the other.
+</Warning>
 
 ## Advertising Identifier
 CAS Mediation uses the [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) and [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
