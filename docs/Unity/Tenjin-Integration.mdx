@@ -180,6 +180,15 @@ If your app includes in-app purchases, you must provide your manager with the fo
 - **Public Key** for the Android app
 - **Shared Secret** for the iOS app (only for subscriptions)
 
+<AccordionGroup>
+<Accordion title="Where to find the Public Key (Android)">
+In the Google Play Console, select your app and go to: `Monetize > Monetization setup > Google Play Billing > Licensing`. Copy the **Base64-encoded RSA public key**.
+</Accordion>
+<Accordion title="Where to find the Shared Secret (iOS)">
+In App Store Connect, select your app and go to: `App Information > App-Specific Shared Secret`. Copy the **App-Specific Shared Secret**.
+</Accordion>
+</AccordionGroup>
+
 <Warning>
 Without the Public Key (Android) and Shared Secret (iOS), Tenjin will not be able to track your purchases.
 </Warning>
