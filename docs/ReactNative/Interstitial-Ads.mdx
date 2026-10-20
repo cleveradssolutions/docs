@@ -45,12 +45,46 @@ Use the `addAdLoadedEventListener` event to be notified when the ad is ready for
 
 ### Optional Placement name
 An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+The placement is applied to every preloaded ad and takes effect from the next ad load.
 
 ```ts
 useEffect(() => {
-  RewardedAd.setPlacement("BestPlace"); // [!code focus] 
+  InterstitialAd.setPlacement("BestPlace"); // [!code focus] 
 }, []);
 ```
+
+### Preload multiple ads
+Preloading keeps several ads of the same format loaded in advance, so `showAd()` has an ad ready right away,
+even when ads are shown one after another.
+
+Call `setPreloadedBufferSize(count)` to keep up to `count` ads loaded, from 1 to 4:
+```ts
+useEffect(() => {
+  InterstitialAd.setPreloadedBufferSize(2); // [!code highlight]
+}, []);
+```
+
+When preloading is on:
+- Autoload is enabled for every preloaded ad, so the buffer refills by itself after each impression and retries on loading failures.
+- `AdLoadedEvent` is triggered for each loaded ad.
+- `showAd()` displays the loaded ad with the highest revenue.
+- Values greater than 4 are reduced to 4.
+
+To turn preloading off, set the buffer size to `0`. A single ad is kept, and its loading follows the `setAutoloadEnabled()` option again.
+Preloading is off by default.
+```ts
+InterstitialAd.setPreloadedBufferSize(0);
+```
+
+Use `getLoadedAdCount()` to check how many ads are ready to be shown:
+```ts
+const loadedAdCount = await InterstitialAd.getLoadedAdCount();
+```
+
+<Info>
+- Each preloaded ad loads its own content, which uses additional network traffic and memory. Use a buffer size larger than 1 only if your app shows interstitial ads frequently.
+- Do not call `setAutoloadEnabled(false)` while preloading is on: it stops the buffer from refilling.
+</Info>
 
 ## Ad content callbacks
 `InterstitialAd` has several optional callbacks for the ad lifecycle. These callbacks can be registered via event listeners.
@@ -115,11 +149,13 @@ InterstitialAd.showAd();
 
 If the ad is not ready at that moment, the `AdFailedToShowEvent` will be triggered with a reason.
 
-You have the option to check `isLoaded()` if it's required by your app's logic.
+You have the option to check `isAdLoaded()` if it's required by your app's logic.
 
 ```ts
 const isAdLoaded = await InterstitialAd.isAdLoaded();
 ```
+
+With [preloading](#preload-multiple-ads), `isAdLoaded()` returns `true` while at least one ad is ready, and `getLoadedAdCount()` returns the number of ready ads.
 
 ### Auto Show Ad mode
 CAS provides the option to automatically show a loaded ad when the user returns to the app. 
@@ -161,6 +197,8 @@ useEffect(() => {
   };
 }, []);
 ```
+
+`destroy()` releases all preloaded ads and resets the ad options. Set the buffer size again after `destroy()` if you need preloading.
 
 ## Some best practices
 

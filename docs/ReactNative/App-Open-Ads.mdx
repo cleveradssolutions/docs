@@ -45,12 +45,46 @@ Use the `addAdLoadedEventListener` event to be notified when the ad is ready for
 
 ### Optional Placement name
 An optional placement name for the ad instance that helps categorize and track statistics across different ad placements. Maximum 100 characters allowed for the placement name.
+The placement is applied to every preloaded ad and takes effect from the next ad load.
 
 ```ts
 useEffect(() => {
-  RewardedAd.setPlacement("BestPlace"); // [!code focus] 
+  AppOpenAd.setPlacement("BestPlace"); // [!code focus] 
 }, []);
 ```
+
+### Preload multiple ads
+Preloading keeps several ads of the same format loaded in advance, so `showAd()` has an ad ready right away,
+even when ads are shown one after another.
+
+Call `setPreloadedBufferSize(count)` to keep up to `count` ads loaded, from 1 to 4:
+```ts
+useEffect(() => {
+  AppOpenAd.setPreloadedBufferSize(2); // [!code highlight]
+}, []);
+```
+
+When preloading is on:
+- Autoload is enabled for every preloaded ad, so the buffer refills by itself after each impression and retries on loading failures.
+- `AdLoadedEvent` is triggered for each loaded ad.
+- `showAd()` displays the loaded ad with the highest revenue.
+- Values greater than 4 are reduced to 4.
+
+To turn preloading off, set the buffer size to `0`. A single ad is kept, and its loading follows the `setAutoloadEnabled()` option again.
+Preloading is off by default.
+```ts
+AppOpenAd.setPreloadedBufferSize(0);
+```
+
+Use `getLoadedAdCount()` to check how many ads are ready to be shown:
+```ts
+const loadedAdCount = await AppOpenAd.getLoadedAdCount();
+```
+
+<Info>
+- Each preloaded ad loads its own content, which uses additional network traffic and memory. Use a buffer size larger than 1 only if your app shows app open ads frequently.
+- Do not call `setAutoloadEnabled(false)` while preloading is on: it stops the buffer from refilling.
+</Info>
 
 ## Ad content callbacks
 `AppOpenAd` provides several optional event listeners for the ad lifecycle.
@@ -110,7 +144,7 @@ App open ads help you monetize your app's loading screen, when the app first lau
 - Show app open ads during times when your users would otherwise be waiting for your app to load.
 - If a user returns to your app after having left it by clicking on an app open ad, it makes sure they're not presented with another app open ad.
 
-You can choose when to show the ad by calling `show()`:
+You can choose when to show the ad by calling `showAd()`:
 ```ts
 AppOpenAd.showAd();
 ```
@@ -121,6 +155,8 @@ You have the option to check `isAdLoaded()` if it's required by your app's logic
 ```ts
 const isAdLoaded = await AppOpenAd.isAdLoaded();
 ```
+
+With [preloading](#preload-multiple-ads), `isAdLoaded()` returns `true` while at least one ad is ready, and `getLoadedAdCount()` returns the number of ready ads.
 
 ### Auto Show mode
 CAS provides the option to automatically show a loaded ad when the user returns to the app. 
@@ -140,6 +176,8 @@ useEffect(() => {
   };
 }, []);
 ```
+
+`destroy()` releases all preloaded ads and resets the ad options. Set the buffer size again after `destroy()` if you need preloading.
 
 ## Mute Ad sounds
 Indicates if the application’s audio is muted. Affects initial mute state for fullscreen ads. Use this method only if your application has its own volume controls (e.g., custom music or sound effect muting).
