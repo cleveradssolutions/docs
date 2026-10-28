@@ -1,5 +1,6 @@
 ---
 title: Purchase Info
+description: Report in-app purchases to CAS.AI to combine IAP revenue with ad revenue and track a user's total value.
 ---
 
 The `PurchaseInfo` class is used to report in-app purchases to CAS.AI. Along with the SDK's ad revenue tracking, this allows you to get a complete picture of a user's total value by combining ad revenue and IAP revenue in one place.
@@ -19,51 +20,43 @@ Build the object from the purchase's product ID, price, currency, and quantity.
 <CodeGroup synchronize={true}>
 ```kotlin
 val purchaseInfo = PurchaseInfo(
-    productId = productId,
+    productId = purchase.products[0],
     price = price,
     currency = currency,
-    iapProvider = IAPProvider.GOOGLE_PLAY_BILLING,
     quantity = purchase.quantity
 )
 ```
 
 ```java
 PurchaseInfo purchaseInfo = new PurchaseInfo(
-    productId,
+    purchase.getProducts().get(0),
     price,
     currency,
-    IAPProvider.GOOGLE_PLAY_BILLING,
     purchase.getQuantity()
 );
 ```
 </CodeGroup>
 
-Google Play Billing is used by default. For purchases processed by another provider, use `IAPProvider.AMAZON_APPSTORE`, `IAPProvider.XSOLLA`, or `IAPProvider.OTHER`.
+| Parameter | Description |
+| --- | --- |
+| `productId` | Product identifier from the IAP provider. |
+| `price` | Price of one purchased item in the selected currency. |
+| `currency` | ISO 4217 currency code, for example `USD` or `EUR`. |
+| `quantity` | Number of items being purchased. Must be at least `1`. |
 
 ### 2. Recommended: attach validation data
-For Google Play purchases, pass the original purchase data and signature when they are available.
+For Google Play purchases, pass the original purchase JSON and signature so CAS.AI can verify the purchase server-side.
 
 <CodeGroup synchronize={true}>
 ```kotlin
-val purchaseInfo = PurchaseInfo(
-    productId = productId,
-    price = price,
-    currency = currency,
-    iapProvider = IAPProvider.GOOGLE_PLAY_BILLING,
-    quantity = purchase.quantity,
-    receipt = purchase.originalJson,
-    signature = purchase.signature
+purchaseInfo.setValidation(
+    purchase.originalJson,
+    purchase.signature
 )
 ```
 
 ```java
-PurchaseInfo purchaseInfo = new PurchaseInfo(
-    productId,
-    price,
-    currency,
-    IAPProvider.GOOGLE_PLAY_BILLING,
-    purchase.getQuantity(),
-    0L,
+purchaseInfo.setValidation(
     purchase.getOriginalJson(),
     purchase.getSignature()
 );
@@ -75,37 +68,60 @@ Validation data is optional, but it is recommended when available.
 </Info>
 
 ### 3. If the product is a subscription
-For Google Play subscriptions, additionally provide the subscription start time and purchase token.
+For Google Play subscriptions (`BillingClient.ProductType.SUBS`), use `setSubsValidation` instead of `setValidation`. It additionally takes the purchase token and the subscription purchase time.
 
 <CodeGroup synchronize={true}>
 ```kotlin
-val purchaseInfo = PurchaseInfo(
-    productId = productId,
-    price = price,
-    currency = currency,
-    iapProvider = IAPProvider.GOOGLE_PLAY_BILLING,
-    quantity = purchase.quantity,
-    subscriptionTime = purchase.purchaseTime,
-    receipt = purchase.originalJson,
-    signature = purchase.signature,
-    receiptId = purchase.purchaseToken
+purchaseInfo.setSubsValidation(
+    purchase.originalJson,
+    purchase.signature,
+    purchase.purchaseToken,
+    purchase.purchaseTime
 )
 ```
 
 ```java
-PurchaseInfo purchaseInfo = new PurchaseInfo(
-    productId,
-    price,
-    currency,
-    IAPProvider.GOOGLE_PLAY_BILLING,
-    purchase.getQuantity(),
-    purchase.getPurchaseTime(),
+purchaseInfo.setSubsValidation(
     purchase.getOriginalJson(),
     purchase.getSignature(),
-    purchase.getPurchaseToken()
+    purchase.getPurchaseToken(),
+    purchase.getPurchaseTime()
 );
 ```
 </CodeGroup>
+
+<Info>
+`purchaseToken` can be `null` and `purchaseTime` can be `0`: in that case, the values are taken from `originalJson`.
+</Info>
+
+### Other providers
+Google Play Billing is used by default. For purchases processed by another provider, attach that provider's validation data instead. This also marks the purchase as coming from that provider.
+
+<CodeGroup synchronize={true}>
+```kotlin
+// Amazon Appstore: receipt ID and user ID
+purchaseInfo.setAmazonValidation(receipt.receiptId, userData.userId)
+// or the full Amazon IAP Receipt JSON
+purchaseInfo.setAmazonValidation(receipt.toJSON().toString())
+
+// Xsolla: order ID and optional user ID
+purchaseInfo.setXsollaValidation(orderId, userId)
+```
+
+```java
+// Amazon Appstore: receipt ID and user ID
+purchaseInfo.setAmazonValidation(receipt.getReceiptId(), userData.getUserId());
+// or the full Amazon IAP Receipt JSON
+purchaseInfo.setAmazonValidation(receipt.toJSON().toString());
+
+// Xsolla: order ID and optional user ID
+purchaseInfo.setXsollaValidation(orderId, userId);
+```
+</CodeGroup>
+
+<Note>
+For Amazon Appstore purchases, you are responsible for supplying the price, currency, and quantity values (e.g. from your own product catalog) to ensure revenue is reported accurately.
+</Note>
 
 ### 4. Report
 With the purchase information prepared, `purchaseInfo` is ready to send:
@@ -122,7 +138,3 @@ CAS.reportPurchase(purchaseInfo);
 
 ## Automatic forwarding to Tenjin
 Purchases reported through `CAS.reportPurchase(...)` can also be forwarded automatically to Tenjin Analytics, so you don't need a separate integration to get IAP revenue into Tenjin.
-
-<Info>
-This requires CAS SDK 4.8.1 or higher, and the feature must be enabled for your account. Contact your account manager to request it.
-</Info>

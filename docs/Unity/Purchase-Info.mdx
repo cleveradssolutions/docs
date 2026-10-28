@@ -1,0 +1,94 @@
+---
+title: Purchase Info
+description: Report in-app purchases to CAS.AI to combine IAP revenue with ad revenue and track a user's total value.
+---
+
+The `PurchaseInfo` class is used to report in-app purchases to CAS.AI. Along with the SDK's ad revenue tracking, this allows you to get a complete picture of a user's total value by combining ad revenue and IAP revenue in one place.
+
+The total reported revenue is calculated as:
+
+```
+revenue = quantity * price * currency_rate
+```
+
+## Reporting a purchase
+
+Call `CAS.MobileAds.ReportPurchase(...)` with a `PurchaseInfo` object as soon as you've confirmed a completed transaction. This feeds IAP revenue into CAS.AI alongside your ad revenue.
+
+When using Unity IAP, this is typically done when the order is confirmed, for example in the `OnPurchasePending` handler right before you call `ConfirmPurchase(order)`.
+
+### 1. Create `PurchaseInfo`
+
+Build the object from the purchased product's ID, price, currency, and quantity.
+
+```csharp
+var purchase = new CAS.PurchaseInfo(
+    product.definition.id,
+    product.metadata.localizedPrice,
+    product.metadata.isoCurrencyCode,
+    quantity // optional, 1 by default
+);
+```
+
+| Parameter | Description |
+| --- | --- |
+| `productId` | Product identifier from the IAP provider: `product.definition.id` |
+| `price` | Price of one purchased item in the selected currency: `product.metadata.localizedPrice` |
+| `currency` | ISO 4217 currency code, for example `USD` or `EUR`: `product.metadata.isoCurrencyCode` |
+| `quantity` | Number of items being purchased. Defaults to `1` |
+
+### 2. Recommended: attach validation data
+
+Add the store-specific receipt data so CAS.AI can verify the purchase server-side. Use the method that matches the store which processed the purchase.
+
+```csharp
+var unityReceipt = JsonUtility.FromJson<UnifiedReceipt>(order.Info.Receipt);
+var store = unityReceipt.Store;
+var payload = unityReceipt.Payload;
+var isSubscriptionType = product.definition.type == ProductType.Subscription;
+
+if (store.Equals("GooglePlay"))
+{
+    purchase.SetGoogleValidation(payload, isSubscriptionType);
+}
+else if (store.Equals("AppleAppStore"))
+{
+    purchase.SetAppleValidation(
+        order.Info.transactionID,
+        order.Info.Apple?.jwsRepresentation,
+        order.Info.Apple?.AppReceipt,
+        isSubscriptionType
+    );
+}
+else if (store.Equals("AmazonAppStore"))
+{
+    purchase.SetAmazonValidation(payload);
+}
+```
+
+| Method | Store | Parameters |
+| --- | --- | --- |
+| `SetGoogleValidation` | Google Play | `payload`: JSON string of the Google payload.<br/>`isSubscriptionType`: whether the product is a subscription. |
+| `SetAppleValidation` | Apple App Store | `transactionID`: StoreKit transaction identifier.<br/>`jwsRepresentation`: StoreKit 2 signed transaction, can be `null`.<br/>`receiptData`: StoreKit 1 app receipt, can be `null`.<br/>`isSubscriptionType`: whether the product is a subscription. |
+| `SetAmazonValidation` | Amazon Appstore | `payload`: JSON string of the Amazon IAP receipt. |
+| `SetXsollaValidation` | Xsolla | `orderId`: Xsolla order ID.<br/>`userId`: Xsolla user ID, can be `null`. |
+
+<Info>
+Validation data is optional, but it is recommended when available.
+</Info>
+
+<Note>
+For Amazon Appstore and Xsolla purchases, you are responsible for supplying the price, currency, and quantity values (e.g. from your own product catalog) to ensure revenue is reported accurately.
+</Note>
+
+### 3. Report
+
+With the product info and validation data attached, `purchase` is ready to send:
+
+```csharp
+CAS.MobileAds.ReportPurchase(purchase);
+```
+
+## Automatic forwarding to Tenjin
+
+Purchases reported through `CAS.MobileAds.ReportPurchase(...)` can also be forwarded automatically to Tenjin Analytics, so you don't need a separate integration to get IAP revenue into Tenjin.

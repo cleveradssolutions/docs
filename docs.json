@@ -519,6 +519,10 @@
                     "href": "/Unity/Impression-Level-Data"
                 },
                 {
+                    "title": "Purchase Info",
+                    "href": "/Unity/Purchase-Info"
+                },
+                {
                     "title": "Reporting API",
                     "href": "/general/ReportingAPI"
                 }

@@ -1,5 +1,6 @@
 ---
 title: Purchase Info
+description: Report in-app purchases to CAS.AI to combine IAP revenue with ad revenue and track a user's total value.
 ---
 
 The `PurchaseInfo` class is used to report in-app purchases to CAS.AI. Along with the SDK's ad revenue tracking, this allows you to get a complete picture of a user's total value by combining ad revenue and IAP revenue in one place.
@@ -143,6 +144,3 @@ CAS.reportPurchase(purchaseInfo)
  
 Purchases reported through `CAS.reportPurchase(_:)` can also be forwarded automatically to Tenjin Analytics, so you don't need a separate integration to get IAP revenue into Tenjin.
  
-<Info>
-This requires CAS SDK 4.8.1 or higher, and the feature must be enabled for your account. Contact your account manager to request it.
-</Info>
