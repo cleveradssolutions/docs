@@ -249,6 +249,10 @@
                     "href": "/Android/Impression-Level-Data"
                 },
                 {
+                    "title": "Purchase Info",
+                    "href": "/Android/Purchase-Info"
+                },
+                {
                     "title": "Reporting API",
                     "href": "/general/ReportingAPI"
                 }
@@ -360,6 +364,10 @@
                 {
                     "title": "Impression Level Data",
                     "href": "/iOS/Impression-Level-Data"
+                },
+                {
+                    "title": "Purchase Info",
+                    "href": "/iOS/Purchase-Info"
                 },
                 {
                     "title": "Reporting API",
