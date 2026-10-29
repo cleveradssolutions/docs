@@ -66,25 +66,15 @@ Choose an integration path based on your app's target audience. If you're unsure
 During development, you can test ad formats using [Test Ads](iOS/Enabling-test-ads) without adding any ad network SDKs.
 </Info>
 
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
 <AccordionGroup>
 <Accordion defaultOpen title="Optimal Ads Solution">
 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-<Tabs groupId="ios-dependency-manager">
-<TabItem value="spm" label="Swift Package Manager">
-
 Add the `AdsOptimalSolutions` product to your app target.
-
-</TabItem>
-<TabItem value="cocoapods" label="CocoaPods">
-
-```ruby
-pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
-```
-
-</TabItem>
-</Tabs>
 
 > Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, AppLovin, Pangle, Bigo, Yango Ads, Audience Network, YSO Network, CAS Exchange, Maticoo.
 
@@ -93,20 +83,7 @@ pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
 
 Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). 
 
-<Tabs groupId="ios-dependency-manager">
-<TabItem value="spm" label="Swift Package Manager">
-
 Add the `AdsFamiliesSolutions` product to your app target.
-
-</TabItem>
-<TabItem value="cocoapods" label="CocoaPods">
-
-```ruby
-pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
-```
-
-</TabItem>
-</Tabs>
 
 > Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Chartboost, Kidoz, Mintegral, Yango Ads.
 
@@ -119,20 +96,7 @@ The families ads solution is NOT intended for apps in [Apple Kids Category](iOS/
 
 Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions. 
 
-<Tabs groupId="ios-dependency-manager">
-<TabItem value="spm" label="Swift Package Manager">
-
 Add the `AdsVPNCompliantSolutions` product to your app target.
-
-</TabItem>
-<TabItem value="cocoapods" label="CocoaPods">
-
-```ruby
-pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
-```
-
-</TabItem>
-</Tabs>
 
 > Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, Bigo, Yango Ads, YSO Network, Monetrix.
 
@@ -141,23 +105,9 @@ pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
 
 Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
 
-<Tabs groupId="ios-dependency-manager">
-<TabItem value="spm" label="Swift Package Manager">
-
 Add the `CASMediation…` product of every network you need to your app target. Each adapter product already brings the CAS base framework with it.
 
 Add the `CleverAdsSolutionsSPM` product on its own only when you integrate the SDK without any ad network, for example to try [Test Ads](iOS/Enabling-test-ads).
-
-</TabItem>
-<TabItem value="cocoapods" label="CocoaPods">
-
-When you are not using the solution pods, you must add a `CleverAdsSolutions-Base` pod for the CAS base framework. 
-```ruby
-pod 'CleverAdsSolutions-Base', '{{ versions.ios }}'
-```
-
-</TabItem>
-</Tabs>
 
 Follow the instructions on the [Mediated Networks](iOS/Mediated-Networks) page.
 
@@ -167,6 +117,64 @@ Follow the instructions on the [Mediated Networks](iOS/Mediated-Networks) page.
 <Info>
 The Ads Solutions products for Swift Package Manager are available starting with CAS `4.8.4`. On earlier versions, add the `CASMediation…` products one by one.
 </Info>
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
+<AccordionGroup>
+<Accordion defaultOpen title="Optimal Ads Solution">
+
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+```ruby
+pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
+```
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, AppLovin, Pangle, Bigo, Yango Ads, Audience Network, YSO Network, CAS Exchange, Maticoo.
+
+</Accordion>
+<Accordion title="Families Ads Solution">
+
+Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). 
+
+```ruby
+pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
+```
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Chartboost, Kidoz, Mintegral, Yango Ads.
+
+<Info>
+The families ads solution is NOT intended for apps in [Apple Kids Category](iOS/Apple-Kids-Category).
+</Info>
+
+</Accordion>
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions. 
+
+```ruby
+pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
+```
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, Bigo, Yango Ads, YSO Network, Monetrix.
+
+</Accordion>
+<Accordion title="Choice networks">
+
+Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
+
+When you are not using the solution pods, you must add a `CleverAdsSolutions-Base` pod for the CAS base framework. 
+```ruby
+pod 'CleverAdsSolutions-Base', '{{ versions.ios }}'
+```
+
+Follow the instructions on the [Mediated Networks](iOS/Mediated-Networks) page.
+
+</Accordion>
+</AccordionGroup>
+
+</TabItem>
+</Tabs>
 
 ### Check project’s build settings
 - Open Xcode `<Project>.xcodeproj`
