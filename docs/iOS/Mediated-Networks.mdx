@@ -5,9 +5,35 @@ description: This guide shows the ad sources CAS.AI Mediation supports.
 
 Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
 
-Feel free not to use ready-made (`Optimal` or `Families`) solutions, and choose which mediated ad networks you want to integrate by copy following `pods` to `Podfile`: 
+Feel free not to use the ready-made [Ads Solutions](iOS#choose-mediated-networks), and choose which mediated ad networks you want to integrate.
 
-The following ad pods are available for monetization to everyone:
+The adapters are sorted alphabetically in the lists below. Every adapter already brings the CAS base framework with it, and requires no additional framework dependencies.
+
+## The following ad sources are available for monetization to everyone
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+Add these products of the CAS package to your app target:
+```
+CASMediationChartboost
+CASMediationDTExchange
+CASMediationGoogleAds
+CASMediationInMobi
+CASMediationIronSource
+CASMediationKidoz
+CASMediationLiftoffMonetize
+CASMediationMintegral
+CASMediationUnityAds
+```
+
+<Info>
+`CASMediationSuperAwesome` has no Swift Package product and is available through CocoaPods only.
+</Info>
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
 ```ruby
   pod 'CASMediationChartboost'
   pod 'CASMediationDTExchange'
@@ -21,34 +47,58 @@ The following ad pods are available for monetization to everyone:
   pod 'CASMediationUnityAds'
 ```
 
-The adapters are sorted alphabetically in the list.
+</TabItem>
+</Tabs>
 
-## The following ad pods do NOT provide monetization for users under COPPA restrictions.
+## The following ad sources do NOT provide monetization for users under COPPA restrictions.
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+Add these products of the CAS package to your app target:
+```
+CASMediationAppLovin
+CASMediationAudienceNetwork
+CASMediationBigo
+CASMediationCASExchange
+CASMediationHyprMX
+CASMediationMaticoo
+CASMediationOgury
+CASMediationPangle
+CASMediationPrado
+CASMediationSmaato
+CASMediationStartIO
+CASMediationVerve
+CASMediationYangoAds
+CASMediationYsoNetwork
+```
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
 ```ruby
   pod 'CASMediationAppLovin'
   pod 'CASMediationAudienceNetwork'
   pod 'CASMediationBigo'
   pod 'CASMediationCASExchange'
   pod 'CASMediationHyprMX'
+  pod 'CASMediationMaticoo'
   pod 'CASMediationOgury'
   pod 'CASMediationPangle'
   pod 'CASMediationPrado'
+  pod 'CASMediationSmaato'
   pod 'CASMediationStartIO'
+  pod 'CASMediationVerve'
   pod 'CASMediationYangoAds'
   pod 'CASMediationYsoNetwork'
-  pod 'CASMediationMaticoo'
-  pod 'CASMediationSmaato'
-  pod 'CASMediationVerve'
 ```
+
+</TabItem>
+</Tabs>
 
 <Info>
 Read more about the adapter versions [here](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md).
 </Info>
-
-After any change to `Podfile`, you need to run a terminal command to apply the changes:
-```
-pod update
-```
 
 <Info>
 - The Meta Audience Network requires [Additional implementations](iOS/Additional-Meta-AudienceNetwork-steps).
@@ -61,21 +111,73 @@ Access to the monetization of the beta ad sources is closed.
 If you would like to monetize by one of these ad sources, please contact your account manager.
 </Warning>
 
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+```
+CASMediationBidease
+CASMediationBidMachine
+CASMediationBlueSea
+CASMediationDisplayIO
+CASMediationMoloco
+CASMediationMonetrix
+CASMediationPubMatic
+```
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
 ```ruby
-  pod 'CASMediationPubMatic'
-  pod 'CASMediationDisplayIO'
   pod 'CASMediationBidease'
+  pod 'CASMediationBidMachine'
+  pod 'CASMediationBlueSea'
+  pod 'CASMediationDisplayIO'
   pod 'CASMediationMoloco'
   pod 'CASMediationMonetrix'
+  pod 'CASMediationPubMatic'
 ```
+
+</TabItem>
+</Tabs>
 
 ## Cross-promotion
 Cross promotion is an app marketing strategy in which app developers promote one of their titles on another one of their titles. Cross promoting is especially effective for developers with large portfolios of games as a means to move users across titles and use the opportunity to scale each of their apps. This is most commonly used by hyper-casual publishers who have relatively low retention, and use cross promotion to keep users within their app portfolio.
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+```
+CASMediationCrossPromo
+```
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
 
 ```ruby
   pod 'CASMediationCrossPromo'
 ```
 
+</TabItem>
+</Tabs>
+
 <Info>
 Contact our account manager if you are interested in cross-promotion.
 </Info>
+
+## Apply the changes
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+Xcode resolves the package the moment you add a product. To pick up a new version later, select **File > Packages > Resolve Package Versions**.
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
+After any change to `Podfile`, you need to run a terminal command to apply the changes:
+```
+pod update
+```
+
+</TabItem>
+</Tabs>
