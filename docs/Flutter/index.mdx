@@ -97,8 +97,8 @@ install the same SDK and are configured by the same script above.
 There is nothing to add for the SDK itself: `flutter build ios` resolves the CAS iOS Swift Package through the
 plugin and links it into `Runner`.
 
-Ad network adapters are not part of that package. Add the ones your app needs to the `Runner` target, see
-[Choose Mediated Networks](#choose-mediated-networks) below.
+The plugin links the SDK alone. Ad network adapters are separate products of the same package: add the ones
+your app needs to the `Runner` target, see [Choose Mediated Networks](#choose-mediated-networks) below.
 
 <Info>
 Swift Package Manager is enabled by default since Flutter `3.47`. Run `flutter config` to see the state of the
@@ -208,8 +208,9 @@ How you add a network depends on the dependency manager your project uses, see
 
 <Tabs groupId="iosdeps">
 <TabItem label="Swift Package Manager" value="spm">
-The Swift Package exposes one library product per mediation network. Adding a network is an Xcode step, not a
-code change: the product carries the adapter binary and the CAS.AI SDK picks it up at runtime.
+The Swift Package exposes a curated solution product that pulls a whole set of networks at once, and one
+library product per network for a hand-picked set. Adding a network is an Xcode step, not a code change: the
+product carries the adapter binary and the CAS.AI SDK picks it up at runtime.
 
 <Steps>
 <Step title="Add the CAS package to the Runner target">
@@ -220,43 +221,71 @@ https://github.com/cleveradssolutions/CAS-iOS
 ```
 Set the **Dependency Rule** to **Up to Next Minor Version**, enter `{{ versions.ios }}` and click **Add Package**.
 </Step>
-<Step title="Pick the networks">
-Xcode then asks which library products to add to which target. Check one `CASMediation*` product per ad network
-you want to monetize with, and add them to the **Runner** target.
+<Step title="Pick the products">
+Xcode then asks which library products to add to which target. Pick them from the list below and add them to
+the **Runner** target.
 
 The CAS.AI SDK itself arrives through the plugin, so `CleverAdsSolutionsSPM` does not have to be checked here.
 Nothing has to be imported or called in Dart or Swift for an adapter to work.
 </Step>
-<Step title="Run the configuration script again">
-```shell
-cd ios
-ruby casconfig.rb <CAS ID>
-```
-It adds the `SKAdNetworkItems` of the networks you picked and keeps the `-ObjC` linker flag in place.
-</Step>
 </Steps>
 
-To change the selection later, select the project in the Project navigator, select the **Runner** target, open
-the **General** tab and edit **Frameworks, Libraries, and Embedded Content**. Re-run the configuration script
-after every change.
+<AccordionGroup>
+<Accordion defaultOpen title="Optimal Ads Solution">
 
-The [adapters table of the CAS iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) lists every network and is kept up to date with each
-release. Three of its columns matter when you pick yours:
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-- **SPM** — whether the adapter is distributed through Swift Package Manager. A few are not, because of
-  limitations of the ad frameworks themselves. If you need one of those, use CocoaPods instead.
-- **Optimal**, **Families**, **VPN** — which curated CAS.AI solution the network belongs to. Take the rows
-  ticked in the column of the solution that fits your audience, the same set that `includeOptimalAds` and its
-  siblings give you on Android.
+Add the `AdsOptimalSolutions` product to the **Runner** target.
 
-The library product of a network is its name in the table prefixed with `CASMediation`, for example
-`CASMediationGoogleAds` for the `GoogleAds` row. The one exception is `CASExchange`, whose product is
-`CASMediationExchange`. Xcode lists the exact products when you add the package, so you never have to guess.
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, AppLovin, Pangle, Bigo, Yango Ads, Audience Network, YSO Network, CAS Exchange, Maticoo.
+
+</Accordion>
+
+<Accordion title="Families Ads Solution">
+
+Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
+
+Add the `AdsFamiliesSolutions` product to the **Runner** target.
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Chartboost, Kidoz, Mintegral, Yango Ads.
+
+</Accordion>
+
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
+
+Add the `AdsVPNCompliantSolutions` product to the **Runner** target.
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, Bigo, Yango Ads, YSO Network, Monetrix.
+
+</Accordion>
+
+<Accordion title="Choice mediation adapters">
+
+Advanced publishers familiar with ad network integrations can configure their own set of adapters. Add one
+`CASMediation*` product per network to the **Runner** target.
+
+The library product of a network is its name in the
+[adapters table of the CAS iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md)
+prefixed with `CASMediation`, for example `CASMediationGoogleAds` for the `GoogleAds` row. The one exception is
+`CASExchange`, whose product is `CASMediationExchange`. Xcode lists the exact products when you add the package,
+so you never have to guess.
+
+The **SPM** column of that table says whether the adapter is distributed through Swift Package Manager. A few
+are not, because of limitations of the ad frameworks themselves. If you need one of those, use CocoaPods
+instead.
+
+</Accordion>
+</AccordionGroup>
 
 <Info>
-Curated `Optimal`, `Families` and `VPNCompliant` products do not exist in the Swift Package yet, so the
-networks of a solution are added one by one for now. They are planned for a future update of the package.
+The solution products arrived in CAS `4.8.3`. On an earlier version of the package, add the `CASMediation*`
+products of a solution one by one.
 </Info>
+
+To change the selection later, select the project in the Project navigator, select the **Runner** target, open
+the **General** tab and edit **Frameworks, Libraries, and Embedded Content**.
 </TabItem>
 
 <TabItem label="CocoaPods" value="cocoapods">
