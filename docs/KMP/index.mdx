@@ -378,9 +378,6 @@ To change the selection later:
 2. Open the **General** tab and find **Frameworks, Libraries, and Embedded Content**.
 3. Click **+**, pick the products you want from the `CleverAdsSolutions` package, and confirm.
 4. Remove a product from the same list to drop a network.
-
-Re-run the [configuration script](#configure-the-ios-project) after changing the selection. It refreshes the
-`SKAdNetworkItems` of the networks you added and keeps the `-ObjC` linker flag in place.
 </TabItem>
 <TabItem label="In Package.swift" value="manifest">
 If your Xcode project consumes a local Swift package of your own, list the products as dependencies of your target:
