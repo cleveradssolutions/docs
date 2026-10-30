@@ -1,0 +1,212 @@
+---
+title: Purchase Info
+---
+
+The `CASPurchaseInfo` class is used to report in-app purchases to CAS.AI. Along with the SDK's ad revenue tracking, this allows you to get a complete picture of a user's total value by combining ad revenue and IAP revenue in one place.
+
+The total reported revenue is calculated as:
+
+```
+revenue = quantity * price * currency_rate
+```
+
+## Reporting a purchase
+
+Call `CASMobileAds.reportPurchase(...)` with a `CASPurchaseInfo` object as soon as you've confirmed a completed transaction.
+
+The steps below use the [`in_app_purchase`](https://pub.dev/packages/in_app_purchase) plugin, where `details` is a `PurchaseDetails` with the `PurchaseStatus.purchased` status received from `InAppPurchase.instance.purchaseStream`, and `product` is the `ProductDetails` it was bought from. Report the purchase before you finish it with `InAppPurchase.instance.completePurchase(details)`.
+
+### 1. Create `CASPurchaseInfo`
+
+Build the object from the product id, price, currency and quantity.
+
+```dart
+final purchase = CASPurchaseInfo(
+  productId: details.productID,
+  price: product.rawPrice,
+  currency: product.currencyCode,
+);
+```
+
+<Info>
+The `in_app_purchase` plugin does not expose the purchased quantity of a Google Play purchase, so `quantity` defaults to `1`. For a StoreKit 1 transaction you can pass `details.skPaymentTransaction.payment.quantity`.
+</Info>
+
+### 2. Recommended: attach validation data
+
+Add the validation data of the transaction so CAS.AI can verify the purchase server-side. The data lives on the store specific `PurchaseDetails` subclass, so check the type of `details`:
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+`GooglePlayPurchaseDetails` comes from `package:in_app_purchase_android/in_app_purchase_android.dart`.
+
+```dart
+if (details is GooglePlayPurchaseDetails) {
+  final googlePurchase = details.billingClientPurchase;
+  purchase.setGoogleValidation(
+    originalJson: googlePurchase.originalJson,
+    signature: googlePurchase.signature,
+  );
+}
+```
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+`SK2PurchaseDetails` and `AppStorePurchaseDetails` come from `package:in_app_purchase_storekit/in_app_purchase_storekit.dart`. Which one you get depends on the StoreKit version the plugin runs on, so handle both.
+
+```dart
+if (details is SK2PurchaseDetails) {
+  // StoreKit 2: the server verification data is the JWS representation
+  purchase.setAppleValidation(
+    transactionId: details.purchaseID,
+    jwsRepresentation: details.verificationData.serverVerificationData,
+  );
+} else if (details is AppStorePurchaseDetails) {
+  // StoreKit 1: the local verification data is the base64 encoded app receipt
+  purchase.setAppleValidation(
+    transactionId: details.skPaymentTransaction.transactionIdentifier,
+    receiptBase64: details.verificationData.localVerificationData,
+  );
+}
+```
+</TabItem>
+</Tabs>
+
+<Info>
+Validation data is optional, but it is recommended when available.
+</Info>
+
+### 3. If the product is a subscription
+
+Neither Google Play Billing nor StoreKit reports whether a product is a subscription on the transaction itself. That comes from your own product catalog, for example from the `ProductDetails` you fetched when querying the products, or however you classify product ids on your side. Check that first, then attach the subscription data:
+
+<Tabs groupId="platform">
+<TabItem label="Android" value="android">
+```dart
+purchase.setGoogleSubscription(
+  purchaseToken: googlePurchase.purchaseToken,
+  purchaseTime: googlePurchase.purchaseTime,
+);
+```
+</TabItem>
+
+<TabItem label="iOS" value="ios">
+```dart
+purchase.setAppleSubscription(
+  jsonRepresentation: details.verificationData.localVerificationData,
+);
+```
+</TabItem>
+</Tabs>
+
+<Info>
+`setAppleSubscription` called without arguments reads the subscription data from the current StoreKit entitlement of the product, which requires iOS 16.0 or higher. Use it for StoreKit 1 transactions, where the json representation is not available.
+</Info>
+
+### 4. Report
+
+With the product info, validation and, if applicable, subscription data attached, `purchase` is ready to send:
+
+```dart
+await CASMobileAds.reportPurchase(purchase);
+```
+
+## Complete example
+
+```dart
+import 'package:clever_ads_solutions/clever_ads_solutions.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+
+// The products of your catalog, by product id, from queryProductDetails().
+Map<String, ProductDetails> _products = {};
+
+void _onPurchaseUpdated(List<PurchaseDetails> purchases) {
+  for (final details in purchases) {
+    if (details.status != PurchaseStatus.purchased) continue;
+
+    final product = _products[details.productID];
+    if (product != null) {
+      _reportPurchase(details, product);
+    }
+
+    if (details.pendingCompletePurchase) {
+      InAppPurchase.instance.completePurchase(details);
+    }
+  }
+}
+
+void _reportPurchase(PurchaseDetails details, ProductDetails product) {
+  final purchase = CASPurchaseInfo(
+    productId: details.productID,
+    price: product.rawPrice,
+    currency: product.currencyCode,
+  );
+
+  // Your own classification of the product, CAS.AI cannot derive it
+  // from the transaction.
+  final isSubscription = _isSubscription(details.productID);
+
+  if (details is GooglePlayPurchaseDetails) {
+    final googlePurchase = details.billingClientPurchase;
+    purchase.setGoogleValidation(
+      originalJson: googlePurchase.originalJson,
+      signature: googlePurchase.signature,
+    );
+    if (isSubscription) {
+      purchase.setGoogleSubscription(
+        purchaseToken: googlePurchase.purchaseToken,
+        purchaseTime: googlePurchase.purchaseTime,
+      );
+    }
+  } else if (details is SK2PurchaseDetails) {
+    purchase.setAppleValidation(
+      transactionId: details.purchaseID,
+      jwsRepresentation: details.verificationData.serverVerificationData,
+    );
+    if (isSubscription) {
+      purchase.setAppleSubscription(
+        jsonRepresentation: details.verificationData.localVerificationData,
+      );
+    }
+  } else if (details is AppStorePurchaseDetails) {
+    purchase.setAppleValidation(
+      transactionId: details.skPaymentTransaction.transactionIdentifier,
+      receiptBase64: details.verificationData.localVerificationData,
+    );
+    if (isSubscription) {
+      purchase.setAppleSubscription();
+    }
+  }
+
+  CASMobileAds.reportPurchase(purchase);
+}
+```
+
+## Other IAP providers
+
+Google Play Billing and the Apple App Store are the providers of the platform stores, but a purchase may be processed elsewhere. Use the matching validation method and `CASPurchaseInfo` is reported for that provider instead:
+
+```dart
+// Amazon Appstore, with the receipt id and the user id of the receipt
+purchase.setAmazonValidation(receiptId: receiptId, userId: userId);
+
+// Amazon Appstore, with the JSON string of the receipt
+purchase.setAmazonValidationFromReceipt(receipt);
+
+// Xsolla
+purchase.setXsollaValidation(orderId: orderId, userId: userId);
+```
+
+<Warning>
+For these providers the purchase price, currency and quantity are your responsibility, for example from your own product catalog or pricing configuration, so that revenue is reported accurately.
+</Warning>
+
+## Automatic forwarding to Tenjin
+
+Purchases reported through `CASMobileAds.reportPurchase(...)` can also be forwarded automatically to Tenjin Analytics, so you don't need a separate integration to get IAP revenue into Tenjin.
+
+<Info>
+This requires CAS SDK 4.8.1 or higher, and the feature must be enabled for your account. Contact your account manager to request it.
+</Info>
