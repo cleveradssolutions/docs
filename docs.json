@@ -538,6 +538,10 @@
                     "href": "/Unity/Publisher-Integrations",
                     "pages": [
                         {
+                            "title": "CAS Publishing Hub",
+                            "href": "/Unity/CAS-Publishing-Hub-Integration"
+                        },
+                        {
                             "title": "Firebase",
                             "href": "/Unity/Firebase-Integration"
                         },

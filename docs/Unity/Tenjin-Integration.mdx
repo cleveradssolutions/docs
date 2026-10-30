@@ -3,178 +3,32 @@ title: Tenjin Integration checklist
 description: Integrate the Tenjin SDK through CAS.AI to attribute installs and track purchases.
 ---
  
-Tenjin handles install attribution and purchase tracking. The CAS SDK already bundles automatic Tenjin initialization, so the setup below covers the manual options and what's required to track in-app purchases.
- 
-## Add the Tenjin SDK
-Download the latest version of the [Tenjin SDK](https://github.com/tenjin/tenjin-unity-sdk/releases) and add it to your project.
- 
-## Initialize Tenjin
-<Info>
-If your app has **no** in-app purchases, you can skip manual setup and ask your manager to enable the Tenjin integration automatically, since the CAS SDK already includes automatic initialization.
-</Info>
- 
-For manual initialization of Tenjin through CAS, pass the Tenjin key as a mediation extra on the CAS builder:
- 
-```csharp
-builder.WithMediationExtras("tenjin_key", <TENJIN_SDK_KEY>);
-```
+Tenjin handles install attribution and purchase tracking. CAS initializes Tenjin automatically, so the only thing left to set up is tracking in-app purchases.
  
 ## Track purchases
- 
-To send purchases to Tenjin, add the purchase-tracking code below to your app. It uses the [MiniJSON](https://gist.github.com/darktable/1411710) library for JSON deserializing. Choose the version that matches your Unity IAP package.
+Choose one of the following methods to report in-app purchases to Tenjin.
+1. Report purchases through CAS
+2. Report purchases through CAS Publishing Hub
 
-<Tabs groupId="unity-iap">
-  <TabItem value="iap5" label="Unity IAP 5+">
+### (Option 1) Report purchases through CAS
+Report each completed purchase with `CAS.MobileAds.ReportPurchase(...)`. CAS forwards it to Tenjin automatically, so no separate Tenjin code is needed.
+
+<Card title="Purchase Info" href="/Unity/Purchase-Info">
+Step-by-step guide to creating a `PurchaseInfo` and reporting it with `CAS.MobileAds.ReportPurchase(...)`.
+</Card>
+
+### (Option 2) Report purchases through CAS Publishing Hub
+If you installed the [CAS Publishing Hub](/Unity/CAS-Publishing-Hub-Integration) and your project uses Unity IAP, report each completed purchase with:
+
+```csharp
+CASHub.ReportPurchase(product, order);
+```
 
 <Info>
-For consumable products, the receipt is only available in `PendingOrder`. Once the purchase is confirmed (`ConfirmedOrder`), the receipt becomes empty. Always process the purchase and send it to Tenjin in `OnPurchasePending`.
+`CASHub.ReportPurchase` is available only when Unity IAP is present in the project.
 </Info>
 
-```csharp
-public static void OnPurchasePending(PendingOrder pendingOrder) {
-    ProcessOrder(pendingOrder);
-    // Confirm the purchase after processing
-    UnityIAPServices.DefaultPurchase().ConfirmPurchase(pendingOrder);
-}
-
-public static void ProcessOrder(Order order) {
-    // Get the first item from the cart
-    var item = order.CartOrdered.Items().FirstOrDefault();
-    if (item == null) return;
-
-    var product = item.Product;
-    var price = product.metadata.localizedPrice;
-    double lPrice = decimal.ToDouble(price);
-    var currencyCode = product.metadata.isoCurrencyCode;
-    var productId = product.definition.id;
-    var info = order.Info;
-
-#if UNITY_ANDROID
-
-    // Parse the unified receipt JSON
-    var wrapper = Json.Deserialize(info.Receipt) as Dictionary<string, object>;
-    if (wrapper == null) return;
-
-    var store   = (string)wrapper["Store"];
-    var payload = (string)wrapper["Payload"];
-
-    if (store.Equals("GooglePlay")) {
-        var googleDetails = Json.Deserialize(payload) as Dictionary<string, object>;
-        var googleJson    = (string)googleDetails["json"];
-        var googleSig     = (string)googleDetails["signature"];
-
-        CompletedAndroidPurchase(productId, currencyCode, 1, lPrice, googleJson, googleSig);
-    }
-
-    if (store.Equals("AmazonAppStore")) {
-        var amazonDetails   = Json.Deserialize(payload) as Dictionary<string, object>;
-        var amazonReceiptId = (string)amazonDetails["receiptId"];
-        var amazonUserId    = (string)amazonDetails["userId"];
-
-        CompletedAmazonPurchase(productId, currencyCode, 1, lPrice, amazonReceiptId, amazonUserId);
-    }
-
-#elif UNITY_IOS
-
-    // Try SK2 first (Unity IAP 5.1+ on iOS 15+), fall back to SK1
-    var receipt = info.Apple?.jwsRepresentation;
-    if (string.IsNullOrEmpty(receipt)) {
-        receipt = info.Apple?.AppReceipt;
-    }
-
-    if (string.IsNullOrEmpty(receipt)) {
-        Debug.LogError("No receipt available");
-        return;
-    }
-
-    var transactionId = info.TransactionID;
-    CompletedIosPurchase(productId, currencyCode, 1, lPrice, transactionId, receipt);
-
-#endif
-}
-
-private static void CompletedAndroidPurchase(string ProductId, string CurrencyCode, int Quantity,
-                                            double UnitPrice, string Receipt, string Signature)
-{
-    BaseTenjin instance = Tenjin.getInstance("SDK_KEY");
-    instance.Transaction(ProductId, CurrencyCode, Quantity, UnitPrice, null, Receipt, Signature);
-}
-
-private static void CompletedIosPurchase(string ProductId, string CurrencyCode, int Quantity,
-                                        double UnitPrice, string TransactionId, string Receipt)
-{
-    BaseTenjin instance = Tenjin.getInstance("SDK_KEY");
-    instance.Transaction(ProductId, CurrencyCode, Quantity, UnitPrice, TransactionId, Receipt, null);
-}
-
-private static void CompletedAmazonPurchase(string ProductId, string CurrencyCode, int Quantity,
-                                            double UnitPrice, string ReceiptId, string UserId)
-{
-    BaseTenjin instance = Tenjin.getInstance("SDK_KEY");
-    instance.TransactionAmazon(ProductId, CurrencyCode, Quantity, UnitPrice, ReceiptId, UserId);
-}
-```
-
-  </TabItem>
-  <TabItem value="iap4" label="Unity IAP 4 or earlier">
-
-```csharp
-public static void OnProcessPurchase(PurchaseEventArgs purchaseEventArgs) {
-    var price = purchaseEventArgs.purchasedProduct.metadata.localizedPrice;
-    double lPrice = decimal.ToDouble(price);
-    var currencyCode = purchaseEventArgs.purchasedProduct.metadata.isoCurrencyCode;
-
-    var wrapper = Json.Deserialize(purchaseEventArgs.purchasedProduct.receipt) as Dictionary<string, object>;
-    if (null == wrapper) {
-        return;
-    }
-
-    var store     = (string)wrapper["Store"];    // GooglePlay, AmazonAppStore, AppleAppStore, etc.
-    var payload   = (string)wrapper["Payload"];  // For Apple: base64 encoded ASN.1 receipt. For Android: raw JSON receipt.
-    var productId = purchaseEventArgs.purchasedProduct.definition.id;
-
-#if UNITY_ANDROID
-    if (store.Equals("GooglePlay")) {
-        var googleDetails = Json.Deserialize(payload) as Dictionary<string, object>;
-        var googleJson    = (string)googleDetails["json"];
-        var googleSig     = (string)googleDetails["signature"];
-        CompletedAndroidPurchase(productId, currencyCode, 1, lPrice, googleJson, googleSig);
-    }
-    if (store.Equals("AmazonApps")) {
-        var amazonDetails   = Json.Deserialize(payload) as Dictionary<string, object>;
-        var amazonReceiptId = (string)amazonDetails["receiptId"];
-        var amazonUserId    = (string)amazonDetails["userId"];
-        CompletedAmazonPurchase(productId, currencyCode, 1, lPrice, amazonReceiptId, amazonUserId);
-    }
-#elif UNITY_IOS
-    var transactionId = purchaseEventArgs.purchasedProduct.transactionID;
-    CompletedIosPurchase(productId, currencyCode, 1, lPrice, transactionId, payload);
-#endif
-}
-
-private static void CompletedAndroidPurchase(string ProductId, string CurrencyCode, int Quantity, double UnitPrice, string Receipt, string Signature) {
-    BaseTenjin instance = Tenjin.getInstance("SDK_KEY");
-    instance.Transaction(ProductId, CurrencyCode, Quantity, UnitPrice, null, Receipt, Signature);
-}
-
-private static void CompletedIosPurchase(string ProductId, string CurrencyCode, int Quantity, double UnitPrice, string TransactionId, string Receipt) {
-    BaseTenjin instance = Tenjin.getInstance("SDK_KEY");
-    instance.Transaction(ProductId, CurrencyCode, Quantity, UnitPrice, TransactionId, Receipt, null);
-}
-
-private static void CompletedAmazonPurchase(string ProductId, string CurrencyCode, int Quantity, double UnitPrice, string ReceiptId, string UserId) {
-    BaseTenjin instance = Tenjin.getInstance("SDK_KEY");
-    instance.TransactionAmazon(ProductId, CurrencyCode, Quantity, UnitPrice, ReceiptId, UserId);
-}
-```
-
-  </TabItem>
-</Tabs>
-
-<Warning>
-Replace `SDK_KEY` in the code above with your **Tenjin SDK Key**.
-</Warning>
-
+## Share purchase validation keys
 If your app includes in-app purchases, you must provide your manager with the following so Tenjin can track them:
  
 - **Public Key** for the Android app
