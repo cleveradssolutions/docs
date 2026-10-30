@@ -10,17 +10,17 @@
             "flutter": "4.8.3",
             "kmp": "4.8.3",
             "kmpios": "4.8.3",
-            "unreal": "4.8.0",
+            "unreal": "4.8.3",
             "reactnative": "4.8.3",
-            "cordova": "4.8.0",
-            "construct": "4.8.0.0"
+            "cordova": "4.8.3",
+            "construct": "4.8.3.0"
         },
         "min": {
             "xcode": "26.2",
             "ios": "15.0",
             "api": "24",
             "targetapi": "36",
-            "kotlin": "2.3.21",
+            "kotlin": "2.1.21",
             "compose": "1.10.3"
         }
     },
