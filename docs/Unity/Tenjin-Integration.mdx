@@ -1,24 +1,24 @@
 ---
-title: Tenjin Integration checklist
+title: Tenjin
 description: Integrate the Tenjin SDK through CAS.AI to attribute installs and track purchases.
 ---
  
-Tenjin handles install attribution and purchase tracking. CAS initializes Tenjin automatically, so the only thing left to set up is tracking in-app purchases.
+Tenjin handles install attribution and purchase tracking. The CAS SDK initializes Tenjin automatically, so the only thing left to set up is tracking in-app purchases.
  
 ## Track purchases
 Choose one of the following methods to report in-app purchases to Tenjin.
-1. Report purchases through CAS
-2. Report purchases through CAS Publishing Hub
+1. Report purchases with the CAS SDK
+2. Report purchases with CAS Publishing Hub
 
-### (Option 1) Report purchases through CAS
-Report each completed purchase with `CAS.MobileAds.ReportPurchase(...)`. CAS forwards it to Tenjin automatically, so no separate Tenjin code is needed.
+### (Option 1) Report purchases with the CAS SDK
+Report each completed purchase with `CAS.MobileAds.ReportPurchase(...)`. The CAS SDK forwards it to Tenjin automatically, so no separate Tenjin code is needed.
 
 <Card title="Purchase Info" href="/Unity/Purchase-Info">
 Step-by-step guide to creating a `PurchaseInfo` and reporting it with `CAS.MobileAds.ReportPurchase(...)`.
 </Card>
 
-### (Option 2) Report purchases through CAS Publishing Hub
-If you installed the [CAS Publishing Hub](/Unity/CAS-Publishing-Hub-Integration) and your project uses Unity IAP, report each completed purchase with:
+### (Option 2) Report purchases with CAS Publishing Hub
+If you installed the SDK with [CAS Publishing Hub](/Unity/CAS-Publishing-Hub-Integration) and your project uses Unity IAP, report each completed purchase with:
 
 ```csharp
 CASHub.ReportPurchase(product, order);
