@@ -167,9 +167,9 @@ Do the option the human chose in step 0. Keep every existing entry in the manife
 }
 ```
 
-The latest version is the `latest` tag of `GET https://npm.cas.ai/ai.cas.installer` (`1.0.9` on 27.10.2026). Use the **same** version for both packages.
+The latest version is the `latest` tag of `GET https://npm.cas.ai/ai.cas.installer`. Use the **same** version for both packages.
 
-**B. Git URL.** Add the installer from the repository `cleveradssolutions/CAS-Publishing-Hub`, path `/installer`, in the form `https://github.com/cleveradssolutions/CAS-Publishing-Hub.git?path=/installer#<version>` (confirmed by the repository README, which uses `#1.0.9`; a release is a commit on `main` tagged with its version; git installs do not update themselves, so to upgrade change the `#<version>` suffix). The metadata package still comes from the registry, so also add the registry and `ai.cas.installer.metadata` as in option A.
+**B. Git URL.** Add the installer from the repository `cleveradssolutions/CAS-Publishing-Hub`, path `/installer`, in the form `https://github.com/cleveradssolutions/CAS-Publishing-Hub.git?path=/installer#<version>` (confirmed by the repository README, which uses the `#<version>` form; a release is a commit on `main` tagged with its version; git installs do not update themselves, so to upgrade change the `#<version>` suffix). The metadata package still comes from the registry, so also add the registry and `ai.cas.installer.metadata` as in option A.
 
 **C. Bootstrap `.unitypackage`** (`cas-publishing-bootstrap.unitypackage`, named in the Hub's user guide). The human imports it once in the Editor (Assets > Import Package > Custom Package); it writes the registry and the installer dependency into `manifest.json` and deletes itself. Then the human saves and **closes the Editor**, and you check that `manifest.json` now has both packages (add `ai.cas.installer.metadata` yourself if only the installer is there).
 
