@@ -3,6 +3,12 @@ title: CAS Publishing Hub
 description: Install and configure the CAS SDK, Tenjin and Firebase Analytics in one step with the CAS Publishing Hub installer.
 ---
 
+<Success>
+**Integrate with an AI assistant (LLM)**
+
+You can integrate CAS Publishing Hub with the help of an AI assistant (Claude, Cursor, GitHub Copilot, etc.). Give it the instruction file [cas-publishing-hub.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-publishing-hub.md) - attach it to the chat or share its link - and ask the assistant to follow it. The guide walks the assistant through the complete integration. If you prefer to do it yourself, follow the manual steps below.
+</Success>
+
 CAS Publishing Hub is a Unity installer that sets up the whole publishing SDK for you: CAS, Tenjin and Firebase Analytics. It registers the required packages, installs them and checks the configuration, so you don't need to edit `Packages/manifest.json` by hand. Follow the steps below in order.
 
 <Warning>
@@ -12,13 +18,6 @@ If your project already contains its own advertising or mediation SDK, remove it
 <Info>
 CAS Publishing Hub requires **Unity 2022.3** or newer.
 </Info>
-
-## Integrate with an AI assistant (LLM)
-You can integrate CAS Publishing Hub with the help of an AI assistant (Claude, Cursor, GitHub Copilot, etc.). Paste the following prompt into your assistant of choice:
-
-> Add CAS Publishing Hub to my project using [cas-publishing-hub.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-publishing-hub.md)
-
-The guide walks the assistant through the complete integration. If you prefer to do it yourself, follow the manual steps below.
 
 ## Install CAS Publishing Hub
 Choose one of the following methods to import CAS Publishing Hub into your Unity project.
@@ -102,5 +101,5 @@ You can review the CAS settings at any time in `Assets > CleverAdsSolutions > An
 
 ## Next steps
 CAS Publishing Hub only installs and configures the SDKs. To finish the integration, you still need to add the code to your app:
-1. [Integrate the CAS SDK](/Unity/Initialize-CAS) - initialize CAS and add the ad formats you selected. To let an AI assistant do it, paste this prompt: "Integrate the CAS SDK into my project using [cas-unity.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-unity.md)"
+1. [Integrate the CAS SDK](/Unity/Initialize-CAS) - initialize CAS and add the ad formats you selected. To let an AI assistant do it, give it the instruction file [cas-unity.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-unity.md).
 2. [Integrate Tenjin](/Unity/Tenjin-Integration) - set up in-app purchase tracking.
