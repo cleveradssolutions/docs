@@ -5,17 +5,22 @@ do not work around it.
 
 ## Money and accounts
 
-1. **Never let a development build serve live ads.** Test ad mode goes on for every build
-   that is not a release build. Clicks on live ads during development are invalid traffic
-   and can get the publisher's account flagged.
+1. **Test ads are not a question, they are the rule, and it cuts both ways.**
+   - Never test on live ads. Any build that is run during the integration serves test
+     ads, because a click on a live ad is invalid traffic and can get the publisher's
+     account flagged.
+   - Never release with test ads on. They earn nothing.
+
+   So test mode is bound to the build, not to a decision someone has to remember: the
+   debug build flag on Android, the debug configuration on iOS. Do not ask the publisher
+   who will turn it off; wire it so that nobody has to.
 2. **Never tell the publisher to click a live ad** to check the integration. Verification
    happens on test ads.
 3. **Never invent an identifier.** CAS ID, AdMob App ID, ad unit ids and test device ids
-   come from the CAS UI or from the publisher. An id copied from a sample app or from
-   another publisher's project is never acceptable, not even as a placeholder.
-4. **Never leave test device ids or test ad mode hardcoded for release.** Bind test mode
-   to the debug build flag, and say in the summary what the publisher must check before
-   submitting.
+   come from the CAS dashboard or from the publisher. An id copied from a sample app or
+   from another publisher's project is never acceptable, not even as a placeholder.
+4. **Never leave a test device id hardcoded.** A test device id is for one machine during
+   one integration, and it is removed when the work is done.
 5. **Never promise revenue, fill rate or eCPM.** Those are account and inventory
    questions, not integration questions.
 

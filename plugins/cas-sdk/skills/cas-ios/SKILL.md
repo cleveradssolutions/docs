@@ -17,9 +17,10 @@ Work through the phases in order. Each one ends with something the publisher can
 Four rules decide whether this integration is safe. The rest are in
 [references/agent-rules.md](references/agent-rules.md), read it before writing code.
 
-1. **Every non-release build runs test ads.** Clicking a live ad during development is
-   invalid traffic and can get the publisher's account flagged. Bind test mode to the
-   debug configuration and never suggest clicking a live ad to check the work.
+1. **Test ads, both ways.** Never test on live ads: a click during development is
+   invalid traffic and can get the publisher's account flagged. Never release with test
+   ads on: they earn nothing. So bind test mode to the build, the debug configuration, and
+   do not ask anyone to remember to turn it off.
 2. **Never invent an identifier.** The CAS ID, the AdMob App ID and test device ids come
    from the CAS dashboard or from the publisher. An id copied out of a sample is not a
    placeholder, it is someone else's account. On iOS the CAS ID is the **App Store id**,
@@ -29,43 +30,18 @@ Four rules decide whether this integration is safe. The rest are in
 4. **Verified means run.** The integration is done when the app builds, the SDK
    initializes, a test ad loads and shows, and the console is clean. Not before.
 
-## Phase 1 - survey
+## Phase 1 and 2 - research, then ask
 
-Read the project and write down what you found. Do not ask about anything in this list.
+[references/integration-interview.md](references/integration-interview.md) holds the
+read-only research table, the questions, and the question format every CAS guide uses.
+Follow it rather than improvising: research first, show a short **Found** block, then ask
+in rounds of at most three questions, each with lettered options and a recommended answer.
 
-- Bundle identifier per target and configuration, and which target gets the SDK.
-- Deployment target, Xcode version, Swift or Objective-C, UIKit or SwiftUI.
-- Dependency manager in use: `Package.swift` and the package list, or `Podfile` and
-  whether a workspace already exists. If both are possible, this becomes a question.
-- Ad SDKs already present and where they are initialized. A second mediation SDK is a
-  migration, not an addition.
-- `Info.plist`: `SKAdNetworkItems`, `GADApplicationIdentifier`,
-  `NSUserTrackingUsageDescription`, App Transport Security exceptions.
-- An existing consent platform, and the MMP and analytics SDKs with their initialization
-  sites, they have to move after consent.
-- View controllers or scenes that are candidates for each ad format.
+Do not ask what the project answers. Do not ask who will turn test mode off; that is a
+rule, not a choice.
 
-Report the list in one short block and ask the publisher to correct it.
-
-## Phase 2 - interview
-
-Ask only what the project cannot answer. The full list with the reasoning is in
-[references/integration-interview.md](references/integration-interview.md); the ones that
-block the work are:
-
-- the **CAS ID**, the App Store id, and whether the app is registered in the CAS dashboard,
-- **new integration or migration**, and from what,
-- **which formats, on which screens**,
-- **the audience**: child-directed, mixed, adult, or a VPN or proxy app. A child-directed
-  app also raises the Apple Kids Category question, which changes which solution is legal,
-- **which solution**: Optimal, Families, VPN compliant, or a hand-picked adapter list,
-- **consent**: the built-in CAS flow or an existing CMP,
-- **App Tracking Transparency**: will the app ask, with what text, and when,
-- **how this will be tested**, on which device or simulator and which configuration.
-
-If the publisher does not know which solution to pick: Optimal for a general audience,
-Families for a child-directed app that is not in the Apple Kids Category, VPN compliant
-for a VPN or proxy app, and the account manager decides anything finer.
+The answers that block everything else are the CAS ID, whether this is a migration, the
+audience, and the ad formats with their screens.
 
 ## Phase 3 - plan
 
@@ -106,6 +82,17 @@ on the dashboard or the account manager.
 
 ## Documentation and samples
 
-Every reference file names the page it was written from. The map is in
-[references/docs-map.md](references/docs-map.md). When this skill and the documentation
-disagree, the documentation is right.
+**The documentation is in this repository, under `docs/`.** Read the page from the working
+tree rather than fetching the website: it is the same source, on the same branch, and it
+costs no network call. Every reference file links the page it was written from, and the
+map of all of them is in [references/docs-map.md](references/docs-map.md). When this skill
+and the documentation disagree, the documentation is right.
+
+A reference gives the shape of the integration and the constraints around it; the page
+gives the full, current code. Read both before writing, and do not copy code out of a
+reference when the page is one link away.
+
+This is not the only guide for agents here. `llm-guides/` holds the same kind of material
+for the rest of the surface: a Unity project belongs to `cas-unity.md`, the CAS Publishing
+program to `cas-publishing-hub.md`, and the studio's Firebase setup to
+`firebase-ga4-setup.md`. They use the same question format as this skill.

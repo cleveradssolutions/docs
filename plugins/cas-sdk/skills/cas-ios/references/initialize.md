@@ -1,6 +1,7 @@
 # iOS: initialization
 
-Canonical: `https://docs.page/cleveradssolutions/docs/iOS/Initialize-CAS`
+Canonical, in this repository: [docs/iOS/Initialize-CAS.mdx](../../../../../docs/iOS/Initialize-CAS.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/iOS/Initialize-CAS`
 Samples: `DemoApp Swift/CASSample/AppDelegate.swift`, `DemoApp Objective-C/` and
 `DemoApp SwiftUI/` in `https://github.com/cleveradssolutions/CAS-iOS`
 

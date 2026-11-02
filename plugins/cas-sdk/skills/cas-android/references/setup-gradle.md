@@ -1,7 +1,8 @@
 # Android: Gradle setup and ad networks
 
-Canonical: `https://docs.page/cleveradssolutions/docs/Android`
-Manual path without the plugin: `.../Android/Manual-setup`
+Canonical, in this repository: [docs/Android/index.mdx](../../../../../docs/Android/index.mdx)
+Manual path without the plugin: [docs/Android/Manual-setup.mdx](../../../../../docs/Android/Manual-setup.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/Android`
 
 Confirm the current SDK version and the minimum toolchain on the documentation page
 before writing versions into the project.

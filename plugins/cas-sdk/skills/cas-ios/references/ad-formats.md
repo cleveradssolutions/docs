@@ -1,6 +1,13 @@
 # iOS: ad formats
 
-Canonical pages, one per format, under `https://docs.page/cleveradssolutions/docs/iOS`.
+Canonical, in this repository, one page per format in [docs/iOS/](../../../../../docs/iOS):
+[Banner-Ads.mdx](../../../../../docs/iOS/Banner-Ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/iOS/Interstitial-Ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/iOS/Rewarded-Ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/iOS/App-Open-Ads.mdx),
+[Load-Native-Ads.mdx](../../../../../docs/iOS/Load-Native-Ads.mdx),
+[Display-Native-Ad.mdx](../../../../../docs/iOS/Display-Native-Ad.mdx).
+Read the page for the format being added; the code below is the shape, not a substitute.
 Working code for every format: `DemoApp Swift/`, `DemoApp Objective-C/` and
 `DemoApp SwiftUI/` in `https://github.com/cleveradssolutions/CAS-iOS`. Read the sample for
 the format being added, it is shorter than the documentation and always compiles.

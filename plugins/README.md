@@ -66,11 +66,20 @@ scripts/check.sh                 # manifests, skill headers, links, shared copie
 Nothing here touches `docs/` or `docs.json`. docs.page reads those two and ignores the
 rest of the repository, the same way it already ignores `README.md` and `cache_images.py`.
 
+## The other guides
+
+`llm-guides/` in this repository holds agent guides for the rest of the surface, in the
+same question format: `cas-unity.md`, `cas-publishing-hub.md` and `firebase-ga4-setup.md`.
+A Unity project belongs there, not here.
+
 ## Keeping it true
 
-Every reference file names the documentation page it was written from. When a page in
-`docs/` changes, check the reference that names it in the same pull request. When the two
-disagree, the documentation is right and the skill is the bug.
+Every reference file **links** the documentation page it was written from, by a path into
+`docs/` in this repository. That is deliberate: the agent clones the repository, so it
+reads the real page instead of a copy that goes stale, and `scripts/check.sh` fails when a
+page is renamed or moved. When a page in `docs/` changes, check the reference that links
+it in the same pull request. When the two disagree, the documentation is right and the
+skill is the bug.
 
 The documentation is also available to agents directly, as
 [llms.txt](https://docs.page/cleveradssolutions/docs/llms.txt) and `llms-full.txt`. Those

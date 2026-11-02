@@ -1,6 +1,7 @@
 # Android: initialization
 
-Canonical: `https://docs.page/cleveradssolutions/docs/Android/Initialize-CAS`
+Canonical, in this repository: [docs/Android/Initialize-CAS.mdx](../../../../../docs/Android/Initialize-CAS.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/Android/Initialize-CAS`
 Samples: `kotlinSample/.../SampleApplication.kt`, `javaSample/.../SampleApplication.java`
 in `https://github.com/cleveradssolutions/CAS-Android`
 

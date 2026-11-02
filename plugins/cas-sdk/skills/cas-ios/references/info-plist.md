@@ -1,7 +1,8 @@
 # iOS: Info.plist
 
-Canonical: `https://docs.page/cleveradssolutions/docs/iOS` (Configure Info.plist) and
-`.../iOS/Manually-configure-project` for the manual path.
+Canonical, in this repository: [docs/iOS/index.mdx](../../../../../docs/iOS/index.mdx), section
+"Configure Info.plist", and [docs/iOS/Manually-configure-project.mdx](../../../../../docs/iOS/Manually-configure-project.mdx)
+for the manual path. Apple attribution: [docs/general/Apple-Ad-Attribution.mdx](../../../../../docs/general/Apple-Ad-Attribution.mdx).
 Script: `Script XCodeConfig/` in `https://github.com/cleveradssolutions/CAS-iOS`.
 
 ## Use the script
