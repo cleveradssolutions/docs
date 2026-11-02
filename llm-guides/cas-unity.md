@@ -69,7 +69,7 @@ Ask only those that still apply. The last column is a rule for you, not part of 
 | 4 | How to install the SDK, and which release? | A. OpenUPM, latest stable release (a scoped registry, no `git`, pins the version in `packages-lock.json`); B. Git URL with a pinned tag (needs `git`; the only way to get a beta); C. the Package Manager window, done by the human (same as B); D. a downloaded `.unitypackage` (use it only if the human already has one from CAS) | A with the latest stable version found. B only if the human asks for a beta. Not asked when the SDK is already installed. |
 | 5 | Is the game in the Google Play Families category? | A. No; B. Yes | A. Most apps are not Families. If nothing in the project says otherwise, or the human does not know, count it as no. |
 | 6 | Which ad formats? | A. banner, interstitial, rewarded; B. the same plus app open; C. another combination | The formats the old ad code uses, if any; else A. |
-| 7 | Place ads in the game code? | A. No; B. Yes, propose placements first (step 8) | A. Step 8 runs only on an explicit B. |
+| 7 | Write the ad code? | A. No, write no ad code at all: the human adds it; B. Yes, initialize CAS and propose the placements first (steps 5 and 8) | A. Steps 5 and 8 run only on an explicit B (or when step 5b needs them). |
 | 8 | How to work with Unity? | A. Mode A: Editor closed, plain batch mode; B. Mode B: Editor open, Unity CLI (only when the CLI is installed, an Editor is connected and the Pipeline package is there; if the CLI is missing, B means the human installs it, commands in step 1); C. Mode B, and add the Pipeline package (only when the CLI is installed but the project has no Pipeline package) | A. The CLI is optional and everything works without it. |
 | 9 | Version control | Not a git repo: A. backup copy of `Assets/` and `Packages/` outside the project; B. stop, I commit first. Uncommitted changes: A. go on, with a backup copy; B. stop, I commit first | A. Clean tree: not asked. |
 | 10 | Another ad SDK found: replace it with CAS? | Show a table (SDK, where, how many call sites). A. Yes, remove it and move its calls to CAS (step 5b); B. No, stop | A. CAS cannot run next to another ad SDK. Nothing found: not asked. |
@@ -311,36 +311,13 @@ For a Families app also remove the advertising ID permission: Settings window > 
 
 ---
 
-## 5. Initialization in code
+## 5. Initialization in code (only on an explicit B for question 7, or when step 5b needs it)
 
-Initialize the manager **once**, at app start, before any ad call. The settings asset already holds the CAS ID and formats, so the minimal call is:
+Skip this step when the answer to question 7 is A and step 5b does not apply: write no ad code, and tell the human in step 9 that initialization is theirs (page **Initialize CAS** at `https://docs.page/cleveradssolutions/docs/Unity/`).
 
-```csharp
-using CAS;
-using UnityEngine;
+Initialize the manager **once**, at app start, before any ad call, with an ads manager class written after the `CASAdsManager` reference in step 8. Write the class and set up its scene object here, in step 5; step 8 then only adds the calls. The settings asset already holds the CAS ID and formats.
 
-public static class AdsBootstrap
-{
-    public static IMediationManager Manager { get; private set; }
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void Init()
-    {
-        MobileAds.BuildManager()
-            .WithCompletionListener(config =>
-            {
-                // config.error is null when the SDK initialized; the SDK retries by itself otherwise.
-                Manager = config.manager;
-                Debug.Log("[Ads] CAS initialized. Error: " + (config.error ?? "none") + ", consent required: " + config.isConsentRequired);
-            })
-            .Build();
-    }
-}
-```
-
-Only banner, interstitial and rewarded load by themselves. **App Open must be loaded by hand** (`manager.LoadAd(AdType.AppOpen)`, then `ShowAd` from `OnAppOpenAdLoaded`); step 8 has a full example.
-
-Look first for an ad manager the game already has (search the game's C#, not `Packages/` or `Library/`, for `MobileAds.BuildManager`, `IMediationManager`, other ad SDKs like `MaxSdk`, `IronSource`, `LevelPlay`, `GoogleMobileAds`). If the game already has a CAS manager, leave it. If it uses another ad SDK, step 1b already handled the decision; the replacement is step 5b.
+Look first for an ad manager the game already has (search the game's C#, not `Packages/` or `Library/`, for `MobileAds.BuildManager`, `IMediationManager`, other ad SDKs like `MaxSdk`, `IronSource`, `LevelPlay`, `GoogleMobileAds`). If the game already has a CAS manager, leave it and do not add `CASAdsManager`. If it uses another ad SDK, step 1b already handled the decision; the replacement is step 5b.
 
 If the project uses Assembly Definitions and the compiler says `error CS0103: The name 'MobileAds' does not exist in the current context`, add an Assembly Definition Reference to the assembly `CleverAdsSolutions` for the assembly that holds the code.
 
@@ -362,7 +339,7 @@ First, **before you delete anything**, collect what you will need later and keep
 2. **Remove the keys it left** in `Assets/Plugins/Android/AndroidManifest.xml` and `Info.plist` (for example the AdMob or AppLovin app ID) only if they are clearly that SDK's, and tell the human each one you removed. If unsure, leave it and report it.
 3. **Move the game's ad calls to CAS.** Use the calls the game already has as the list of placements: every old interstitial, rewarded, banner and app open call becomes the matching CAS call, in the same place, with the same reward and callback logic. Read the CAS pages for exact calls: **Interstitial Ads**, **Rewarded Ads**, **Banner Ads**, **App Open Ads** (`https://docs.page/cleveradssolutions/docs/Unity/`).
    - If the game has its own ad class, keep it and change only what is inside; the rest of the game then does not change.
-   - If the game calls the old SDK directly from many places, create one small ad class once (like step 8) and point the calls at it.
+   - If the game calls the old SDK directly from many places, create one small ad class once (written after the `CASAdsManager` reference in step 8, in step 5) and point the calls at it.
    - Old SDK initialization and its ad unit IDs go away: CAS does not use them. Do not copy IDs into CAS.
 4. **Compile** (step 7). Fix only errors from the removed SDK. If a feature of the old SDK has no CAS counterpart (for example custom banner placement, server-side reward callbacks, an unusual consent setup), **stop**, list these places, and ask the human what to do.
 5. **Check that nothing is left:** search again for the markers from step 1b in the code, `Assets/` and `manifest.json`.
@@ -401,7 +378,7 @@ Read the CAS pages **Banner Ads**, **Interstitial Ads**, **Rewarded Ads**, **App
 3. Edit minimally: one call per placement next to the existing logic; no refactoring.
 4. Compile and check (step 7).
 
-**Template: `CASAdsManager`, one ads manager for the whole game.** This is a ready script written by hand for CAS 4.8.0 on Unity 6000.3. **Use it as it is. Do not rewrite or "improve" it**; change only what the human asks (for example the class or field names).
+**Reference: `CASAdsManager`, one ads manager for the whole game.** This is a working script written by hand for CAS 4.8.0 on Unity 6000.3. It is a reference for the code you write, not a file to paste. Adapt it to the project: its naming and code style, the formats the human chose (question 6), the ad class and call sites the game already has, the scene setup and the installed Unity and CAS versions. Keep what the reference does right: one manager for the whole game, one initialization at start, App Open loaded by hand, every ad called through the manager, one banner on screen at a time. Do not add features the human did not ask for.
 
 What it does: a singleton (`CASAdsManager.instance`) on one object of the first scene that survives scene loads (`DontDestroyOnLoad`). `InitCAS()` builds the manager (on `Start`, unless `_initOnStart` is switched off in the Inspector), and in the initialization callback it runs App Open: **App Open is loaded by hand** (`LoadAd(AdType.AppOpen)`) and shown from the `OnAppOpenAdLoaded` callback. The other formats are called by the game code through the manager:
 
@@ -515,13 +492,13 @@ public class CASAdsManager : MonoBehaviour
 
 ```
 
-Notes for the template:
+Notes for the reference:
 - **Put the object into the first scene** after the script compiles: one object named `CASAdsManager` with this component, at the root of the scene (`DontDestroyOnLoad` works only on root objects). Editor closed: add three blocks to the scene YAML before the `SceneRoots` block (a `GameObject`, a `MonoBehaviour` whose `m_Script` is `{fileID: 11500000, guid: <guid from CASAdsManager.cs.meta>, type: 3}`, a `Transform` with `m_Father: {fileID: 0}`) with new unused fileIDs, and add the Transform's fileID to `m_Roots`; copy an existing object of the same scene as the format sample and keep a backup of the scene file. Fields missing in the YAML take the defaults from the script. Editor open: ask the human to drag the script onto an empty object (editing the scene file under an open Editor makes it ask to reload and can lose unsaved changes).
-- It initializes CAS itself. If step 5 already created `AdsBootstrap`, delete `AdsBootstrap`: one manager per game. Existing ad calls of the game (step 5b) point at `CASAdsManager.instance`.
+- It initializes CAS itself: one manager per game, so never add a second initializer next to it. Existing ad calls of the game (step 5b) point at `CASAdsManager.instance`.
 - There is no guard against a second copy: keep the object only in the first scene, or a later scene with the same object creates a second manager.
 - `HideBanner()` disposes the current banner view; `ShowBanner` hides the previous one first, so only one banner is on screen. `AdSize` is an enum (`Banner`, `AdaptiveBanner`, `Leaderboard`, `MediumRectangle`, ...); `AdPosition` has `BottomCenter` and the others. Both are in `CAS`.
-- The template does not check that an ad is ready: `ShowInterstitial` and `ShowRewarded` call `ShowAd` directly, and a failed show only fires the CAS failed-to-show event. If the human wants a ready check or a "hide the reward button" logic, say so and ask whether to add it. Do not add it on your own.
-- App Open is requested once, at initialization. In the reference project the banner and the interstitial 10 seconds later are not part of the manager: place those calls where the human asked (step 8.2).
+- The reference does not check that an ad is ready: `ShowInterstitial` and `ShowRewarded` call `ShowAd` directly, and a failed show only fires the CAS failed-to-show event. If the human wants a ready check or a "hide the reward button" logic, say so and ask whether to add it. Do not add it on your own.
+- Include the App Open part only when the human chose app open (question 6). App Open is requested once, at initialization. In the reference project the banner and the interstitial 10 seconds later are not part of the manager: place those calls where the human asked (step 8.2).
 - Rewarded and the other formats work only if they are enabled in the settings asset (`allowedAdFlags`, step 3).
 - The settings asset keeps `interstitialInterval: 30` (minimum seconds between interstitials). If an interstitial is requested sooner, it fails to show. Tell the human instead of changing the interval yourself.
 
@@ -530,4 +507,4 @@ Notes for the template:
 
 ## 9. Report back
 
-Tell the human: whether another ad SDK was found and what you removed and rewrote (step 1b and 5b), the install method and version, the settings per platform (CAS ID, formats, audience, test mode), the files you added or changed, whether the mediation solution was chosen (and by whom), what is still manual (CAS registration of the app, turning Test ad mode off, store setup), and any step you could not complete. Suggest `git diff` for review if the project is under git.
+Tell the human: whether another ad SDK was found and what you removed and rewrote (step 1b and 5b), the install method and version, the settings per platform (CAS ID, formats, audience, test mode), the files you added or changed, whether the mediation solution was chosen (and by whom), what is still manual (CAS registration of the app, turning Test ad mode off, store setup, and, when the answer to question 7 was A, the initialization and the ad calls in code, which you did not write), and any step you could not complete. Suggest `git diff` for review if the project is under git.
