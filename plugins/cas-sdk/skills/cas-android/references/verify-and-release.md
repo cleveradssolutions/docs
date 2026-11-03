@@ -5,18 +5,36 @@ An integration is verified by running it. Reading the diff is not verification.
 ## Verify
 
 1. Build and install the debug variant.
-2. Confirm test ad mode is on for this build. In the log, test full screen ads announce
-   themselves and show CAS integration details, including a Mediation Adapters section
-   that lists every network that initialized correctly. That screen is the fastest proof
-   the adapter set is right.
-3. Enable debug logging, `CAS.settings.setDebugMode(true)`, tag `CAS`.
-4. Launch and read the initialization callback: `config.error` must be null. If it is not,
-   the message names the cause; a wrong or unregistered CAS ID shows up here.
-5. For every format that was added: load it, show it, and watch for `onAdLoaded` then
+2. Enable debug logging, `CAS.settings.debugMode = true`. **The log tag is `CAS.AI`**:
+   `adb logcat -s CAS.AI:V`. Filtering on `CAS` returns nothing and looks like a dead
+   integration.
+3. Launch. **The consent form comes first.** On a clean device in a region that requires
+   consent, the built-in flow shows a Google UMP form, and initialization does not
+   complete until someone answers it. Nothing loads before that, and it is not a failure.
+   Dismiss it, then continue.
+4. Read the initialization callback: `config.error` must be null. If the callback never
+   arrives, the consent form is still up, or the app is waiting on the network.
+   An unregistered CAS ID logs
+   `Main > Initialization > CAS ID is not registered in system: <id>` as an error and then
+   `Apply test ads mode configuration`: the integration still runs on test ads, and the
+   publisher registers the app before anything can serve live.
+5. Show each full screen format. A test ad opens the CAS integration screen with a
+   **Mediation adapters N/M** row, the CAS ID, the SDK version, the minimum API, the
+   consent state and the advertising id permission. That screen, not the log, is the
+   fastest proof the adapter set is right; open the adapters row and look for the ones
+   that did not initialize.
+6. For every format that was added: load it, show it, and watch for `onAdLoaded` then
    `onAdShowed`. A format that only loads is not done.
-6. Rotate the device or background and foreground the app on a screen with a banner, then
+7. **Check what happens after the ad closes**, which is where placements break:
+   - the interstitial: the screen the user was going to actually opens, after the dismiss,
+     and a new ad is loaded;
+   - the rewarded: the reward is granted from the reward listener, and the ad reloads, so
+     a second press works. Press it twice;
+   - the banner: it sits in its reserved space, nothing of the app is covered, and the
+     bottom of the creative is not clipped.
+8. Rotate the device or background and foreground the app on a screen with a banner, then
    leave the screen, and confirm `destroy()` runs and nothing keeps loading afterwards.
-7. Re-read the log for integration warnings. `CAS.validateIntegration(activity)` reports
+9. Re-read the log for integration warnings. `CAS.validateIntegration(activity)` reports
    integration status in debug builds and is worth one run.
 
 Report what actually happened, with the log lines. If a format failed, name the format and

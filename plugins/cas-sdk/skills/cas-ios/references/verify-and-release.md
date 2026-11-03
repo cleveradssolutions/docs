@@ -10,12 +10,19 @@ An integration is verified by running it. Reading the diff is not verification.
    show CAS integration details, including a Mediation Adapters section that lists every
    network that initialized correctly. That screen is the fastest proof the product or pod
    selection is right.
-3. Turn the SDK's debug logging on and watch the console.
+3. Turn the SDK's debug logging on and watch the console. **The consent form comes
+   first**: on a clean device in a region that requires consent the built-in flow shows a
+   form, and initialization does not complete until it is answered. Nothing loads before
+   that, and it is not a failure.
 4. Read the initialization handler: `config.error` must be nil. If it is not, the message
    names the cause; a wrong or unregistered CAS ID shows up here.
 5. For every format that was added: load it, present it, and watch for the load callback
    then the present callback. A format that only loads is not done.
-6. Leave and re-enter the screen that owns a banner, and confirm nothing keeps loading
+6. **Check what happens after the ad closes**, which is where placements break: the
+   screen the user was going to opens after the dismiss and a new ad is loaded; the
+   reward is granted from the reward callback and the rewarded ad reloads, so press it
+   twice; the banner sits in its reserved space with nothing of the app covered.
+7. Leave and re-enter the screen that owns a banner, and confirm nothing keeps loading
    after the owner is gone.
 7. Confirm the `Info.plist` holds the keys the script wrote, and that
    `SKAdNetworkItems` is populated.

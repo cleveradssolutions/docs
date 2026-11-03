@@ -7,11 +7,24 @@ Published: `https://docs.page/cleveradssolutions/docs/Android`
 Confirm the current SDK version and the minimum toolchain on the documentation page
 before writing versions into the project.
 
-## 1. Prerequisites
+## 1. Prerequisites, before adding anything
 
 The app must meet the minimum `minSdk`, `compileSdk` and Kotlin version from the
-documentation. If the project is below any of them, say so and let the publisher decide
-whether to raise it. Never raise it silently.
+documentation. Check them first and tell the publisher what has to move, because each one
+fails late and with a message that does not name CAS:
+
+| Below the minimum | What you get, and when |
+|---|---|
+| `compileSdk` | `checkDebugAarMetadata` fails with "Dependency ... requires libraries and applications that depend on it to compile against version N or later". Not at sync, at build. |
+| Kotlin | `compileDebugKotlin` fails with "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is X, expected version is Y", repeated for every file of an ad network's library. The documented minimum has been behind the adapters before, so when this appears, raise Kotlin to the next minor and try again. |
+| `minSdk` | The manifest merger fails, naming the adapter that needs more. |
+
+Raise **only** what blocks the build, with the publisher's agreement. `compileSdk` is a
+build-time setting and raising it is usually safe; `targetSdk` changes runtime behaviour
+and is the publisher's product decision, so leave it alone unless they ask.
+
+There also has to be an Android SDK to build against: `local.properties` with `sdk.dir`,
+or `ANDROID_HOME`. A fresh clone often has neither.
 
 ## 2. Ad network repositories
 

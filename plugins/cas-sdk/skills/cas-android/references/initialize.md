@@ -5,6 +5,21 @@ Published: `https://docs.page/cleveradssolutions/docs/Android/Initialize-CAS`
 Samples: `kotlinSample/.../SampleApplication.kt`, `javaSample/.../SampleApplication.java`
 in `https://github.com/cleveradssolutions/CAS-Android`
 
+## Before the code
+
+Three things the documentation page does not spell out, each of which stops the
+integration dead:
+
+- The `Application` subclass has to be registered in `AndroidManifest.xml` as
+  `android:name=".MyApplication"`. An unregistered class simply never runs, and nothing
+  initializes.
+- `BuildConfig` needs `buildFeatures { buildConfig = true }` on AGP 8, otherwise
+  `BuildConfig.APPLICATION_ID` and `BuildConfig.DEBUG` do not resolve.
+- **The Kotlin snippets on the documentation page use Java setters.** `setDebugMode`,
+  `setTaggedAudience`, `setTrialAdFreeInterval`, `setUserConsent` and `setCcpaStatus` are
+  Kotlin **properties** on `CAS.settings`: write `CAS.settings.debugMode = true`. The
+  snippet as printed does not compile from Kotlin.
+
 ## Where it goes
 
 Once, at app launch, normally in `Application.onCreate()`. The CAS ID is a constant, not
@@ -29,7 +44,13 @@ call is what gives access to the configuration and to the consent flow state, so
 ## The call
 
 ```kotlin
+import com.cleversolutions.ads.InitialConfiguration
+import com.cleversolutions.ads.InitializationListener
+import com.cleversolutions.ads.android.CAS
+
 private fun initializeCAS() {
+    CAS.settings.debugMode = BuildConfig.DEBUG
+
     val builder = CAS.buildManager()
         .withCasId(CAS_ID)
         .withTestAdMode(BuildConfig.DEBUG)
@@ -77,11 +98,12 @@ COPPA-safe. This is the publisher's decision; implement what they state, never g
 ## Debug logging
 
 ```kotlin
-CAS.settings.setDebugMode(true)
+CAS.settings.debugMode = true
 ```
 
-Log tag `CAS`. Keep it on while verifying and turn it off for release; it is noisy and
-costs performance.
+**The log tag is `CAS.AI`, not `CAS`.** `adb logcat -s CAS:V` shows nothing at all, which
+reads like a dead integration. Use `adb logcat -s CAS.AI:V`. Keep debug logging on while
+verifying and bind it to the debug build, it is noisy and costs performance.
 
 ## Legacy API
 

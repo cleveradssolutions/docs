@@ -31,10 +31,21 @@ traffic, and it is the first thing a user complains about.
 | Format | Load | Show |
 |---|---|---|
 | Interstitial | In `onCreate()` of the screen that will show it, or with `isAutoloadEnabled`. One load is one impression, so reload after `onAdDismissed()`. | On a transition the user is already making: a level finished, a screen closed, a step completed. Never in the middle of a task, never on a tap that means something else. |
-| Rewarded | Early, in `onCreate()` of the screen with the button, so the button is never pressed on an empty cache. | Only from a button the user pressed, with the reward stated before the press. Grant the reward in `OnRewardEarnedListener`, never in `onAdDismissed()`: a user who closes the ad early earns nothing. Keep the button visible but disabled, or hidden, while no ad is ready. |
+| Rewarded | Early, in `onCreate()` of the screen with the button, and again after every dismiss, so the button is never pressed on an empty cache. | Only from a button the user pressed, with the reward stated before the press. Grant the reward in `OnRewardEarnedListener`, never in `onAdDismissed()`: a user who closes the ad early earns nothing. Keep the button visible but disabled, or hidden, while no ad is ready. |
 | Banner | The view loads itself once it is attached and `isAutoloadEnabled` is on. | In a fixed container at the top or the bottom, outside the scrolling content, and never over a button, a navigation bar or game controls. Reserve the height so the layout does not jump when the ad arrives. |
 | App open | While the app is in the foreground, for the *next* foreground. | Only on a return to the app, or on a cold start from a loading screen while that screen is still up. Never once the user has reached app content. |
 | Native | With the screen or the list that will hold it, ahead of the position where it appears. | Inside the app's own layout, marked as an ad, with the required assets present. In a list, far enough apart that two ads are never on screen together. |
+
+**The transition waits for the ad, the ad does not race the transition.** Showing a full
+screen ad and navigating in the same handler is the single most common way to get an
+integration that looks right and shows nothing: the next screen covers the ad
+immediately. Call show, and start the next activity from `onAdDismissed()`, with the same step repeated in
+`onAdFailedToShow()` and when no ad is loaded, so the user is never stuck.
+
+**Every format reloads after it is dismissed, not just the interstitial.** One load is one
+impression. A rewarded ad that is not reloaded fails the next press with `NOT_READY`, and
+the button looks broken. Gate the button on the loaded state so it is never pressed on an
+empty cache.
 
 Rules that hold for every format:
 
@@ -95,7 +106,7 @@ Do not show an app open ad to a user who has just returned from clicking one.
 
 ```kotlin
 bannerView = CASBannerView(this, MyApplication.CAS_ID)
-bannerView.size = AdSize.getAdaptiveBanner(maxWidthDp)
+bannerView.size = AdSize.getAdaptiveBannerInScreen(this)
 bannerView.isAutoloadEnabled = true
 
 adContainerView.removeAllViews()
@@ -104,10 +115,15 @@ adContainerView.addView(bannerView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
 
 Or from XML, then set `casId` in code.
 
-Sizes: `getAdaptiveBanner(maxWidth)` is the default choice, plus `getInlineBanner`,
-`getSmartBanner`, `MEDIUM_RECTANGLE`, `LEADERBOARD` and `BANNER`. Pick the size from the
-container the publisher actually has; an ad view in a container that cannot measure it
-shows nothing.
+Sizes: `getAdaptiveBannerInScreen(context)` for a full width banner, or
+`getAdaptiveBanner(context, maxWidthDp)` for a narrower one. **Both take a context**; the
+documentation page prints the call without it and that snippet does not compile. Also
+`getInlineBanner`, `getSmartBanner`, `MEDIUM_RECTANGLE`, `LEADERBOARD` and `BANNER`.
+
+**Reserve the height the ad size actually reports, not a round number.** An adaptive
+banner is taller than 50dp on most screens, so a 50dp container clips it. Read
+`adSize.height` and give the container that, or let the container wrap the view and
+accept one layout pass.
 
 Banners refresh themselves; 30 seconds is the recommended `refreshInterval`. Destroy the
 view with the screen, and in Compose destroy it in `onDispose`.

@@ -31,10 +31,21 @@ traffic, and it is the first thing a user complains about.
 | Format | Load | Show |
 |---|---|---|
 | Interstitial | In `viewDidLoad()` of the view controller that will show it, or with `isAutoloadEnabled`. One load is one impression, so reload after the dismiss callback. | On a transition the user is already making: a level finished, a screen closed, a step completed. Never in the middle of a task, never on a tap that means something else. |
-| Rewarded | Early, in `viewDidLoad()` of the screen with the button, so the button is never pressed on an empty cache. | Only from a button the user pressed, with the reward stated before the press. Grant the reward in the reward callback, never in the dismiss callback: a user who closes the ad early earns nothing. Keep the button visible but disabled, or hidden, while no ad is ready. |
+| Rewarded | Early, in `viewDidLoad()` of the screen with the button, and again after every dismiss, so the button is never pressed on an empty cache. | Only from a button the user pressed, with the reward stated before the press. Grant the reward in the reward callback, never in the dismiss callback: a user who closes the ad early earns nothing. Keep the button visible but disabled, or hidden, while no ad is ready. |
 | Banner | The view loads itself once it is in the hierarchy with constraints and `isAutoloadEnabled` is on. | Pinned to the safe area at the top or the bottom, outside the scrolling content, and never over a button, a tab bar or game controls. Reserve the height so the layout does not jump when the ad arrives. |
 | App open | While the app is in the foreground, for the *next* foreground. | Only on a return to the app, or on a cold start from a loading screen while that screen is still up. Never once the user has reached app content. |
 | Native | With the screen or the list that will hold it, ahead of the position where it appears. | Inside the app's own layout, marked as an ad, with the required assets present. In a list, far enough apart that two ads are never on screen together. |
+
+**The transition waits for the ad, the ad does not race the transition.** Showing a full
+screen ad and navigating in the same handler is the single most common way to get an
+integration that looks right and shows nothing: the next screen covers the ad
+immediately. Call show, and push the next screen from the dismiss callback, with the same step repeated in
+the present-failure callback and when no ad is loaded, so the user is never stuck.
+
+**Every format reloads after it is dismissed, not just the interstitial.** One load is one
+impression. A rewarded ad that is not reloaded fails the next press with `NOT_READY`, and
+the button looks broken. Gate the button on the loaded state so it is never pressed on an
+empty cache.
 
 Rules that hold for every format:
 
