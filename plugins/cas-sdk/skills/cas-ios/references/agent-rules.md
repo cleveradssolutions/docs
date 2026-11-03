@@ -19,6 +19,12 @@ do not work around it.
 3. **Never invent an identifier.** CAS ID, AdMob App ID, ad unit ids and test device ids
    come from the CAS dashboard or from the publisher. An id copied from a sample app or
    from another publisher's project is never acceptable, not even as a placeholder.
+   **Never derive the CAS ID at runtime.** On Android that means never
+   `context.packageName`: only a constant in the code, or `BuildConfig.APPLICATION_ID`.
+   A package name read at runtime changes with a build variant, a suffix, an applied
+   renaming or a test process, and the request then goes out under an id nobody
+   registered. On iOS the CAS ID is the App Store id, which no runtime call can produce
+   at all.
 4. **Never leave a test device id hardcoded.** A test device id is for one machine during
    one integration, and it is removed when the work is done.
 5. **Never promise revenue, fill rate or eCPM.** Those are account and inventory
@@ -92,19 +98,26 @@ do not work around it.
     one after the user has already reached app content.
 28. **Never stack full screen formats** or place an interstitial on every user action.
     Keep the minimum interval and say where the ad is shown.
-29. **Never leave an ad instance dangling.** Every banner view, and every loaded but
+29. **Never show a full screen ad in the middle of a task.** An interstitial belongs to a
+    transition the user already expects, and a rewarded ad belongs behind a button the
+    user pressed knowing what they get in return.
+30. **Never place an ad where it covers something the user needs.** A banner over a
+    button, a navigation bar or game controls is a misplacement, not a layout detail, and
+    the accidental clicks it earns are invalid traffic. The placement rules per format are
+    in each platform's `ad-formats.md`.
+31. **Never leave an ad instance dangling.** Every banner view, and every loaded but
     unshown full screen or native ad, is destroyed with the screen that owns it on
     Android, and released with it on iOS. An instance nobody holds keeps loading, and the
     ad it loads is lost.
-30. **Never attach an ad view to a layout it cannot measure**, and never change the ad size
+32. **Never attach an ad view to a layout it cannot measure**, and never change the ad size
     after it has been attached.
 
 ## Reporting
 
-31. **Never claim the integration is verified without running it.** Verified means the
+33. **Never claim the integration is verified without running it.** Verified means the
     project builds, the SDK initializes, a test ad loads and shows, and the log has no
     integration errors. Anything else is reported as not verified, with the exact reason.
-32. **Never hide a failing step.** If one format does not load, finish the rest and say
+34. **Never hide a failing step.** If one format does not load, finish the rest and say
     which one failed and what the error code was.
-33. **Never guess at an error.** Ad error codes have documented meanings; look the code up
+35. **Never guess at an error.** Ad error codes have documented meanings; look the code up
     before offering a cause.

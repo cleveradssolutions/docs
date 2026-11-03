@@ -15,8 +15,17 @@ and `plugins/cas-sdk/.claude-plugin/plugin.json`, which other agents can ignore.
 | Integrate CAS.AI into an Android app | `plugins/cas-sdk/skills/cas-android/SKILL.md` |
 | Integrate CAS.AI into an iOS app | `plugins/cas-sdk/skills/cas-ios/SKILL.md` |
 | The rules that apply to any platform | `plugins/shared/agent-rules.md` |
-| What to ask the publisher first | `plugins/shared/integration-interview.md` |
+| How to ask the publisher anything | `plugins/shared/question-format.md` |
+| What to ask, per platform | the skill's `references/questions.md` |
 | Where the canonical documentation is | `plugins/shared/docs-map.md` |
+| Unity, CAS Publishing, Firebase | `llm-guides/` |
+
+Installed rather than read: the [`skills`](https://github.com/vercel-labs/skills) CLI
+copies these into the skills directory of whichever agents you have.
+
+```bash
+npx skills add cleveradssolutions/docs/plugins/cas-sdk/skills
+```
 
 `SKILL.md` links to files inside its own `references/` folder, relative to itself. Follow
 them as you would any relative link.

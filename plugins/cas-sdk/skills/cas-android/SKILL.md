@@ -1,9 +1,20 @@
 ---
 name: cas-android
-description: Integrate, upgrade or debug the CAS.AI (Clever Ads Solutions) ad mediation SDK in an Android app - Gradle setup, initialization, consent flow, banner, interstitial, rewarded, app open and native ads, and verification on test ads. Use when the user mentions CAS.AI, cleveradssolutions, the CAS Gradle plugin, or asks to add ad monetization or migrate from AppLovin MAX, LevelPlay or AdMob mediation on Android.
+description: >-
+  Integrates, upgrades or debugs the CAS.AI (Clever Ads Solutions) ad mediation
+  SDK in a native Android app: Gradle setup and ad network choice, initialization,
+  consent flow, banner, interstitial, rewarded, app open and native ads, and
+  verification on test ads. Use when the task mentions CAS.AI, cleveradssolutions,
+  the CAS Gradle plugin, or asks to add ad monetization or migrate from AppLovin
+  MAX, LevelPlay or AdMob mediation in an Android project. Don't use for Flutter,
+  React Native, Unity, Unreal, Cordova or Kotlin Multiplatform apps, which have
+  their own CAS plugin and their own guide, or for the iOS side of a project,
+  which is the cas-ios skill.
 license: Apache-2.0
+metadata:
+  version: "0.1.0"
+  category: CAS.AI
 ---
-
 # CAS.AI on Android
 
 CAS.AI is an ad mediation SDK: one integration, many ad networks bidding for each
@@ -29,12 +40,30 @@ Four rules decide whether this integration is safe. The rest are in
 4. **Verified means run.** The integration is done when the app builds, the SDK
    initializes, a test ad loads and shows, and the log is clean. Not before.
 
+## Phase 0 - is this the right skill
+
+Check the project kind before anything else. A cross-platform project has Android
+folders too, and belongs to its own CAS plugin, not here:
+
+| Found | Belongs to |
+|---|---|
+| `pubspec.yaml` | the CAS Flutter plugin |
+| `react-native` in `package.json` | the CAS React Native plugin |
+| `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide `llm-guides/cas-unity.md` |
+| A Kotlin Multiplatform `shared` module | the CAS KMP plugin |
+| `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
+| An Unreal `.uproject` | the CAS Unreal plugin |
+
+Say which one and stop. Integrating the native SDK underneath a plugin breaks the
+plugin.
+
 ## Phase 1 and 2 - research, then ask
 
-[references/integration-interview.md](references/integration-interview.md) holds the
-read-only research table, the questions, and the question format every CAS guide uses.
-Follow it rather than improvising: research first, show a short **Found** block, then ask
-in rounds of at most three questions, each with lettered options and a recommended answer.
+[references/questions.md](references/questions.md) holds the read-only research table and
+the questions for this platform. The shape of a question is in
+[references/question-format.md](references/question-format.md), the same in every CAS
+guide: research first, show a short **Found** block, then ask in rounds of at most three
+questions with lettered options and a recommended answer.
 
 Do not ask what the project answers. Do not ask who will turn test mode off; that is a
 rule, not a choice.

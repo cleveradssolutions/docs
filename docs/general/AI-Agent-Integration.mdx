@@ -34,12 +34,16 @@ what to ask you first, and what never to do*. We publish skills for Android and 
 [documentation repository](https://github.com/cleveradssolutions/docs/tree/master/plugins).
 
 <CodeGroup>
+```bash Any agent
+npx skills add cleveradssolutions/docs/plugins/cas-sdk/skills
+```
+
 ```bash Claude Code
 /plugin marketplace add cleveradssolutions/docs
 /plugin install cas-sdk@cas-skills
 ```
 
-```text Other agents
+```text By hand
 Point the agent at the skill folder for your platform:
 
 plugins/cas-sdk/skills/cas-android/SKILL.md
@@ -48,6 +52,17 @@ plugins/cas-sdk/skills/cas-ios/SKILL.md
 Each folder is plain Markdown and is self contained.
 ```
 </CodeGroup>
+
+The first command uses the open [skills CLI](https://github.com/vercel-labs/skills), which
+detects the agents installed on your machine and copies the skills into each one. It
+supports Claude Code, Codex, Cursor, OpenCode and many others, and needs Node.js only to
+run the installer. Add `--skill cas-android` for one platform, and update later with
+`npx skills update`.
+
+| Skill | What it does | Sample prompt |
+| ----- | ------------ | ------------- |
+| `cas-android` | Adds the SDK to a native Android app: Gradle setup, ad networks, initialization, consent, ad formats, verification on test ads. | *Add CAS.AI banner and interstitial ads to this app* |
+| `cas-ios` | The same for a native iOS app, with Swift Package Manager or CocoaPods and the `Info.plist` configuration. | *Integrate CAS.AI into my iOS app and show a rewarded ad* |
 
 <Info>
 The skills are not Claude specific. `SKILL.md` is Markdown with a small header, and the
@@ -115,6 +130,29 @@ Also, in short:
   to make a build pass.
 - Store privacy disclosures, the ATT text and the decision about a child-directed audience
   are yours, not the agent's.
+
+## Where ads belong
+
+The agent should propose a placement and let you correct it, not place ads wherever the
+code is easiest to change:
+
+- **Interstitial:** loaded when the screen that shows it is created, shown on a transition
+  the user is already making, such as a finished level or a closed screen. Never in the
+  middle of a task.
+- **Rewarded:** loaded early, shown only from a button the user pressed, with the reward
+  stated before the press and granted on the reward callback, not when the ad is closed.
+- **Banner:** in a fixed container at the top or the bottom, outside the scrolling content,
+  never over a button, a navigation bar or game controls, with the height reserved so the
+  layout does not jump.
+- **App open:** only on a return to the app, or on a cold start while a loading screen is
+  still up.
+- **Native:** inside your own layout, marked as an ad, spaced so two are never on screen
+  together.
+
+<Warning>
+An ad over a control earns accidental clicks, and accidental clicks are invalid traffic.
+A misplaced ad costs more than no ad.
+</Warning>
 
 ## What "done" means
 

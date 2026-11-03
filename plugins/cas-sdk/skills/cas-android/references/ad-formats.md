@@ -21,6 +21,30 @@ Shared truths:
   turns into a request loop. Autoload or an explicit, rate-limited retry instead.
 - `placement` is an optional label for reporting, not an ad unit id.
 
+## Where to load, and where to show
+
+The publisher knows their app; the agent knows what each format needs. Propose a placement
+from this table, name the screen and the moment, and let the publisher correct it. An ad in
+the wrong place costs more than no ad: it earns accidental clicks, which are invalid
+traffic, and it is the first thing a user complains about.
+
+| Format | Load | Show |
+|---|---|---|
+| Interstitial | In `onCreate()` of the screen that will show it, or with `isAutoloadEnabled`. One load is one impression, so reload after `onAdDismissed()`. | On a transition the user is already making: a level finished, a screen closed, a step completed. Never in the middle of a task, never on a tap that means something else. |
+| Rewarded | Early, in `onCreate()` of the screen with the button, so the button is never pressed on an empty cache. | Only from a button the user pressed, with the reward stated before the press. Grant the reward in `OnRewardEarnedListener`, never in `onAdDismissed()`: a user who closes the ad early earns nothing. Keep the button visible but disabled, or hidden, while no ad is ready. |
+| Banner | The view loads itself once it is attached and `isAutoloadEnabled` is on. | In a fixed container at the top or the bottom, outside the scrolling content, and never over a button, a navigation bar or game controls. Reserve the height so the layout does not jump when the ad arrives. |
+| App open | While the app is in the foreground, for the *next* foreground. | Only on a return to the app, or on a cold start from a loading screen while that screen is still up. Never once the user has reached app content. |
+| Native | With the screen or the list that will hold it, ahead of the position where it appears. | Inside the app's own layout, marked as an ad, with the required assets present. In a list, far enough apart that two ads are never on screen together. |
+
+Rules that hold for every format:
+
+- Pause sound, video and gameplay before a full screen ad and resume on dismiss.
+- A placement name is a reporting label, set it per position, not per format.
+- One instance per placement. Two interstitials racing on one screen produce
+  `ALREADY_DISPLAYED`, not two impressions.
+- If the publisher asks for a placement that breaks one of these, say what it costs and
+  propose the nearest one that does not. Then do what they decide.
+
 ## Full screen formats: interstitial, rewarded, app open
 
 Same shape for all three, `CASInterstitial`, `CASRewarded`, `CASAppOpen`:

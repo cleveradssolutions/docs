@@ -67,9 +67,23 @@ for skill in skills:
         print("FAIL  %s has no front matter" % name)
         ok = False
         continue
-    fields = dict(
-        re.findall(r"^([a-z-]+):\s*(.+)$", header.group(1), re.M)
-    )
+    # top level scalars, including folded and literal blocks (">-", "|")
+    fields = {}
+    lines = header.group(1).split("\n")
+    i = 0
+    while i < len(lines):
+        match = re.match(r"^([a-z][a-z-]*):[ \t]*(.*)$", lines[i])
+        i += 1
+        if not match:
+            continue
+        key, value = match.group(1), match.group(2).strip()
+        if value[:1] in (">", "|"):
+            block = []
+            while i < len(lines) and (lines[i].startswith((" ", "\t")) or not lines[i].strip()):
+                block.append(lines[i].strip())
+                i += 1
+            value = " ".join(part for part in block if part)
+        fields[key] = value
     if fields.get("name") != name:
         print("FAIL  %s front matter name is %r" % (name, fields.get("name")))
         ok = False

@@ -13,28 +13,60 @@ Today: **Android** and **iOS**. The layout has room for the other platforms.
 
 ## Use it
 
-### Claude Code
+### Any agent, through the open skills CLI
+
+```bash
+npx skills add cleveradssolutions/docs/plugins/cas-sdk/skills
+```
+
+The [`skills`](https://github.com/vercel-labs/skills) CLI detects the agents installed on
+your machine and copies the skills into their skills directories. It supports Claude Code,
+Codex, Cursor, OpenCode and many others, and needs Node.js only to run the installer.
+Install one with `--skill cas-android`, update later with `npx skills update`.
+
+### Claude Code, through the plugin marketplace
 
 ```
 /plugin marketplace add cleveradssolutions/docs
 /plugin install cas-sdk@cas-skills
 ```
 
-The marketplace lives at the root of this repository, so the command names the docs
-repository and the plugin inside it. Then ask for what you want, for example *"add CAS.AI
-banner and interstitial ads to this app"*. The skill loads itself when the task matches.
+The marketplace manifest is at the root of this repository, so the command names the docs
+repository and the plugin inside it.
 
 ### claude.ai
 
 Upload the folder of a single skill, `cas-sdk/skills/cas-android` or
-`cas-sdk/skills/cas-ios`, as a skill. Each folder is self contained.
+`cas-sdk/skills/cas-ios`, as a skill. Each folder is self contained; when it travels alone
+it falls back to the published documentation instead of the pages in this repository.
 
-### Any other agent
+### By hand
 
 `SKILL.md` is plain Markdown with a small YAML header, and every file it links to sits
-next to it. Point your agent at the raw files, or copy a skill folder into your repository
-next to your own agent instructions. Nothing here is Claude specific except the two plugin
-manifests. See [../AGENTS.md](../AGENTS.md).
+next to it. Copy a skill folder into your repository beside your own agent instructions,
+or point your agent at the raw files. Nothing here is Claude specific except the two
+plugin manifests. See [../AGENTS.md](../AGENTS.md).
+
+## The skills
+
+| Skill | What it does | Sample prompt |
+| :--- | :--- | :--- |
+| `cas-android` | Adds the CAS SDK to a native Android app: Gradle setup, ad networks, initialization, consent, ad formats, verification on test ads. | *Add CAS.AI banner and interstitial ads to this app* |
+| `cas-ios` | The same for a native iOS app, with Swift Package Manager or CocoaPods and the `Info.plist` configuration. | *Integrate CAS.AI into my iOS app and show a rewarded ad* |
+
+Cross-platform projects, Flutter, React Native, Unity, Unreal, Cordova and Kotlin
+Multiplatform, have their own CAS plugin and are **not** covered by these skills. A skill
+detects such a project and stops.
+
+## Before you let an agent do this
+
+Read what the agent changes. Skills make the result more accurate; they do not make an
+agent infallible. Two things in particular are worth checking yourself: that **test ad
+mode is bound to the debug build** and nothing can ship with it on or off by accident,
+and that the **CAS ID** is the one from your dashboard.
+
+While following a skill, the agent reads this repository, your project, and may fetch the
+published documentation and the sample apps on GitHub.
 
 ## What is inside
 
