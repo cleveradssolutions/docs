@@ -28,9 +28,11 @@ or `ANDROID_HOME`. A fresh clone often has neither.
 
 ## 2. Ad network repositories
 
-Several networks publish outside Maven Central. Add their repositories to the
-`dependencyResolutionManagement` block in `settings.gradle.kts`, or to `allprojects` in
-the root `build.gradle` on Gradle below 7.
+Several networks publish outside Maven Central. Add their repositories **where the project
+already keeps repositories**: the `dependencyResolutionManagement` block in
+`settings.gradle(.kts)`, or the `allprojects` block in the root `build.gradle`, which is
+what older projects and most published samples still use. Do not introduce
+`dependencyResolutionManagement` into a project that does not have it.
 
 Copy the block from the documentation page rather than from memory: the list changes with
 the adapter set, and each entry carries a `content { includeGroup(...) }` filter that
@@ -38,7 +40,9 @@ keeps Gradle from searching every repository for every artifact.
 
 ## 3. The CAS Gradle plugin
 
-Recommended path. In the app-level Gradle file:
+Recommended path. In the app-level Gradle file, in whichever DSL the project uses.
+
+Kotlin, `build.gradle.kts`:
 
 ```kotlin
 plugins {
@@ -50,6 +54,21 @@ cas {
     // configuration
 }
 ```
+
+Groovy, `build.gradle`:
+
+```groovy
+plugins {
+    id 'com.android.application'
+    id 'com.cleveradssolutions.gradle-plugin' version '<current version>'
+}
+
+cas {
+    includeOptimalAds = true
+}
+```
+
+Match the project. Converting a Groovy build to Kotlin is not part of an ad integration.
 
 The plugin resolves the adapter dependencies from the `cas { }` block, so adapters are
 never declared by hand.

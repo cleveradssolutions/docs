@@ -81,6 +81,9 @@ outside the code, in the dashboard or the store listing. Get agreement, then app
 
 In this order, because each step needs the previous one:
 
+0. **Removing the previous mediation**, when this is a migration -
+   [references/migration.md](references/migration.md). It comes first: the old SDK goes
+   before the new one arrives.
 1. **Gradle and ad networks** - [references/setup-gradle.md](references/setup-gradle.md)
 2. **Initialization and consent** - [references/initialize.md](references/initialize.md)
    and [references/consent-privacy.md](references/consent-privacy.md)
