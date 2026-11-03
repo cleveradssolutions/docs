@@ -46,9 +46,14 @@ a variable resolved from `docs.json`, where the current version numbers live.
 ## Other guides for agents in this repository
 
 `llm-guides/` holds the guides for the rest of the surface, in the same question format as
-this skill: `cas-unity.md`, `cas-publishing-hub.md` and `firebase-ga4-setup.md`. A Unity
-project belongs to `cas-unity.md`, not to these skills. If the folder is not in the
-working tree, it is on the `publishers` branch.
+this skill. Paths from the repository root, like the pages above:
+`llm-guides/cas-unity.md`, `llm-guides/cas-publishing-hub.md` and
+`llm-guides/firebase-ga4-setup.md`. A Unity project belongs to `cas-unity.md`, not to
+these skills.
+
+This file is copied into each skill, so it gives paths rather than links: a link would be
+right in one copy and wrong in the other. The per-topic reference files sit at one known
+depth and do link their pages.
 
 ## When the working tree is not there
 
