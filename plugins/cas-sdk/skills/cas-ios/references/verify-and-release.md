@@ -5,7 +5,10 @@ An integration is verified by running it. Reading the diff is not verification.
 ## Verify
 
 1. Build and run the debug configuration, on a device if the publisher has one, on a
-   simulator otherwise.
+   simulator otherwise. **A simulator cannot be tapped from the command line**, so a
+   full screen format cannot be triggered headlessly: either the publisher taps, or the
+   verification build presents the ad once from a timer, which is removed afterwards. Say
+   which of the two was done.
 2. Confirm test ad mode is on for this build. Test full screen ads announce themselves and
    show CAS integration details, including a Mediation Adapters section that lists every
    network that initialized correctly. That screen is the fastest proof the product or pod
@@ -14,8 +17,10 @@ An integration is verified by running it. Reading the diff is not verification.
    first**: on a clean device in a region that requires consent the built-in flow shows a
    form, and initialization does not complete until it is answered. Nothing loads before
    that, and it is not a failure.
-4. Read the initialization handler: `config.error` must be nil. If it is not, the message
-   names the cause; a wrong or unregistered CAS ID shows up here.
+4. Read the initialization handler: `config.error` must be nil. The console line
+   `Main > Initialization > complete ... in TEST AD` confirms test mode is really on.
+   A `demo` id is reported on the test ad screen as "You are using a DEMO CAS Id", which
+   is the reminder to replace it, not an error.
 5. For every format that was added: load it, present it, and watch for the load callback
    then the present callback. A format that only loads is not done.
 6. **Check what happens after the ad closes**, which is where placements break: the
@@ -24,8 +29,10 @@ An integration is verified by running it. Reading the diff is not verification.
    twice; the banner sits in its reserved space with nothing of the app covered.
 7. Leave and re-enter the screen that owns a banner, and confirm nothing keeps loading
    after the owner is gone.
-7. Confirm the `Info.plist` holds the keys the script wrote, and that
-   `SKAdNetworkItems` is populated.
+8. Confirm the `Info.plist` holds the keys the script wrote. The test ad screen states
+   them as numbers, `SKAdNetwork Support`, `AdAttributionKit Support`, `App Transport
+   Security`, `Minimum iOS` and `CASBaseResources.bundle`, so compare that screen with
+   what the script reported rather than reading the plist by hand.
 
 Report what actually happened, with the console lines. If a format failed, name the format
 and the error code, finish the rest, and say plainly that one is unverified.

@@ -5,6 +5,23 @@ Canonical, in this repository: [docs/iOS/index.mdx](../../../../../docs/iOS/inde
 for the manual path. Apple attribution: [docs/general/Apple-Ad-Attribution.mdx](../../../../../docs/general/Apple-Ad-Attribution.mdx).
 Script: `Script XCodeConfig/` in `https://github.com/cleveradssolutions/CAS-iOS`.
 
+## When and how to run it
+
+**After the dependencies are installed, and from the project directory.** The script
+takes the CAS ID: `ruby casconfig.rb <CAS ID>`, or `demo` while the app is not registered.
+
+It edits the **`.xcodeproj`**, not the workspace, which is correct even in a CocoaPods
+project, where you then keep working in the `.xcworkspace`. It also adds `-ObjC` to
+`OTHER_LDFLAGS` at the target level.
+
+Pass `--no-gad` when the integration has no Google demand. Without it the script writes a
+`GADApplicationIdentifier` that the app does not use, which later reads as a
+misconfiguration rather than as an unused key.
+
+A run reports exactly what it changed, for example 265 `SKAdNetworkItems`, 6
+`AdNetworkIdentifiers`, App Transport Security and the tracking usage description. Those
+numbers show up again on the test ad screen, which is how you confirm it worked.
+
 ## Use the script
 
 The configuration script writes everything below from the current remote configuration.

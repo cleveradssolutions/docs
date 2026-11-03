@@ -7,7 +7,18 @@ Canonical, in this repository, one page per format in [docs/iOS/](../../../../..
 [App-Open-Ads.mdx](../../../../../docs/iOS/App-Open-Ads.mdx),
 [Load-Native-Ads.mdx](../../../../../docs/iOS/Load-Native-Ads.mdx),
 [Display-Native-Ad.mdx](../../../../../docs/iOS/Display-Native-Ad.mdx).
-Read the page for the format being added; the code below is the shape, not a substitute.
+Read the page for the format being added. **The code below is the shape of the flow, not
+an API reference.** Every initializer and selector is taken from the page, never from
+memory: a plausible looking signature that does not exist costs a build cycle to discover.
+The ones that are easy to get wrong:
+
+| What | The actual API |
+|---|---|
+| Banner view | `CASBannerView(casID: String, size: AdSize, origin: CGPoint = .zero)`. The `adSize:manager:` form is the old one and takes a `CASMediationManager`, not an id. |
+| Adaptive size | `AdSize.getAdaptiveBanner(forMaxWidth:)`, `AdSize.getAdaptiveBannerInScreen()` |
+| Loaded check | `isAdLoaded` on iOS, while Android calls it `isLoaded` |
+| Delegate errors | `screenAd(_:didFailToLoadWithError:)` and `screenAd(_:didFailToPresentWithError:)` take an `AdError`, not a `String` |
+| Consent before init | `CAS.settings.userConsent = CASConsentStatus.accepted`, set before `create(withCasId:)` |
 Working code for every format: `DemoApp Swift/`, `DemoApp Objective-C/` and
 `DemoApp SwiftUI/` in `https://github.com/cleveradssolutions/CAS-iOS`. Read the sample for
 the format being added, it is shorter than the documentation and always compiles.

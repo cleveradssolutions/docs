@@ -55,6 +55,17 @@ pod 'CleverAdsSolutions-SDK/Optimal', '<current version>'
 the Mediated Networks page. Run `pod install`, then work in the `.xcworkspace`, never in
 the `.xcodeproj`.
 
+Two things the page does not say:
+
+- **The pod has no base-only subspec.** `pod 'CleverAdsSolutions-SDK'` without a subspec
+  resolves to `Optimal`, because that is the podspec's default. The "SDK with no ad
+  network, to try test ads" option exists only on Swift Package Manager, as the
+  `CleverAdsSolutionsSPM` product. On CocoaPods, the lightest honest equivalent is one
+  small subspec such as `CASExchange`.
+- Run `pod repo update` before installing if the version the publisher asked for is not
+  found. The CAS specs repo is a separate source and a stale clone shows only the
+  versions it was last synced with.
+
 ## Which networks, in one sentence
 
 The network list behind each solution is on the documentation page and changes between
