@@ -1,11 +1,11 @@
 # CAS.AI Developer Docs
 This repository stores documentation files for display on docs.page.
 
-https://docs.page/cleveradssolutions/docs
+https://cleveradssolutions.docs.page/docs
 
 For AI agents, the same documentation is published as
-[llms.txt](https://docs.page/cleveradssolutions/docs/llms.txt) and
-[llms-full.txt](https://docs.page/cleveradssolutions/docs/llms-full.txt).
+[llms.txt](https://cleveradssolutions.docs.page/docs/llms.txt) and
+[llms-full.txt](https://cleveradssolutions.docs.page/docs/llms-full.txt).
 
 ## Agent skills
 `plugins/` holds agent skills for integrating the SDK: the procedure, the questions to ask

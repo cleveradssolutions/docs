@@ -1,7 +1,7 @@
 # Android: reading failures
 
 Canonical, in this repository: [docs/Android/Ad-errors.mdx](../../../../../docs/Android/Ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/Android/Ad-errors`
+Published: `https://cleveradssolutions.docs.page/docs/Android/Ad-errors`
 
 Error codes have defined meanings. Look the code up before offering a cause.
 

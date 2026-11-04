@@ -121,6 +121,10 @@
                     "href": "/general"
                 },
                 {
+                    "title": "Integrating with an AI agent",
+                    "href": "/general/AI-Agent-Integration"
+                },
+                {
                     "title": "App-ads.txt",
                     "href": "/general/Authorized-Sellers-for-Apps"
                 },
@@ -143,10 +147,6 @@
                 {
                     "title": "Reporting API",
                     "href": "/general/ReportingAPI"
-                },
-                {
-                    "title": "Integrating with an AI agent",
-                    "href": "/general/AI-Agent-Integration"
                 }
             ]
         },

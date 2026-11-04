@@ -59,7 +59,7 @@ depth and do link their pages.
 
 A skill folder copied on its own, for example uploaded to claude.ai, has no `docs/`. Then
 use the published pages, same names:
-`https://docs.page/cleveradssolutions/docs/<Platform>/<Page>`, with
+`https://cleveradssolutions.docs.page/docs/<Platform>/<Page>`, with
 `llms.txt` as the index and `llms-full.txt` as everything in one file, which is large.
 
 ## Sample apps

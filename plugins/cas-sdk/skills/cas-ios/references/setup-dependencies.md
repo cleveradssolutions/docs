@@ -2,7 +2,7 @@
 
 Canonical, in this repository: [docs/iOS/index.mdx](../../../../../docs/iOS/index.mdx)
 Networks and adapter products: [docs/iOS/Mediated-Networks.mdx](../../../../../docs/iOS/Mediated-Networks.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/iOS`
+Published: `https://cleveradssolutions.docs.page/docs/iOS`
 
 Confirm the current SDK version and the minimum deployment target on the documentation
 page before writing versions into the project. Use the dependency manager the project

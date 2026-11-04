@@ -1,7 +1,7 @@
 # iOS: consent and privacy
 
 Canonical, in this repository: [docs/iOS/User-Consent-Flow.mdx](../../../../../docs/iOS/User-Consent-Flow.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/iOS/User-Consent-Flow`
+Published: `https://cleveradssolutions.docs.page/docs/iOS/User-Consent-Flow`
 
 Two mutually exclusive paths. Pick one in the interview and never mix them.
 

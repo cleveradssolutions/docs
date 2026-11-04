@@ -6,12 +6,6 @@ description: This guide explains how to hand a CAS.AI integration to an AI codin
 You can hand a CAS.AI integration to an AI coding agent. This page is for both of you: it
 tells you what to expect, and it tells the agent what it is not allowed to do.
 
-<Error>
-The one rule that cannot be broken: **every build that is not a release build must run
-[test ads](Android/Enabling-test-ads)**. Clicking a live ad during development is invalid
-traffic and can get your account flagged. No integration is worth that.
-</Error>
-
 ## The documentation, for agents
 
 The whole documentation is published in a form agents read directly, without rendering the
@@ -19,8 +13,8 @@ site:
 
 | File | What it is |
 | ---- | ---------- |
-| [llms.txt](https://docs.page/cleveradssolutions/docs/llms.txt) | An index of every page with a one-line description. Small, fetch this first. |
-| [llms-full.txt](https://docs.page/cleveradssolutions/docs/llms-full.txt) | The full text of every page in one file. Large, roughly a quarter of a million tokens. |
+| [llms.txt](https://cleveradssolutions.docs.page/docs/llms.txt) | An index of every page with a one-line description. Small, fetch this first. |
+| [llms-full.txt](https://cleveradssolutions.docs.page/docs/llms-full.txt) | The full text of every page in one file. Large, roughly a quarter of a million tokens. |
 
 <Info>
 Point your agent at `llms.txt` and let it fetch the pages it needs. Pasting
@@ -34,13 +28,13 @@ what to ask you first, and what never to do*. We publish skills for Android and 
 [documentation repository](https://github.com/cleveradssolutions/docs/tree/master/plugins).
 
 <CodeGroup>
-```bash Any agent
-npx skills add cleveradssolutions/docs/plugins/cas-sdk/skills
-```
-
 ```bash Claude Code
 /plugin marketplace add cleveradssolutions/docs
 /plugin install cas-sdk@cas-skills
+```
+
+```bash Any agent
+npx skills add cleveradssolutions/docs/plugins/cas-sdk/skills
 ```
 
 ```text By hand

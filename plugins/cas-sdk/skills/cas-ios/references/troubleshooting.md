@@ -1,7 +1,7 @@
 # iOS: reading failures
 
 Canonical, in this repository: [docs/iOS/Ad-errors.mdx](../../../../../docs/iOS/Ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/iOS/Ad-errors`
+Published: `https://cleveradssolutions.docs.page/docs/iOS/Ad-errors`
 
 Error codes have defined meanings and match the Android ones. Look the code up before
 offering a cause.
