@@ -8,7 +8,6 @@ Tenjin handles install attribution and purchase tracking. The CAS SDK initialize
 ## Track purchases
 Choose one of the following methods to report in-app purchases to Tenjin.
 
-<AccordionGroup>
 <Accordion title="(Option 1) Report purchases with the CAS SDK">
 Report each completed purchase with `CAS.MobileAds.ReportPurchase(...)`. The CAS SDK forwards it to Tenjin automatically, so no separate Tenjin code is needed.
 
@@ -63,7 +62,6 @@ CASHub.ReportPurchase(product, order);
 `CASHub.ReportPurchase` is available only when Unity IAP is present in the project.
 </Info>
 </Accordion>
-</AccordionGroup>
 
 ## Share purchase validation keys
 If your app includes in-app purchases, you must provide your manager with the following so Tenjin can track them:
