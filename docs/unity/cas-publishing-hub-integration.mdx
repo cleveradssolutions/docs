@@ -1,0 +1,105 @@
+---
+title: CAS Publishing Hub
+description: Install and configure the CAS SDK, Tenjin and Firebase Analytics in one step with the CAS Publishing Hub installer.
+---
+
+<Success>
+**Integrate with an AI assistant (LLM)**
+
+You can integrate CAS Publishing Hub with the help of an AI assistant (Claude, Cursor, GitHub Copilot, etc.). Give it the instruction file [cas-publishing-hub.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-publishing-hub.md) - attach it to the chat or share its link - and ask the assistant to follow it. The guide walks the assistant through the complete integration. If you prefer to do it yourself, follow the manual steps below.
+</Success>
+
+CAS Publishing Hub is a Unity installer that sets up the whole publishing SDK for you: CAS, Tenjin and Firebase Analytics. It registers the required packages, installs them and checks the configuration, so you don't need to edit `Packages/manifest.json` by hand. Follow the steps below in order.
+
+<Warning>
+If your project already contains its own advertising or mediation SDK, remove it before you start. It is not compatible with CAS.
+</Warning>
+
+## Install CAS Publishing Hub
+Choose one of the following methods to import CAS Publishing Hub into your Unity project.
+1. npm (scoped registry)
+2. Add package from git URL
+
+### (Option 1) npm (scoped registry)
+1. Open the [package manager settings](https://docs.unity3d.com/Manual/class-PackageManager.html) by selecting the Unity menu option **Edit > Project Settings > Package Manager**.
+2. Add CAS Publishing as a scoped registry to the Package Manager window:
+```
+Name: CAS Publishing
+URL: https://npm.cas.ai/
+Scopes: ai.cas
+```
+3. Open the [package manager menu](https://docs.unity3d.com/Manual/upm-ui-install.html) by selecting the Unity menu option **Window > Package Manager**.
+4. Set the manager scope drop-down to select **My Registries**.
+
+![image](https://docs.unity3d.com/uploads/Main/upm-ui-unityregistry.png)
+
+5. Select the **CAS Publishing Hub** package (`ai.cas.installer`) from the package list.
+6. Press **Install**.
+
+### (Option 2) Add package from git URL
+1. Open the [package manager menu](https://docs.unity3d.com/Manual/upm-ui-install.html) by selecting the Unity menu option **Window > Package Manager**.
+2. Press the **plus (+)** drop-down to select **Add package from Git URL**.
+
+![image](https://user-images.githubusercontent.com/22005013/135641554-c38422fa-995e-4e56-9c3a-a89a72172081.png)
+
+3. Enter the CAS Publishing Hub Git URL in the text box and click **Add**:
+```
+https://github.com/cleveradssolutions/CAS-Publishing-Hub.git?path=/installer#1.1.0
+```
+The Git URL ends with the tag name after `#`.
+
+<Info>
+Check Prerequisites and Troubleshooting on [Install a package from a Git URL](https://docs.unity3d.com/Manual/upm-ui-giturl.html) page of Unity Documentation.
+</Info>
+
+When the package is installed, the setup wizard opens automatically. You can open it again at any time from `CAS Hub > Open Hub`.
+
+## Run the setup wizard
+
+### 1. Choose a platform and enter your CAS ID
+Select the platform you are building for (`Android` or `iOS`) and enter your CAS ID. It is applied to the CAS settings automatically after the installation.
+
+<Image width="650" alt="Welcome step of the CAS Publishing Hub wizard" src="/assets/unity/publishers/hub/Hub-Integration-Step-1.png" />
+
+### 2. Install the components
+Check the list of components and press `Install`. CAS Publishing Hub adds the packages to your project and imports the required plugins. No scene files are changed.
+
+<Image width="650" alt="Ready to install step of the CAS Publishing Hub wizard" src="/assets/unity/publishers/hub/Hub-Integration-Step-2.png" />
+
+### 3. Choose ad formats
+Select the ad formats your app uses. At least one is required.
+
+<Image width="650" alt="Placements step of the CAS Publishing Hub wizard" src="/assets/unity/publishers/hub/Hub-Integration-Step-3.png" />
+
+<Info>
+Tenjin is enabled automatically - it reports attribution and purchases, so there is nothing to configure for it here.
+</Info>
+
+### 4. Add the Firebase config file
+Press [`Open Firebase Console`](https://console.firebase.google.com/) to download the configuration file of your app:
+- Android: `google-services.json`
+- iOS: `GoogleService-Info.plist`
+
+Then add it to the wizard:
+- Press `Click to choose a file` and select the file, or
+- drag a file that is already in your project from the Project window into the wizard.
+
+<Image width="650" alt="Firebase setup step of the CAS Publishing Hub wizard" src="/assets/unity/publishers/hub/Hub-Integration-Step-4.png" />
+
+<Info>
+Don't have a Firebase project yet? Create one and share the permissions first, following the [Firebase checklist](/unity/firebase-integration).
+</Info>
+
+### 5. Check the result
+When the setup is complete, the wizard shows a checklist confirming that the CAS SDK and Firebase are ready.
+
+<Image width="650" alt="Setup complete step of the CAS Publishing Hub wizard" src="/assets/unity/publishers/hub/Hub-Integration-Step-5.png" />
+
+<Info>
+You can review the CAS settings at any time in `Assets > CleverAdsSolutions > Android / iOS Settings`.
+</Info>
+
+## Next steps
+CAS Publishing Hub only installs and configures the SDKs. To finish the integration, you still need to add the code to your app:
+1. [Integrate the CAS SDK](/unity/initialize-cas) - initialize CAS and add the ad formats you selected. To let an AI assistant do it, give it the instruction file [cas-unity.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-unity.md).
+2. [Integrate Tenjin](/unity/tenjin-integration) - set up in-app purchase tracking.

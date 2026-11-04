@@ -1,0 +1,19 @@
+{
+  "name": "cas-sdk",
+  "version": "0.1.0",
+  "description": "Integrate the CAS.AI ad mediation SDK into an app: setup, initialization, ad formats, consent and test-mode verification.",
+  "author": {
+    "name": "CAS.AI",
+    "url": "https://cas.ai"
+  },
+  "homepage": "https://cleveradssolutions.docs.page/docs",
+  "repository": "https://github.com/cleveradssolutions/cas-skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "ads",
+    "monetization",
+    "mediation",
+    "android",
+    "ios"
+  ]
+}

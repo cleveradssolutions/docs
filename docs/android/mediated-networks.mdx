@@ -1,0 +1,89 @@
+---
+title: Mediated Networks
+description: This guide shows the ad sources CAS.AI Mediation supports.
+---
+
+Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
+
+Feel free not to use ready-made (`Optimal` or `Families`) solutions, and choose which mediated ad networks you want to integrate by copy following adapter names to `build.gradle` file: 
+
+Just specify `true` for the adapters you want to use and all the necessary dependencies will be included in your application automatically.
+
+```kotlin
+cas {  
+    adapters {  
+        appLovin = true  
+        audienceNetwork = true  
+        bidease = true  
+        bigoAds = true  
+        bluesea = true  
+        casExchange = true  
+        chartboost = true  
+        dtExchange = true  
+        googleAds = true  
+        hyprMX = true  
+        inMobi = true  
+        ironSource = true  
+        kidoz = true  
+        liftoffMonetize = true  
+        maticoo = true  
+        mintegral = true  
+        moloco = true  
+        monetrix = true  
+        ogury = true  
+        pangle = true  
+        prado = true  
+        smaato = true  
+        startIO = true  
+        superAwesome = true  
+        unityAds = true  
+        verve = true  
+        yangoAds = true  
+        ysoNetwork = true  
+    }  
+}
+```
+
+The adapters are sorted alphabetically in the list.
+
+<Info>
+- Read more about the adapter versions [here](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md).
+- The Meta Audience Network requires [Additional implementations](additional-meta-audiencenetwork-steps).
+- The HyprMX is focused on the USA and Canada regions only. Your apps must be approved for monetization.
+</Info>
+
+## Closed beta ad adapters
+
+<Warning>  
+Access to the monetization of the beta ad sources is closed.  
+If you would like to monetize by one of these ad sources, please contact your account manager.
+</Warning>
+
+```kotlin
+cas {  
+    adapters {  
+        bidmachine = true  
+        displayIO = true  
+        pubmatic = true  
+    }  
+}
+```
+
+<Info>
+Please note that you may need to add additional [maven repositories](android) for your project.
+</Info>
+
+## Cross promotion adapter
+Cross promotion is an app marketing strategy in which app developers promote one of their titles on another one of their titles. Cross promoting is especially effective for developers with large portfolios of games as a means to move users across titles and use the opportunity to scale each of their apps. This is most commonly used by hyper-casual publishers who have relatively low retention, and use cross promotion to keep users within their app portfolio.
+
+```kotlin
+cas {  
+    adapters {  
+        crossPromo = true  
+    }  
+}
+```
+
+<Success>
+Contact our account manager if you are interested in cross-promotion.
+</Success>

@@ -1,0 +1,322 @@
+---
+title: CAS.AI iOS Framework
+---
+
+Integrating CAS SDK into an app is the first step toward displaying ads and earning revenue. 
+Once you've integrated and initialized the SDK, you can choose an ad format and follow the steps to implement it.
+
+## App prerequisites
+- Use Xcode `{{ min.xcode }}` or higher
+- Target minimum iOS `{{ min.ios }}` or higher
+
+<Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-iOS/subscription">
+Subscribe to receive notifications about CAS updates.
+</Card>
+
+## Add the SDK to your project
+CAS.AI ships for both Swift Package Manager and CocoaPods. Pick the dependency manager your project already uses — everything after this step is the same for both.
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+The [Swift Package Manager](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app) is a tool for managing the distribution of Swift code. It’s integrated with the Swift build system, automating the process of downloading, compiling, and linking dependencies.
+
+#### Add the CAS package to your project
+1. Select **File > Add Package Dependencies**
+2. Enter the CAS Git repository URL into the **Search or Enter Package URL** field:
+
+   ```
+   https://github.com/cleveradssolutions/CAS-iOS
+   ```
+3. Specify the **Up to Next Minor Version**: `{{ versions.ios }}`
+4. Click **Add Package**
+
+Xcode then asks which products of the package to add to your app target. Pick them in [Choose Mediated Networks](#choose-mediated-networks) below.
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
+[CocoaPods](http://guides.cocoapods.org/using/getting-started.html) is a dependency manager for Objective-C and Swift; it automates and simplifies the SDK integration process.
+
+#### Open your project's Podfile
+The `Podfile` is a specification that describes the dependencies of the targets of one or more Xcode projects. You could use a `pod init` command to create the `Podfile` with smart defaults.
+
+#### Add CAS pods source url to the beginning of the file:
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/cleveradssolutions/CAS-Specs.git'
+```
+
+#### Use pods as frameworks
+```ruby
+use_frameworks!
+```
+
+</TabItem>
+</Tabs>
+
+### Choose Mediated Networks
+<Warning>
+CAS.AI is a mediation SDK with no built-in live ad inventory. At least one ad network adapter or solution must be integrated before publishing to display ads and generate revenue.
+</Warning>
+
+Choose an integration path based on your app's target audience. If you're unsure which solution best fits your application, please contact your account manager.
+
+<Info>
+During development, you can test ad formats using [Test Ads](ios/enabling-test-ads) without adding any ad network SDKs.
+</Info>
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+<AccordionGroup>
+<Accordion defaultOpen title="Optimal Ads Solution">
+
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+Add the `AdsOptimalSolutions` product to your app target.
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, AppLovin, Pangle, Bigo, Yango Ads, Audience Network, YSO Network, CAS Exchange, Maticoo.
+
+</Accordion>
+<Accordion title="Families Ads Solution">
+
+Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). 
+
+Add the `AdsFamiliesSolutions` product to your app target.
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Chartboost, Kidoz, Mintegral, Yango Ads.
+
+<Info>
+The families ads solution is NOT intended for apps in [Apple Kids Category](/general/apple-kids-category).
+</Info>
+
+</Accordion>
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions. 
+
+Add the `AdsVPNCompliantSolutions` product to your app target.
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, Bigo, Yango Ads, YSO Network, Monetrix.
+
+</Accordion>
+<Accordion title="Choice networks">
+
+Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
+
+Add the `CASMediation…` product of every network you need to your app target. Each adapter product already brings the CAS base framework with it.
+
+Add the `CleverAdsSolutionsSPM` product on its own only when you integrate the SDK without any ad network, for example to try [Test Ads](ios/enabling-test-ads).
+
+Follow the instructions on the [Mediated Networks](ios/mediated-networks) page.
+
+</Accordion>
+</AccordionGroup>
+
+<Info>
+The Ads Solutions products for Swift Package Manager are available starting with CAS `4.8.3`. On earlier versions, add the `CASMediation…` products one by one.
+</Info>
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
+<AccordionGroup>
+<Accordion defaultOpen title="Optimal Ads Solution">
+
+Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
+
+```ruby
+pod 'CleverAdsSolutions-SDK/Optimal', '{{ versions.ios }}'
+```
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, AppLovin, Pangle, Bigo, Yango Ads, Audience Network, YSO Network, CAS Exchange, Maticoo.
+
+</Accordion>
+<Accordion title="Families Ads Solution">
+
+Required for applications **directed exclusively at children** and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy). 
+
+```ruby
+pod 'CleverAdsSolutions-SDK/Families', '{{ versions.ios }}'
+```
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Chartboost, Kidoz, Mintegral, Yango Ads.
+
+<Info>
+The families ads solution is NOT intended for apps in [Apple Kids Category](/general/apple-kids-category).
+</Info>
+
+</Accordion>
+<Accordion title="VPN Compliant Ads Solutions">
+
+Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions. 
+
+```ruby
+pod 'CleverAdsSolutions-SDK/VPNCompliant', '{{ versions.ios }}'
+```
+
+> Networks included: Google Ads, Unity Ads, IronSource, Liftoff Monetize, InMobi, Mintegral, Bigo, Yango Ads, YSO Network, Monetrix.
+
+</Accordion>
+<Accordion title="Choice networks">
+
+Advanced publishers who are familiar with ad network integrations can choose their own set of adapters. If you have any questions or need assistance, please contact your account manager.  
+
+When you are not using the solution pods, you must add a `CleverAdsSolutions-Base` pod for the CAS base framework. 
+```ruby
+pod 'CleverAdsSolutions-Base', '{{ versions.ios }}'
+```
+
+Follow the instructions on the [Mediated Networks](ios/mediated-networks) page.
+
+</Accordion>
+</AccordionGroup>
+
+</TabItem>
+</Tabs>
+
+### Check project’s build settings
+- Open Xcode `<Project>.xcodeproj`
+- Go to the Build Settings section for the app target
+- Find the `OTHER_LDFLAGS` property, if customized.
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+Make sure that `$(inherited)` and the `-ObjC` flag are at the beginning of the list. Swift Package Manager has no `xcconfig` to set the flag for you, and without it the linker drops the Objective-C categories the adapters ship.
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
+Make sure the `$(inherited)` flag is at the beginning of the list, so that the settings CocoaPods generates are applied.
+
+</TabItem>
+</Tabs>
+
+### Resolve the dependencies
+
+<Tabs groupId="ios-dependency-manager">
+<TabItem value="spm" label="Swift Package Manager">
+
+Xcode resolves the packages the moment you add them. To pick up a new version later, select **File > Packages > Resolve Package Versions**.
+
+Keep opening the `<Project>.xcodeproj` file as usual — Swift Package Manager needs no workspace.
+
+</TabItem>
+<TabItem value="cocoapods" label="CocoaPods">
+
+Open the terminal window and run:
+```sh
+cd into/your/project/folder
+```
+Run pod install with repo update:
+```sh
+pod update
+```
+
+Make sure that after `Pod installation complete` in the terminal, there are no issues that need to be fixed. Repeat the installation after resolving issues.
+
+<Info>
+Read more about [Cocoapods troubleshooting](https://guides.cocoapods.org/using/troubleshooting.html#using-the-cocoapods-project).
+</Info>
+
+Make sure to always open the Xcode workspace instead of the project file when building your project:
+```sh
+open <Project>.xcworkspace
+```
+
+</TabItem>
+</Tabs>
+
+## Manual download
+For projects where you cannot use CocoaPods during Xcode build, you need to manually collect all frameworks from the CAS Pod dependencies and add them to the project. Our script, which can be found in the repository [here](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20PodFrameworks), will assist you with this process.
+
+## Configure Info.plist
+Your project `Info.plist` requires additional configurations that can be performed automatically by a special script.
+1. Download the <a href="https://github.com/cleveradssolutions/CAS-iOS/releases/download/{{ versions.iosconfig }}/casconfig.rb">casconfig.rb</a>  
+2. Place the script in directory with the app `.xcodeproj` 
+3. Open the terminal window and run command:
+```
+cd into/your/project/folder
+```
+5. Run ruby script:
+```
+ruby casconfig.rb <CAS_ID>
+```
+
+<AccordionGroup>
+<Accordion title="What is CAS ID?">
+
+In most cases, a CASID is the same as your app store ID.  
+You can find an app store ID in the URL of your app’s Apple App Store URL. For example, the URL is `apps.apple.com/us/app/id123456789` then app store ID is `123456789`.  
+ 
+If you haven't created an CAS account and registered an app yet, now's a great time to do so at https://cas.ai  
+If you just want to experiment or test the SDK, you can skip the configuration your project.
+
+</Accordion>
+
+<Accordion title="What does the script do?">
+
+The script automatically performs the following integration steps:
+- [x] Set [AdAttributionKit and SKAdNetwork Support](general/apple-ad-attribution) to Info.plist
+- [x] Set [App Transport Security](ios/manually-configure-project) to Info.plist
+- [X] Set User Tracking usage description to Info.plist
+- [x] Set [Google Ads App ID](ios/manually-configure-project) to Info.plist
+- [x] Set Delay app measurement to Info.plist
+- [x] [Link the CAS project](ios/manually-configure-project)
+
+</Accordion>
+</AccordionGroup>
+
+For more details about the script and its updates, please refer to the [the CAS iOS repository](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
+
+<Info>
+Repeat the script before every update of the application to make sure you are using up-to-date configurations.
+</Info>
+
+<Success>  
+Instead of using the `casconfig.rb` script, you can manually complete [additional steps to configure your project](ios/manually-configure-project). (Not recomended)
+</Success>
+
+### User Tracking usage description
+To display the App Tracking Transparency authorization request for accessing the IDFA, update your `Info.plist` to add the [NSUserTrackingUsageDescription](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) key with a custom message describing your usage. Below is an example description text:
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>Your data will remain confidential and will only be used to provide you a better and personalised ad experience</string>
+```
+
+<Info>
+Name in Xcode Property List Editor: Privacy - Tracking Usage Description
+</Info>
+
+<AccordionGroup>
+<Accordion title="Usage description examples">
+
+- Your data will remain confidential and will only be used to provide you a better and personalised ad experience
+- Your data will be used to provide you a better and personalised ad experience
+- Your data will be used to create a customized experience tailored to your interests
+- Allowing tracking will enable more personalized ads for you
+- We try to show ads for apps and products that will be most interesting to you based on the apps you use
+- This identifier will be used to deliver personalized ads to you
+- This only uses device info for more interesting and relevant ads
+
+</Accordion>
+<Accordion title="Localizing Usage description (optional)">
+
+To optimize performance and to improve the user experience, you can localize the `NSUserTrackingUsageDescription` string. Please follow the [Documentation > Xcode > Localization](https://developer.apple.com/documentation/xcode/localization) instructions to learn how to localize your app.  
+The table below gives you a variety of localizations that you can use at your discretion. 
+
+| Locale | Description |
+| ----------- | ----------- |
+| English (en) | Your data will remain confidential and will only be used to provide you a better and personalised ad experience |
+| German (de) | Ihre Daten bleiben vertraulich und werden nur dazu verwendet, Ihnen ein besseres und personalisiertes Werbeerlebnis zu bieten |
+| French (fr) | Vos données resteront confidentielles et seront utilisées uniquement pour vous offrir une expérience publicitaire meilleure et personnalisée |
+| Spanish (es) | Sus datos permanecerán confidenciales y solo se utilizarán para brindarle una experiencia publicitaria mejor y personalizada |
+| Ukrainian (uk) | Ваші дані залишатимуться конфіденційними та використовуватимуться лише для надання вам кращої та персоналізованої реклами |
+| Russian (ru) | Ваши данные останутся конфиденциальными и будут использоваться только для предоставления вам более качественной и персонализированной рекламы |
+| Portuguese (pt) | Seus dados permanecerão confidenciais e serão usados apenas para lhe proporcionar uma experiência publicitária melhor e personalizada |
+| Japanese (ja) | お客様のデータは機密として保持され、より優れたパーソナライズされた広告エクスペリエンスを提供するためにのみ使用されます |
+
+</Accordion>
+</AccordionGroup>

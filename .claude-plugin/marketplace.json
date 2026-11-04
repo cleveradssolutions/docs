@@ -1,0 +1,33 @@
+{
+  "name": "cas-skills",
+  "owner": {
+    "name": "CAS.AI",
+    "email": "support@cas.ai",
+    "url": "https://cas.ai"
+  },
+  "metadata": {
+    "description": "Agent skills for integrating the CAS.AI ad mediation SDK.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "cas-sdk",
+      "source": "./plugins/cas-sdk",
+      "description": "Integrate the CAS.AI ad mediation SDK into an app: setup, initialization, ad formats, consent and test-mode verification.",
+      "version": "0.1.0",
+      "author": {
+        "name": "CAS.AI",
+        "url": "https://cas.ai"
+      },
+      "homepage": "https://cleveradssolutions.docs.page/docs",
+      "license": "Apache-2.0",
+      "keywords": [
+        "ads",
+        "monetization",
+        "mediation",
+        "android",
+        "ios"
+      ]
+    }
+  ]
+}
