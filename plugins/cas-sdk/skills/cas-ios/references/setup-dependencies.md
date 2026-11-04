@@ -1,8 +1,8 @@
 # iOS: dependencies and ad networks
 
-Canonical, in this repository: [docs/iOS/index.mdx](../../../../../docs/iOS/index.mdx)
-Networks and adapter products: [docs/iOS/Mediated-Networks.mdx](../../../../../docs/iOS/Mediated-Networks.mdx)
-Published: `https://cleveradssolutions.docs.page/docs/iOS`
+Canonical, in this repository: [docs/ios/index.mdx](../../../../../docs/ios/index.mdx)
+Networks and adapter products: [docs/ios/mediated-networks.mdx](../../../../../docs/ios/mediated-networks.mdx)
+Published: `https://cleveradssolutions.docs.page/docs/ios`
 
 Confirm the current SDK version and the minimum deployment target on the documentation
 page before writing versions into the project. Use the dependency manager the project

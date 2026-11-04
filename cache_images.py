@@ -4,7 +4,7 @@ import re
 import requests
 import mimetypes
 
-SCRIPT_DIR = 'iOS'
+SCRIPT_DIR = 'ios'
 OUTPUT_DIR = 'assets/ios'
 
 image_regex = re.compile(r'<Image[^>]*src="([^"]+)"[^>]*/>', re.IGNORECASE)

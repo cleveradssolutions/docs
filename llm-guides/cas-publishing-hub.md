@@ -333,7 +333,7 @@ Do this only on an explicit request such as "add ads to the game". Then:
 - Run Unity once more in batch mode with no `-executeMethod` and search the log for `error CS`. Fix only what you introduced.
 - Test ads: if the app is not registered in CAS yet, `testAdMode: 1` is set (step 3b). A development build also gets test ads automatically. Remind the human: **until CAS registers the app, the game can only be built with Test ad mode on.** After registration: `testAdMode: 0` and build again.
 - If you used test devices in code (`CAS.MobileAds.settings.SetTestDeviceIds`), remove that line before release.
-- Read the CAS pages **User Consent Flow** and **Privacy Regulations** (`https://cleveradssolutions.docs.page/docs/Unity/`) and tell the human what they need to provide (privacy policy link, the App Tracking Transparency text on iOS). Do not change the consent defaults without the human's decision.
+- Read the CAS pages **User Consent Flow** and **Privacy Regulations** (`https://cleveradssolutions.docs.page/docs/unity/`) and tell the human what they need to provide (privacy policy link, the App Tracking Transparency text on iOS). Do not change the consent defaults without the human's decision.
 
 ---
 

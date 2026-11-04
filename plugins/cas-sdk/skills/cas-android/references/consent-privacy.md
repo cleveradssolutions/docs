@@ -1,7 +1,7 @@
 # Android: consent and privacy
 
-Canonical, in this repository: [docs/Android/User-Consent-Flow.mdx](../../../../../docs/Android/User-Consent-Flow.mdx)
-Published: `https://cleveradssolutions.docs.page/docs/Android/User-Consent-Flow`
+Canonical, in this repository: [docs/android/user-consent-flow.mdx](../../../../../docs/android/user-consent-flow.mdx)
+Published: `https://cleveradssolutions.docs.page/docs/android/user-consent-flow`
 
 Two mutually exclusive paths. Pick one in the interview and never mix them.
 
@@ -52,7 +52,7 @@ the integration, not after.
 - Location is collected only if the app has its own valid reason to use it, never for ads
   alone.
 - The store data disclosure is the publisher's to fill in. Point at
-  `/general/Google-Play-data-disclosure` and let them answer.
+  `/general/google-play-data-disclosure` and let them answer.
 
 ## Testing the flow
 
