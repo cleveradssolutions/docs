@@ -36,6 +36,10 @@ SKAdNetwork is a privacy safe method provided by Apple for ad networks to track 
 
 The CAS Unreal Plugin **automatically updates** your app’s `Info.plist` with network-specific identifiers.
 
+<Info>
+To learn why these identifiers matter and what you lose without them, see [Apple Ad Attribution](general/apple-ad-attribution).
+</Info>
+
 ## Exclude Frameworks
 Sometimes when multiple different plugins are used in a project, they may utilize the same frameworks. Each plugin will package its own version of frameworks, which can lead to issues during code linking. You will need to decide which frameworks should remain in the package and which ones need to be excluded.  
 To exclude frameworks required for the CAS Plugin, utilize the `Config/DefaultEngine.ini` file in your project. Add the following lines to the file with the names of the frameworks that need to be excluded from the package.

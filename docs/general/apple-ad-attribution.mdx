@@ -13,15 +13,19 @@ Proper configuration ensures that your app can attribute installs and in-app con
 * [x] Increases eCPM
 * [x] Prevents revenue loss
 
-From a monetization standpoint, missing SKAdNetwork or AdAttributionKit identifiers directly impacts your ability to compete in privacy-safe performance campaigns.
+<Warning>
+**Missing identifiers cost you revenue, and nothing in the app tells you.** The app builds, ads still load, and no error appears, but you earn less for every impression.
+</Warning>
 
-We strongly recommend validating this configuration before every production release.
+Most iOS users don't allow tracking, so for them advertisers can measure their campaigns only through SKAdNetwork and AdAttributionKit. Apple sends an install postback only to ad networks whose identifier is in your `Info.plist`. When an identifier is missing:
 
-Failure to properly configure these values may result in:
-* Lost attribution data
-* Lower campaign performance visibility
-* Reduced eCPM and monetization efficiency
-* Inability to measure post-install performance
+* **The ad network can't attribute installs from your app.** An advertiser who can't see results from your inventory lowers the bid or stops buying it.
+* **Fewer buyers compete for each impression.** The ad request tells buyers which identifiers your app declares, and many performance campaigns skip apps that don't declare theirs.
+* **eCPM and fill rate drop**, most of all for users without the IDFA, who are usually the majority on iOS.
+* **The loss is hard to notice.** Revenue shrinks gradually as new networks and identifiers appear, and your app doesn't have them.
+* **Installs that already happened can't be attributed later.** Adding the identifiers in the next release doesn't recover the postbacks you lost.
+
+Validate this configuration before every production release, and update the list whenever you update the SDK.
 
 ## SKAdNetwork
 SKAdNetwork is Apple’s privacy-preserving attribution framework introduced in iOS 14 to replace traditional device-level attribution.
@@ -41,10 +45,17 @@ AdAttributionKit is Apple’s next-generation attribution framework introduced i
 AdAttributionKit identifiers must also be declared in your `Info.plist` to enable proper attribution for supported campaigns.
 
 ## Automated Integration
-To simplify the integration process and eliminate manual errors, we provide a Ruby script to [CAS.AI Automatically configure project](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig).
+How the identifiers get into `Info.plist` depends on the platform you build with.
 
-This script will automatically inject required `SKAdNetworkItems` and 
-`AdNetworkIdentifiers` identifiers into your `Info.plist`.
+### Unity, Unreal, Cordova, React Native, Construct
+The CAS.AI plugins for these platforms handle it for you. Each time the app is built, the plugin downloads the latest list of identifiers and updates `SKAdNetworkItems` and `AdNetworkIdentifiers` in `Info.plist`. You don't need to do anything else.
+
+### iOS, Flutter, Kotlin Multiplatform
+Run the [CAS.AI Ruby script](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig) yourself to configure the Xcode project. It adds the required `SKAdNetworkItems` and `AdNetworkIdentifiers` identifiers to your `Info.plist`.
+
+The steps for each platform are on its setup page: [iOS](ios#configure-infoplist), [Flutter](flutter), [Kotlin Multiplatform](kmp).
+
+Run the script again before every release so that the list stays up to date.
 
 ## Manual Integration
 An up-to-date list of SKAdNetworkItems and AdAttributionKit partners can be found in the repository.
@@ -59,6 +70,6 @@ Additional `SKAdNetworkItems` and `AdNetworkIdentifiers` values may be added in 
 
 ## Best Practices
 * Keep identifiers updated — Apple and ad networks may introduce new ones.
-* Re-run the Ruby script when updating the SDK.
+* Re-run the Ruby script when updating the SDK (iOS, Flutter, Kotlin Multiplatform).
 * Validate configuration before App Store submission.
 * Monitor attribution performance after release.
