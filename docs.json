@@ -1210,6 +1210,10 @@
         "/ReactNative": "/reactnative",
         "/Unity": "/unity",
         "/Unreal": "/unreal",
-        "/iOS": "/ios"
+        "/iOS": "/ios",
+        "/general/Google-Play-data-disclosure": "/general/google-play-data-disclosure",
+        "/general/Authorized-Sellers-for-Apps": "/general/authorized-sellers-for-apps",
+        "/general/AppStore-data-disclosure": "/general/appstore-data-disclosure",
+        "/general/ReportingAPI": "/general/reportingapi"
     }
 }
