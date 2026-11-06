@@ -46,15 +46,16 @@ Open **Applications** in the [CAS.AI dashboard](https://platform.cas.ai).
 Click the status in the **APP-ADS** column of your app.
 </Step>
 <Step title="Get the file">
-In the app-ads.txt window, use **Download app-ads.txt** or **Copy all**.
-
+In the app-ads.txt window, open the **Full file** tab and click **Download app-ads.txt** or **Copy**.  
+On the **Missing** tab the same buttons take only the lines your published file lacks.
 </Step>
 </Steps>
 
-<Image zoom width="750" alt="CAS Dashboard overview" src="/assets/App-ads-txt.png" />
+<Image zoom width="750" alt="The app-ads.txt window in the CAS.AI dashboard" src="/assets/App-ads-txt.png" />
 
 <Info>
-A developer is a store account (Google Play, App Store), not a company. If you publish in both stores, you have two developer accounts, two files and two developer pages.
+A developer is a store account (Google Play, App Store), not a company. If you publish in both stores, you have two developer accounts, two files and two developer pages.  
+If the listings of both accounts point to the same website, its app-ads.txt must hold the seller lines of both accounts.
 </Info>
 
 ## Choose your developer website
@@ -88,7 +89,8 @@ CAS.AI creates a developer page for you on your own subdomain, like `vXXXXXXXX.c
 
 <Steps>
 <Step title="Copy the developer page">
-In the app-ads.txt window, click **Copy developer page**.
+In the app-ads.txt window, click **Copy developer page**.  
+If the button is locked, ask your account manager for a developer page.
 </Step>
 <Step title="Set it in the store listing">
 Set the copied address as the **Developer Website** of every app in the store listing, as described [below](#updating-a-developer-website).
@@ -101,29 +103,33 @@ That is all. The file on the developer page is always up to date: CAS.AI updates
 </Tabs>
 
 <Warning>
-Do not use a website you don't own, or a website shared with other developers, as your Developer Website. Ad networks cannot link such a website to your account, and your account is not listed in sellers.json.
+Do not set a CAS.AI website (`cas.ai`, `psvgamestudio.com`, `cleveradssolutions.com` or another CAS.AI domain) as your Developer Website. The check reports it as **Old domain**, and your account is not listed in sellers.json until one of your apps points to a website of your own or to your developer page.
 </Warning>
 
 ## Check the status in the dashboard
 
-CAS.AI checks app-ads.txt of every app once a day. It finds your app in the store, reads the Developer Website from the store listing and compares the app-ads.txt on that website with your file in the dashboard. If your own website is in the store listing, the file on your website is checked, not the one on the developer page.
+CAS.AI checks app-ads.txt of every app once a day, at 08:00 UTC. It finds your app in the store, reads the Developer Website from the store listing and compares the app-ads.txt on that website with your file in the dashboard. If your own website is in the store listing, the file on your website is checked, not the one on the developer page.
 
-The result is shown in the **APP-ADS** column of **Applications**. Use the **All app-ads** filter to show all apps with problems at once.
+The result is shown in the **APP-ADS** column of **Applications**. To show every app with a problem at once, choose **All issues** in the app-ads filter.
 
 | Status | Meaning | What to do |
 |---|---|---|
 | **OK** | The file is found and has all required lines. | Nothing. |
-| **Not checked yet** | The app has not been checked yet. | Wait for the next daily check. |
+| **Not checked** | The app has not been checked yet. | Wait for the next daily check. |
 | **Missing** | The file is found, but some lines are missing. The app-ads.txt window lists them. | Add the missing lines to the file on your website, or switch to the CAS.AI developer page, where the file is always complete. |
-| **Issue** | The store listing has no Developer Website, or the website does not return the file. | Set the Developer Website in the store listing. If it is set, make sure `https://<your website>/app-ads.txt` opens in a browser. |
-| **Old domain** | The store listing points to a CAS.AI website that is no longer used for app-ads.txt. | Replace the Developer Website with your CAS.AI developer page. |
-| **No store** | The app is not found in the store. | When the app is back in the store, click **Recheck** in the app-ads.txt window. |
+| **Issue** | The store listing has no Developer Website, or the website does not return the file: it cannot be reached, does not answer in time, answers with an HTTP error or a web page, or the file is larger than 10 MB. The app-ads.txt window names the reason. | Set the Developer Website in the store listing. If it is set, make sure `https://<your website>/app-ads.txt` opens in a browser as plain text. |
+| **Old domain** | The store listing points to a CAS.AI website that is no longer used for app-ads.txt. | Replace the Developer Website with your CAS.AI developer page: click **Copy developer page** in the app-ads.txt window. |
+| **No store** | The app is not found in the store. | When the app is back in the store, click **Check again** in the app-ads.txt window. |
 
-After fixing the problem, click **Recheck** in the app-ads.txt window to check the app without waiting for the daily check.
+After fixing the problem, click **Check again** in the app-ads.txt window to check the app without waiting for the daily check. You can do it up to 10 times a minute.
 
 <Info>
-After you change the Developer Website, the store needs time to update the listing, and the status does not change until it does. Ad networks also need time to crawl the new file: AdMob, for example, may take up to 24 hours.
+After you change the Developer Website, the store needs time to update the listing, and the status does not change until it does. If the app-ads.txt window says the store listing has not changed yet, check again in a few hours. Ad networks also need time to crawl the new file: AdMob, for example, may take up to 24 hours.
 </Info>
+
+### Notifications
+
+When an app gets the status **Missing**, **Issue** or **Old domain**, the **Applications** page shows the **App-ads.txt issue detected** banner, and CAS.AI emails you the list of affected apps. The banner disappears once every app is fixed.
 
 ## Updating a Developer Website
 It is important to pay attention to the instructions below before beginning the app-ads.txt implementation.
@@ -181,6 +187,9 @@ Enter your contact details including the **Website**.
 
 ## Ensure your app-ads.txt files can be crawled
 If you host the file on your own website, work through the following troubleshooting steps. The CAS.AI developer page already meets all of them.
+
+### How CAS.AI reads the file
+CAS.AI reads `https://<root domain>/app-ads.txt`, where the root domain is the host of your Developer Website with a leading `www.` or `m.` removed. It falls back to `http://` only when `https://` cannot connect, and follows up to 5 redirects. The response must be the plain-text file itself: a web page returned for that address counts as **Issue**.
 
 <Info>
 The following information was taken from a [Google Support resource](https://support.google.com/admob/answer/9679128).
