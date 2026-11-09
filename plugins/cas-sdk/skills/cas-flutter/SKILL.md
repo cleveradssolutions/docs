@@ -62,9 +62,9 @@ side:
 | Found | Belongs to |
 |---|---|
 | No `pubspec.yaml`, an Android or Xcode project only | the cas-android or cas-ios skill |
-| `react-native` in `package.json` | the CAS React Native plugin |
+| `react-native` in `package.json` | the cas-react-native skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
-| A Kotlin Multiplatform `shared` module | the CAS KMP plugin |
+| A Kotlin Multiplatform `shared` module | the cas-kmp skill |
 | `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
 | An Unreal `.uproject` | the CAS Unreal plugin |
 | A Flutter **module** added to a native host app (`.android/`, `.ios/` generated) | still this skill for the Dart part, but the native host owns Gradle and the Xcode project — say so and agree who edits them |

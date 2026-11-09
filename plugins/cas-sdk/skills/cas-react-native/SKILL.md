@@ -67,10 +67,10 @@ And projects that are not this skill's at all:
 
 | Found | Belongs to |
 |---|---|
-| `pubspec.yaml` | the CAS Flutter plugin |
+| `pubspec.yaml` | the cas-flutter skill |
 | No `react-native`, an Android or Xcode project only | the cas-android or cas-ios skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
-| A Kotlin Multiplatform `shared` module | the CAS KMP plugin |
+| A Kotlin Multiplatform `shared` module | the cas-kmp skill |
 | `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
 | An Unreal `.uproject` | the CAS Unreal plugin |
 

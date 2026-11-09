@@ -17,6 +17,8 @@
     "ios",
     "flutter",
     "react-native",
-    "expo"
+    "expo",
+    "kotlin-multiplatform",
+    "compose-multiplatform"
   ]
 }
