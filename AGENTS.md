@@ -18,6 +18,7 @@ and `plugins/cas-sdk/.claude-plugin/plugin.json`, which other agents can ignore.
 | Integrate CAS.AI into a React Native or Expo app | `plugins/cas-sdk/skills/cas-react-native/SKILL.md` |
 | Integrate CAS.AI into a Kotlin Multiplatform app | `plugins/cas-sdk/skills/cas-kmp/SKILL.md` |
 | Integrate CAS.AI into an Unreal Engine project | `plugins/cas-sdk/skills/cas-unreal/SKILL.md` |
+| Integrate CAS.AI into a Cordova or Ionic app | `plugins/cas-sdk/skills/cas-cordova/SKILL.md` |
 | The rules that apply to any platform | `plugins/shared/agent-rules.md` |
 | How to ask the publisher anything | `plugins/shared/question-format.md` |
 | What to ask, per platform | the skill's `references/questions.md` |

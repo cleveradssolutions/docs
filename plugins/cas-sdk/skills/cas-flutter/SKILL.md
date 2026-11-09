@@ -65,7 +65,7 @@ side:
 | `react-native` in `package.json` | the cas-react-native skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
 | A Kotlin Multiplatform `shared` module | the cas-kmp skill |
-| `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
+| `config.xml` with a Cordova plugin list | the cas-cordova skill |
 | An Unreal `.uproject` | the cas-unreal skill |
 | A Flutter **module** added to a native host app (`.android/`, `.ios/` generated) | still this skill for the Dart part, but the native host owns Gradle and the Xcode project — say so and agree who edits them |
 

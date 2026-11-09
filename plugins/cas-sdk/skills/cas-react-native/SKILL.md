@@ -71,7 +71,7 @@ And projects that are not this skill's at all:
 | No `react-native`, an Android or Xcode project only | the cas-android or cas-ios skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
 | A Kotlin Multiplatform `shared` module | the cas-kmp skill |
-| `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
+| `config.xml` with a Cordova plugin list | the cas-cordova skill |
 | An Unreal `.uproject` | the cas-unreal skill |
 
 Say which one and stop when it is not this skill.

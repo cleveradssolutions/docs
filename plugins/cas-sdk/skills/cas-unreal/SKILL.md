@@ -82,7 +82,7 @@ And projects that are not this skill's at all:
 | `pubspec.yaml` | the cas-flutter skill |
 | `react-native` in `package.json` | the cas-react-native skill |
 | A Kotlin Multiplatform `shared` module | the cas-kmp skill |
-| `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
+| `config.xml` with a Cordova plugin list | the cas-cordova skill |
 
 Say which one and stop when it is not this skill.
 

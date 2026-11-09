@@ -77,7 +77,7 @@ And projects that are not this skill's at all:
 | `pubspec.yaml` | the cas-flutter skill |
 | `react-native` in `package.json` | the cas-react-native skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
-| `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
+| `config.xml` with a Cordova plugin list | the cas-cordova skill |
 | An Unreal `.uproject` | the cas-unreal skill |
 
 Say which one and stop when it is not this skill.

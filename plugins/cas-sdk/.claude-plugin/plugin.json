@@ -21,6 +21,8 @@
     "kotlin-multiplatform",
     "compose-multiplatform",
     "unreal",
-    "unreal-engine"
+    "unreal-engine",
+    "cordova",
+    "ionic"
   ]
 }
