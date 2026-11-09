@@ -112,7 +112,9 @@ for dirpath, files in walked:
         if not file.endswith(".md"):
             continue
         full = os.path.join(dirpath, file)
-        for target in re.findall(r"\]\((?!https?://|#)([^)]+)\)", open(full).read()):
+        # fenced code blocks are not prose: a C++ lambda [this](const T& x) is not a link
+        prose = re.sub(r"(?ms)^```.*?^```", "", open(full).read())
+        for target in re.findall(r"\]\((?!https?://|#)([^)]+)\)", prose):
             target = target.split("#")[0]
             if not target:
                 continue
