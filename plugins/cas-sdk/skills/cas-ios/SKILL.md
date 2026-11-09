@@ -54,7 +54,7 @@ folders too, and belongs to its own CAS plugin, not here:
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
 | A Kotlin Multiplatform `shared` module | the cas-kmp skill |
 | `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
-| An Unreal `.uproject` | the CAS Unreal plugin |
+| An Unreal `.uproject` | the cas-unreal skill |
 
 Say which one and stop. Integrating the native SDK underneath a plugin breaks the
 plugin.

@@ -19,6 +19,8 @@
     "react-native",
     "expo",
     "kotlin-multiplatform",
-    "compose-multiplatform"
+    "compose-multiplatform",
+    "unreal",
+    "unreal-engine"
   ]
 }

@@ -9,8 +9,8 @@ They live next to the documentation on purpose. The one way this material fails 
 drifting from the pages it was written from, and the only thing that reliably prevents
 that is changing both in the same pull request.
 
-Today: **Android**, **iOS**, **Flutter**, **React Native** and **Kotlin Multiplatform**.
-The layout has room for the remaining platforms.
+Today: **Android**, **iOS**, **Flutter**, **React Native**, **Kotlin Multiplatform**
+and **Unreal**. The layout has room for the remaining platforms.
 
 ## Use it
 
@@ -57,6 +57,7 @@ plugin manifests. See [../AGENTS.md](../AGENTS.md).
 | `cas-flutter` | A Flutter app: the `clever_ads_solutions` package, the CAS Gradle plugin on Android, the `casconfig.rb` script on iOS, then the Dart ad formats. | *Add CAS.AI ads to my Flutter app* |
 | `cas-react-native` | A React Native or Expo app: the `react-native-cas` package, the Expo config plugin or the bare native setup, then the TypeScript ad formats. | *Add CAS.AI ads to my React Native app* |
 | `cas-kmp` | A Kotlin Multiplatform app: the `cas-kmp` library in `commonMain`, the CAS Gradle plugin on Android and the CAS Swift Package on iOS, then the shared ad formats and the Compose composables. | *Add CAS.AI ads to my Kotlin Multiplatform app* |
+| `cas-unreal` | An Unreal Engine project: the CAS-Unreal plugin, the `CleverAdsSolutions` module, the per-platform CAS.AI Config window and the packaging prerequisites, then the C++ or Blueprint ad formats. | *Add CAS.AI rewarded ads to my Unreal game* |
 
 Each skill detects a project that belongs to another platform and stops, rather than
 integrating a native SDK underneath a plugin. Unity has a guide instead of a skill,

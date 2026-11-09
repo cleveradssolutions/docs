@@ -66,7 +66,7 @@ side:
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
 | A Kotlin Multiplatform `shared` module | the cas-kmp skill |
 | `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
-| An Unreal `.uproject` | the CAS Unreal plugin |
+| An Unreal `.uproject` | the cas-unreal skill |
 | A Flutter **module** added to a native host app (`.android/`, `.ios/` generated) | still this skill for the Dart part, but the native host owns Gradle and the Xcode project — say so and agree who edits them |
 
 Say which one and stop when it is not this skill. Integrating a native SDK underneath a
