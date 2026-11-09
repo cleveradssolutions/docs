@@ -49,6 +49,7 @@ Point the agent at the skill folder for your platform:
 plugins/cas-sdk/skills/cas-android/SKILL.md
 plugins/cas-sdk/skills/cas-ios/SKILL.md
 plugins/cas-sdk/skills/cas-flutter/SKILL.md
+plugins/cas-sdk/skills/cas-react-native/SKILL.md
 
 Each folder is plain Markdown and is self contained.
 ```
@@ -65,6 +66,7 @@ run the installer. Add `--skill cas-android` for one platform, and update later 
 | `cas-android` | Adds the SDK to a native Android app: Gradle setup, ad networks, initialization, consent, ad formats, verification on test ads. | *Add CAS.AI banner and interstitial ads to this app* |
 | `cas-ios` | The same for a native iOS app, with Swift Package Manager or CocoaPods and the `Info.plist` configuration. | *Integrate CAS.AI into my iOS app and show a rewarded ad* |
 | `cas-flutter` | The `clever_ads_solutions` package, the CAS Gradle plugin on Android and the `casconfig.rb` script on iOS, then the Dart ad formats. | *Add CAS.AI ads to my Flutter app* |
+| `cas-react-native` | A React Native or Expo app: the `react-native-cas` package, the Expo config plugin or the bare native setup, then the TypeScript ad formats. | *Add CAS.AI ads to my React Native app* |
 
 <Info>
 The skills are not Claude specific. `SKILL.md` is Markdown with a small header, and the
