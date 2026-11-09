@@ -78,6 +78,7 @@ And projects that are not this skill's at all:
 | Found | Belongs to |
 |---|---|
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
+| A `.c3p` file or a `project.c3proj` | Construct 3, guide [llm-guides/cas-construct.md](../../../../llm-guides/cas-construct.md) |
 | No `.uproject`, an Android or Xcode project only | the cas-android or cas-ios skill |
 | `pubspec.yaml` | the cas-flutter skill |
 | `react-native` in `package.json` | the cas-react-native skill |

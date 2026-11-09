@@ -81,6 +81,8 @@ And projects that are not this skill's at all:
 | A Kotlin Multiplatform `shared` module | the cas-kmp skill |
 | An Unreal `.uproject` | the cas-unreal skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
+| A `.c3p` file or a `project.c3proj` | Construct 3, guide [llm-guides/cas-construct.md](../../../../llm-guides/cas-construct.md) |
+| A `config.xml` and a `www/` that Construct **exported** | Construct 3 too, guide [llm-guides/cas-construct.md](../../../../llm-guides/cas-construct.md). An exported folder is a build artefact: the next export overwrites it, so the integration belongs in the Construct project. Look for Construct's own files under `www/` before assuming a hand-written Cordova app. |
 | No `config.xml`, an Android or Xcode project only | the cas-android or cas-ios skill |
 
 Say which one and stop when it is not this skill.

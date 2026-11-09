@@ -50,6 +50,7 @@ folders too, and belongs to its own CAS plugin, not here:
 | `pubspec.yaml` | the cas-flutter skill |
 | `react-native` in `package.json` | the cas-react-native skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
+| A `.c3p` file or a `project.c3proj` | Construct 3, guide [llm-guides/cas-construct.md](../../../../llm-guides/cas-construct.md) |
 | A Kotlin Multiplatform `shared` module | the cas-kmp skill |
 | `config.xml` with a Cordova plugin list | the cas-cordova skill |
 | An Unreal `.uproject` | the cas-unreal skill |

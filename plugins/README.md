@@ -61,8 +61,10 @@ plugin manifests. See [../AGENTS.md](../AGENTS.md).
 | `cas-cordova` | A Cordova or Ionic app: the `cordova-plugin-casai` plugin and its `config.xml` variables, then the JavaScript ad formats with their Promise and document-event APIs. | *Add CAS.AI ads to my Ionic app* |
 
 Each skill detects a project that belongs to another platform and stops, rather than
-integrating a native SDK underneath a plugin. Unity has a guide instead of a skill,
-`llm-guides/cas-unity.md`, and so will Construct.
+integrating a native SDK underneath a plugin. Unity and Construct have guides instead of
+skills, `llm-guides/cas-unity.md` and `llm-guides/cas-construct.md`: in both the work is
+done in an editor rather than in files, so the agent decides and instructs rather than
+edits.
 
 ## Before you let an agent do this
 
@@ -107,7 +109,8 @@ rest of the repository, the same way it already ignores `README.md` and `cache_i
 ## The other guides
 
 `llm-guides/` in this repository holds agent guides for the rest of the surface, in the
-same question format: `cas-unity.md`, `cas-publishing-hub.md` and `firebase-ga4-setup.md`.
+same question format: `cas-unity.md`, `cas-construct.md`, `cas-publishing-hub.md` and
+`firebase-ga4-setup.md`.
 A Unity project belongs there, not here.
 
 ## Keeping it true

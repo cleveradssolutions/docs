@@ -23,6 +23,7 @@ and `plugins/cas-sdk/.claude-plugin/plugin.json`, which other agents can ignore.
 | How to ask the publisher anything | `plugins/shared/question-format.md` |
 | What to ask, per platform | the skill's `references/questions.md` |
 | Where the canonical documentation is | `plugins/shared/docs-map.md` |
+| Integrate CAS.AI into a Construct 3 project | `llm-guides/cas-construct.md` |
 | Unity, CAS Publishing, Firebase | `llm-guides/` |
 
 Installed rather than read: the [`skills`](https://github.com/vercel-labs/skills) CLI
