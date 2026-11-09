@@ -9,7 +9,7 @@ They live next to the documentation on purpose. The one way this material fails 
 drifting from the pages it was written from, and the only thing that reliably prevents
 that is changing both in the same pull request.
 
-Today: **Android** and **iOS**. The layout has room for the other platforms.
+Today: **Android**, **iOS** and **Flutter**. The layout has room for the other platforms.
 
 ## Use it
 
@@ -36,8 +36,8 @@ repository and the plugin inside it.
 
 ### claude.ai
 
-Upload the folder of a single skill, `cas-sdk/skills/cas-android` or
-`cas-sdk/skills/cas-ios`, as a skill. Each folder is self contained; when it travels alone
+Upload the folder of a single skill, `cas-sdk/skills/cas-android`,
+`cas-sdk/skills/cas-ios` or `cas-sdk/skills/cas-flutter`, as a skill. Each folder is self contained; when it travels alone
 it falls back to the published documentation instead of the pages in this repository.
 
 ### By hand
@@ -53,10 +53,11 @@ plugin manifests. See [../AGENTS.md](../AGENTS.md).
 | :--- | :--- | :--- |
 | `cas-android` | Adds the CAS SDK to a native Android app: Gradle setup, ad networks, initialization, consent, ad formats, verification on test ads. | *Add CAS.AI banner and interstitial ads to this app* |
 | `cas-ios` | The same for a native iOS app, with Swift Package Manager or CocoaPods and the `Info.plist` configuration. | *Integrate CAS.AI into my iOS app and show a rewarded ad* |
+| `cas-flutter` | A Flutter app: the `clever_ads_solutions` package, the CAS Gradle plugin on Android, the `casconfig.rb` script on iOS, then the Dart ad formats. | *Add CAS.AI ads to my Flutter app* |
 
-Cross-platform projects, Flutter, React Native, Unity, Unreal, Cordova and Kotlin
-Multiplatform, have their own CAS plugin and are **not** covered by these skills. A skill
-detects such a project and stops.
+Each skill detects a project that belongs to another platform and stops, rather than
+integrating a native SDK underneath a plugin. Unity has a guide instead of a skill,
+`llm-guides/cas-unity.md`, and so will Construct.
 
 ## Before you let an agent do this
 

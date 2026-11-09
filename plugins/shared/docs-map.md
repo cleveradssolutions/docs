@@ -12,7 +12,7 @@ This repository never becomes the source of truth. Every reference file links th
 was written from. When the two disagree, the documentation wins and the reference is wrong
 and has to be fixed, in the same pull request.
 
-## Pages
+## Pages, native platforms
 
 | Topic | Android | iOS |
 |---|---|---|
@@ -43,6 +43,31 @@ The pages are MDX. Components such as `<Info>`, `<Warning>`, `<Error>`, `<Tabs>`
 `<CodeGroup>` wrap the text; read through them. A `{{ versions.android }}` style value is
 a variable resolved from `docs.json`, where the current version numbers live.
 
+## Pages, plugin platforms
+
+Each plugin platform has its own section under `docs/`, and the page names repeat: `index.mdx`
+for setup, then `Initialize-CAS.mdx`, `Enabling-test-ads.mdx`, `User-Consent-Flow.mdx`,
+`Banner-Ads.mdx`, `Interstitial-Ads.mdx`, `Rewarded-Ads.mdx`, `App-Open-Ads.mdx`,
+`Targeting-options.mdx`, `Impression-Level-Data.mdx`, `Ad-errors.mdx` and
+`Additional-Meta-AudienceNetwork-steps.mdx`. So the path is
+`docs/<Platform>/<Page>.mdx` with `<Platform>` one of `Flutter`, `ReactNative`, `KMP`,
+`Cordova`, `Unreal`, `Construct`, `Unity`.
+
+What each one has on top of that list, or lacks, is where the platforms actually differ:
+
+| Platform | Also has | Does not have |
+|---|---|---|
+| `Flutter` | `Native-Ads.mdx`, `Native-Ads-templates.mdx`, `Native-Ads-Android-Setup.mdx`, `Native-Ads-iOS-Setup.mdx`, `Purchase-Info.mdx` | — |
+| `ReactNative` | `Native-Ads.mdx`, `Native-Ads-Templates.mdx`, `Native-Ad-Manual.mdx` | `Purchase-Info.mdx` |
+| `KMP` | `Native-Ads.mdx`, `Native-Ads-templates.mdx`, `Native-Ads-layout.mdx` | `Purchase-Info.mdx` |
+| `Cordova` | `MRec-Ads.mdx` | native ads, `Purchase-Info.mdx` |
+| `Unreal` | `Configuring-SDK.mdx`, `Include-Android.mdx`, `Include-iOS.mdx`, `MREC-Ads.mdx`, `Verify-Integration.mdx`, `Privacy-Regulations.mdx`, `FAQ.mdx`, `Google-Plays-Families-Policy.mdx`, `Building-Unreal-Engine-4-with-XCode-14.mdx` | native ads, `Purchase-Info.mdx`, `Ad-errors.mdx` |
+| `Construct` | `Build.mdx`, `Development-Options.mdx`, `Automation-Options.mdx`, `MRec-Ads.mdx` | native ads, `Targeting-options.mdx`, `Initialize-CAS.mdx`, `Enabling-test-ads.mdx`, `Ad-errors.mdx`, `Impression-Level-Data.mdx` |
+
+A plugin platform still rests on the two native SDKs, so the pages under `docs/Android/` and
+`docs/iOS/` stay relevant for anything the plugin does not wrap: the ad network tables, the
+store disclosures and the families policy pages have no plugin copy.
+
 ## Other guides for agents in this repository
 
 `llm-guides/` holds the guides for the rest of the surface, in the same question format as
@@ -70,6 +95,12 @@ Android, `https://github.com/cleveradssolutions/CAS-Android`: `kotlinSample/`,
 iOS, `https://github.com/cleveradssolutions/CAS-iOS`: `DemoApp Swift/`,
 `DemoApp Objective-C/`, `DemoApp SwiftUI/`, `Adapters/README.md`, and `Script XCodeConfig/`
 for the `Info.plist` configuration script.
+
+The plugins, under the same organisation, each with an example app:
+`CAS-Flutter` (`example/`), `CAS-ReactNative`, `CAS-KMP`, `CAS-Cordova`, `CAS-Unreal`,
+`CAS-Construct`, `CAS-Unity`. A plugin's example app is the shortest correct answer for that
+platform, the same way the demo apps are for the native SDKs. The repository names are the
+ones the pages themselves link.
 
 ## Versions
 
