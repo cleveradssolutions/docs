@@ -1,12 +1,12 @@
 # iOS: ad formats
 
-Canonical, in this repository, one page per format in [docs/iOS/](../../../../../docs/iOS):
-[Banner-Ads.mdx](../../../../../docs/iOS/Banner-Ads.mdx),
-[Interstitial-Ads.mdx](../../../../../docs/iOS/Interstitial-Ads.mdx),
-[Rewarded-Ads.mdx](../../../../../docs/iOS/Rewarded-Ads.mdx),
-[App-Open-Ads.mdx](../../../../../docs/iOS/App-Open-Ads.mdx),
-[Load-Native-Ads.mdx](../../../../../docs/iOS/Load-Native-Ads.mdx),
-[Display-Native-Ad.mdx](../../../../../docs/iOS/Display-Native-Ad.mdx).
+Canonical, in this repository, one page per format in [docs/ios/](../../../../../docs/ios):
+[Banner-Ads.mdx](../../../../../docs/ios/banner-ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/ios/interstitial-ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/ios/rewarded-ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/ios/app-open-ads.mdx),
+[Load-Native-Ads.mdx](../../../../../docs/ios/load-native-ads.mdx),
+[Display-Native-Ad.mdx](../../../../../docs/ios/display-native-ad.mdx).
 Read the page for the format being added. **The code below is the shape of the flow, not
 an API reference.** Every initializer and selector is taken from the page, never from
 memory: a plausible looking signature that does not exist costs a build cycle to discover.

@@ -1,12 +1,12 @@
 # Android: ad formats
 
-Canonical, in this repository, one page per format in [docs/Android/](../../../../../docs/Android):
-[Banner-Ads.mdx](../../../../../docs/Android/Banner-Ads.mdx),
-[Interstitial-Ads.mdx](../../../../../docs/Android/Interstitial-Ads.mdx),
-[Rewarded-Ads.mdx](../../../../../docs/Android/Rewarded-Ads.mdx),
-[App-Open-Ads.mdx](../../../../../docs/Android/App-Open-Ads.mdx),
-[Load-Native-Ads.mdx](../../../../../docs/Android/Load-Native-Ads.mdx),
-[Display-Native-Ad.mdx](../../../../../docs/Android/Display-Native-Ad.mdx).
+Canonical, in this repository, one page per format in [docs/android/](../../../../../docs/android):
+[Banner-Ads.mdx](../../../../../docs/android/banner-ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/android/interstitial-ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/android/rewarded-ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/android/app-open-ads.mdx),
+[Load-Native-Ads.mdx](../../../../../docs/android/load-native-ads.mdx),
+[Display-Native-Ad.mdx](../../../../../docs/android/display-native-ad.mdx).
 Read the page for the format being added; the code below is the shape, not a substitute.
 Working code for every format: `kotlinSample/`, `javaSample/` and `composeSample/` in
 `https://github.com/cleveradssolutions/CAS-Android`. Read the sample for the format being

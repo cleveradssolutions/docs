@@ -1,0 +1,75 @@
+---
+title: Apple Ad Attribution
+---
+
+![AdNetworksID](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cleveradssolutions/CAS-iOS/master/AdNetworkIdentifiers/AdNetworksShield.json)
+
+To ensure proper ad attribution and maximize revenue performance, you must configure both **SKAdNetworkItems and AdAttributionKit** identifiers in your app’s `Info.plist`.
+
+Proper configuration ensures that your app can attribute installs and in-app conversions correctly under Apple’s privacy framework:
+* [x] Ensures full attribution coverage
+* [x] Unlocks optimized campaign bidding
+* [x] Improves fill rate and competition
+* [x] Increases eCPM
+* [x] Prevents revenue loss
+
+<Warning>
+**Missing identifiers cost you revenue, and nothing in the app tells you.** The app builds, ads still load, and no error appears, but you earn less for every impression.
+</Warning>
+
+Most iOS users don't allow tracking, so for them advertisers can measure their campaigns only through SKAdNetwork and AdAttributionKit. Apple sends an install postback only to ad networks whose identifier is in your `Info.plist`. When an identifier is missing:
+
+* **The ad network can't attribute installs from your app.** An advertiser who can't see results from your inventory lowers the bid or stops buying it.
+* **Fewer buyers compete for each impression.** The ad request tells buyers which identifiers your app declares, and many performance campaigns skip apps that don't declare theirs.
+* **eCPM and fill rate drop**, most of all for users without the IDFA, who are usually the majority on iOS.
+* **The loss is hard to notice.** Revenue shrinks gradually as new networks and identifiers appear, and your app doesn't have them.
+* **Installs that already happened can't be attributed later.** Adding the identifiers in the next release doesn't recover the postbacks you lost.
+
+Validate this configuration before every production release, and update the list whenever you update the SDK.
+
+## SKAdNetwork
+SKAdNetwork is Apple’s privacy-preserving attribution framework introduced in iOS 14 to replace traditional device-level attribution.
+
+It allows ad networks to measure app installs and post-install events **without accessing user-level identifiers (IDFA)**.
+
+[Official Apple documentation about SKAdNetwork](https://developer.apple.com/documentation/storekit/skadnetwork)
+
+Each ad network participating in SKAdNetwork must register its unique SKAdNetwork ID.
+To receive attribution postbacks, your app must include these IDs in Info.plist `SKAdNetworkItems` 
+
+## AdAttributionKit
+AdAttributionKit is Apple’s next-generation attribution framework introduced in iOS 17.4 that extends and evolves SKAdNetwork. It provides more advanced attribution capabilities and improved privacy-preserving reporting.
+
+[Official Apple documentation about AdAttributionKit](https://developer.apple.com/documentation/adattributionkit)
+
+AdAttributionKit identifiers must also be declared in your `Info.plist` to enable proper attribution for supported campaigns.
+
+## Automated Integration
+How the identifiers get into `Info.plist` depends on the platform you build with.
+
+### Unity, Unreal, Cordova, React Native, Construct
+The CAS.AI plugins for these platforms handle it for you. Each time the app is built, the plugin downloads the latest list of identifiers and updates `SKAdNetworkItems` and `AdNetworkIdentifiers` in `Info.plist`. You don't need to do anything else.
+
+### iOS, Flutter, Kotlin Multiplatform
+Run the [CAS.AI Ruby script](https://github.com/cleveradssolutions/CAS-iOS/tree/master/Script%20XCodeConfig) yourself to configure the Xcode project. It adds the required `SKAdNetworkItems` and `AdNetworkIdentifiers` identifiers to your `Info.plist`.
+
+The steps for each platform are on its setup page: [iOS](ios#configure-infoplist), [Flutter](flutter), [Kotlin Multiplatform](kmp).
+
+Run the script again before every release so that the list stays up to date.
+
+## Manual Integration
+An up-to-date list of SKAdNetworkItems and AdAttributionKit partners can be found in the repository.
+
+1. Open your project in `Info.plist` as Source Code.
+2. Copy the `<key>SKAdNetworkItems</key><array>...</array>` tags from the [SKAdNetworkItems.xml](https://github.com/cleveradssolutions/CAS-iOS/blob/master/AdNetworkIdentifiers/SKAdNetworkItems.xml).
+3. Paste the content inside SKAdNetworkItems `<array>` tag or at the end of the file before `</dict></plist>`
+4. Copy the `<key>AdNetworkIdentifiers</key><array>...</array>` tags from the [AdNetworkIdentifiers.xml](https://github.com/cleveradssolutions/CAS-iOS/blob/master/AdNetworkIdentifiers/AdNetworkIdentifiers.xml).
+5. Paste the content inside AdNetworkIdentifiers `<array>` tag or at the end of the file before `</dict></plist>`
+
+Additional `SKAdNetworkItems` and `AdNetworkIdentifiers` values may be added in the future. We recommend checking back on this page for updates.
+
+## Best Practices
+* Keep identifiers updated — Apple and ad networks may introduce new ones.
+* Re-run the Ruby script when updating the SDK (iOS, Flutter, Kotlin Multiplatform).
+* Validate configuration before App Store submission.
+* Monitor attribution performance after release.

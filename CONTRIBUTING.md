@@ -4,12 +4,12 @@
 
 Pages live in `docs/` as MDX and are published by [docs.page](https://docs.page). The
 navigation is `docs.json`; a new page has to be added there to appear in the sidebar and
-in [llms.txt](https://docs.page/cleveradssolutions/docs/llms.txt).
+in [llms.txt](https://cleveradssolutions.docs.page/docs/llms.txt).
 
 Preview a branch before merging:
 
 ```
-https://docs.page/cleveradssolutions/docs~<branch>
+https://cleveradssolutions.docs.page/docs~<branch>
 ```
 
 ## Agent skills

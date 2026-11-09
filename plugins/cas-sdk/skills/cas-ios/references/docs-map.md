@@ -16,28 +16,28 @@ and has to be fixed, in the same pull request.
 
 | Topic | Android | iOS |
 |---|---|---|
-| Project setup | `docs/Android/index.mdx` | `docs/iOS/index.mdx` |
-| Manual setup | `docs/Android/Manual-setup.mdx` | `docs/iOS/Manually-configure-project.mdx` |
-| Initialization | `docs/Android/Initialize-CAS.mdx` | `docs/iOS/Initialize-CAS.mdx` |
-| Test ads | `docs/Android/Enabling-test-ads.mdx` | `docs/iOS/Enabling-test-ads.mdx` |
-| Consent flow | `docs/Android/User-Consent-Flow.mdx` | `docs/iOS/User-Consent-Flow.mdx` |
-| Banner | `docs/Android/Banner-Ads.mdx` | `docs/iOS/Banner-Ads.mdx` |
-| Interstitial | `docs/Android/Interstitial-Ads.mdx` | `docs/iOS/Interstitial-Ads.mdx` |
-| Rewarded | `docs/Android/Rewarded-Ads.mdx` | `docs/iOS/Rewarded-Ads.mdx` |
-| App open | `docs/Android/App-Open-Ads.mdx` | `docs/iOS/App-Open-Ads.mdx` |
-| Native, load | `docs/Android/Load-Native-Ads.mdx` | `docs/iOS/Load-Native-Ads.mdx` |
-| Native, display | `docs/Android/Display-Native-Ad.mdx` | `docs/iOS/Display-Native-Ad.mdx` |
-| Native assets | `docs/Android/Native-Ad-assets.mdx` | `docs/iOS/Native-Ad-assets.mdx` |
-| Ad networks | `docs/Android/Mediated-Networks.mdx` | `docs/iOS/Mediated-Networks.mdx` |
-| Targeting | `docs/Android/Targeting-options.mdx` | `docs/iOS/Targeting-options.mdx` |
-| Impression level data | `docs/Android/Impression-Level-Data.mdx` | `docs/iOS/Impression-Level-Data.mdx` |
-| Error codes | `docs/Android/Ad-errors.mdx` | `docs/iOS/Ad-errors.mdx` |
-| Purchases | `docs/Android/Purchase-Info.mdx` | `docs/iOS/Purchase-Info.mdx` |
-| Meta Audience Network | `docs/Android/Additional-Meta-AudienceNetwork-steps.mdx` | `docs/iOS/Additional-Meta-AudienceNetwork-steps.mdx` |
-| Families policy | `docs/Android/Google-Plays-Families-Policy.mdx` | `docs/general/Apple-Kids-Category.mdx` |
-| Store disclosures | `docs/general/Google-Play-data-disclosure.mdx` | `docs/general/AppStore-data-disclosure.mdx` |
-| Apple ad attribution | — | `docs/general/Apple-Ad-Attribution.mdx` |
-| Handing work to an agent | `docs/general/AI-Agent-Integration.mdx` | same page |
+| Project setup | `docs/android/index.mdx` | `docs/ios/index.mdx` |
+| Manual setup | `docs/android/manual-setup.mdx` | `docs/ios/manually-configure-project.mdx` |
+| Initialization | `docs/android/initialize-cas.mdx` | `docs/ios/initialize-cas.mdx` |
+| Test ads | `docs/android/enabling-test-ads.mdx` | `docs/ios/enabling-test-ads.mdx` |
+| Consent flow | `docs/android/user-consent-flow.mdx` | `docs/ios/user-consent-flow.mdx` |
+| Banner | `docs/android/banner-ads.mdx` | `docs/ios/banner-ads.mdx` |
+| Interstitial | `docs/android/interstitial-ads.mdx` | `docs/ios/interstitial-ads.mdx` |
+| Rewarded | `docs/android/rewarded-ads.mdx` | `docs/ios/rewarded-ads.mdx` |
+| App open | `docs/android/app-open-ads.mdx` | `docs/ios/app-open-ads.mdx` |
+| Native, load | `docs/android/load-native-ads.mdx` | `docs/ios/load-native-ads.mdx` |
+| Native, display | `docs/android/display-native-ad.mdx` | `docs/ios/display-native-ad.mdx` |
+| Native assets | `docs/android/native-ad-assets.mdx` | `docs/ios/native-ad-assets.mdx` |
+| Ad networks | `docs/android/mediated-networks.mdx` | `docs/ios/mediated-networks.mdx` |
+| Targeting | `docs/android/targeting-options.mdx` | `docs/ios/targeting-options.mdx` |
+| Impression level data | `docs/android/impression-level-data.mdx` | `docs/ios/impression-level-data.mdx` |
+| Error codes | `docs/android/ad-errors.mdx` | `docs/ios/ad-errors.mdx` |
+| Purchases | `docs/android/purchase-info.mdx` | `docs/ios/purchase-info.mdx` |
+| Meta Audience Network | `docs/android/additional-meta-audiencenetwork-steps.mdx` | `docs/ios/additional-meta-audiencenetwork-steps.mdx` |
+| Families policy | `docs/android/google-plays-families-policy.mdx` | `docs/general/apple-kids-category.mdx` |
+| Store disclosures | `docs/general/google-play-data-disclosure.mdx` | `docs/general/appstore-data-disclosure.mdx` |
+| Apple ad attribution | — | `docs/general/apple-ad-attribution.mdx` |
+| Handing work to an agent | `docs/general/ai-agent-integration.mdx` | same page |
 
 The pages are MDX. Components such as `<Info>`, `<Warning>`, `<Error>`, `<Tabs>` and
 `<CodeGroup>` wrap the text; read through them. A `{{ versions.android }}` style value is
@@ -84,7 +84,7 @@ depth and do link their pages.
 
 A skill folder copied on its own, for example uploaded to claude.ai, has no `docs/`. Then
 use the published pages, same names:
-`https://docs.page/cleveradssolutions/docs/<Platform>/<Page>`, with
+`https://cleveradssolutions.docs.page/docs/<platform>/<page>`, all lowercase, with
 `llms.txt` as the index and `llms-full.txt` as everything in one file, which is large.
 
 ## Sample apps

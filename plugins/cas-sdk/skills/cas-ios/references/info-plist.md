@@ -1,8 +1,8 @@
 # iOS: Info.plist
 
-Canonical, in this repository: [docs/iOS/index.mdx](../../../../../docs/iOS/index.mdx), section
-"Configure Info.plist", and [docs/iOS/Manually-configure-project.mdx](../../../../../docs/iOS/Manually-configure-project.mdx)
-for the manual path. Apple attribution: [docs/general/Apple-Ad-Attribution.mdx](../../../../../docs/general/Apple-Ad-Attribution.mdx).
+Canonical, in this repository: [docs/ios/index.mdx](../../../../../docs/ios/index.mdx), section
+"Configure Info.plist", and [docs/ios/manually-configure-project.mdx](../../../../../docs/ios/manually-configure-project.mdx)
+for the manual path. Apple attribution: [docs/general/apple-ad-attribution.mdx](../../../../../docs/general/apple-ad-attribution.mdx).
 Script: `Script XCodeConfig/` in `https://github.com/cleveradssolutions/CAS-iOS`.
 
 ## When and how to run it
@@ -63,8 +63,8 @@ publisher has no ATT flow, say what is lost and let them decide.
 ## App Store privacy
 
 The data the SDK and its networks collect has to be declared in App Store Connect. That is
-the publisher's to answer; point at `/general/AppStore-data-disclosure` and
-`/general/Apple-Ad-Attribution`, and do not fill it in for them.
+the publisher's to answer; point at `/general/appstore-data-disclosure` and
+`/general/apple-ad-attribution`, and do not fill it in for them.
 
 For a child-directed app, the Apple Kids Category has its own rules and the Families
 solution is **not** intended for apps in that category. If the publisher says the app is

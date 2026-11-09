@@ -68,47 +68,47 @@
         {
             "id": "android",
             "title": "Android",
-            "href": "/Android"
+            "href": "/android"
         },
         {
             "id": "ios",
             "title": "iOS",
-            "href": "/iOS"
+            "href": "/ios"
         },
         {
             "id": "unity",
             "title": "Unity",
-            "href": "/Unity"
+            "href": "/unity"
         },
         {
             "id": "flutter",
             "title": "Flutter",
-            "href": "/Flutter"
+            "href": "/flutter"
         },
         {
             "id": "kmp",
             "title": "KMP",
-            "href": "/KMP"
+            "href": "/kmp"
         },
         {
             "id": "unreal",
             "title": "Unreal",
-            "href": "/Unreal"
+            "href": "/unreal"
         },
         {
             "id": "reactnative",
             "title": "ReactNative",
-            "href": "/ReactNative"
+            "href": "/reactnative"
         },
         {
             "id": "cordova",
             "title": "Cordova",
-            "href": "/Cordova"
+            "href": "/cordova"
         },
         {
             "id": "construct",
             "title": "Construct",
-            "href": "/Construct"
+            "href": "/construct"
         }
     ],
     "sidebar": [
@@ -121,32 +121,32 @@
                     "href": "/general"
                 },
                 {
+                    "title": "Integrating with an AI agent",
+                    "href": "/general/ai-agent-integration"
+                },
+                {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "title": "Google Play data disclosure",
-                    "href": "/general/Google-Play-data-disclosure"
+                    "href": "/general/google-play-data-disclosure"
                 },
                 {
                     "title": "App Store data disclosure",
-                    "href": "/general/AppStore-data-disclosure"
+                    "href": "/general/appstore-data-disclosure"
                 },
                 {
                     "title": "Apple Ad Attribution",
-                    "href": "/general/Apple-Ad-Attribution"
+                    "href": "/general/apple-ad-attribution"
                 },
                 {
                     "title": "Apple Kids category",
-                    "href": "/general/Apple-Kids-Category"
+                    "href": "/general/apple-kids-category"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
-                },
-                {
-                    "title": "Integrating with an AI agent",
-                    "href": "/general/AI-Agent-Integration"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -156,46 +156,46 @@
             "pages": [
                 {
                     "group": "Integration",
-                    "href": "/Android",
+                    "href": "/android",
                     "pages": [
                         {
                             "title": "Mediated Networks",
-                            "href": "/Android/Mediated-Networks"
+                            "href": "/android/mediated-networks"
                         },
                         {
                             "title": "Manual setup",
-                            "href": "/Android/Manual-setup"
+                            "href": "/android/manual-setup"
                         }
                     ]
                 },
                 {
                     "group": "Initialization",
-                    "href": "/Android/Initialize-CAS",
+                    "href": "/android/initialize-cas",
                     "pages": [
                         {
                             "title": "User Consent Flow",
-                            "href": "/Android/User-Consent-Flow"
+                            "href": "/android/user-consent-flow"
                         },
                         {
                             "title": "Test ads",
-                            "href": "/Android/Enabling-test-ads"
+                            "href": "/android/enabling-test-ads"
                         }
                     ]
                 },
                 {
                     "title": "Google Play data disclosure",
-                    "href": "/general/Google-Play-data-disclosure"
+                    "href": "/general/google-play-data-disclosure"
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/Android/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/android/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -207,31 +207,31 @@
             "pages": [
                 {
                     "title": "App Open Ad",
-                    "href": "/Android/App-Open-Ads"
+                    "href": "/android/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/Android/Interstitial-Ads"
+                    "href": "/android/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/Android/Rewarded-Ads"
+                    "href": "/android/rewarded-ads"
                 },
                 {
                     "title": "Banner Ad",
-                    "href": "/Android/Banner-Ads"
+                    "href": "/android/banner-ads"
                 },
                 {
                     "group": "Native Ad",
-                    "href": "/Android/Load-Native-Ads",
+                    "href": "/android/load-native-ads",
                     "pages": [
                         {
                             "title": "Display Native Ad",
-                            "href": "/Android/Display-Native-Ad"
+                            "href": "/android/display-native-ad"
                         },
                         {
                             "title": "Native Ad assets",
-                            "href": "/Android/Native-Ad-assets"
+                            "href": "/android/native-ad-assets"
                         }
                     ]
                 }
@@ -243,23 +243,23 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/Android/Targeting-options"
+                    "href": "/android/targeting-options"
                 },
                 {
                     "title": "Ad errors",
-                    "href": "/Android/Ad-errors"
+                    "href": "/android/ad-errors"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/Android/Impression-Level-Data"
+                    "href": "/android/impression-level-data"
                 },
                 {
                     "title": "Purchase Info",
-                    "href": "/Android/Purchase-Info"
+                    "href": "/android/purchase-info"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -269,50 +269,50 @@
             "pages": [
                 {
                     "group": "Integration",
-                    "href": "/iOS",
+                    "href": "/ios",
                     "pages": [
                         {
                             "title": "Mediated Networks",
-                            "href": "/iOS/Mediated-Networks"
+                            "href": "/ios/mediated-networks"
                         },
                         {
                             "title": "Manual setup",
-                            "href": "/iOS/Manually-configure-project"
+                            "href": "/ios/manually-configure-project"
                         },
                         {
                             "title": "Apple Ad Attribution",
-                            "href": "/general/Apple-Ad-Attribution"
+                            "href": "/general/apple-ad-attribution"
                         }
                     ]
                 },
                 {
                     "group": "Initialization",
-                    "href": "/iOS/Initialize-CAS",
+                    "href": "/ios/initialize-cas",
                     "pages": [
                         {
                             "title": "User Consent Flow",
-                            "href": "/iOS/User-Consent-Flow"
+                            "href": "/ios/user-consent-flow"
                         },
                         {
                             "title": "Test ads",
-                            "href": "/iOS/Enabling-test-ads"
+                            "href": "/ios/enabling-test-ads"
                         }
                     ]
                 },
                 {
                     "title": "App Store data disclosure",
-                    "href": "/general/AppStore-data-disclosure"
+                    "href": "/general/appstore-data-disclosure"
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/iOS/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/ios/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -324,31 +324,31 @@
             "pages": [
                 {
                     "title": "App Open Ad",
-                    "href": "/iOS/App-Open-Ads"
+                    "href": "/ios/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/iOS/Interstitial-Ads"
+                    "href": "/ios/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/iOS/Rewarded-Ads"
+                    "href": "/ios/rewarded-ads"
                 },
                 {
                     "title": "Banner Ad",
-                    "href": "/iOS/Banner-Ads"
+                    "href": "/ios/banner-ads"
                 },
                 {
                     "group": "Native Ad",
-                    "href": "/iOS/Load-Native-Ads",
+                    "href": "/ios/load-native-ads",
                     "pages": [
                         {
                             "title": "Display Native Ad",
-                            "href": "/iOS/Display-Native-Ad"
+                            "href": "/ios/display-native-ad"
                         },
                         {
                             "title": "Native Ad assets",
-                            "href": "/iOS/Native-Ad-assets"
+                            "href": "/ios/native-ad-assets"
                         }
                     ]
                 }
@@ -360,23 +360,23 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/iOS/Targeting-options"
+                    "href": "/ios/targeting-options"
                 },
                 {
                     "title": "Ad errors",
-                    "href": "/iOS/Ad-errors"
+                    "href": "/ios/ad-errors"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/iOS/Impression-Level-Data"
+                    "href": "/ios/impression-level-data"
                 },
                 {
                     "title": "Purchase Info",
-                    "href": "/iOS/Purchase-Info"
+                    "href": "/ios/purchase-info"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -386,66 +386,66 @@
             "pages": [
                 {
                     "title": "Integration",
-                    "href": "/Unity"
+                    "href": "/unity"
                 },
                 {
                     "group": "Configuration",
-                    "href": "/Unity/Configuring-SDK",
+                    "href": "/unity/configuring-sdk",
                     "pages": [
                         {
                             "title": "Test ads",
-                            "href": "/Unity/Enabling-test-ads"
+                            "href": "/unity/enabling-test-ads"
                         },
                         {
                             "title": "Privacy Regulations",
-                            "href": "/Unity/Privacy-Regulations"
+                            "href": "/unity/privacy-regulations"
                         }
                     ]
                 },
                 {
                     "group": "Include Android",
-                    "href": "/Unity/Include-Android",
+                    "href": "/unity/include-android",
                     "pages": [
                         {
                             "title": "Google Play data disclosure",
-                            "href": "/general/Google-Play-data-disclosure"
+                            "href": "/general/google-play-data-disclosure"
                         }
                     ]
                 },
                 {
                     "group": "Include iOS",
-                    "href": "/Unity/Include-iOS",
+                    "href": "/unity/include-ios",
                     "pages": [
                         {
                             "title": "App Store data disclosure",
-                            "href": "/general/AppStore-data-disclosure"
+                            "href": "/general/appstore-data-disclosure"
                         }
                     ]
                 },
                 {
                     "group": "Initialization",
-                    "href": "/Unity/Initialize-CAS",
+                    "href": "/unity/initialize-cas",
                     "pages": [
                         {
                             "title": "Inspector",
-                            "href": "/Unity/Manager-Ad-object"
+                            "href": "/unity/manager-ad-object"
                         },
                         {
                             "title": "User Consent Flow",
-                            "href": "/Unity/User-Consent-Flow"
+                            "href": "/unity/user-consent-flow"
                         }
                     ]
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/Unity/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/unity/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -457,51 +457,51 @@
             "pages": [
                 {
                     "group": "Banner Ad",
-                    "href": "/Unity/Banner-Ads",
+                    "href": "/unity/banner-ads",
                     "pages": [
                         {
                             "title": "Inspector",
-                            "href": "/Unity/Banner-Ad-object"
+                            "href": "/unity/banner-ad-object"
                         }
                     ]
                 },
                 {
                     "group": "App Open Ad",
-                    "href": "/Unity/App-Open-Ads",
+                    "href": "/unity/app-open-ads",
                     "pages": [
                         {
                             "title": "Inspector",
-                            "href": "/Unity/App-Open-Ad-object"
+                            "href": "/unity/app-open-ad-object"
                         }
                     ]
                 },
                 {
                     "group": "Interstitial Ad",
-                    "href": "/Unity/Interstitial-Ads",
+                    "href": "/unity/interstitial-ads",
                     "pages": [
                         {
                             "title": "Inspector",
-                            "href": "/Unity/Interstitial-Ad-object"
+                            "href": "/unity/interstitial-ad-object"
                         }
                     ]
                 },
                 {
                     "group": "Rewarded Ad",
-                    "href": "/Unity/Rewarded-Ads",
+                    "href": "/unity/rewarded-ads",
                     "pages": [
                         {
                             "title": "Inspector",
-                            "href": "/Unity/Rewarded-Ad-object"
+                            "href": "/unity/rewarded-ad-object"
                         }
                     ]
                 },
                 {
                     "group": "App Return Ad",
-                    "href": "/Unity/App-Return-Ad",
+                    "href": "/unity/app-return-ad",
                     "pages": [
                         {
                             "title": "Inspector",
-                            "href": "/Unity/Return-To-Play-Ad-Object"
+                            "href": "/unity/return-to-play-ad-object"
                         }
                     ]
                 }
@@ -513,23 +513,23 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/Unity/Targeting-options"
+                    "href": "/unity/targeting-options"
                 },
                 {
                     "title": "Other Options",
-                    "href": "/Unity/Other-Options"
+                    "href": "/unity/other-options"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/Unity/Impression-Level-Data"
+                    "href": "/unity/impression-level-data"
                 },
                 {
                     "title": "Purchase Info",
-                    "href": "/Unity/Purchase-Info"
+                    "href": "/unity/purchase-info"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -539,19 +539,19 @@
             "pages": [
                 {
                     "group": "Integration Checklist",
-                    "href": "/Unity/Publisher-Integrations",
+                    "href": "/unity/publisher-integrations",
                     "pages": [
                         {
                             "title": "CAS Publishing Hub",
-                            "href": "/Unity/CAS-Publishing-Hub-Integration"
+                            "href": "/unity/cas-publishing-hub-integration"
                         },
                         {
                             "title": "Firebase",
-                            "href": "/Unity/Firebase-Integration"
+                            "href": "/unity/firebase-integration"
                         },
                         {
                             "title": "Tenjin",
-                            "href": "/Unity/Tenjin-Integration"
+                            "href": "/unity/tenjin-integration"
                         }
                     ]
                 }
@@ -563,40 +563,40 @@
             "pages": [
                 {
                     "title": "Integration",
-                    "href": "/Flutter"
+                    "href": "/flutter"
                 },
                 {
                     "group": "Initialization",
-                    "href": "/Flutter/Initialize-CAS",
+                    "href": "/flutter/initialize-cas",
                     "pages": [
                         {
                             "title": "User Consent Flow",
-                            "href": "/Flutter/User-Consent-Flow"
+                            "href": "/flutter/user-consent-flow"
                         },
                         {
                             "title": "Test ads",
-                            "href": "/Flutter/Enabling-test-ads"
+                            "href": "/flutter/enabling-test-ads"
                         }
                     ]
                 },
                 {
                     "title": "Google Play data disclosure",
-                    "href": "/general/Google-Play-data-disclosure"
+                    "href": "/general/google-play-data-disclosure"
                 },
                 {
                     "title": "App Store data disclosure",
-                    "href": "/general/AppStore-data-disclosure"
+                    "href": "/general/appstore-data-disclosure"
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/Flutter/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/flutter/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -608,35 +608,35 @@
             "pages": [
                 {
                     "title": "App Open Ad",
-                    "href": "/Flutter/App-Open-Ads"
+                    "href": "/flutter/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/Flutter/Interstitial-Ads"
+                    "href": "/flutter/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/Flutter/Rewarded-Ads"
+                    "href": "/flutter/rewarded-ads"
                 },
                 {
                     "title": "Banner Ad",
-                    "href": "/Flutter/Banner-Ads"
+                    "href": "/flutter/banner-ads"
                 },
                 {
                     "group": "Native Ad",
-                    "href": "/Flutter/Native-Ads",
+                    "href": "/flutter/native-ads",
                     "pages": [
                         {
                             "title": "Native Ad templates",
-                            "href": "/Flutter/Native-Ads-templates"
+                            "href": "/flutter/native-ads-templates"
                         },
                         {
                             "title": "Android setup",
-                            "href": "/Flutter/Native-Ads-Android-Setup"
+                            "href": "/flutter/native-ads-android-setup"
                         },
                         {
                             "title": "iOS setup",
-                            "href": "/Flutter/Native-Ads-iOS-Setup"
+                            "href": "/flutter/native-ads-ios-setup"
                         }
                     ]
                 }
@@ -648,23 +648,23 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/Flutter/Targeting-options"
+                    "href": "/flutter/targeting-options"
                 },
                 {
                     "title": "Ad errors",
-                    "href": "/Flutter/Ad-errors"
+                    "href": "/flutter/ad-errors"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/Flutter/Impression-Level-Data"
+                    "href": "/flutter/impression-level-data"
                 },
                 {
                     "title": "Purchase Info",
-                    "href": "/Flutter/Purchase-Info"
+                    "href": "/flutter/purchase-info"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -674,40 +674,40 @@
             "pages": [
                 {
                     "title": "Integration",
-                    "href": "/KMP"
+                    "href": "/kmp"
                 },
                 {
                     "group": "Initialization",
-                    "href": "/KMP/Initialize-CAS",
+                    "href": "/kmp/initialize-cas",
                     "pages": [
                         {
                             "title": "User Consent Flow",
-                            "href": "/KMP/User-Consent-Flow"
+                            "href": "/kmp/user-consent-flow"
                         },
                         {
                             "title": "Test ads",
-                            "href": "/KMP/Enabling-test-ads"
+                            "href": "/kmp/enabling-test-ads"
                         }
                     ]
                 },
                 {
                     "title": "Google Play data disclosure",
-                    "href": "/general/Google-Play-data-disclosure"
+                    "href": "/general/google-play-data-disclosure"
                 },
                 {
                     "title": "App Store data disclosure",
-                    "href": "/general/AppStore-data-disclosure"
+                    "href": "/general/appstore-data-disclosure"
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/KMP/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/kmp/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -719,31 +719,31 @@
             "pages": [
                 {
                     "title": "App Open Ad",
-                    "href": "/KMP/App-Open-Ads"
+                    "href": "/kmp/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/KMP/Interstitial-Ads"
+                    "href": "/kmp/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/KMP/Rewarded-Ads"
+                    "href": "/kmp/rewarded-ads"
                 },
                 {
                     "title": "Banner Ad",
-                    "href": "/KMP/Banner-Ads"
+                    "href": "/kmp/banner-ads"
                 },
                 {
                     "group": "Native Ad",
-                    "href": "/KMP/Native-Ads",
+                    "href": "/kmp/native-ads",
                     "pages": [
                         {
                             "title": "Native Ad custom layout",
-                            "href": "/KMP/Native-Ads-layout"
+                            "href": "/kmp/native-ads-layout"
                         },
                         {
                             "title": "Native Ad templates",
-                            "href": "/KMP/Native-Ads-templates"
+                            "href": "/kmp/native-ads-templates"
                         }
                     ]
                 }
@@ -755,19 +755,19 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/KMP/Targeting-options"
+                    "href": "/kmp/targeting-options"
                 },
                 {
                     "title": "Ad errors",
-                    "href": "/KMP/Ad-errors"
+                    "href": "/kmp/ad-errors"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/KMP/Impression-Level-Data"
+                    "href": "/kmp/impression-level-data"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -777,64 +777,64 @@
             "pages": [
                 {
                     "title": "Integration",
-                    "href": "/Unreal"
+                    "href": "/unreal"
                 },
                 {
                     "title": "Configuration",
-                    "href": "/Unreal/Configuring-SDK"
+                    "href": "/unreal/configuring-sdk"
                 },
                 {
                     "group": "Include Android",
-                    "href": "/Unreal/Include-Android",
+                    "href": "/unreal/include-android",
                     "pages": [
                         {
                             "title": "Google Play data disclosure",
-                            "href": "/general/Google-Play-data-disclosure"
+                            "href": "/general/google-play-data-disclosure"
                         }
                     ]
                 },
                 {
                     "group": "Include iOS",
-                    "href": "/Unreal/Include-iOS",
+                    "href": "/unreal/include-ios",
                     "pages": [
                         {
                             "title": "App Store data disclosure",
-                            "href": "/general/AppStore-data-disclosure"
+                            "href": "/general/appstore-data-disclosure"
                         }
                     ]
                 },
                 {
                     "group": "Initialization",
-                    "href": "/Unreal/Initialize-CAS",
+                    "href": "/unreal/initialize-cas",
                     "pages": [
                         {
                             "title": "Test ads",
-                            "href": "/Unreal/Enabling-test-ads"
+                            "href": "/unreal/enabling-test-ads"
                         },
                         {
                             "title": "Privacy Regulations",
-                            "href": "/Unreal/Privacy-Regulations"
+                            "href": "/unreal/privacy-regulations"
                         },
                         {
                             "title": "User Consent Flow",
-                            "href": "/Unreal/User-Consent-Flow"
+                            "href": "/unreal/user-consent-flow"
                         }
                     ]
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "title": "FAQ",
-                    "href": "/Unreal/FAQ"
+                    "href": "/unreal/faq"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/Unreal/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/unreal/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -846,23 +846,23 @@
             "pages": [
                 {
                     "title": "Banner Ad",
-                    "href": "/Unreal/Banner-Ads"
+                    "href": "/unreal/banner-ads"
                 },
                 {
                     "title": "MREC Ad",
-                    "href": "/Unreal/MREC-Ads"
+                    "href": "/unreal/mrec-ads"
                 },
                 {
                     "title": "App Open Ad",
-                    "href": "/Unreal/App-Open-Ads"
+                    "href": "/unreal/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/Unreal/Interstitial-Ads"
+                    "href": "/unreal/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/Unreal/Rewarded-Ads"
+                    "href": "/unreal/rewarded-ads"
                 }
             ]
         },
@@ -872,15 +872,15 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/Unreal/Targeting-options"
+                    "href": "/unreal/targeting-options"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/Unreal/Impression-Level-Data"
+                    "href": "/unreal/impression-level-data"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -890,40 +890,40 @@
             "pages": [
                 {
                     "title": "Integration",
-                    "href": "/ReactNative"
+                    "href": "/reactnative"
                 },
                 {
                     "group": "Initialization",
-                    "href": "/ReactNative/Initialize-CAS",
+                    "href": "/reactnative/initialize-cas",
                     "pages": [
                         {
                             "title": "User Consent Flow",
-                            "href": "/ReactNative/User-Consent-Flow"
+                            "href": "/reactnative/user-consent-flow"
                         },
                         {
                             "title": "Test ads",
-                            "href": "/ReactNative/Enabling-test-ads"
+                            "href": "/reactnative/enabling-test-ads"
                         }
                     ]
                 },
                 {
                     "title": "Google Play data disclosure",
-                    "href": "/general/Google-Play-data-disclosure"
+                    "href": "/general/google-play-data-disclosure"
                 },
                 {
                     "title": "App Store data disclosure",
-                    "href": "/general/AppStore-data-disclosure"
+                    "href": "/general/appstore-data-disclosure"
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/ReactNative/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/reactnative/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -935,31 +935,31 @@
             "pages": [
                 {
                     "title": "App Open Ad",
-                    "href": "/ReactNative/App-Open-Ads"
+                    "href": "/reactnative/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/ReactNative/Interstitial-Ads"
+                    "href": "/reactnative/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/ReactNative/Rewarded-Ads"
+                    "href": "/reactnative/rewarded-ads"
                 },
                 {
                     "title": "Banner Ad",
-                    "href": "/ReactNative/Banner-Ads"
+                    "href": "/reactnative/banner-ads"
                 },
                 {
                     "group": "Native Ad",
-                    "href": "/ReactNative/Native-Ads",
+                    "href": "/reactnative/native-ads",
                     "pages": [
                         {
                             "title": "Native Ad templates",
-                            "href": "/ReactNative/Native-Ads-Templates"
+                            "href": "/reactnative/native-ads-templates"
                         },
                         {
                             "title": "Manual Native Ad",
-                            "href": "/ReactNative/Native-Ad-Manual"
+                            "href": "/reactnative/native-ad-manual"
                         }
                     ]
                 }
@@ -971,19 +971,19 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/ReactNative/Targeting-options"
+                    "href": "/reactnative/targeting-options"
                 },
                 {
                     "title": "Ad errors",
-                    "href": "/ReactNative/Ad-errors"
+                    "href": "/reactnative/ad-errors"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/ReactNative/Impression-Level-Data"
+                    "href": "/reactnative/impression-level-data"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -993,40 +993,40 @@
             "pages": [
                 {
                     "title": "Integration",
-                    "href": "/Cordova"
+                    "href": "/cordova"
                 },
                 {
                     "group": "Initialization",
-                    "href": "/Cordova/Initialize-CAS",
+                    "href": "/cordova/initialize-cas",
                     "pages": [
                         {
                             "title": "User Consent Flow",
-                            "href": "/Cordova/User-Consent-Flow"
+                            "href": "/cordova/user-consent-flow"
                         },
                         {
                             "title": "Test ads",
-                            "href": "/Cordova/Enabling-test-ads"
+                            "href": "/cordova/enabling-test-ads"
                         }
                     ]
                 },
                 {
                     "title": "Google Play data disclosure",
-                    "href": "/general/Google-Play-data-disclosure"
+                    "href": "/general/google-play-data-disclosure"
                 },
                 {
                     "title": "App Store data disclosure",
-                    "href": "/general/AppStore-data-disclosure"
+                    "href": "/general/appstore-data-disclosure"
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 },
                 {
                     "group": "Additional mediation steps",
                     "pages": [
                         {
                             "title": "Meta Audience Network",
-                            "href": "/Cordova/Additional-Meta-AudienceNetwork-steps"
+                            "href": "/cordova/additional-meta-audiencenetwork-steps"
                         }
                     ]
                 }
@@ -1038,23 +1038,23 @@
             "pages": [
                 {
                     "title": "App Open Ad",
-                    "href": "/Cordova/App-Open-Ads"
+                    "href": "/cordova/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/Cordova/Interstitial-Ads"
+                    "href": "/cordova/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/Cordova/Rewarded-Ads"
+                    "href": "/cordova/rewarded-ads"
                 },
                 {
                     "title": "Banner Ad",
-                    "href": "/Cordova/Banner-Ads"
+                    "href": "/cordova/banner-ads"
                 },
                 {
                     "title": "MRec Ad",
-                    "href": "/Cordova/MRec-Ads"
+                    "href": "/cordova/mrec-ads"
                 }
             ]
         },
@@ -1064,19 +1064,19 @@
             "pages": [
                 {
                     "title": "Targeting Options",
-                    "href": "/Cordova/Targeting-options"
+                    "href": "/cordova/targeting-options"
                 },
                 {
                     "title": "Ad errors",
-                    "href": "/Cordova/Ad-errors"
+                    "href": "/cordova/ad-errors"
                 },
                 {
                     "title": "Impression Level Data",
-                    "href": "/Cordova/Impression-Level-Data"
+                    "href": "/cordova/impression-level-data"
                 },
                 {
                     "title": "Reporting API",
-                    "href": "/general/ReportingAPI"
+                    "href": "/general/reportingapi"
                 }
             ]
         },
@@ -1086,35 +1086,35 @@
             "pages": [
                 {
                     "title": "Integration",
-                    "href": "/Construct"
+                    "href": "/construct"
                 },
                 {
                     "title": "Build",
-                    "href": "/Construct/Build"
+                    "href": "/construct/build"
                 },
                 {
                     "title": "Automation Options",
-                    "href": "/Construct/Automation-Options"
+                    "href": "/construct/automation-options"
                 },
                 {
                     "title": "Development Options",
-                    "href": "/Construct/Development-Options"
+                    "href": "/construct/development-options"
                 },
                 {
                     "title": "User Consent Flow",
-                    "href": "/Construct/User-Consent-Flow"
+                    "href": "/construct/user-consent-flow"
                 },
                 {
                     "title": "Google Play data disclosure",
-                    "href": "/general/Google-Play-data-disclosure"
+                    "href": "/general/google-play-data-disclosure"
                 },
                 {
                     "title": "App Store data disclosure",
-                    "href": "/general/AppStore-data-disclosure"
+                    "href": "/general/appstore-data-disclosure"
                 },
                 {
                     "title": "App-ads.txt",
-                    "href": "/general/Authorized-Sellers-for-Apps"
+                    "href": "/general/authorized-sellers-for-apps"
                 }
             ]
         },
@@ -1124,23 +1124,23 @@
             "pages": [
                 {
                     "title": "App Open Ad",
-                    "href": "/Construct/App-Open-Ads"
+                    "href": "/construct/app-open-ads"
                 },
                 {
                     "title": "Interstitial Ad",
-                    "href": "/Construct/Interstitial-Ads"
+                    "href": "/construct/interstitial-ads"
                 },
                 {
                     "title": "Rewarded Ad",
-                    "href": "/Construct/Rewarded-Ads"
+                    "href": "/construct/rewarded-ads"
                 },
                 {
                     "title": "Banner Ad",
-                    "href": "/Construct/Banner-Ads"
+                    "href": "/construct/banner-ads"
                 },
                 {
                     "title": "MRec Ad",
-                    "href": "/Construct/MRec-Ads"
+                    "href": "/construct/mrec-ads"
                 }
             ]
         }
@@ -1200,5 +1200,20 @@
             "tab": "construct",
             "href": "https://github.com/cleveradssolutions/CAS-Construct/releases"
         }
-    ]
+    ],
+    "redirects": {
+        "/Android": "/android",
+        "/Construct": "/construct",
+        "/Cordova": "/cordova",
+        "/Flutter": "/flutter",
+        "/KMP": "/kmp",
+        "/ReactNative": "/reactnative",
+        "/Unity": "/unity",
+        "/Unreal": "/unreal",
+        "/iOS": "/ios",
+        "/general/Google-Play-data-disclosure": "/general/google-play-data-disclosure",
+        "/general/Authorized-Sellers-for-Apps": "/general/authorized-sellers-for-apps",
+        "/general/AppStore-data-disclosure": "/general/appstore-data-disclosure",
+        "/general/ReportingAPI": "/general/reportingapi"
+    }
 }

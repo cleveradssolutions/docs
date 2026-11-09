@@ -1,7 +1,7 @@
 # For agents that are not Claude
 
 This repository holds the CAS.AI documentation, published at
-`https://docs.page/cleveradssolutions/docs`, and, under `plugins/`, agent skills for
+`https://cleveradssolutions.docs.page/docs`, and, under `plugins/`, agent skills for
 integrating the SDK.
 
 The skills are plain Markdown. There is no runtime, no tool call and no Claude specific
@@ -45,7 +45,7 @@ them as you would any relative link.
    the main procedure can stay small.
 4. Fetch the documentation page a reference names when you need the full detail or the
    current version numbers. The whole documentation is also published for agents at
-   `https://docs.page/cleveradssolutions/docs/llms.txt`, with the full text at
+   `https://cleveradssolutions.docs.page/docs/llms.txt`, with the full text at
    `llms-full.txt`, which is large, so prefer single pages.
 
 ## If you are copying this into a project

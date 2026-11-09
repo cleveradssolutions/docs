@@ -313,7 +313,7 @@ For a Families app also remove the advertising ID permission: Settings window > 
 
 ## 5. Initialization in code (only on an explicit B for question 7, or when step 5b needs it)
 
-Skip this step when the answer to question 7 is A and step 5b does not apply: write no ad code, and tell the human in step 9 that initialization is theirs (page **Initialize CAS** at `https://docs.page/cleveradssolutions/docs/Unity/`).
+Skip this step when the answer to question 7 is A and step 5b does not apply: write no ad code, and tell the human in step 9 that initialization is theirs (page **Initialize CAS** at `https://cleveradssolutions.docs.page/docs/unity/`).
 
 Initialize the manager **once**, at app start, before any ad call, with an ads manager class written after the `CASAdsManager` reference in step 8. Write the class and set up its scene object here, in step 5; step 8 then only adds the calls. The settings asset already holds the CAS ID and formats.
 
@@ -337,7 +337,7 @@ First, **before you delete anything**, collect what you will need later and keep
    - the legacy Unity Ads package `com.unity.ads` is an error for CAS: remove it too.
    Never delete anything that was not in the approved list and never delete outside `Assets/` and `Packages/manifest.json`. Keep EDM4U, Firebase, attribution, analytics and purchase SDKs.
 2. **Remove the keys it left** in `Assets/Plugins/Android/AndroidManifest.xml` and `Info.plist` (for example the AdMob or AppLovin app ID) only if they are clearly that SDK's, and tell the human each one you removed. If unsure, leave it and report it.
-3. **Move the game's ad calls to CAS.** Use the calls the game already has as the list of placements: every old interstitial, rewarded, banner and app open call becomes the matching CAS call, in the same place, with the same reward and callback logic. Read the CAS pages for exact calls: **Interstitial Ads**, **Rewarded Ads**, **Banner Ads**, **App Open Ads** (`https://docs.page/cleveradssolutions/docs/Unity/`).
+3. **Move the game's ad calls to CAS.** Use the calls the game already has as the list of placements: every old interstitial, rewarded, banner and app open call becomes the matching CAS call, in the same place, with the same reward and callback logic. Read the CAS pages for exact calls: **Interstitial Ads**, **Rewarded Ads**, **Banner Ads**, **App Open Ads** (`https://cleveradssolutions.docs.page/docs/unity/`).
    - If the game has its own ad class, keep it and change only what is inside; the rest of the game then does not change.
    - If the game calls the old SDK directly from many places, create one small ad class once (written after the `CASAdsManager` reference in step 8, in step 5) and point the calls at it.
    - Old SDK initialization and its ad unit IDs go away: CAS does not use them. Do not copy IDs into CAS.
@@ -351,7 +351,7 @@ First, **before you delete anything**, collect what you will need later and keep
 
 ## 6. Consent and privacy
 
-CAS shows its own consent flow where the law requires it (the initialization result has `isConsentRequired` and `consentFlowStatus`). Read the CAS pages **User Consent Flow** and **Privacy Regulations** at `https://docs.page/cleveradssolutions/docs/Unity/` and tell the human what they need to provide (privacy policy link, Info.plist text on iOS). Do not change the defaults without the human's decision. For a Families app set the audience as in step 3.
+CAS shows its own consent flow where the law requires it (the initialization result has `isConsentRequired` and `consentFlowStatus`). Read the CAS pages **User Consent Flow** and **Privacy Regulations** at `https://cleveradssolutions.docs.page/docs/unity/` and tell the human what they need to provide (privacy policy link, Info.plist text on iOS). Do not change the defaults without the human's decision. For a Families app set the audience as in step 3.
 
 ---
 
@@ -367,7 +367,7 @@ CAS shows its own consent flow where the law requires it (the initialization res
 
 ## 8. Placing ads in the game (only on an explicit yes from step 0)
 
-Read the CAS pages **Banner Ads**, **Interstitial Ads**, **Rewarded Ads**, **App Open Ads** at `https://docs.page/cleveradssolutions/docs/Unity/`, then:
+Read the CAS pages **Banner Ads**, **Interstitial Ads**, **Rewarded Ads**, **App Open Ads** at `https://cleveradssolutions.docs.page/docs/unity/`, then:
 
 1. Map the game loop: level complete, game over, return to the menu, pause, continue prompts, shops, reward buttons.
 2. **Propose before editing**: a short table (file, method, ad format, placement name) and get a yes.

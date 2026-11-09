@@ -123,7 +123,7 @@ it in the same pull request. When the two disagree, the documentation is right a
 skill is the bug.
 
 The documentation is also available to agents directly, as
-[llms.txt](https://docs.page/cleveradssolutions/docs/llms.txt) and `llms-full.txt`. Those
+[llms.txt](https://cleveradssolutions.docs.page/docs/llms.txt) and `llms-full.txt`. Those
 answer "where is it written". The skills answer "in what order, what to ask first and what
 never to do", which is not documentation and does not belong in `docs/`.
 
