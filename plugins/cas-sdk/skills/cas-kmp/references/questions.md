@@ -61,6 +61,7 @@ the publisher sees: it says how to pick the Recommended option.
 | 19 | A minimum interval between interstitials? | `interstitialAd.minInterval` exists for it, and `restartInterval()` is how a rewarded or app open impression resets it. |
 | 20 | Server-side reward verification? | `rewardedAd.serverSideVerificationData` carries the user identifier, and the publisher's backend has to be ready for the callback. |
 | 21 | Does an Intel Mac have to build this? | There is no x86_64 simulator target. It is a hardware answer, and it is better given before the verification step than during it. |
+| 22 | After a migration, do the reports have to stay comparable with the old ones? | Affects placement names and the impression level data wiring. |
 
 ## What the publisher does, not the agent
 

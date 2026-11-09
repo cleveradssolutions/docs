@@ -59,6 +59,7 @@ the publisher sees: it says how to pick the Recommended option.
 | 18 | In-app purchases reported to CAS? | A separate call, see the purchase page. Flutter is the only plugin platform with that page. |
 | 19 | A minimum interval between interstitials, or a banner refresh interval? | Defaults exist; a publisher with a pacing policy will want their own. |
 | 20 | A trial ad-free interval after install? | `CASMobileAds.setTrialAdFreeInterval` exists for it, and it changes what a tester sees — an ad that does not show inside that window is correct behaviour, not a bug. |
+| 21 | After a migration, do the reports have to stay comparable with the old ones? | Affects placement names and the impression level data wiring. |
 
 ## What the publisher does, not the agent
 

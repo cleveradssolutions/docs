@@ -59,6 +59,7 @@ the publisher sees: it says how to pick the Recommended option.
 | 18 | Impression level data needed for analytics? | Changes what is wired at initialization. |
 | 19 | A minimum interval between interstitials? | `InterstitialAd.setMinInterval` exists for it, and the timer is shared across instances while the value is per instance. |
 | 20 | Should a rewarded ad fall back to an interstitial when there is no fill? | `RewardedAd.setExtraFillByInterstitialAd(true)`. The reward event still fires, which is a product decision rather than a technical one. |
+| 21 | After a migration, do the reports have to stay comparable with the old ones? | Affects placement names and the impression level data wiring. |
 
 ## What the publisher does, not the agent
 

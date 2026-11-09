@@ -114,6 +114,9 @@ that affect other projects. Get agreement, then apply.
 
 In this order, because each step needs the previous one:
 
+0. **Removing the previous mediation**, when this is a migration -
+   [references/migration.md](references/migration.md). It comes first: the old SDK goes
+   before the plugin arrives.
 1. **The plugin, the module, and the per-platform prerequisites** -
    [references/setup-plugin.md](references/setup-plugin.md)
 2. **Initialization and consent** - [references/initialize.md](references/initialize.md)

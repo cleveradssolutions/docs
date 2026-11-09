@@ -63,6 +63,7 @@ the publisher sees: it says how to pick the Recommended option.
 | 20 | A fixed banner position? | `SetBannerAdPosition` takes an `ECASPosition`, defaults to bottom centre, and changing it does not reload the ad. Worth agreeing before the HUD is laid out. |
 | 21 | Impression level data needed for analytics? | `OnAdsImpression` with `FCASImpressionInfo` carries the revenue and the network. Changes what is wired at initialization. |
 | 22 | Is the build machine Windows? | The project folder and the engine installation must be on the same drive, or paths fail to resolve during packaging. |
+| 23 | After a migration, do the reports have to stay comparable with the old ones? | Affects placement names and the impression level data wiring. |
 
 ## What the publisher does, not the agent
 
