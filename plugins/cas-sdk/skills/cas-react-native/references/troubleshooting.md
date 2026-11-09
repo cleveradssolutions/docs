@@ -1,8 +1,8 @@
 # React Native: reading failures
 
 Canonical, in this repository:
-[docs/ReactNative/Ad-errors.mdx](../../../../../docs/ReactNative/Ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/ReactNative/Ad-errors`
+[docs/reactnative/ad-errors.mdx](../../../../../docs/reactnative/ad-errors.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/reactnative/ad-errors`
 
 Errors arrive on the failure listeners with a code and a message. The codes are the same
 numbers on every CAS platform; the constant names here are the `AdErrorCode` members below.
@@ -63,7 +63,7 @@ same handler. Navigate from the dismissed listener.
 ## When the answer is not here
 
 The native error pages carry the same codes with native wording and sometimes more detail:
-[docs/Android/Ad-errors.mdx](../../../../../docs/Android/Ad-errors.mdx) and
-[docs/iOS/Ad-errors.mdx](../../../../../docs/iOS/Ad-errors.mdx). The plugin is a thin layer,
+[docs/android/ad-errors.mdx](../../../../../docs/android/ad-errors.mdx) and
+[docs/ios/ad-errors.mdx](../../../../../docs/ios/ad-errors.mdx). The plugin is a thin layer,
 so a failure that makes no sense in TypeScript usually makes sense in the native log —
 `adb logcat` or the Xcode console, not the Metro output.

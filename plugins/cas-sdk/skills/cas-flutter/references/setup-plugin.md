@@ -1,6 +1,6 @@
 # Flutter: the package and the two native sides
 
-Canonical: [docs/Flutter/index.mdx](../../../../../docs/Flutter/index.mdx). Read it before
+Canonical: [docs/flutter/index.mdx](../../../../../docs/flutter/index.mdx). Read it before
 writing anything — the version numbers and the exact Gradle block live there, and they
 change.
 
@@ -81,8 +81,8 @@ iOS. Shipping one platform with a solution and the other without it is a common 
 mistake — the app earns on Android and shows nothing on iOS.
 
 The adapter tables are native, with no Flutter copy:
-[docs/Android/Mediated-Networks.mdx](../../../../../docs/Android/Mediated-Networks.mdx) and
-[docs/iOS/Mediated-Networks.mdx](../../../../../docs/iOS/Mediated-Networks.mdx), plus
+[docs/android/mediated-networks.mdx](../../../../../docs/android/mediated-networks.mdx) and
+[docs/ios/mediated-networks.mdx](../../../../../docs/ios/mediated-networks.mdx), plus
 `Adapters/README.md` in each native repository for the current versions.
 
 During development no ad network is needed at all: test ads work without them, which is

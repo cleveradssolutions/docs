@@ -1,7 +1,7 @@
 # React Native: the package and the two native sides
 
 Canonical:
-[docs/ReactNative/index.mdx](../../../../../docs/ReactNative/index.mdx). Read it before
+[docs/reactnative/index.mdx](../../../../../docs/reactnative/index.mdx). Read it before
 writing anything — the version numbers, the exact Gradle block and the full Maven repository
 list live there, and they change.
 
@@ -108,8 +108,8 @@ plugin options under Expo. Shipping one platform with a solution and the other w
 a common and silent mistake — the app earns on Android and shows nothing on iOS.
 
 The adapter tables are native, with no React Native copy:
-[docs/Android/Mediated-Networks.mdx](../../../../../docs/Android/Mediated-Networks.mdx) and
-[docs/iOS/Mediated-Networks.mdx](../../../../../docs/iOS/Mediated-Networks.mdx), plus
+[docs/android/mediated-networks.mdx](../../../../../docs/android/mediated-networks.mdx) and
+[docs/ios/mediated-networks.mdx](../../../../../docs/ios/mediated-networks.mdx), plus
 `Adapters/README.md` in each native repository for the current versions.
 
 During development no ad network is needed at all: test ads work without them, which is what

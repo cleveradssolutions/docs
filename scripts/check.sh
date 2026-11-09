@@ -107,6 +107,24 @@ for target in targets:
         for dirpath, _, files in os.walk(target):
             walked.append((dirpath, files))
 
+def exists_cased(path):
+    # macOS is case-insensitive, so os.path.exists() accepts docs/KMP/Banner-Ads.mdx
+    # for docs/kmp/banner-ads.mdx. Every page path is lowercase; check the real casing
+    # so a stale capitalised link fails here and not in CI.
+    path = os.path.normpath(path)
+    if not os.path.exists(path):
+        return False
+    head, tail = os.path.split(path)
+    while tail:
+        try:
+            if tail not in os.listdir(head or "."):
+                return False
+        except OSError:
+            return False
+        head, tail = os.path.split(head)
+    return True
+
+
 for dirpath, files in walked:
     for file in files:
         if not file.endswith(".md"):
@@ -118,7 +136,7 @@ for dirpath, files in walked:
             target = target.split("#")[0]
             if not target:
                 continue
-            if not os.path.exists(os.path.join(dirpath, target)):
+            if not exists_cased(os.path.join(dirpath, target)):
                 print("FAIL  %s links to missing %s" % (os.path.relpath(full, root), target))
                 ok = False
 

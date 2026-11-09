@@ -1,7 +1,7 @@
 # Kotlin Multiplatform: the library and the two platform setups
 
 Canonical:
-[docs/KMP/index.mdx](../../../../../docs/KMP/index.mdx). Read it before writing anything —
+[docs/kmp/index.mdx](../../../../../docs/kmp/index.mdx). Read it before writing anything —
 the version numbers, the exact Gradle block, the Swift Package product names and the full
 Maven repository list live there, and they change.
 
@@ -184,8 +184,8 @@ individual iOS adapters raise the minimum deployment target. Pick per platform r
 mirroring one list onto the other.
 
 The adapter tables are native, with no Kotlin Multiplatform copy:
-[docs/Android/Mediated-Networks.mdx](../../../../../docs/Android/Mediated-Networks.mdx) and
-[docs/iOS/Mediated-Networks.mdx](../../../../../docs/iOS/Mediated-Networks.mdx), plus
+[docs/android/mediated-networks.mdx](../../../../../docs/android/mediated-networks.mdx) and
+[docs/ios/mediated-networks.mdx](../../../../../docs/ios/mediated-networks.mdx), plus
 `Adapters/README.md` in each native repository for the current versions and, on iOS, the
 SPM column.
 

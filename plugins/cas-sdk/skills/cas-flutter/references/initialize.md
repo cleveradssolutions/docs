@@ -1,8 +1,8 @@
 # Flutter: initialization
 
 Canonical:
-[docs/Flutter/Initialize-CAS.mdx](../../../../../docs/Flutter/Initialize-CAS.mdx) and
-[docs/Flutter/Enabling-test-ads.mdx](../../../../../docs/Flutter/Enabling-test-ads.mdx).
+[docs/flutter/initialize-cas.mdx](../../../../../docs/flutter/initialize-cas.mdx) and
+[docs/flutter/enabling-test-ads.mdx](../../../../../docs/flutter/enabling-test-ads.mdx).
 Read the page for the current argument list; the shape below is what matters around it.
 
 One call does everything: the CAS ID, test mode, the audience, the consent flow and the

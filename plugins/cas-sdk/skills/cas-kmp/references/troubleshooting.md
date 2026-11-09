@@ -1,8 +1,8 @@
 # Kotlin Multiplatform: reading failures
 
 Canonical, in this repository:
-[docs/KMP/Ad-errors.mdx](../../../../../docs/KMP/Ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/KMP/Ad-errors`
+[docs/kmp/ad-errors.mdx](../../../../../docs/kmp/ad-errors.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/kmp/ad-errors`
 
 Failures arrive as a `CASError` on `onAdFailedToLoad`, `onAdFailedToShow`,
 `onBannerAdFailed` and `onNativeAdFailedToLoad`. `CASError` is a `data class` with `code`
@@ -102,7 +102,7 @@ delivered on the main thread, so no dispatch is needed inside them.
 tag in the log.
 
 The native error pages carry the same codes with native wording and sometimes more detail:
-[docs/Android/Ad-errors.mdx](../../../../../docs/Android/Ad-errors.mdx) and
-[docs/iOS/Ad-errors.mdx](../../../../../docs/iOS/Ad-errors.mdx). The plugin is a thin layer
+[docs/android/ad-errors.mdx](../../../../../docs/android/ad-errors.mdx) and
+[docs/ios/ad-errors.mdx](../../../../../docs/ios/ad-errors.mdx). The plugin is a thin layer
 over them, so a failure that makes no sense in Kotlin usually makes sense in the native log
 — `adb logcat` or the Xcode console, not the Gradle output.

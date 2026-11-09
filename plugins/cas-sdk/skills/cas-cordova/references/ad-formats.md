@@ -1,11 +1,11 @@
 # Cordova: ad formats
 
-Canonical, one page per format in [docs/Cordova/](../../../../../docs/Cordova):
-[Banner-Ads.mdx](../../../../../docs/Cordova/Banner-Ads.mdx),
-[MRec-Ads.mdx](../../../../../docs/Cordova/MRec-Ads.mdx),
-[Interstitial-Ads.mdx](../../../../../docs/Cordova/Interstitial-Ads.mdx),
-[Rewarded-Ads.mdx](../../../../../docs/Cordova/Rewarded-Ads.mdx),
-[App-Open-Ads.mdx](../../../../../docs/Cordova/App-Open-Ads.mdx).
+Canonical, one page per format in [docs/cordova/](../../../../../docs/cordova):
+[Banner-Ads.mdx](../../../../../docs/cordova/banner-ads.mdx),
+[MRec-Ads.mdx](../../../../../docs/cordova/mrec-ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/cordova/interstitial-ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/cordova/rewarded-ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/cordova/app-open-ads.mdx).
 Read the page for the format being added. **The notes below are the shape of the flow, not
 an API reference.** Every page shows the same flow three times — Promise, async/await and
 document events — so read the tab that matches the project's style.

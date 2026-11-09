@@ -1,11 +1,11 @@
 # React Native: ad formats
 
-Canonical, one page per format in [docs/ReactNative/](../../../../../docs/ReactNative):
-[Banner-Ads.mdx](../../../../../docs/ReactNative/Banner-Ads.mdx),
-[Interstitial-Ads.mdx](../../../../../docs/ReactNative/Interstitial-Ads.mdx),
-[Rewarded-Ads.mdx](../../../../../docs/ReactNative/Rewarded-Ads.mdx),
-[App-Open-Ads.mdx](../../../../../docs/ReactNative/App-Open-Ads.mdx),
-[Native-Ads.mdx](../../../../../docs/ReactNative/Native-Ads.mdx).
+Canonical, one page per format in [docs/reactnative/](../../../../../docs/reactnative):
+[Banner-Ads.mdx](../../../../../docs/reactnative/banner-ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/reactnative/interstitial-ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/reactnative/rewarded-ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/reactnative/app-open-ads.mdx),
+[Native-Ads.mdx](../../../../../docs/reactnative/native-ads.mdx).
 Read the page for the format being added. **The notes below are the shape of the flow, not
 an API reference.**
 
@@ -85,9 +85,9 @@ the button looks broken.
 ## Native ads need more than the component
 
 Native has a templates page and a manual path:
-[Native-Ads-Templates.mdx](../../../../../docs/ReactNative/Native-Ads-Templates.mdx) for the
+[Native-Ads-Templates.mdx](../../../../../docs/reactnative/native-ads-templates.mdx) for the
 ready-made layouts, and
-[Native-Ad-Manual.mdx](../../../../../docs/ReactNative/Native-Ad-Manual.mdx) when the
+[Native-Ad-Manual.mdx](../../../../../docs/reactnative/native-ad-manual.mdx) when the
 publisher wants their own. The manual path means binding every required asset and honouring
 the ad choices placement; it is the one format where a half-done job is a policy problem and
 not just an empty space. Plan it before promising the format.

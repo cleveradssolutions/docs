@@ -1,8 +1,8 @@
 # React Native: consent and privacy
 
 Canonical, in this repository:
-[docs/ReactNative/User-Consent-Flow.mdx](../../../../../docs/ReactNative/User-Consent-Flow.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/ReactNative/User-Consent-Flow`
+[docs/reactnative/user-consent-flow.mdx](../../../../../docs/reactnative/user-consent-flow.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/reactnative/user-consent-flow`
 
 Two mutually exclusive paths. Pick one in the interview and never mix them.
 
@@ -58,11 +58,11 @@ asks, links the page, and does not decide.
 
 Both stores ask the publisher questions that an integration changes the answers to, and those
 pages are the native ones:
-[Google-Play-data-disclosure.mdx](../../../../../docs/general/Google-Play-data-disclosure.mdx)
+[Google-Play-data-disclosure.mdx](../../../../../docs/general/google-play-data-disclosure.mdx)
 and
-[AppStore-data-disclosure.mdx](../../../../../docs/general/AppStore-data-disclosure.mdx), plus
-[Apple-Ad-Attribution.mdx](../../../../../docs/general/Apple-Ad-Attribution.mdx) and
-[Apple-Kids-Category.mdx](../../../../../docs/general/Apple-Kids-Category.mdx). Name them in
+[AppStore-data-disclosure.mdx](../../../../../docs/general/appstore-data-disclosure.mdx), plus
+[Apple-Ad-Attribution.mdx](../../../../../docs/general/apple-ad-attribution.mdx) and
+[Apple-Kids-Category.mdx](../../../../../docs/general/apple-kids-category.mdx). Name them in
 the hand-over; the publisher answers them.
 
 ## Rules that hold on both paths

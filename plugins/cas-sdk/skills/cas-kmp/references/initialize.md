@@ -1,9 +1,9 @@
 # Kotlin Multiplatform: initialization
 
 Canonical:
-[docs/KMP/Initialize-CAS.mdx](../../../../../docs/KMP/Initialize-CAS.mdx)
+[docs/kmp/initialize-cas.mdx](../../../../../docs/kmp/initialize-cas.mdx)
 and
-[docs/KMP/Enabling-test-ads.mdx](../../../../../docs/KMP/Enabling-test-ads.mdx).
+[docs/kmp/enabling-test-ads.mdx](../../../../../docs/kmp/enabling-test-ads.mdx).
 Read the page for the current argument list; the shape below is what matters around it.
 
 One call, from `commonMain`. It returns immediately and reports through a listener:
@@ -103,7 +103,7 @@ unless the publisher wants them there.
   say so in the hand-over or it gets filed as a bug.
 - `CASMobileAds.targetingOptions` — `userId`, `age`, `gender`, `keywords`, `contentUrl`,
   `locationCollectionEnabled`, all optional, all from
-  [Targeting-options.mdx](../../../../../docs/KMP/Targeting-options.mdx). Set them before
+  [Targeting-options.mdx](../../../../../docs/kmp/targeting-options.mdx). Set them before
   loading ads, and only with values the publisher actually has.
 - `mediationExtras = mapOf(...)` — key-value settings passed to the networks, used only
   when a network's documentation asks for one.

@@ -1,8 +1,8 @@
 # Flutter: reading failures
 
 Canonical, in this repository:
-[docs/Flutter/Ad-errors.mdx](../../../../../docs/Flutter/Ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/Flutter/Ad-errors`
+[docs/flutter/ad-errors.mdx](../../../../../docs/flutter/ad-errors.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/flutter/ad-errors`
 
 Errors arrive as an `AdError` on `onAdFailedToLoad` and `onAdFailedToShow`: `code` for the
 machine, `message` for the human. The codes are the same numbers on every CAS platform; the
@@ -59,6 +59,6 @@ and read the native console — `flutter logs` shows it — rather than guessing
 ## When the answer is not here
 
 The native error pages carry the same codes with native wording and sometimes more detail:
-[docs/Android/Ad-errors.mdx](../../../../../docs/Android/Ad-errors.mdx) and
-[docs/iOS/Ad-errors.mdx](../../../../../docs/iOS/Ad-errors.mdx). The plugin is a thin layer,
+[docs/android/ad-errors.mdx](../../../../../docs/android/ad-errors.mdx) and
+[docs/ios/ad-errors.mdx](../../../../../docs/ios/ad-errors.mdx). The plugin is a thin layer,
 so a failure that makes no sense in Dart usually makes sense in the native log.

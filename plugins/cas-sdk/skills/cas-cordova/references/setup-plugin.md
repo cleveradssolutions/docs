@@ -1,7 +1,7 @@
 # Cordova: the plugin and its variables
 
 Canonical:
-[docs/Cordova/index.mdx](../../../../../docs/Cordova/index.mdx). Read it before writing
+[docs/cordova/index.mdx](../../../../../docs/cordova/index.mdx). Read it before writing
 anything — the minimum platform versions, the exact variable names and the solution values
 live there, and they change.
 
@@ -89,8 +89,8 @@ separated by a comma, a semicolon or a space:
 > name exactly as the iOS adapters table's first column writes it — `GoogleAds` — and
 > Android uses the Android table's first column — `googleAds`. Copying one list into the
 > other variable is wrong even though it looks right. Take each list from its own table:
-> [docs/Android/Mediated-Networks.mdx](../../../../../docs/Android/Mediated-Networks.mdx)
-> and [docs/iOS/Mediated-Networks.mdx](../../../../../docs/iOS/Mediated-Networks.mdx),
+> [docs/android/mediated-networks.mdx](../../../../../docs/android/mediated-networks.mdx)
+> and [docs/ios/mediated-networks.mdx](../../../../../docs/ios/mediated-networks.mdx),
 > plus `Adapters/README.md` in each native repository for the current list.
 
 The two lists are also expected to differ: not every network ships an adapter for both
@@ -101,7 +101,7 @@ what makes it tempting to stop here. Say plainly in the hand-over that the solut
 be on, on both platforms, before release.
 
 Some networks need extra steps — Meta Audience Network has its own page,
-[Additional-Meta-AudienceNetwork-steps.mdx](../../../../../docs/Cordova/Additional-Meta-AudienceNetwork-steps.mdx).
+[Additional-Meta-AudienceNetwork-steps.mdx](../../../../../docs/cordova/additional-meta-audiencenetwork-steps.mdx).
 
 ## 5. The advertising identifier, also per platform
 

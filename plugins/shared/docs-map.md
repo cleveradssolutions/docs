@@ -46,26 +46,29 @@ a variable resolved from `docs.json`, where the current version numbers live.
 ## Pages, plugin platforms
 
 Each plugin platform has its own section under `docs/`, and the page names repeat: `index.mdx`
-for setup, then `Initialize-CAS.mdx`, `Enabling-test-ads.mdx`, `User-Consent-Flow.mdx`,
-`Banner-Ads.mdx`, `Interstitial-Ads.mdx`, `Rewarded-Ads.mdx`, `App-Open-Ads.mdx`,
-`Targeting-options.mdx`, `Impression-Level-Data.mdx`, `Ad-errors.mdx` and
-`Additional-Meta-AudienceNetwork-steps.mdx`. So the path is
-`docs/<Platform>/<Page>.mdx` with `<Platform>` one of `Flutter`, `ReactNative`, `KMP`,
-`Cordova`, `Unreal`, `Construct`, `Unity`.
+for setup, then `initialize-cas.mdx`, `enabling-test-ads.mdx`, `user-consent-flow.mdx`,
+`banner-ads.mdx`, `interstitial-ads.mdx`, `rewarded-ads.mdx`, `app-open-ads.mdx`,
+`targeting-options.mdx`, `impression-level-data.mdx`, `ad-errors.mdx` and
+`additional-meta-audiencenetwork-steps.mdx`. So the path is
+`docs/<platform>/<page>.mdx` with `<platform>` one of `flutter`, `reactnative`, `kmp`,
+`cordova`, `unreal`, `construct`, `unity`.
+
+**Every path under `docs/` is lowercase**, directory and file name alike, and so is every
+published URL. A capitalised path is from before that change and does not resolve.
 
 What each one has on top of that list, or lacks, is where the platforms actually differ:
 
 | Platform | Also has | Does not have |
 |---|---|---|
-| `Flutter` | `Native-Ads.mdx`, `Native-Ads-templates.mdx`, `Native-Ads-Android-Setup.mdx`, `Native-Ads-iOS-Setup.mdx`, `Purchase-Info.mdx` | — |
-| `ReactNative` | `Native-Ads.mdx`, `Native-Ads-Templates.mdx`, `Native-Ad-Manual.mdx` | `Purchase-Info.mdx` |
-| `KMP` | `Native-Ads.mdx`, `Native-Ads-templates.mdx`, `Native-Ads-layout.mdx` | `Purchase-Info.mdx` |
-| `Cordova` | `MRec-Ads.mdx` | native ads, `Purchase-Info.mdx` |
-| `Unreal` | `Configuring-SDK.mdx`, `Include-Android.mdx`, `Include-iOS.mdx`, `MREC-Ads.mdx`, `Verify-Integration.mdx`, `Privacy-Regulations.mdx`, `FAQ.mdx`, `Google-Plays-Families-Policy.mdx`, `Building-Unreal-Engine-4-with-XCode-14.mdx` | native ads, `Purchase-Info.mdx`, `Ad-errors.mdx` |
-| `Construct` | `Build.mdx`, `Development-Options.mdx`, `Automation-Options.mdx`, `MRec-Ads.mdx` | native ads, `Targeting-options.mdx`, `Initialize-CAS.mdx`, `Enabling-test-ads.mdx`, `Ad-errors.mdx`, `Impression-Level-Data.mdx` |
+| `flutter` | `native-ads.mdx`, `native-ads-templates.mdx`, `native-ads-android-setup.mdx`, `native-ads-ios-setup.mdx`, `purchase-info.mdx` | — |
+| `reactnative` | `native-ads.mdx`, `native-ads-templates.mdx`, `native-ad-manual.mdx` | `purchase-info.mdx` |
+| `kmp` | `native-ads.mdx`, `native-ads-templates.mdx`, `native-ads-layout.mdx` | `purchase-info.mdx` |
+| `cordova` | `mrec-ads.mdx` | native ads, `purchase-info.mdx` |
+| `unreal` | `configuring-sdk.mdx`, `include-android.mdx`, `include-ios.mdx`, `mrec-ads.mdx`, `verify-integration.mdx`, `privacy-regulations.mdx`, `faq.mdx`, `google-plays-families-policy.mdx`, `building-unreal-engine-4-with-xcode-14.mdx` | native ads, `purchase-info.mdx`, `ad-errors.mdx` |
+| `construct` | `build.mdx`, `development-options.mdx`, `automation-options.mdx`, `mrec-ads.mdx` | native ads, `targeting-options.mdx`, `initialize-cas.mdx`, `enabling-test-ads.mdx`, `ad-errors.mdx`, `impression-level-data.mdx` |
 
-A plugin platform still rests on the two native SDKs, so the pages under `docs/Android/` and
-`docs/iOS/` stay relevant for anything the plugin does not wrap: the ad network tables, the
+A plugin platform still rests on the two native SDKs, so the pages under `docs/android/` and
+`docs/ios/` stay relevant for anything the plugin does not wrap: the ad network tables, the
 store disclosures and the families policy pages have no plugin copy.
 
 ## Other guides for agents in this repository

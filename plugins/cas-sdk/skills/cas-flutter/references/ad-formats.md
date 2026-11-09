@@ -1,11 +1,11 @@
 # Flutter: ad formats
 
-Canonical, one page per format in [docs/Flutter/](../../../../../docs/Flutter):
-[Banner-Ads.mdx](../../../../../docs/Flutter/Banner-Ads.mdx),
-[Interstitial-Ads.mdx](../../../../../docs/Flutter/Interstitial-Ads.mdx),
-[Rewarded-Ads.mdx](../../../../../docs/Flutter/Rewarded-Ads.mdx),
-[App-Open-Ads.mdx](../../../../../docs/Flutter/App-Open-Ads.mdx),
-[Native-Ads.mdx](../../../../../docs/Flutter/Native-Ads.mdx).
+Canonical, one page per format in [docs/flutter/](../../../../../docs/flutter):
+[Banner-Ads.mdx](../../../../../docs/flutter/banner-ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/flutter/interstitial-ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/flutter/rewarded-ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/flutter/app-open-ads.mdx),
+[Native-Ads.mdx](../../../../../docs/flutter/native-ads.mdx).
 Read the page for the format being added. **The notes below are the shape of the flow, not
 an API reference.** Every argument name is taken from the page or from
 `https://pub.dev/documentation/clever_ads_solutions/latest/`, never from memory.
@@ -70,10 +70,10 @@ and the button looks broken.
 ## Native ads need native setup
 
 Native is the one format with work outside Dart, on both platforms:
-[Native-Ads-Android-Setup.mdx](../../../../../docs/Flutter/Native-Ads-Android-Setup.mdx)
+[Native-Ads-Android-Setup.mdx](../../../../../docs/flutter/native-ads-android-setup.mdx)
 and
-[Native-Ads-iOS-Setup.mdx](../../../../../docs/Flutter/Native-Ads-iOS-Setup.mdx), plus a
+[Native-Ads-iOS-Setup.mdx](../../../../../docs/flutter/native-ads-ios-setup.mdx), plus a
 template per platform,
-[Native-Ads-templates.mdx](../../../../../docs/Flutter/Native-Ads-templates.mdx). Plan that
+[Native-Ads-templates.mdx](../../../../../docs/flutter/native-ads-templates.mdx). Plan that
 work before promising the format; it is not a Dart-only change, and it is why native is
 worth asking about separately rather than bundling into "all formats".

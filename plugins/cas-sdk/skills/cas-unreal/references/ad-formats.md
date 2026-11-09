@@ -1,11 +1,11 @@
 # Unreal: ad formats
 
-Canonical, one page per format in [docs/Unreal/](../../../../../docs/Unreal):
-[Banner-Ads.mdx](../../../../../docs/Unreal/Banner-Ads.mdx),
-[MREC-Ads.mdx](../../../../../docs/Unreal/MREC-Ads.mdx),
-[Interstitial-Ads.mdx](../../../../../docs/Unreal/Interstitial-Ads.mdx),
-[Rewarded-Ads.mdx](../../../../../docs/Unreal/Rewarded-Ads.mdx),
-[App-Open-Ads.mdx](../../../../../docs/Unreal/App-Open-Ads.mdx).
+Canonical, one page per format in [docs/unreal/](../../../../../docs/unreal):
+[Banner-Ads.mdx](../../../../../docs/unreal/banner-ads.mdx),
+[MREC-Ads.mdx](../../../../../docs/unreal/mrec-ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/unreal/interstitial-ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/unreal/rewarded-ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/unreal/app-open-ads.mdx).
 Read the page for the format being added. **The notes below are the shape of the flow, not
 an API reference.** The pages also carry a screenshot of every Blueprint node, which is the
 fastest way to tell a publisher what to place.

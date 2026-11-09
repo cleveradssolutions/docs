@@ -1,8 +1,8 @@
 # Cordova: initialization
 
 Canonical:
-[docs/Cordova/Initialize-CAS.mdx](../../../../../docs/Cordova/Initialize-CAS.mdx) and
-[docs/Cordova/Enabling-test-ads.mdx](../../../../../docs/Cordova/Enabling-test-ads.mdx).
+[docs/cordova/initialize-cas.mdx](../../../../../docs/cordova/initialize-cas.mdx) and
+[docs/cordova/enabling-test-ads.mdx](../../../../../docs/cordova/enabling-test-ads.mdx).
 Read the page for the current option list; the shape below is what matters around it.
 
 One call, from `deviceready`, returning a `Promise<InitializationStatus>`:
@@ -85,12 +85,12 @@ unless the publisher wants them there.
   except rewarded. An ad that does not appear inside that window is correct behaviour; say
   so in the hand-over or it gets filed as a bug.
 - Targeting, all optional and all from
-  [Targeting-options.mdx](../../../../../docs/Cordova/Targeting-options.mdx):
+  [Targeting-options.mdx](../../../../../docs/cordova/targeting-options.mdx):
   `setUserAge`, `setUserGender('male')`, `setLocationCollectionEnabled`, `setAppKeywords`,
   `setAppContentUrl`. Set them before loading ads, and only with values the publisher
   actually has.
 - The `casai_ad_impressions` document event carries `revenue`, `sourceName`,
   `sourceUnitId`, `creativeId`, `impressionDepth` and `revenueTotal` — see
-  [Impression-Level-Data.mdx](../../../../../docs/Cordova/Impression-Level-Data.mdx). CAS
+  [Impression-Level-Data.mdx](../../../../../docs/cordova/impression-level-data.mdx). CAS
   can also report revenue to Google Analytics and Tenjin automatically; ask the account
   manager to enable it rather than wiring it by hand.

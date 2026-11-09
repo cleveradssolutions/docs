@@ -1,11 +1,11 @@
 # Kotlin Multiplatform: ad formats
 
-Canonical, one page per format in [docs/KMP/](../../../../../docs/KMP):
-[Banner-Ads.mdx](../../../../../docs/KMP/Banner-Ads.mdx),
-[Interstitial-Ads.mdx](../../../../../docs/KMP/Interstitial-Ads.mdx),
-[Rewarded-Ads.mdx](../../../../../docs/KMP/Rewarded-Ads.mdx),
-[App-Open-Ads.mdx](../../../../../docs/KMP/App-Open-Ads.mdx),
-[Native-Ads.mdx](../../../../../docs/KMP/Native-Ads.mdx).
+Canonical, one page per format in [docs/kmp/](../../../../../docs/kmp):
+[Banner-Ads.mdx](../../../../../docs/kmp/banner-ads.mdx),
+[Interstitial-Ads.mdx](../../../../../docs/kmp/interstitial-ads.mdx),
+[Rewarded-Ads.mdx](../../../../../docs/kmp/rewarded-ads.mdx),
+[App-Open-Ads.mdx](../../../../../docs/kmp/app-open-ads.mdx),
+[Native-Ads.mdx](../../../../../docs/kmp/native-ads.mdx).
 Read the page for the format being added. **The notes below are the shape of the flow, not
 an API reference.**
 

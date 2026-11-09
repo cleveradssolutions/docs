@@ -1,9 +1,9 @@
 # React Native: initialization
 
 Canonical:
-[docs/ReactNative/Initialize-CAS.mdx](../../../../../docs/ReactNative/Initialize-CAS.mdx)
+[docs/reactnative/initialize-cas.mdx](../../../../../docs/reactnative/initialize-cas.mdx)
 and
-[docs/ReactNative/Enabling-test-ads.mdx](../../../../../docs/ReactNative/Enabling-test-ads.mdx).
+[docs/reactnative/enabling-test-ads.mdx](../../../../../docs/reactnative/enabling-test-ads.mdx).
 Read the page for the current option list; the shape below is what matters around it.
 
 One call does everything. The CAS ID is a positional argument and the rest is an options

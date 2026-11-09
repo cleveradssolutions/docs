@@ -1,10 +1,10 @@
 # Unreal: the plugin, the module, and the two platforms
 
 Canonical, in this repository:
-[docs/Unreal/index.mdx](../../../../../docs/Unreal/index.mdx),
-[Configuring-SDK.mdx](../../../../../docs/Unreal/Configuring-SDK.mdx),
-[Include-Android.mdx](../../../../../docs/Unreal/Include-Android.mdx) and
-[Include-iOS.mdx](../../../../../docs/Unreal/Include-iOS.mdx). Read them before writing
+[docs/unreal/index.mdx](../../../../../docs/unreal/index.mdx),
+[Configuring-SDK.mdx](../../../../../docs/unreal/configuring-sdk.mdx),
+[Include-Android.mdx](../../../../../docs/unreal/include-android.mdx) and
+[Include-iOS.mdx](../../../../../docs/unreal/include-ios.mdx). Read them before writing
 anything — the engine versions, the Gradle versions and the exact menu paths live there,
 and they change.
 
@@ -161,10 +161,10 @@ the development loop. Say plainly in the hand-over that the solution has to be o
 platforms, before release.
 
 The adapter tables are native, with no Unreal copy:
-[docs/Android/Mediated-Networks.mdx](../../../../../docs/Android/Mediated-Networks.mdx) and
-[docs/iOS/Mediated-Networks.mdx](../../../../../docs/iOS/Mediated-Networks.mdx). Some
+[docs/android/mediated-networks.mdx](../../../../../docs/android/mediated-networks.mdx) and
+[docs/ios/mediated-networks.mdx](../../../../../docs/ios/mediated-networks.mdx). Some
 networks need extra steps — Meta Audience Network has its own page,
-[Additional-Meta-AudienceNetwork-steps.mdx](../../../../../docs/Unreal/Additional-Meta-AudienceNetwork-steps.mdx).
+[Additional-Meta-AudienceNetwork-steps.mdx](../../../../../docs/unreal/additional-meta-audiencenetwork-steps.mdx).
 
 ## 5. What to check before moving on
 

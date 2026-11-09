@@ -1,8 +1,8 @@
 # Cordova: reading failures
 
 Canonical, in this repository:
-[docs/Cordova/Ad-errors.mdx](../../../../../docs/Cordova/Ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/Cordova/Ad-errors`
+[docs/cordova/ad-errors.mdx](../../../../../docs/cordova/ad-errors.mdx)
+Published: `https://docs.page/cleveradssolutions/docs/cordova/ad-errors`
 
 A failure arrives as a rejected Promise carrying an `AdError`, or on the
 `casai_ad_load_failed` and `casai_ad_show_failed` document events. `AdError` has `code`,
@@ -85,5 +85,5 @@ Android, the Xcode console on iOS — not the WebView inspector. The plugin is a
 so a failure that makes no sense in JavaScript usually makes sense there.
 
 The native error pages carry the same codes with native wording and sometimes more detail:
-[docs/Android/Ad-errors.mdx](../../../../../docs/Android/Ad-errors.mdx) and
-[docs/iOS/Ad-errors.mdx](../../../../../docs/iOS/Ad-errors.mdx).
+[docs/android/ad-errors.mdx](../../../../../docs/android/ad-errors.mdx) and
+[docs/ios/ad-errors.mdx](../../../../../docs/ios/ad-errors.mdx).

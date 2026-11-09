@@ -1,9 +1,9 @@
 # Unreal: initialization
 
 Canonical:
-[docs/Unreal/Initialize-CAS.mdx](../../../../../docs/Unreal/Initialize-CAS.mdx),
-[Enabling-test-ads.mdx](../../../../../docs/Unreal/Enabling-test-ads.mdx) and
-[Verify-Integration.mdx](../../../../../docs/Unreal/Verify-Integration.mdx).
+[docs/unreal/initialize-cas.mdx](../../../../../docs/unreal/initialize-cas.mdx),
+[Enabling-test-ads.mdx](../../../../../docs/unreal/enabling-test-ads.mdx) and
+[Verify-Integration.mdx](../../../../../docs/unreal/verify-integration.mdx).
 Read the pages for the current signatures; the shape below is what matters around them.
 
 Everything is static on `UCASMobileAds`. There are no ad objects and no SDK instance to
@@ -84,12 +84,12 @@ says so.
   recommends setting it **before** initialization, so the value can be overridden remotely
   from the dashboard.
 - Targeting, all optional and all from
-  [Targeting-options.mdx](../../../../../docs/Unreal/Targeting-options.mdx):
+  [Targeting-options.mdx](../../../../../docs/unreal/targeting-options.mdx):
   `SetUserIDForAds`, `SetUserAgeForAds`, `SetUserGenderForAds(ECASGender::Male)`. Set them
   before loading ads, and only with values the publisher actually has.
 - `UCASMobileAds::OnAdsImpression` with `FCASImpressionInfo` — `RevenueCPM`, `Network`,
   `UnitID`, `CreativeID`, `PlacementType`, `TotalImpressions`, `LifetimeRevenue`. The page
-  is [Impression-Level-Data.mdx](../../../../../docs/Unreal/Impression-Level-Data.mdx), and
+  is [Impression-Level-Data.mdx](../../../../../docs/unreal/impression-level-data.mdx), and
   the plugin can also report revenue to Google Analytics and Tenjin automatically — ask the
   account manager to enable it rather than wiring it by hand.
 - `app-ads.txt` on the publisher's domain. Not code, but it belongs in the hand-over.

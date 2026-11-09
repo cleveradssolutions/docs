@@ -1,9 +1,9 @@
 # Unreal: reading failures
 
 Canonical, in this repository:
-[docs/Unreal/FAQ.mdx](../../../../../docs/Unreal/FAQ.mdx) — read it before guessing,
+[docs/unreal/faq.mdx](../../../../../docs/unreal/faq.mdx) — read it before guessing,
 because most Unreal failures are **build** failures with a known, documented answer.
-Published: `https://docs.page/cleveradssolutions/docs/Unreal/FAQ`
+Published: `https://docs.page/cleveradssolutions/docs/unreal/faq`
 
 Two different kinds of failure live here: the package does not build, or it builds and no
 ad appears. Separate them before investigating.
@@ -90,8 +90,8 @@ what belongs in the log, because the Unreal pages name only
 `ECASError::IntervalNotYetPassed` by hand.
 
 The values and their meanings are the native ones, and the native pages are the reference:
-[docs/Android/Ad-errors.mdx](../../../../../docs/Android/Ad-errors.mdx) and
-[docs/iOS/Ad-errors.mdx](../../../../../docs/iOS/Ad-errors.mdx). The codes are the same
+[docs/android/ad-errors.mdx](../../../../../docs/android/ad-errors.mdx) and
+[docs/ios/ad-errors.mdx](../../../../../docs/ios/ad-errors.mdx). The codes are the same
 numbers on every CAS platform, so the "no fill" entry there is the same no fill here — and
 it means the integration is correct and fill is an account question, provided test ads show.
 
