@@ -2,7 +2,7 @@
 
 Canonical, in this repository:
 [docs/flutter/ad-errors.mdx](../../../../../docs/flutter/ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/flutter/ad-errors`
+Published: `https://cleveradssolutions.docs.page/docs/flutter/ad-errors`
 
 Errors arrive as an `AdError` on `onAdFailedToLoad` and `onAdFailedToShow`: `code` for the
 machine, `message` for the human. The codes are the same numbers on every CAS platform; the

@@ -3,7 +3,7 @@
 Canonical, in this repository:
 [docs/unreal/user-consent-flow.mdx](../../../../../docs/unreal/user-consent-flow.mdx) and
 [Privacy-Regulations.mdx](../../../../../docs/unreal/privacy-regulations.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/unreal/user-consent-flow`
+Published: `https://cleveradssolutions.docs.page/docs/unreal/user-consent-flow`
 
 Two mutually exclusive paths. Pick one in the interview and never mix them.
 

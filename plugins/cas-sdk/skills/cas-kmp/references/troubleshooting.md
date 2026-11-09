@@ -2,7 +2,7 @@
 
 Canonical, in this repository:
 [docs/kmp/ad-errors.mdx](../../../../../docs/kmp/ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/kmp/ad-errors`
+Published: `https://cleveradssolutions.docs.page/docs/kmp/ad-errors`
 
 Failures arrive as a `CASError` on `onAdFailedToLoad`, `onAdFailedToShow`,
 `onBannerAdFailed` and `onNativeAdFailedToLoad`. `CASError` is a `data class` with `code`

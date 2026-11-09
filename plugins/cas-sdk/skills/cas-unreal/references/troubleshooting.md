@@ -3,7 +3,7 @@
 Canonical, in this repository:
 [docs/unreal/faq.mdx](../../../../../docs/unreal/faq.mdx) — read it before guessing,
 because most Unreal failures are **build** failures with a known, documented answer.
-Published: `https://docs.page/cleveradssolutions/docs/unreal/faq`
+Published: `https://cleveradssolutions.docs.page/docs/unreal/faq`
 
 Two different kinds of failure live here: the package does not build, or it builds and no
 ad appears. Separate them before investigating.

@@ -2,7 +2,7 @@
 
 Canonical, in this repository:
 [docs/reactnative/ad-errors.mdx](../../../../../docs/reactnative/ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/reactnative/ad-errors`
+Published: `https://cleveradssolutions.docs.page/docs/reactnative/ad-errors`
 
 Errors arrive on the failure listeners with a code and a message. The codes are the same
 numbers on every CAS platform; the constant names here are the `AdErrorCode` members below.

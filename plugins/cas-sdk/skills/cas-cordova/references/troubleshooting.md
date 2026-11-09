@@ -2,7 +2,7 @@
 
 Canonical, in this repository:
 [docs/cordova/ad-errors.mdx](../../../../../docs/cordova/ad-errors.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/cordova/ad-errors`
+Published: `https://cleveradssolutions.docs.page/docs/cordova/ad-errors`
 
 A failure arrives as a rejected Promise carrying an `AdError`, or on the
 `casai_ad_load_failed` and `casai_ad_show_failed` document events. `AdError` has `code`,

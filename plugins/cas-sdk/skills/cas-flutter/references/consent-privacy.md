@@ -2,7 +2,7 @@
 
 Canonical, in this repository:
 [docs/flutter/user-consent-flow.mdx](../../../../../docs/flutter/user-consent-flow.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/flutter/user-consent-flow`
+Published: `https://cleveradssolutions.docs.page/docs/flutter/user-consent-flow`
 
 Two mutually exclusive paths. Pick one in the interview and never mix them.
 

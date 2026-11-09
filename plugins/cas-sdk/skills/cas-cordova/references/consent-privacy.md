@@ -2,7 +2,7 @@
 
 Canonical, in this repository:
 [docs/cordova/user-consent-flow.mdx](../../../../../docs/cordova/user-consent-flow.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/cordova/user-consent-flow`
+Published: `https://cleveradssolutions.docs.page/docs/cordova/user-consent-flow`
 
 Two mutually exclusive paths. Pick one in the interview and never mix them.
 

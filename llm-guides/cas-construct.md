@@ -200,7 +200,7 @@ The built-in flow runs at startup when `Consent Flow Auto show if required` is o
 - `Tracking Usage Description` is the iOS App Tracking Transparency text. Without it the IDFA is zeroed out and revenue drops, with nothing in the log. **The human writes it** — offer the examples from the CAS pages and do not word it for them.
 - A game that targets children and adults needs a **neutral age screen**, an age gate that does not nudge the player to misrepresent their age. Say so; do not decide it.
 
-The store questions have no Construct copy. Name them in the hand-over: the Google Play data disclosure, the App Store privacy questions, Apple's ad attribution, and the Apple Kids Category if it applies. Pages at `https://docs.page/cleveradssolutions/docs/general/`.
+The store questions have no Construct copy. Name them in the hand-over: the Google Play data disclosure, the App Store privacy questions, Apple's ad attribution, and the Apple Kids Category if it applies. Pages at `https://cleveradssolutions.docs.page/docs/general/`.
 
 ---
 

@@ -2,7 +2,7 @@
 
 Canonical, in this repository:
 [docs/kmp/user-consent-flow.mdx](../../../../../docs/kmp/user-consent-flow.mdx)
-Published: `https://docs.page/cleveradssolutions/docs/kmp/user-consent-flow`
+Published: `https://cleveradssolutions.docs.page/docs/kmp/user-consent-flow`
 
 Two mutually exclusive paths. Pick one in the interview and never mix them.
 
