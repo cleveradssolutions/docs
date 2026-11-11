@@ -66,6 +66,15 @@ skills, `llm-guides/cas-unity.md` and `llm-guides/cas-construct.md`: in both the
 done in an editor rather than in files, so the agent decides and instructs rather than
 edits.
 
+## The internal plugin
+
+`plugins/cas-mediation/` holds one skill, `cas-adapter`, for writing a mediation adapter
+for one ad network inside the CAS SDK repositories. That is internal work on the SDK
+itself rather than an app integration, so the plugin is **not** in the marketplace
+manifest and `npx skills add` does not install it. The skill is deliberately short: the
+source of truth is the reference adapter and its `AGENTS.md` in CAS-Kotlin and CAS-Swift,
+which are built alongside the real adapters and so cannot drift from the mediation API.
+
 ## Before you let an agent do this
 
 Read what the agent changes. Skills make the result more accurate; they do not make an
@@ -86,9 +95,11 @@ plugins/
 │   └── skills/
 │       ├── cas-android/SKILL.md         the procedure, plus references/
 │       └── cas-ios/SKILL.md             the procedure, plus references/
-├── shared/                              texts both skills use
+├── cas-mediation/                       internal, not in the marketplace
+│   └── skills/cas-adapter/SKILL.md      writing an adapter inside the SDK repos
+├── shared/                              texts the cas-sdk skills use
 └── README.md                            this file
-scripts/sync-shared.sh                   copies shared/ into every references/
+scripts/sync-shared.sh                   copies shared/ into every cas-sdk references/
 scripts/check.sh                         validates all of the above
 ```
 
