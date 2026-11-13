@@ -63,7 +63,9 @@ bugs.
 1. Register the adapter — `build-logic/src/main/kotlin/AdaptersList.kt` on Android,
    `tools/adapterList.py` on iOS. Nothing builds before this.
 2. Create the module or Xcode target, copying the reference adapter's scaffolding.
-3. Write the adapter class, then one class per format family.
+3. Write the adapter class, then a loader and an ad class per format family. The
+   loader exists only until the request is answered and builds the ad once the network
+   has one; keeping the two in one object is where the awkward bugs live.
 4. Map the network's errors onto CAS errors.
 5. Build the **release** configuration: it is the minified one, and it catches what a
    debug build hides.
