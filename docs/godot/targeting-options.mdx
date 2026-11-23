@@ -1,0 +1,56 @@
+---
+title: Targeting options
+---
+
+You can now easily tailor the way you serve your ads to fit a specific audience!
+You’ll need to inform our servers of the users’ details so the SDK will know to serve ads according
+to the segment the user belongs to.
+
+### User Age
+Set user age. Limitation: 1-99. By default 0 is 'unknown'.
+
+```gdscript
+CASMobileAds.set_user_age(12)
+```
+
+### User Gender
+
+Set targeting to user’s gender. Limitation: `MALE`, `FEMALE`, `UNKNOWN` (default).
+
+```gdscript
+CASMobileAds.set_user_gender(CASMobileAds.Gender.MALE)
+``` 
+
+### User ID
+Set a user ID for server-side callbacks and analytics. Pass an empty string to clear it.
+
+```gdscript
+CASMobileAds.set_user_id("user-1")
+```
+
+### User Location auto collection
+Collect from the device the latitude and longitude coordinated truncated to the hundredths decimal place.
+
+* Collect only if your application already has the relevant end-user permissions.
+- Does not collect if the target audience is children.
+- Disabled by default.
+
+```gdscript
+CASMobileAds.set_location_collection_enabled(true)
+```
+
+### App Keywords
+Set a list of keywords, interests, or intents related to your application. Words or phrases describe
+the current activity of the user for targeting purposes.
+
+```gdscript
+CASMobileAds.set_app_keywords(PackedStringArray(["puzzle", "casual"]))
+```
+
+### App Content URL
+
+Set the content URL for a website whose content matches the app's primary content. This website content is used for targeting and brand safety purposes. Limitation: max URL length 512. Pass an empty string to clear it.
+
+```gdscript
+CASMobileAds.set_app_content_url(content_url)
+```

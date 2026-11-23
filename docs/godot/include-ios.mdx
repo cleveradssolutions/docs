@@ -80,3 +80,10 @@ To learn why these identifiers matter and what you lose without them, see [Apple
 ## App Transport Security
 Some ad networks load creatives over HTTP. The plugin adds `NSAllowsArbitraryLoads` to the `NSAppTransportSecurity` key of `Info.plist`, 
 unless you already set `NSAppTransportSecurity` in **Additional Plist Content**.
+
+## Known export issues
+#### Godot shows "Failed to run xcodebuild with code 0"
+The message hides the real build error. Use **Export Project Only** and build the exported project in Xcode to see the error.
+
+#### iOS Simulator build fails with "Undefined symbol: _main"
+The Godot iOS export templates may not include a simulator slice for Apple Silicon Macs. Test the game on a device.

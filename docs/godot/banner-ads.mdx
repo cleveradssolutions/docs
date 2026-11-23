@@ -1,0 +1,159 @@
+---
+title: Banner Ads
+description: This guide explains how to integrate banner ads into a Godot game.
+---
+
+Banner Ad units display rectangular ads that occupy a portion of an app's layout.
+They can refresh automatically after a set period of time.
+This means users view a new ad at regular intervals, even if they stay on the same screen in your app.
+They're also the simplest ad format to implement.
+
+Banner ad management in Godot code is handled through the `CASBanner` object returned by `CASMobileAds.get_banner()`.
+The banner is drawn by the native SDK on top of the game and is not a node of the scene tree.
+
+CAS provides an option to enable `autoload_enabled` to simplify your app logic. When autoload is enabled, loading failures will trigger automatic retry attempts.
+You should decide whether to enable autoload, or manually manage each ad loading cycle in your code. Autoload is disabled for banners by default.
+
+Also, banner ads support automatic `refresh_interval` regardless of the autoload setting.
+
+Below is a diagram showing the ad lifecycle and how autoload and refresh interval affect it.
+<Image zoom src="/assets/Lifecycle-Banner-Ad.png" alt="Diagram" height="500" />
+
+## Get the Ad size
+To load a banner ad, choose one of the `CASBanner.Size` values in the `size` property:
+
+1. **Adaptive banner** ads have a fixed aspect ratio for the maximum width. 
+The adaptive size calculates the optimal height for that width with an aspect ratio similar to 320x50. 
+The width of the safe area is used, up to 728. The ad size is updated when the screen rotates. This is the default size.
+```gdscript
+banner.size = CASBanner.Size.ADAPTIVE
+```
+
+2. **Leaderboard** has a fixed size of 728x90 and is allowed on tablets only.
+```gdscript
+banner.size = CASBanner.Size.LEADERBOARD
+```
+
+3. **Standard Banner** has a fixed size of 320x50 and is the minimum ad size
+```gdscript
+banner.size = CASBanner.Size.BANNER
+```
+
+<Info>
+For the 300x250 size, use the separate [MREC Ad](godot/mrec-ads) object.
+</Info>
+
+## Load the Ad
+The following example loads a banner ad:
+
+```gdscript
+func _ready() -> void:
+	var banner := CASMobileAds.get_banner()
+	banner.loaded.connect(_on_banner_loaded)
+	banner.failed_to_load.connect(_on_banner_failed_to_load)
+	banner.size = CASBanner.Size.ADAPTIVE
+	banner.autoload_enabled = true
+	banner.load()
+
+
+func _on_banner_loaded() -> void:
+	# Called when an ad is successfully loaded.
+	print("Banner Ad loaded")
+
+
+func _on_banner_failed_to_load(error: CASAdError) -> void:
+	# Called when an ad load failed.
+	print("Banner Ad failed to load: ", error.message)
+```
+
+The `loaded` and `impression` signals are emitted again for every new ad after a refresh.
+
+<Info>
+- Read more about `CASAdContentInfo` object in [Impression Level Data](godot/impression-level-data).  
+- Read more about [CASAdError](godot/ad-errors) object. 
+</Info>
+
+## Ad refresh interval
+The automatic refresh interval determines how often a new ad request is generated. 
+Once the interval elapses, a new ad will automatically load and display.
+
+The interval countdown runs only while the ad is visible on screen. 
+
+Set a custom refresh interval longer than 10 seconds, or 0 to disable refresh option. 
+The default value `-1` uses the global SDK interval for all banners, 30 seconds by default.
+
+Override the automatic refresh interval in the `refresh_interval` property:
+```gdscript
+CASMobileAds.get_banner().refresh_interval = 30 # [!code highlight]
+```
+
+## Display the Ad
+The banner will not be visible until `show()` is called. The `position` property specifies where the banner ad should be placed. The `CASBanner.Position` lists the valid ad position values. By default, the banner ad is centered at the bottom. 
+```gdscript
+var banner := CASMobileAds.get_banner()
+banner.position = CASBanner.Position.BOTTOM_CENTER
+banner.show()
+```
+To change the banner’s position on the screen, simply set the `position` property again.
+
+`show()` can be called even if the ad is not ready to be shown yet. When the ad is loaded, it will be shown automatically. 
+With autoload enabled, `show()` also loads the first ad, so `load()` is not needed.
+
+`is_visible()` returns `true` after `show()` until `hide()`, even if the ad is not loaded yet.
+
+## The Ad coordinates on the screen
+The `offset` property allows you to adjust the banner’s position relative to the specified anchor position. Our SDK will not allow an ad to be placed outside the screen or overlap with screen cutouts.
+
+Some anchor positions do not support offset on the X or Y axis, this can be seen in the table as (X, Y).
+
+|        | Left     | Center |    Right |
+| ------ | -------- | :----: | -------: |
+| Top    | TL(X, Y) | TC(Y)  | TR(X, Y) |
+| Middle | ML(X)    | MC(-)  |    MR(X) |
+| Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
+
+The offset is determined in points on iOS, not in game pixels.
+```gdscript
+var banner := CASMobileAds.get_banner()
+banner.position = CASBanner.Position.TOP_LEFT
+banner.offset = Vector2i(x_offset, y_offset)
+```
+
+### Ad area in game pixels
+Use `get_rect()` to get the area of the visible loaded ad in window pixels, the same space as touch events and `DisplayServer.get_display_safe_area()`. 
+For example, to move your game UI away from the banner. The method returns an empty `Rect2i` when the ad is hidden or not loaded.
+
+```gdscript
+func _on_banner_loaded() -> void:
+	var rect := CASMobileAds.get_banner().get_rect()
+	print("Banner area: ", rect)
+```
+
+Check the area again on `loaded`: an adaptive ad can change its size, for example after the screen rotates.
+
+## Hide the Ad
+When you need to hide the banner ad from the user, call `hide()`. The loaded ad is kept.
+```gdscript
+CASMobileAds.get_banner().hide()
+```
+
+## Listening for the Ad Clicked
+The `clicked` signal is emitted whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions.
+
+```gdscript
+CASMobileAds.get_banner().clicked.connect(func():
+	# Called when a click is recorded for a banner ad.
+	pass)
+```
+
+## Release Ad resource
+Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
+
+```gdscript
+CASMobileAds.get_banner().destroy()
+```
+
+The ad options are kept. Call `load()` again to create and load a new ad.
+
+## Complete example
+- [Banner ad example](https://github.com/cleveradssolutions/CAS-Godot/blob/main/example/main.gd)

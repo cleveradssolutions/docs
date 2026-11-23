@@ -1,0 +1,111 @@
+---
+title: Impression Level Data
+---
+
+CAS.AI SDK enables you to access detailed information for each impression through the impression callback APIs.  
+The data includes which demand source served the ad and the exact or estimated revenue associated with it.  
+This allows you to analyze and optimize your monetization and user acquisition strategies.
+
+### CASAdContentInfo
+The `CASAdContentInfo` object contains information about a displayed ad.  
+
+<Property name="format" type="String">
+  The format of the ad that is shown.
+</Property>
+
+---
+
+<Property name="source_name" type="String">
+  The display name of the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="source_unit_id" type="String">
+  The Ad Unit ID from the mediated network that purchased the impression.
+</Property>
+
+---
+
+<Property name="creative_id" type="String">
+  The Creative ID associated with the ad, or empty if not available.
+  You can use this ID to report creative issues to the Ad review team. 
+</Property>
+
+---
+
+<Property name="revenue" type="float">
+  The revenue generated from the impression, in USD. 
+  The revenue value may be either estimated or exact, depending on the precision specified by `revenue_precision`. 
+</Property>
+
+---
+
+<Property name="revenue_precision" type="CASAdContentInfo.RevenuePrecision">
+  The precision type of the revenue field: `PRECISE`, `FLOOR`, `ESTIMATED` or `UNKNOWN`.
+</Property>
+
+---
+
+<Property name="placement" type="String">
+  The placement name set in the `placement` property of the ad object.
+</Property>
+
+---
+
+<Property name="revenue_total" type="float">
+  The accumulated value of user ad revenue in USD from all ad format impressions. 
+</Property>
+
+---
+
+<Property name="impression_depth" type="int">
+  The total number of impressions across all ad formats for the current user, across all sessions. 
+</Property>
+
+
+### Ad Impression signal
+Each ad object emits the `impression` signal with `CASAdContentInfo` details:
+
+```gdscript
+func _ready() -> void:
+	CASMobileAds.get_interstitial().impression.connect(_on_ad_impression)
+	CASMobileAds.get_rewarded().impression.connect(_on_ad_impression)
+	CASMobileAds.get_banner().impression.connect(_on_ad_impression)
+
+
+func _on_ad_impression(info: CASAdContentInfo) -> void:
+	# Called when an ad impression occurs.
+	var ad_platform := "CAS"
+	var ad_format := info.format
+	var ad_source := info.source_name
+	var ad_unit_name := info.source_unit_id
+	var value := info.revenue
+	# All CAS revenue is sent in USD
+	var currency := "USD"
+```
+
+The information about the loaded ad, before it is shown, is available with `get_content_info()` of the ad object. 
+The method returns `null` when no ad is loaded.
+
+```gdscript
+var info := CASMobileAds.get_rewarded().get_content_info()
+if info != null:
+	print("Ready to show ad from ", info.source_name)
+```
+
+### User ad summary
+CAS tracks cumulative impression and revenue metrics that are included in each `CASAdContentInfo` payload:
+
+```gdscript
+var total_impressions := info.impression_depth
+var total_revenue := info.revenue_total
+```
+
+<Info>
+These counters persist between app sessions until the user clears your app’s data.
+</Info>
+
+## Automatic ad revenue collection
+The CAS SDK have features to automatically collect ad revenue to Google Analytics and Tenjin Analytics. 
+Contact your account manager for details of enabling automatic events.

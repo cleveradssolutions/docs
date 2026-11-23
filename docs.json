@@ -1168,8 +1168,83 @@
                     "href": "/godot/include-android"
                 },
                 {
-                    "title": "Initialization",
-                    "href": "/godot/initialize-cas"
+                    "group": "Initialization",
+                    "href": "/godot/initialize-cas",
+                    "pages": [
+                        {
+                            "title": "User Consent Flow",
+                            "href": "/godot/user-consent-flow"
+                        },
+                        {
+                            "title": "Test ads",
+                            "href": "/godot/enabling-test-ads"
+                        }
+                    ]
+                },
+                {
+                    "title": "App Store data disclosure",
+                    "href": "/general/appstore-data-disclosure"
+                },
+                {
+                    "title": "App-ads.txt",
+                    "href": "/general/authorized-sellers-for-apps"
+                },
+                {
+                    "group": "Additional mediation steps",
+                    "pages": [
+                        {
+                            "title": "Meta Audience Network",
+                            "href": "/godot/additional-meta-audiencenetwork-steps"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Ad formats",
+            "tab": "godot",
+            "pages": [
+                {
+                    "title": "App Open Ad",
+                    "href": "/godot/app-open-ads"
+                },
+                {
+                    "title": "Interstitial Ad",
+                    "href": "/godot/interstitial-ads"
+                },
+                {
+                    "title": "Rewarded Ad",
+                    "href": "/godot/rewarded-ads"
+                },
+                {
+                    "title": "Banner Ad",
+                    "href": "/godot/banner-ads"
+                },
+                {
+                    "title": "MRec Ad",
+                    "href": "/godot/mrec-ads"
+                }
+            ]
+        },
+        {
+            "group": "Advanced topics",
+            "tab": "godot",
+            "pages": [
+                {
+                    "title": "Targeting Options",
+                    "href": "/godot/targeting-options"
+                },
+                {
+                    "title": "Ad errors",
+                    "href": "/godot/ad-errors"
+                },
+                {
+                    "title": "Impression Level Data",
+                    "href": "/godot/impression-level-data"
+                },
+                {
+                    "title": "Reporting API",
+                    "href": "/general/reportingapi"
                 }
             ]
         }
