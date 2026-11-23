@@ -1,0 +1,82 @@
+---
+title: Include iOS
+description: This guide explains how to export a Godot game with CAS.AI to iOS.
+---
+
+The CAS.AI plugin configures the iOS export automatically. No CocoaPods or Ruby are required: 
+the CAS iOS SDK and the selected ad networks are added to the exported Xcode project as a Swift Package.
+
+## Export the game
+Choose the export flow by your Godot version and operating system:
+
+<Tabs groupId="godot-export">
+<TabItem label="Godot 4.7+ on macOS" value="full">
+
+Export the `.ipa` file or use one-click deploy from the Godot editor. 
+The CAS Swift Package is added before Godot builds the Xcode project, so nothing needs to be done in Xcode.
+
+</TabItem>
+<TabItem label="Godot 4.5-4.6, Windows or Linux" value="project">
+
+1. Enable **Export Project Only** in the iOS export preset and export the project.
+2. Open the exported `.xcodeproj` in Xcode on a Mac.
+3. Build and run the app. Xcode downloads the CAS Swift Package on the first build.
+
+</TabItem>
+</Tabs>
+
+<Warning>
+Required minimum Xcode version `{{ min.xcode }}`.
+</Warning>
+
+The first export needs network access to download the CAS configuration and the ad network identifier lists. 
+The files are cached for 12 hours in the `.godot/cas_ai` folder. 
+Without network access, the cache is used, and then the lists shipped with the plugin.
+
+If the export folder is inside the Godot project, the plugin creates a `.gdignore` file in it, 
+so the editor does not import the exported Xcode project.
+
+## What the export does
+During each iOS export the plugin:
+- Adds the native CAS.AI plugin to the Xcode project.
+- Adds the CAS Swift Package with the selected solution and adapters.
+- Adds the CAS configuration file of your CAS ID to the app bundle.
+- Sets the `-ObjC` linker flag required by some ad networks.
+- Adds the required keys to `Info.plist`.
+
+<Info>
+Keys that you already set in **Additional Plist Content** of the export preset are not overwritten.
+</Info>
+
+## CAS iOS SDK version
+The CAS iOS SDK version is set in the `cas_ai/ios/sdk_version` setting. 
+The default value is the version tested with the current plugin release, we recommend keeping it.
+
+Before the export, the plugin checks that the version is a released tag of the [CAS iOS SDK](https://github.com/cleveradssolutions/CAS-iOS/releases) 
+and that it contains every selected solution and adapter. If the check fails, the Godot editor shows an error.
+
+When an exported Xcode project already contains the CAS Swift Package, the export updates its version and adds the missing products.
+
+## Google AdMob App ID
+Every CAS solution includes Google Ads, which requires the AdMob App ID in `Info.plist`. 
+By default, the plugin takes the AdMob App ID from the CAS configuration of your CAS ID.
+
+To override it, set the `cas_ai/ios/admob_app_id` setting.
+
+<Warning>
+If the AdMob App ID is not set and not found in the CAS configuration, the Google sample App ID is used, which serves test ads only. 
+The export shows a warning for a release build in this case.
+</Warning>
+
+## SKAdNetwork
+SKAdNetwork is a privacy safe method provided by Apple for ad networks to track installs. Up until iOS 14, most ad network campaign attribution has been based on a user's IDFA, but on iOS 14 and beyond, IDFAs will be less usable as a way to attribute which users have installed based on which ads they have interacted with.
+
+The CAS Godot plugin **automatically updates** your app’s `Info.plist` with network-specific SKAdNetwork and AdAttributionKit identifiers.
+
+<Info>
+To learn why these identifiers matter and what you lose without them, see [Apple Ad Attribution](general/apple-ad-attribution).
+</Info>
+
+## App Transport Security
+Some ad networks load creatives over HTTP. The plugin adds `NSAllowsArbitraryLoads` to the `NSAppTransportSecurity` key of `Info.plist`, 
+unless you already set `NSAppTransportSecurity` in **Additional Plist Content**.

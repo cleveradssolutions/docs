@@ -1,0 +1,122 @@
+---
+title: Initialize CAS SDK
+description: This guide explains how to initialize the CAS.AI SDK in a Godot game.
+---
+
+Before loading ads, initialize the CAS Mobile Ads SDK by calling `CASMobileAds.initialize()`, for example from `_ready()` of the first scene. 
+The `initialized` signal is emitted with `CASInitStatus` when initialization completes.
+
+```gdscript
+func _ready() -> void:
+	CASMobileAds.initialized.connect(_on_cas_initialized)
+	CASMobileAds.initialize()
+
+
+func _on_cas_initialized(status: CASInitStatus) -> void:
+	if status.is_success():
+		print("CAS initialized")
+	else:
+		print("CAS initialization failed: ", status.error)
+```
+
+The CAS ID is taken from the project settings, see [Configure CAS ID](godot#configure-cas-id). 
+To set initialization options, pass `CASInitOptions` to the `initialize()` method.
+
+Ads can be loaded right after `initialize()` is called, without waiting for the `initialized` signal.
+
+The SDK is initialized once per app session. After a failure, calling `initialize()` again starts a new attempt. 
+After a success, calling it again emits `initialized` with the same status.
+
+<Info>
+On platforms other than iOS and Android, `CASMobileAds.is_supported()` returns `false`, `initialized` is emitted with an error, 
+and ad calls fail with the `NOT_INITIALIZED` error. The same game code runs on every platform, without platform checks around ads.
+</Info>
+
+### Initialization Status
+
+<Property name="error" type="String">
+Initialization error or empty if success. Use `is_success()` to check it.
+</Property>
+
+---
+
+<Property name="country_code" type="String">
+User country code ISO 3166-1 alpha-2 or empty if not allowed.
+</Property>
+
+---
+
+<Property name="is_consent_required" type="bool">
+Indicates the privacy options button is required.
+</Property>
+
+---
+
+<Property name="consent_flow_status" type="CASInitStatus.ConsentFlowStatus">
+Consent flow status code, check `ConsentFlowStatus` enum values.
+</Property>
+
+## Automatic user consent flow
+To collect user consent for personal data, use the built-in **Consent Flow**. It shows a consent form automatically during initialization.
+
+```gdscript
+var options := CASInitOptions.new()
+options.show_consent_form_if_required = true # [!code highlight]
+options.debug_geography = CASInitOptions.DebugGeography.EEA
+CASMobileAds.initialize(options)
+
+
+func _on_cas_initialized(status: CASInitStatus) -> void:
+	if status.consent_flow_status == CASInitStatus.ConsentFlowStatus.OBTAINED:
+		print("CAS obtained user consent")
+```
+
+Wait for the consent flow to complete before initializing third-party SDKs (MMPs, analytics), otherwise they may not have access to required identifiers.
+
+<Info>
+Read more about **Debug geography** on [CAS User Consent Flow](godot/user-consent-flow).
+</Info>
+
+## Always test with test ads
+Enable test ads during development so you can interact with ads safely.
+
+```gdscript
+var options := CASInitOptions.new()
+options.test_mode = OS.is_debug_build() # [!code highlight]
+options.test_device_ids = PackedStringArray(["YOUR_TEST_DEVICE_ID"]) # [!code highlight]
+CASMobileAds.initialize(options)
+```
+
+For more on test ads, see [Enable test ads](godot/enabling-test-ads).
+
+## Prohibition on Personal Information from Children
+Mark apps as child-directed or COPPA-applicable in the CAS UI. If you know specific users are COPPA-applicable, set the audience:
+
+```gdscript
+var options := CASInitOptions.new()
+options.target_audience = CASInitOptions.Audience.CHILDREN # [!code highlight]
+CASMobileAds.initialize(options)
+```
+
+- `CHILDREN` - Compliance with all applicable legal regulations and industry standards relating to advertising to children.
+- `NOT_CHILDREN` - Audiences over the age of 13 NOT subject to the restrictions of child protection laws.
+- `UNDEFINED` - For app's target age groups include both children and older audiences, any ads that may be shown to children must comply with Google Play's Families Ads Program.
+
+If your app targets both children and older users, implement a **neutral age screen** to ensure COPPA compliance.
+
+## (Optional) Retrieve the Version Number
+To programmatically retrieve the SDK version number at runtime, CAS provides the following method:
+```gdscript
+var sdk_version := CASMobileAds.get_sdk_version()
+```
+
+## (Optional) Trial ad-free interval
+Defines the time interval, in seconds, starting from the moment of the initial app installation, during which users can use the application without ads being displayed while still retaining access to the Rewarded Ads format. Within this interval, users enjoy privileged access to the application's features without intrusive advertisements.  
+
+```gdscript
+var seconds_in_7_days := 604800
+CASMobileAds.set_trial_ad_free_interval(seconds_in_7_days)
+```
+
+## Complete example
+- [Initialize CAS example](https://github.com/cleveradssolutions/CAS-Godot/blob/main/example/main.gd#L35)
