@@ -1182,6 +1182,10 @@
                     ]
                 },
                 {
+                    "title": "Google Play data disclosure",
+                    "href": "/general/google-play-data-disclosure"
+                },
+                {
                     "title": "App Store data disclosure",
                     "href": "/general/appstore-data-disclosure"
                 },

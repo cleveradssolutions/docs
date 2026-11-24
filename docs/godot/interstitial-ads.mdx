@@ -7,25 +7,25 @@ Interstitial ads are full-screen ads that cover the interface of their host app.
 They're typically displayed at natural transition points in the flow of an app, such as between levels.
 When an app shows an interstitial ad, the user has the choice to either tap on the ad and continue to its destination or close it and return to the app.
 
-Interstitial ad management in Godot code is handled through the `CASInterstitial` object returned by `CASMobileAds.get_interstitial()`.
+Interstitial ad management in Godot code is handled through the `CASInterstitial` object in the `CASMobileAds.interstitial` property.
 The interstitial ad is displayed by the native SDK on top of the game and is not a node of the scene tree.
 
-Below is a diagram showing the ad lifecycle and how autoload affects it.
+Below is a diagram showing the ad lifecycle and how automatic loading affects it.
 <Image zoom src="/assets/Lifecycle-Screen-Ad.png" alt="Diagram" height="500" />
 
 ## Load Ad
-CAS provides an option to enable autoload to simplify your app logic.  
-Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
+CAS provides two ways to load ads. Before using the ad, decide whether the SDK keeps ads loaded for you, or you manually manage each ad loading cycle in your code.
 
-When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+### Automatic loading
+The `buffer_size` property sets the number of ads kept loaded automatically, up to 4.
+A new ad is loaded after each display, and loading failures trigger automatic retry attempts, so `load()` is not needed.
 
 ```gdscript
 func _ready() -> void:
-	var interstitial := CASMobileAds.get_interstitial()
+	var interstitial := CASMobileAds.interstitial
 	interstitial.loaded.connect(_on_interstitial_loaded)
 	interstitial.failed_to_load.connect(_on_interstitial_failed_to_load)
-	interstitial.autoload_enabled = true
-	interstitial.load()
+	interstitial.buffer_size = 1 # [!code highlight]
 
 
 func _on_interstitial_loaded() -> void:
@@ -38,8 +38,18 @@ func _on_interstitial_failed_to_load(error: CASAdError) -> void:
 	print("Load failed: ", error.message)
 ```
 
-Manual load mode is useful when you only need to show a single ad per game screen, and the screens change frequently.
-When you want to manually control ad loading, set `autoload_enabled = false` and call `load()` each time you need a new ad.
+To have an ad ready more often, keep several ads loaded at the same time with `buffer_size` 2 to 4.
+`show()` presents the loaded ad with the highest revenue. Use `get_loaded_count()` to get the number of loaded ads.
+
+`buffer_size` can be set before `CASMobileAds.initialize()`, the ads start loading once the SDK is initialized.
+
+### Manual loading
+With the default `buffer_size = 0`, the ad is loaded only by `load()`. Call it each time you need a new ad, for example after `dismissed`.
+Manual loading is useful when you only need to show a single ad per game screen, and the screens change frequently.
+
+```gdscript
+CASMobileAds.interstitial.load()
+```
 
 Ad content may take some time to load. To ensure the ad displays instantly when needed, load the ad in advance.
 You can use the `loaded` signal to be notified when the ad is ready for display.
@@ -49,34 +59,20 @@ You can use the `loaded` signal to be notified when the ad is ready for display.
 - Read more about [CASAdError](godot/ad-errors) object. 
 </Info>
 
-## Preload several ads
-To have an ad ready more often, keep several ads loaded at the same time, up to 4. 
-`show()` presents the loaded ad with the highest revenue, and the shown ad loads a new one by itself.
-
-```gdscript
-var interstitial := CASMobileAds.get_interstitial()
-interstitial.preload_count = 2 # [!code highlight]
-print("Loaded ads: ", interstitial.get_loaded_count())
-```
-
-Preloaded ads always use autoload, so `load()` is not needed. 
-`preload_count` can be set before `CASMobileAds.initialize()`, the ads start loading once the SDK is initialized.
-Set `preload_count = 0` to return to a single ad.
-
 ## Show Ad
 Interstitial ads should be displayed during natural pauses in the flow of an app. Between game levels is a good example, or after the user completes a task.
 You can choose when to show the ad by calling `show()`:
 
 ```gdscript
 func _ready() -> void:
-	var interstitial := CASMobileAds.get_interstitial()
+	var interstitial := CASMobileAds.interstitial
 	interstitial.showed.connect(_on_interstitial_showed)
 	interstitial.failed_to_show.connect(_on_interstitial_failed_to_show)
 	interstitial.dismissed.connect(_on_interstitial_dismissed)
 
 
 func show_interstitial() -> void:
-	CASMobileAds.get_interstitial().show()
+	CASMobileAds.interstitial.show()
 
 
 func _on_interstitial_showed() -> void:
@@ -103,7 +99,7 @@ If the ad is not ready at that moment, the `failed_to_show` signal will be emitt
 You have the option to check `is_loaded()` if it's required by your app's logic.
 
 ```gdscript
-if CASMobileAds.get_interstitial().is_loaded():
+if CASMobileAds.interstitial.is_loaded():
 	# The ad is loaded here
 	pass
 ```
@@ -113,7 +109,7 @@ CAS provides the option to automatically show a loaded ad when the user returns 
 To enable this behavior, set autoshow enabled:
 
 ```gdscript
-CASMobileAds.get_interstitial().autoshow_enabled = true
+CASMobileAds.interstitial.autoshow_enabled = true
 ```
 
 ## Game pause during the ad
@@ -127,13 +123,18 @@ If your game opens a pause menu on focus loss, skip it during ads, or turn the p
 CASMobileAds.set_pause_game_during_ads(false)
 ```
 
+<Info>
+On Android, a fullscreen ad opens in a separate Activity, and Godot pauses the game the same way as when the app goes to the background. 
+`set_pause_game_during_ads()` has no effect on Android.
+</Info>
+
 The setting applies to interstitial, rewarded and app open ads. Enabled by default.
 
 ## Listening for the Ad Clicked
 The `clicked` signal is emitted whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions.
 
 ```gdscript
-CASMobileAds.get_interstitial().clicked.connect(func():
+CASMobileAds.interstitial.clicked.connect(func():
 	# Called when a click is recorded for an interstitial ad.
 	pass)
 ```
@@ -143,20 +144,20 @@ The minimum interval between showing interstitial ads, in seconds.
 Attempting to show a new interstitial ad before the interval has passed after the previous one was dismissed will emit the `failed_to_show` signal with `CASAdError.Code.NOT_PASSED_INTERVAL`.
 
 ```gdscript
-CASMobileAds.get_interstitial().min_interval = 30 # seconds
+CASMobileAds.interstitial.min_interval = 30 # seconds
 ```
 
 To start the interval countdown again, for example after a rewarded or app open ad, call:
 
 ```gdscript
-CASMobileAds.get_interstitial().restart_interval()
+CASMobileAds.interstitial.restart_interval()
 ```
 
 ## Placement name
 Set the `placement` property to group ad statistics by place in your game in the CAS dashboard. The name is applied before the ad load.
 
 ```gdscript
-CASMobileAds.get_interstitial().placement = "level_complete"
+CASMobileAds.interstitial.placement = "level_complete"
 ```
 
 ## Mute Ad sounds
@@ -172,7 +173,7 @@ Not muted by default.
 Be sure to release ad resources when no longer needed. The ad options are kept, and the next `load()` creates a new ad.
 
 ```gdscript
-CASMobileAds.get_interstitial().destroy()
+CASMobileAds.interstitial.destroy()
 ```
 
 ## Some best practices

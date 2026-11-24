@@ -6,8 +6,8 @@ description: This guide explains how to integrate medium rectangle banner ads in
 Medium Rectangle (MREC) are rectangular image or text ads that occupy a spot with size in points (300x250) on screen. 
 They stay on screen while users are interacting with the app, and can refresh automatically after a certain period of time. 
 
-Medium Rectangle ad management in Godot code is handled through the `CASBanner` object returned by `CASMobileAds.get_mrec()`.
-The MREC ad is independent of `CASMobileAds.get_banner()`, so both can be shown at the same time.
+Medium Rectangle ad management in Godot code is handled through the `CASBanner` object in the `CASMobileAds.mrec` property.
+The MREC ad is independent of `CASMobileAds.banner`, so both can be shown at the same time.
 The ad is drawn by the native SDK on top of the game and is not a node of the scene tree.
 
 CAS provides an option to enable `autoload_enabled` to simplify your app logic. When autoload is enabled, loading failures will trigger automatic retry attempts.
@@ -24,7 +24,7 @@ The following example loads an MREC ad:
 
 ```gdscript
 func _ready() -> void:
-	var mrec := CASMobileAds.get_mrec()
+	var mrec := CASMobileAds.mrec
 	mrec.loaded.connect(_on_mrec_loaded)
 	mrec.failed_to_load.connect(_on_mrec_failed_to_load)
 	mrec.autoload_enabled = true
@@ -61,13 +61,13 @@ The default value `-1` uses the global SDK interval for all banners, 30 seconds 
 
 Override the automatic refresh interval in the `refresh_interval` property:
 ```gdscript
-CASMobileAds.get_mrec().refresh_interval = 30 # [!code highlight]
+CASMobileAds.mrec.refresh_interval = 30 # [!code highlight]
 ```
 
 ## Display the Ad
 The MREC ad will not be visible until `show()` is called. The `position` property specifies where the ad should be placed. The `CASBanner.Position` lists the valid ad position values. By default, the ad is centered at the bottom. 
 ```gdscript
-var mrec := CASMobileAds.get_mrec()
+var mrec := CASMobileAds.mrec
 mrec.position = CASBanner.Position.MIDDLE_CENTER
 mrec.show()
 ```
@@ -87,9 +87,9 @@ Some anchor positions do not support offset on the X or Y axis, this can be seen
 | Middle | ML(X)    | MC(-)  |    MR(X) |
 | Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
 
-The offset is determined in points on iOS, not in game pixels.
+The offset is determined in points on iOS and in dp on Android, not in game pixels.
 ```gdscript
-var mrec := CASMobileAds.get_mrec()
+var mrec := CASMobileAds.mrec
 mrec.position = CASBanner.Position.TOP_LEFT
 mrec.offset = Vector2i(x_offset, y_offset)
 ```
@@ -100,14 +100,14 @@ Read more in [Banner Ads](godot/banner-ads#ad-area-in-game-pixels).
 ## Hide the Ad
 When you need to hide the ad from the user, call `hide()`. The loaded ad is kept.
 ```gdscript
-CASMobileAds.get_mrec().hide()
+CASMobileAds.mrec.hide()
 ```
 
 ## Listening for the Ad Clicked
 The `clicked` signal is emitted whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions.
 
 ```gdscript
-CASMobileAds.get_mrec().clicked.connect(func():
+CASMobileAds.mrec.clicked.connect(func():
 	# Called when a click is recorded for an MREC ad.
 	pass)
 ```
@@ -116,7 +116,7 @@ CASMobileAds.get_mrec().clicked.connect(func():
 Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
 
 ```gdscript
-CASMobileAds.get_mrec().destroy()
+CASMobileAds.mrec.destroy()
 ```
 
 The ad options are kept. Call `load()` again to create and load a new ad.

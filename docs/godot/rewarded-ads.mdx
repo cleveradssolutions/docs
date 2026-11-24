@@ -6,25 +6,25 @@ description: This guide explains how to integrate rewarded ads into a Godot game
 Rewarded ads let you offer users in-app items, such as continued gameplay, virtual currency, or other rewards, in exchange for their engagement with ads.
 Rewarded ads boost engagement because users receive a tangible benefit for their time.
 
-Rewarded ad management in Godot code is handled through the `CASRewarded` object returned by `CASMobileAds.get_rewarded()`.
+Rewarded ad management in Godot code is handled through the `CASRewarded` object in the `CASMobileAds.rewarded` property.
 The rewarded ad is displayed by the native SDK on top of the game and is not a node of the scene tree.
 
-Below is a diagram showing the ad lifecycle and how autoload affects it.
+Below is a diagram showing the ad lifecycle and how automatic loading affects it.
 <Image zoom src="/assets/Lifecycle-Rewarded-Ad.png" alt="Diagram" height="500" />
 
 ## Load Ad
-CAS provides an option to enable autoload to simplify your app logic.  
-Before using the ad, you should decide whether to enable autoload, or manually manage each ad loading cycle in your code.
+CAS provides two ways to load ads. Before using the ad, decide whether the SDK keeps ads loaded for you, or you manually manage each ad loading cycle in your code.
 
-When autoload is enabled, a new ad will be automatically loaded after each display, and loading failures will trigger automatic retry attempts.
+### Automatic loading
+The `buffer_size` property sets the number of ads kept loaded automatically, up to 4.
+A new ad is loaded after each display, and loading failures trigger automatic retry attempts, so `load()` is not needed.
 
 ```gdscript
 func _ready() -> void:
-	var rewarded := CASMobileAds.get_rewarded()
+	var rewarded := CASMobileAds.rewarded
 	rewarded.loaded.connect(_on_rewarded_loaded)
 	rewarded.failed_to_load.connect(_on_rewarded_failed_to_load)
-	rewarded.autoload_enabled = true
-	rewarded.load()
+	rewarded.buffer_size = 1 # [!code highlight]
 
 
 func _on_rewarded_loaded() -> void:
@@ -37,8 +37,18 @@ func _on_rewarded_failed_to_load(error: CASAdError) -> void:
 	print("Load failed: ", error.message)
 ```
 
-Manual load mode is useful when you only need to show a single ad per game screen, and the screens change frequently.
-When you want to manually control ad loading, set `autoload_enabled = false` and call `load()` each time you need a new ad.
+To have an ad ready more often, keep several ads loaded at the same time with `buffer_size` 2 to 4.
+`show()` presents the loaded ad with the highest revenue. Use `get_loaded_count()` to get the number of loaded ads.
+
+`buffer_size` can be set before `CASMobileAds.initialize()`, the ads start loading once the SDK is initialized.
+
+### Manual loading
+With the default `buffer_size = 0`, the ad is loaded only by `load()`. Call it each time you need a new ad, for example after `dismissed`.
+Manual loading is useful when you only need to show a single ad per game screen, and the screens change frequently.
+
+```gdscript
+CASMobileAds.rewarded.load()
+```
 
 Ad content may take some time to load. To ensure the ad displays instantly when needed, load the ad in advance.
 You can use the `loaded` signal to be notified when the ad is ready for display.
@@ -48,20 +58,6 @@ You can use the `loaded` signal to be notified when the ad is ready for display.
 - Read more about [CASAdError](godot/ad-errors) object. 
 </Info>
 
-## Preload several ads
-To have an ad ready more often, keep several ads loaded at the same time, up to 4. 
-`show()` presents the loaded ad with the highest revenue, and the shown ad loads a new one by itself.
-
-```gdscript
-var rewarded := CASMobileAds.get_rewarded()
-rewarded.preload_count = 2 # [!code highlight]
-print("Loaded ads: ", rewarded.get_loaded_count())
-```
-
-Preloaded ads always use autoload, so `load()` is not needed. 
-`preload_count` can be set before `CASMobileAds.initialize()`, the ads start loading once the SDK is initialized.
-Set `preload_count = 0` to return to a single ad.
-
 ## Show Ad
 Be sure to listen to the `earned_reward` signal and reward the user for watching an ad.
 The `earned_reward` signal is emitted before `dismissed`.
@@ -70,14 +66,14 @@ You can choose when to show the ad by calling `show()`:
 
 ```gdscript
 func _ready() -> void:
-	var rewarded := CASMobileAds.get_rewarded()
+	var rewarded := CASMobileAds.rewarded
 	rewarded.earned_reward.connect(_on_rewarded_earned_reward)
 	rewarded.failed_to_show.connect(_on_rewarded_failed_to_show)
 	rewarded.dismissed.connect(_on_rewarded_dismissed)
 
 
 func show_rewarded() -> void:
-	CASMobileAds.get_rewarded().show()
+	CASMobileAds.rewarded.show()
 
 
 func _on_rewarded_earned_reward(info: CASAdContentInfo) -> void:
@@ -104,7 +100,7 @@ If the ad is not ready at that moment, the `failed_to_show` signal will be emitt
 You have the option to check `is_loaded()` if it's required by your app's logic.
 
 ```gdscript
-if CASMobileAds.get_rewarded().is_loaded():
+if CASMobileAds.rewarded.is_loaded():
 	# The ad is loaded here
 	pass
 ```
@@ -117,14 +113,14 @@ Read more in [Interstitial Ads](godot/interstitial-ads#game-pause-during-the-ad)
 Set custom data that is passed to your server-side reward verification callbacks. Pass an empty string to clear it.
 
 ```gdscript
-CASMobileAds.get_rewarded().server_side_verification_data = "custom-data"
+CASMobileAds.rewarded.server_side_verification_data = "custom-data"
 ```
 
 ## Listening for the Ad Clicked
 The `clicked` signal is emitted whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions.
 
 ```gdscript
-CASMobileAds.get_rewarded().clicked.connect(func():
+CASMobileAds.rewarded.clicked.connect(func():
 	# Called when a click is recorded for a rewarded ad.
 	pass)
 ```
@@ -142,7 +138,7 @@ Not muted by default.
 Be sure to release ad resources when no longer needed. The ad options are kept, and the next `load()` creates a new ad.
 
 ```gdscript
-CASMobileAds.get_rewarded().destroy()
+CASMobileAds.rewarded.destroy()
 ```
 
 ## Complete example

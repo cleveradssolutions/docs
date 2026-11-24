@@ -69,9 +69,9 @@ Each ad object emits the `impression` signal with `CASAdContentInfo` details:
 
 ```gdscript
 func _ready() -> void:
-	CASMobileAds.get_interstitial().impression.connect(_on_ad_impression)
-	CASMobileAds.get_rewarded().impression.connect(_on_ad_impression)
-	CASMobileAds.get_banner().impression.connect(_on_ad_impression)
+	CASMobileAds.interstitial.impression.connect(_on_ad_impression)
+	CASMobileAds.rewarded.impression.connect(_on_ad_impression)
+	CASMobileAds.banner.impression.connect(_on_ad_impression)
 
 
 func _on_ad_impression(info: CASAdContentInfo) -> void:
@@ -89,7 +89,7 @@ The information about the loaded ad, before it is shown, is available with `get_
 The method returns `null` when no ad is loaded.
 
 ```gdscript
-var info := CASMobileAds.get_rewarded().get_content_info()
+var info := CASMobileAds.rewarded.get_content_info()
 if info != null:
 	print("Ready to show ad from ", info.source_name)
 ```

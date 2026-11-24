@@ -15,6 +15,7 @@ Desktop, web and console exports are not supported, but the same game code still
 - Godot `{{ min.godot }}` or higher.
 - iOS `{{ min.ios }}` or higher: set **Min iOS Version** in the iOS export preset.
 - Xcode `{{ min.xcode }}` or higher.
+- Android minimum SDK version `{{ min.api }}` or higher, and Gradle build: see [Include Android](godot/include-android).
 
 ## Add CAS.AI Godot plugin
 1. Download `CAS-Godot-{{ versions.godot }}.zip` from the [latest release](https://github.com/cleveradssolutions/CAS-Godot/releases/latest).
@@ -24,7 +25,7 @@ Desktop, web and console exports are not supported, but the same game code still
 3. Open **Project > Project Settings > Plugins** and enable **CAS.AI**.
 
 The plugin registers the `CASMobileAds` autoload, the entry point for all ads in your game code.
-The native iOS plugin is enabled in every iOS export preset automatically.
+The native iOS plugin is enabled in every iOS export preset automatically, the native Android plugin is added to every Android export.
 
 <Info>
 To update the plugin, delete both folders and copy them again from the new release.
@@ -34,9 +35,14 @@ To update the plugin, delete both folders and copy them again from the new relea
 You need to register your app on the https://cas.ai platform. 
 Open **Project > Project Settings**, turn on **Advanced Settings** and select the **CAS AI** section.
 
-Set the registered **CAS ID** in the `cas_ai/ios/cas_id` setting.
+Set the registered **CAS ID** of each platform in the `cas_ai/ios/cas_id` and `cas_ai/android/cas_id` settings.
 
 <AccordionGroup>
+<Accordion title="What is CAS ID in Android?">
+
+In most cases, a CAS ID is the same as your application package name: **Package > Unique Name** of the Android export preset, for example `com.yourcompany.yourgame`.
+
+</Accordion>
 <Accordion title="What is CAS ID in iOS?">
 
 In most cases, a CAS ID is the same as your app store ID.  
@@ -52,43 +58,50 @@ The CAS ID is packed into the game with the project settings, so export the game
 CAS.AI is a mediation SDK with no built-in live ad inventory. At least one ad network adapter or solution must be integrated before publishing to display ads and generate revenue.
 </Warning>
 
-Choose an integration path based on your app's target audience in the `cas_ai/ios/solution` setting. 
+Choose an integration path based on your app's target audience in the `cas_ai/ios/solution` and `cas_ai/android/solution` settings. 
 If you're unsure which solution best fits your application, please contact your account manager.
 
 <Info>
 During development, you can test ad formats using [Test Ads](godot/enabling-test-ads) without adding any ad network SDKs.
 </Info>
 
-Check the details of the ad network adapters supported by CAS.AI Mediation in the [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) table.
+<Warning>
+After changing the Android solution or adapters, run **Project > Tools > CAS: Configure Android** to apply them to the Android build, see [Include Android](godot/include-android).
+</Warning>
+
+Check the details of the ad network adapters supported by CAS.AI Mediation in the [iOS repository](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md) and [Android repository](https://github.com/cleveradssolutions/CAS-Android/blob/master/Adapters/README.md) tables.
 
 <AccordionGroup>
 <Accordion defaultOpen title="Optimal Ads Solution">
 
 Recommended for **most applications** targeting a **general or mixed audience**. Includes a broad set of stable, high-performance networks.
 
-Select `Optimal Ads` in the `cas_ai/ios/solution` setting. This is the default value.
+Select `Optimal Ads` in the `cas_ai/ios/solution` and `cas_ai/android/solution` settings. This is the default value.
 
 </Accordion>
 <Accordion title="Families Ads Solution">
 
 Required for applications **directed exclusively at children**, in accordance with the [Google Play Families Policy](https://support.google.com/googleplay/android-developer/answer/12918983?hl=en) and fully compatible with the [Children’s Online Privacy Protection Act (COPPA)](https://www.ftc.gov/tips-advice/business-center/privacy-and-security/children%27s-privacy).
 
-Select `Families Ads` in the `cas_ai/ios/solution` setting.
+Select `Families Ads` in the `cas_ai/ios/solution` and `cas_ai/android/solution` settings.
 
 </Accordion>
 <Accordion title="VPN Compliant Ads Solutions">
 
 Designed specifically for applications that provide VPN or proxy services. This solution includes partner networks that comply with VPN-related traffic policies and restrictions.
 
-Select `VPN Compliant Ads` in the `cas_ai/ios/solution` setting.
+Select `VPN Compliant Ads` in the `cas_ai/ios/solution` and `cas_ai/android/solution` settings.
 
 </Accordion>
 <Accordion title="Choice networks">
 
 Advanced publishers familiar with ad network integrations can configure their own set of adapters. 
+Select `None` in the solution setting to include no solution, or keep a solution to extend it.
 
-1. Select `None` in the `cas_ai/ios/solution` setting to include no solution, or keep a solution to extend it.
-2. Add adapters to the `cas_ai/ios/adapters` list. Each value is `CASMediation` followed by the adapter name (first column) from the [iOS Adapters table](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md).
+<Tabs groupId="platform">
+<TabItem label="iOS" value="ios">
+
+Add adapters to the `cas_ai/ios/adapters` list. Each value is `CASMediation` followed by the adapter name (first column) from the [iOS Adapters table](https://github.com/cleveradssolutions/CAS-iOS/blob/master/Adapters/README.md).
 
 Below, as an example, only GoogleAds, Exchange, and DTExchange are shown.
 ```
@@ -99,10 +112,28 @@ CASMediationDTExchange
 
 The iOS export checks that each name exists in the selected CAS iOS SDK version and shows an error otherwise.
 
+</TabItem>
+<TabItem label="Android" value="android">
+
+Add adapters to the `cas_ai/android/adapters` list. Each value is the adapter name of the CAS Gradle Plugin `adapters { }` block, see [Mediated Networks](android/mediated-networks).
+
+Below, as an example, only GoogleAds, CAS Exchange, and DTExchange are shown.
+```
+googleAds
+casExchange
+dtExchange
+```
+
+</TabItem>
+</Tabs>
+
 </Accordion>
 </AccordionGroup>
 
 ## Advertising Identifier
+<Tabs groupId="platform">
+<TabItem label="iOS" value="ios">
+
 CAS Mediation uses the [Apple Identifier for Advertisers (IDFA)](https://developer.apple.com/documentation/adsupport) to deliver personalized and more relevant ads to each user.  
 
 The [App Tracking Transparency authorization request](https://developer.apple.com/documentation/bundleresources/information_property_list/nsusertrackingusagedescription) for accessing the IDFA is shown by the SDK with the text from the `cas_ai/ios/tracking_usage_description` setting. 
@@ -122,8 +153,17 @@ The plugin sets a default text, you can replace it with a custom message describ
 </Accordion>
 </AccordionGroup>
 
+</TabItem>
+<TabItem label="Android" value="android">
+
+The [Google Advertising ID](https://support.google.com/googleplay/android-developer/answer/6048248?hl=en) is enabled with the `useAdvertisingId` option of the CAS Gradle Plugin, see [The CAS Gradle block](godot/include-android#the-cas-gradle-block).
+
+</TabItem>
+</Tabs>
+
 ## Next steps
 - Export the game to iOS: [Include iOS](godot/include-ios).
+- Export the game to Android: [Include Android](godot/include-android).
 - [Initialize CAS SDK](godot/initialize-cas) in your game code.
 
 <Card title="Subscribe" icon="github" href="https://github.com/cleveradssolutions/CAS-Godot/subscription">

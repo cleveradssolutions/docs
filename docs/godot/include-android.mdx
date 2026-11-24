@@ -1,3 +1,66 @@
 ---
 title: Include Android
+description: This guide explains how to export a Godot game with CAS.AI to Android.
 ---
+
+The CAS.AI plugin adds the native Android plugin to the export automatically. 
+The CAS Android SDK and the selected ad networks are added by the [CAS Gradle Plugin](android) to the Godot Android build template.
+
+## Prerequisites
+- Minimum SDK version `{{ min.api }}` or higher: the **Min SDK** option of the Android export preset.
+- Android Gradle Plugin `8.10.1` or higher and Gradle `8.11.1` or higher in the Android build template.
+
+## Configure the Android build
+1. Open **Project > Install Android Build Template** to create the `android/build` folder in your project.
+2. In the Android export preset, enable **Gradle Build > Use Gradle Build**.
+3. Open **Project > Tools > CAS: Configure Android** and confirm the changes.
+
+The configuration updates two files of the Android build template:
+- `android/build/build.gradle`: adds the CAS Gradle Plugin and the `cas { }` block with the solution and adapters from the project settings.
+- `android/build/config.gradle`: raises the Android Gradle Plugin version to `8.10.1` when it is lower. A newer version is never changed.
+
+<Warning>
+Run **CAS: Configure Android** again after you change the CAS Android SDK version, the solution or the adapters in the project settings. 
+Until then, the Android export stops with the error "Android Gradle configuration is incomplete".
+</Warning>
+
+To check the configuration without changing files, use **Project > Tools > CAS: Verify Android Gradle**.
+The same check runs before each Android export.
+
+<Info>
+If you install the Android build template again, for example after a Godot update, run **CAS: Configure Android** again.
+</Info>
+
+## What the export does
+During each Android export the plugin:
+- Adds the native CAS.AI plugin library to the Gradle build.
+- Adds the Maven repositories of the mediated ad networks.
+- Checks that the Gradle configuration matches the project settings.
+
+The CAS Gradle Plugin downloads the dependencies of the selected solution and adapters during the Gradle build.
+
+## CAS Android SDK version
+The CAS Android SDK version is set in the `cas_ai/android/sdk_version` setting. 
+The default value is the version tested with the current plugin release, we recommend keeping it.
+
+## The CAS Gradle block
+The `cas { }` block in `android/build/build.gradle` is managed by the plugin. 
+**CAS: Configure Android** replaces only the solution and the adapters in this block and keeps other options. 
+You can add other options of the [CAS Gradle Plugin](android) to the block, for example the Google Advertising Identifier:
+
+```groovy
+cas {
+    includeOptimalAds = true
+    useAdvertisingId = true // [!code highlight]
+}
+```
+
+<Info>
+An application must not use an advertising identifier if **at least one** of the following conditions is true:
+- The app’s target audience includes **only children**, as defined in the [Families Policy](https://support.google.com/googleplay/android-developer/answer/9893335?sjid=10683822576513227860-EU).
+- The app is being built for **devices that do not use Google Play Services** (e.g. Amazon or Huawei devices).
+</Info>
+
+## CAS ID and package name
+The CAS Gradle Plugin uses the **Package > Unique Name** of the Android export preset as the CAS ID for the build configuration.
+Set the same value in the `cas_ai/android/cas_id` project setting, it is used to initialize the SDK.

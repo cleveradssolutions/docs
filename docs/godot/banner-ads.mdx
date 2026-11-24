@@ -8,7 +8,7 @@ They can refresh automatically after a set period of time.
 This means users view a new ad at regular intervals, even if they stay on the same screen in your app.
 They're also the simplest ad format to implement.
 
-Banner ad management in Godot code is handled through the `CASBanner` object returned by `CASMobileAds.get_banner()`.
+Banner ad management in Godot code is handled through the `CASBanner` object in the `CASMobileAds.banner` property.
 The banner is drawn by the native SDK on top of the game and is not a node of the scene tree.
 
 CAS provides an option to enable `autoload_enabled` to simplify your app logic. When autoload is enabled, loading failures will trigger automatic retry attempts.
@@ -48,7 +48,7 @@ The following example loads a banner ad:
 
 ```gdscript
 func _ready() -> void:
-	var banner := CASMobileAds.get_banner()
+	var banner := CASMobileAds.banner
 	banner.loaded.connect(_on_banner_loaded)
 	banner.failed_to_load.connect(_on_banner_failed_to_load)
 	banner.size = CASBanner.Size.ADAPTIVE
@@ -84,13 +84,13 @@ The default value `-1` uses the global SDK interval for all banners, 30 seconds 
 
 Override the automatic refresh interval in the `refresh_interval` property:
 ```gdscript
-CASMobileAds.get_banner().refresh_interval = 30 # [!code highlight]
+CASMobileAds.banner.refresh_interval = 30 # [!code highlight]
 ```
 
 ## Display the Ad
 The banner will not be visible until `show()` is called. The `position` property specifies where the banner ad should be placed. The `CASBanner.Position` lists the valid ad position values. By default, the banner ad is centered at the bottom. 
 ```gdscript
-var banner := CASMobileAds.get_banner()
+var banner := CASMobileAds.banner
 banner.position = CASBanner.Position.BOTTOM_CENTER
 banner.show()
 ```
@@ -112,9 +112,9 @@ Some anchor positions do not support offset on the X or Y axis, this can be seen
 | Middle | ML(X)    | MC(-)  |    MR(X) |
 | Bottom | BL(X, Y) | BC(Y)  | BR(X, Y) |
 
-The offset is determined in points on iOS, not in game pixels.
+The offset is determined in points on iOS and in dp on Android, not in game pixels.
 ```gdscript
-var banner := CASMobileAds.get_banner()
+var banner := CASMobileAds.banner
 banner.position = CASBanner.Position.TOP_LEFT
 banner.offset = Vector2i(x_offset, y_offset)
 ```
@@ -125,7 +125,7 @@ For example, to move your game UI away from the banner. The method returns an em
 
 ```gdscript
 func _on_banner_loaded() -> void:
-	var rect := CASMobileAds.get_banner().get_rect()
+	var rect := CASMobileAds.banner.get_rect()
 	print("Banner area: ", rect)
 ```
 
@@ -134,14 +134,14 @@ Check the area again on `loaded`: an adaptive ad can change its size, for exampl
 ## Hide the Ad
 When you need to hide the banner ad from the user, call `hide()`. The loaded ad is kept.
 ```gdscript
-CASMobileAds.get_banner().hide()
+CASMobileAds.banner.hide()
 ```
 
 ## Listening for the Ad Clicked
 The `clicked` signal is emitted whenever a user clicks an ad. This can be useful for analytics, custom tracking, or UI reactions.
 
 ```gdscript
-CASMobileAds.get_banner().clicked.connect(func():
+CASMobileAds.banner.clicked.connect(func():
 	# Called when a click is recorded for a banner ad.
 	pass)
 ```
@@ -150,7 +150,7 @@ CASMobileAds.get_banner().clicked.connect(func():
 Destroys the ad content and releases any associated resources when the ad is no longer needed to clean up resources and prevent memory leaks.
 
 ```gdscript
-CASMobileAds.get_banner().destroy()
+CASMobileAds.banner.destroy()
 ```
 
 The ad options are kept. Call `load()` again to create and load a new ad.
