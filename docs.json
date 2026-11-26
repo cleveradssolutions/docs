@@ -14,7 +14,7 @@
             "reactnative": "4.8.3",
             "cordova": "4.8.3",
             "construct": "4.8.3.0",
-            "godot": "0.1.0"
+            "godot": "4.8.3"
         },
         "min": {
             "xcode": "26.2",

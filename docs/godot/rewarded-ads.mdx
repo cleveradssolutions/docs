@@ -16,7 +16,7 @@ Below is a diagram showing the ad lifecycle and how automatic loading affects it
 CAS provides two ways to load ads. Before using the ad, decide whether the SDK keeps ads loaded for you, or you manually manage each ad loading cycle in your code.
 
 ### Automatic loading
-The `buffer_size` property sets the number of ads kept loaded automatically, up to 4.
+The `set_preloaded_buffer_size()` method sets the number of ads kept loaded automatically, up to 4.
 A new ad is loaded after each display, and loading failures trigger automatic retry attempts, so `load()` is not needed.
 
 ```gdscript
@@ -24,7 +24,7 @@ func _ready() -> void:
 	var rewarded := CASMobileAds.rewarded
 	rewarded.loaded.connect(_on_rewarded_loaded)
 	rewarded.failed_to_load.connect(_on_rewarded_failed_to_load)
-	rewarded.buffer_size = 1 # [!code highlight]
+	rewarded.set_preloaded_buffer_size(1) # [!code highlight]
 
 
 func _on_rewarded_loaded() -> void:
@@ -37,13 +37,13 @@ func _on_rewarded_failed_to_load(error: CASAdError) -> void:
 	print("Load failed: ", error.message)
 ```
 
-To have an ad ready more often, keep several ads loaded at the same time with `buffer_size` 2 to 4.
+To have an ad ready more often, keep several ads loaded at the same time with a buffer size of 2 to 4.
 `show()` presents the loaded ad with the highest revenue. Use `get_loaded_count()` to get the number of loaded ads.
 
-`buffer_size` can be set before `CASMobileAds.initialize()`, the ads start loading once the SDK is initialized.
+`set_preloaded_buffer_size()` can be called before `CASMobileAds.initialize()`, the ads start loading once the SDK is initialized.
 
 ### Manual loading
-With the default `buffer_size = 0`, the ad is loaded only by `load()`. Call it each time you need a new ad, for example after `dismissed`.
+With the default buffer size 0, the ad is loaded only by `load()`. Call it each time you need a new ad, for example after `dismissed`.
 Manual loading is useful when you only need to show a single ad per game screen, and the screens change frequently.
 
 ```gdscript
