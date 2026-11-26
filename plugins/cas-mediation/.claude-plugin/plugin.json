@@ -1,0 +1,17 @@
+{
+  "name": "cas-mediation",
+  "version": "0.1.0",
+  "description": "Write and review CAS.AI mediation adapters inside the CAS SDK repositories. Internal: not published in the marketplace.",
+  "author": {
+    "name": "CAS.AI",
+    "url": "https://cas.ai"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "ads",
+    "mediation",
+    "adapter",
+    "android",
+    "ios"
+  ]
+}

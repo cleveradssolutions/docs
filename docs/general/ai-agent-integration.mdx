@@ -18,14 +18,15 @@ site:
 
 <Info>
 Point your agent at `llms.txt` and let it fetch the pages it needs. Pasting
-`llms-full.txt` into a prompt wastes context on eight platforms you are not using.
+`llms-full.txt` into a prompt wastes context on the nine platforms you are not using.
 </Info>
 
 ## Agent skills
 
 The documentation answers *where it is written*. A skill answers *in what order to do it,
-what to ask you first, and what never to do*. We publish skills for Android and iOS in the
-[documentation repository](https://github.com/cleveradssolutions/docs/tree/master/plugins).
+what to ask you first, and what never to do*. We publish a skill for every platform that
+has a code integration, in the
+[documentation repository](https://github.com/cleveradssolutions/docs/tree/main/plugins).
 
 <CodeGroup>
 ```bash Claude Code
@@ -42,6 +43,11 @@ Point the agent at the skill folder for your platform:
 
 plugins/cas-sdk/skills/cas-android/SKILL.md
 plugins/cas-sdk/skills/cas-ios/SKILL.md
+plugins/cas-sdk/skills/cas-flutter/SKILL.md
+plugins/cas-sdk/skills/cas-react-native/SKILL.md
+plugins/cas-sdk/skills/cas-kmp/SKILL.md
+plugins/cas-sdk/skills/cas-unreal/SKILL.md
+plugins/cas-sdk/skills/cas-cordova/SKILL.md
 
 Each folder is plain Markdown and is self contained.
 ```
@@ -57,6 +63,11 @@ run the installer. Add `--skill cas-android` for one platform, and update later 
 | ----- | ------------ | ------------- |
 | `cas-android` | Adds the SDK to a native Android app: Gradle setup, ad networks, initialization, consent, ad formats, verification on test ads. | *Add CAS.AI banner and interstitial ads to this app* |
 | `cas-ios` | The same for a native iOS app, with Swift Package Manager or CocoaPods and the `Info.plist` configuration. | *Integrate CAS.AI into my iOS app and show a rewarded ad* |
+| `cas-flutter` | The `clever_ads_solutions` package, the CAS Gradle plugin on Android and the `casconfig.rb` script on iOS, then the Dart ad formats. | *Add CAS.AI ads to my Flutter app* |
+| `cas-react-native` | A React Native or Expo app: the `react-native-cas` package, the Expo config plugin or the bare native setup, then the TypeScript ad formats. | *Add CAS.AI ads to my React Native app* |
+| `cas-kmp` | A Kotlin Multiplatform app: the `cas-kmp` library in `commonMain`, the CAS Gradle plugin on Android and the CAS Swift Package on iOS, then the shared ad formats and the Compose composables. | *Add CAS.AI ads to my Kotlin Multiplatform app* |
+| `cas-unreal` | An Unreal Engine project: the CAS-Unreal plugin, the `CleverAdsSolutions` module, the per-platform CAS.AI Config window and the packaging prerequisites, then the C++ or Blueprint ad formats. | *Add CAS.AI rewarded ads to my Unreal game* |
+| `cas-cordova` | A Cordova or Ionic app: the `cordova-plugin-casai` plugin and its `config.xml` variables, then the JavaScript ad formats with their Promise and document-event APIs. | *Add CAS.AI ads to my Ionic app* |
 
 <Info>
 The skills are not Claude specific. `SKILL.md` is Markdown with a small header, and the
@@ -64,9 +75,22 @@ files it links to sit next to it. `AGENTS.md` in the repository root explains ho
 them from any other agent.
 </Info>
 
-Unity, the CAS Publishing Hub and the studio Firebase setup have their own agent guides in
-the same repository, under `llm-guides/`. A Unity project belongs to those, not to the
-Android and iOS skills.
+## Agent guides, where there is no code to write
+
+Unity and Construct are guides rather than skills, because the work happens in an editor
+rather than in files: the addon or package is installed through a dialog, the configuration
+is a settings window, and the ad calls are visual blocks. The agent decides what is
+correct, says which setting and which block, and you click. A Unity or Construct project
+belongs to these guides, not to the platform skills.
+
+Give the agent the file — attach it to the chat or share its link:
+
+| Guide | For |
+| ----- | --- |
+| [cas-unity.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-unity.md) | A Unity project: the package, the settings asset, the mediation solution, the ad calls in C#. |
+| [cas-construct.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-construct.md) | A Construct 3 project: the `.c3addon`, the CAS.AI object properties, the event-sheet actions and conditions, and the Cordova build. |
+| [cas-publishing-hub.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/cas-publishing-hub.md) | Integrating the CAS Publishing Hub. |
+| [firebase-ga4-setup.md](https://github.com/cleveradssolutions/docs/blob/main/llm-guides/firebase-ga4-setup.md) | Setting up Firebase Analytics alongside CAS. |
 
 <Info>
 Because the agent clones the repository, it gets this documentation with the skill. A good
@@ -106,14 +130,15 @@ someone else's account.
 
 <Warning>
 **CAS initializes the mediated ad networks.** The app must not call an ad network
-initializer, and must not add network or adapter dependencies by hand. See
-[Initialize CAS SDK](android/initialize-cas).
+initializer, and must not add network or adapter dependencies by hand. See the
+**Initialize CAS SDK** page of your platform, for example
+[Android](/android/initialize-cas) or [iOS](/ios/initialize-cas).
 </Warning>
 
 Also, in short:
 
 - No ad request before initialization completes, and no analytics or attribution SDK
-  started before the [consent flow](android/user-consent-flow) finishes.
+  started before the **User Consent Flow** of your platform finishes.
 - No `load()` call from inside a failure callback.
 - Every ad instance is destroyed, on Android, or released, on iOS, with the screen that
   owns it.
@@ -140,6 +165,9 @@ code is easiest to change:
   layout does not jump.
 - **App open:** only on a return to the app, or on a cold start while a loading screen is
   still up.
+- **MREC**, where the platform has it as its own format: a pause screen, a results panel, a
+  content break — somewhere the user is reading rather than playing. It is large, and it
+  does not belong over gameplay.
 - **Native:** inside your own layout, marked as an ad, spaced so two are never on screen
   together.
 
@@ -157,6 +185,6 @@ adapters that initialized correctly, which is the fastest way to confirm the ad 
 set is right.
 
 <Warning>
-Before you publish: test ad mode off, test device ids removed, debug logging off. See
-[Enabling test ads](android/enabling-test-ads).
+Before you publish: test ad mode off, test device ids removed, debug logging off. See the
+**Enabling test ads** page of your platform.
 </Warning>

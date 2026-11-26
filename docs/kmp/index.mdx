@@ -8,6 +8,19 @@ Once you've integrated and initialized the SDK, you can choose an ad format and 
 The plugin exposes a single `expect` API from `commonMain`, backed by the native CAS.AI SDK on each platform.
 Banner and Native ads are also available as Compose Multiplatform composables, so the whole integration can live in shared code.
 
+<Info>
+**Handing this to an AI agent?** The `cas-kmp` skill walks an agent through the steps on this
+page for a Kotlin Multiplatform app: it researches the project, asks only what it cannot
+read, writes the integration in order, and verifies it on test ads.
+
+```bash
+npx skills add cleveradssolutions/docs/plugins/cas-sdk/skills --skill cas-kmp
+```
+
+See [Integrating with an AI agent](/general/ai-agent-integration) for what it will ask you
+and the rules it must follow.
+</Info>
+
 ## Prerequisites
 Make sure that your app's build files use the following values:
 - Use Kotlin `{{ min.kotlin }}` or higher

@@ -9,7 +9,8 @@ They live next to the documentation on purpose. The one way this material fails 
 drifting from the pages it was written from, and the only thing that reliably prevents
 that is changing both in the same pull request.
 
-Today: **Android** and **iOS**. The layout has room for the other platforms.
+Today: **Android**, **iOS**, **Flutter**, **React Native**, **Kotlin Multiplatform**,
+**Unreal** and **Cordova**.
 
 ## Use it
 
@@ -36,8 +37,8 @@ repository and the plugin inside it.
 
 ### claude.ai
 
-Upload the folder of a single skill, `cas-sdk/skills/cas-android` or
-`cas-sdk/skills/cas-ios`, as a skill. Each folder is self contained; when it travels alone
+Upload the folder of a single skill, for example `cas-sdk/skills/cas-android` or
+`cas-sdk/skills/cas-react-native`, as a skill. Each folder is self contained; when it travels alone
 it falls back to the published documentation instead of the pages in this repository.
 
 ### By hand
@@ -53,10 +54,26 @@ plugin manifests. See [../AGENTS.md](../AGENTS.md).
 | :--- | :--- | :--- |
 | `cas-android` | Adds the CAS SDK to a native Android app: Gradle setup, ad networks, initialization, consent, ad formats, verification on test ads. | *Add CAS.AI banner and interstitial ads to this app* |
 | `cas-ios` | The same for a native iOS app, with Swift Package Manager or CocoaPods and the `Info.plist` configuration. | *Integrate CAS.AI into my iOS app and show a rewarded ad* |
+| `cas-flutter` | A Flutter app: the `clever_ads_solutions` package, the CAS Gradle plugin on Android, the `casconfig.rb` script on iOS, then the Dart ad formats. | *Add CAS.AI ads to my Flutter app* |
+| `cas-react-native` | A React Native or Expo app: the `react-native-cas` package, the Expo config plugin or the bare native setup, then the TypeScript ad formats. | *Add CAS.AI ads to my React Native app* |
+| `cas-kmp` | A Kotlin Multiplatform app: the `cas-kmp` library in `commonMain`, the CAS Gradle plugin on Android and the CAS Swift Package on iOS, then the shared ad formats and the Compose composables. | *Add CAS.AI ads to my Kotlin Multiplatform app* |
+| `cas-unreal` | An Unreal Engine project: the CAS-Unreal plugin, the `CleverAdsSolutions` module, the per-platform CAS.AI Config window and the packaging prerequisites, then the C++ or Blueprint ad formats. | *Add CAS.AI rewarded ads to my Unreal game* |
+| `cas-cordova` | A Cordova or Ionic app: the `cordova-plugin-casai` plugin and its `config.xml` variables, then the JavaScript ad formats with their Promise and document-event APIs. | *Add CAS.AI ads to my Ionic app* |
 
-Cross-platform projects, Flutter, React Native, Unity, Unreal, Cordova and Kotlin
-Multiplatform, have their own CAS plugin and are **not** covered by these skills. A skill
-detects such a project and stops.
+Each skill detects a project that belongs to another platform and stops, rather than
+integrating a native SDK underneath a plugin. Unity and Construct have guides instead of
+skills, `llm-guides/cas-unity.md` and `llm-guides/cas-construct.md`: in both the work is
+done in an editor rather than in files, so the agent decides and instructs rather than
+edits.
+
+## The internal plugin
+
+`plugins/cas-mediation/` holds one skill, `cas-adapter`, for writing a mediation adapter
+for one ad network inside the CAS SDK repositories. That is internal work on the SDK
+itself rather than an app integration, so the plugin is **not** in the marketplace
+manifest and `npx skills add` does not install it. The skill is deliberately short: the
+source of truth is the reference adapter and its `AGENTS.md` in CAS-Kotlin and CAS-Swift,
+which are built alongside the real adapters and so cannot drift from the mediation API.
 
 ## Before you let an agent do this
 
@@ -78,9 +95,11 @@ plugins/
 │   └── skills/
 │       ├── cas-android/SKILL.md         the procedure, plus references/
 │       └── cas-ios/SKILL.md             the procedure, plus references/
-├── shared/                              texts both skills use
+├── cas-mediation/                       internal, not in the marketplace
+│   └── skills/cas-adapter/SKILL.md      writing an adapter inside the SDK repos
+├── shared/                              texts the cas-sdk skills use
 └── README.md                            this file
-scripts/sync-shared.sh                   copies shared/ into every references/
+scripts/sync-shared.sh                   copies shared/ into every cas-sdk references/
 scripts/check.sh                         validates all of the above
 ```
 
@@ -101,7 +120,8 @@ rest of the repository, the same way it already ignores `README.md` and `cache_i
 ## The other guides
 
 `llm-guides/` in this repository holds agent guides for the rest of the surface, in the
-same question format: `cas-unity.md`, `cas-publishing-hub.md` and `firebase-ga4-setup.md`.
+same question format: `cas-unity.md`, `cas-construct.md`, `cas-publishing-hub.md` and
+`firebase-ga4-setup.md`.
 A Unity project belongs there, not here.
 
 ## Keeping it true

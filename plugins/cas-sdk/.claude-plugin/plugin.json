@@ -14,6 +14,15 @@
     "monetization",
     "mediation",
     "android",
-    "ios"
+    "ios",
+    "flutter",
+    "react-native",
+    "expo",
+    "kotlin-multiplatform",
+    "compose-multiplatform",
+    "unreal",
+    "unreal-engine",
+    "cordova",
+    "ionic"
   ]
 }

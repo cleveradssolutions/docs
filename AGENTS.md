@@ -14,10 +14,17 @@ and `plugins/cas-sdk/.claude-plugin/plugin.json`, which other agents can ignore.
 |---|---|
 | Integrate CAS.AI into an Android app | `plugins/cas-sdk/skills/cas-android/SKILL.md` |
 | Integrate CAS.AI into an iOS app | `plugins/cas-sdk/skills/cas-ios/SKILL.md` |
+| Integrate CAS.AI into a Flutter app | `plugins/cas-sdk/skills/cas-flutter/SKILL.md` |
+| Integrate CAS.AI into a React Native or Expo app | `plugins/cas-sdk/skills/cas-react-native/SKILL.md` |
+| Integrate CAS.AI into a Kotlin Multiplatform app | `plugins/cas-sdk/skills/cas-kmp/SKILL.md` |
+| Integrate CAS.AI into an Unreal Engine project | `plugins/cas-sdk/skills/cas-unreal/SKILL.md` |
+| Integrate CAS.AI into a Cordova or Ionic app | `plugins/cas-sdk/skills/cas-cordova/SKILL.md` |
+| Write a mediation adapter inside the CAS SDK repositories | `plugins/cas-mediation/skills/cas-adapter/SKILL.md` |
 | The rules that apply to any platform | `plugins/shared/agent-rules.md` |
 | How to ask the publisher anything | `plugins/shared/question-format.md` |
 | What to ask, per platform | the skill's `references/questions.md` |
 | Where the canonical documentation is | `plugins/shared/docs-map.md` |
+| Integrate CAS.AI into a Construct 3 project | `llm-guides/cas-construct.md` |
 | Unity, CAS Publishing, Firebase | `llm-guides/` |
 
 Installed rather than read: the [`skills`](https://github.com/vercel-labs/skills) CLI

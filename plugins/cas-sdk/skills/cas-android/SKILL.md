@@ -47,12 +47,13 @@ folders too, and belongs to its own CAS plugin, not here:
 
 | Found | Belongs to |
 |---|---|
-| `pubspec.yaml` | the CAS Flutter plugin |
-| `react-native` in `package.json` | the CAS React Native plugin |
+| `pubspec.yaml` | the cas-flutter skill |
+| `react-native` in `package.json` | the cas-react-native skill |
 | `ProjectSettings/ProjectVersion.txt` | the CAS Unity plugin, guide [llm-guides/cas-unity.md](../../../../llm-guides/cas-unity.md) |
-| A Kotlin Multiplatform `shared` module | the CAS KMP plugin |
-| `config.xml` with a Cordova plugin list | the CAS Cordova plugin |
-| An Unreal `.uproject` | the CAS Unreal plugin |
+| A `.c3p` file or a `project.c3proj` | Construct 3, guide [llm-guides/cas-construct.md](../../../../llm-guides/cas-construct.md) |
+| A Kotlin Multiplatform `shared` module | the cas-kmp skill |
+| `config.xml` with a Cordova plugin list | the cas-cordova skill |
+| An Unreal `.uproject` | the cas-unreal skill |
 
 Say which one and stop. Integrating the native SDK underneath a plugin breaks the
 plugin.
