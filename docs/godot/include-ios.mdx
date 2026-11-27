@@ -59,14 +59,14 @@ When an exported Xcode project already contains the CAS Swift Package, the expor
 
 ## Google AdMob App ID
 Every CAS solution includes Google Ads, which requires the AdMob App ID in `Info.plist`. 
-By default, the plugin takes the AdMob App ID from the CAS configuration of your CAS ID.
-
-To override it, set the `cas_ai/ios/admob_app_id` setting.
+The plugin adds the AdMob App ID from the CAS configuration of your CAS ID automatically, no setting is needed.
 
 <Warning>
-If the AdMob App ID is not set and not found in the CAS configuration, the Google sample App ID is used, which serves test ads only. 
+If the CAS configuration has no AdMob App ID, for example while the app is not yet registered on https://cas.ai, the Google sample App ID is used, which serves test ads only. 
 The export shows a warning for a release build in this case.
 </Warning>
+
+Do not add `GADApplicationIdentifier` to **Additional Plist Content** of the export preset: the export shows an error in this case.
 
 ## SKAdNetwork
 SKAdNetwork is a privacy safe method provided by Apple for ad networks to track installs. Up until iOS 14, most ad network campaign attribution has been based on a user's IDFA, but on iOS 14 and beyond, IDFAs will be less usable as a way to attribute which users have installed based on which ads they have interacted with.
